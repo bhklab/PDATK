@@ -2,7 +2,8 @@
 
 ### References
  * CSPC (Consensus Subtypes for Pancreatic Cancer)
-   * Meta-clustering of pancreatic ductal adenocarcinoma cohorts identifies consistent molecular subtypes  _under review_
+   * Meta-clustering of pancreatic ductal adenocarcinoma cohorts identifies consistent molecular subtypes.  
+   _under review_
 
  * PCOSP (Pancreatic Cancer Overall Survival Predictor)
    * Meta-Analysis of 1,200 transcriptomic profiles identifies a prognostic model for pancreatic ductal adenocarcinoma. [Sandhu et al. _JCO Clin Cancer Inform_ (2019)](https://doi.org/10.1200/CCI.18.00102)
