@@ -1,0 +1,56 @@
+Package: PanCuRx
+Type: Package
+Title: Analysis of Large-Scale Pharmacogenomic Data
+Version: 0.0.1
+Date: 2020-05-06
+Author: Vandana Sandhu, Heewon Seo, Christopher Eeles, Benjamin Haibe-Kains
+Maintainer: Benjamin Haibe-Kains <benjamin.haibe.kains@utoronto.ca>
+Description: A unique set of 89 pancreatic cancer samples profiled using both sequencing and microarray 
+  platform was used for training the PCOSP (Pancreatic cancer overall survival predictor) to predict 
+  patients with early death (within >1 yr) after surgery. Further, to validate the model we used genomic 
+  profiles of 823 samples curated from public domain. The simplistic k-top scoring pair approach was used 
+  to build the model, where we looked at relative expression of gene pairs within the patient. Add
+  description of CDAC and rePURIST.
+License: MIT
+Suggests: xtable,
+    testthat
+Encoding: UTF-8
+Imports: 
+    switchBox,
+    vcdExtra,
+    caret,
+    forestplot,
+    ggplot2,
+    grid,
+    ktspair,
+    pROC,
+    survcomp,
+    survival,
+    data.table,
+    reportROC,
+    verification,
+    genefu,
+    BiocParallel,
+    scales,
+    IDPmisc,
+    dplyr,
+    factoextra,
+    NBClust,
+    cluster,
+    ConensusClusterPlus,
+    clusterRepro,
+    igraph,
+    gtools,
+    plyr,
+    KMsurv,
+    survminer,
+    limma,
+    piano,
+    ggpubr,
+    effsize,
+    RColorBrewer,
+    lattice
+Depends: R (>= 3.6) 
+RoxygenNote: 7.1.0
+biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software, Classification
+BugReports: https://github.com/bhklab/PanCuRx/issues
