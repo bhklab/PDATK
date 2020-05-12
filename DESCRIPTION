@@ -33,7 +33,7 @@ Imports:
     BiocParallel,
     scales,
     IDPmisc,
-    dplyr,
+    dplyr,  
     factoextra,
     NBClust,
     cluster,
