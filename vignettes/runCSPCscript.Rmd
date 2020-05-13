@@ -1,0 +1,203 @@
+---
+title: "Run CSPSC"
+author: "Christopher Eeles"
+date: "11/05/2020"
+output: html_document
+---
+
+```{r}
+#library(PanCuRx)
+require(IDPmisc)
+library(dplyr)
+library(matrixStats)
+library(factoextra)
+library(NbClust)
+library(cluster)
+library(ConsensusClusterPlus)
+library(clusterRepro)
+library(igraph)
+library(gtools)
+library(plyr)
+library(survival)
+library(KMsurv)
+library(survminer)
+library(limma)
+library(piano)
+require(ggplot2)
+library(ggpubr)
+library(BiocParallel)
+library(data.table)
+library(effsize)
+library(vcdExtra)
+library(survcomp)
+library(RColorBrewer)
+library(lattice)
+```
+
+## 1. COINCIDE Implementation
+
+```{r load_data}
+cohorts <- readRDS('../data/cohortsCommonGenes.rds')       
+normalGTEx <- readRDS('../data/normalGTEx.rds')
+adjNormal <- readRDS('../data/adjacentNormal.rds')
+```
+
+
+```{r source_function}
+source('../R/cluster_me_cont.R')
+source('../R/comare_interclusters_cont_pearson.R')
+source('../R/mgsub_function.R')
+source('../R/msm_threshold.r')
+```
+
+```{r ranking_genes_based_on_mad}
+cohortMADrankings <- bplapply(cohorts, function(cohort) calcRowMADdf(cohort))
+```
+
+```{r rank_cohort_genes_by_MAD}
+geneWiseWeightedMADdf <- calcGeneWiseWeightedMADdf(cohortMADrankings)
+```
+
+
+```{r get_top_ranked_genes}
+top20genesPerCohort <- getTopGenes(cohortMADrankings, n=20)
+```
+
+
+```{r get_top_genes_and_meta_genes}
+metaGenes <- getMetaGenes(cohortMADrankings, geneWiseWeightedMADdf, n=20, m=2066)
+
+resultsDir <- file.path("..", "results")
+saveRDS(metaGenes, file.path(resultsDir, "metaGenes.rds"))
+```
+
+
+
+```{r preprocess_cohort_expression_matrixes}
+preprocCohorts <- preprocessCohorts(cohorts, metaGenes)
+```
+
+
+
+```{r compute_consensus_cluster}
+set.seed(1987, sample.kind="Rounding")
+consensusClusters <- lapply(preprocCohorts,
+                            consensusClusterCohort,
+                            maxK=5, distance="pearson", method="hc")
+```
+
+```{r consensus_cluster_normals_and_GTEx_normals}
+normalCohorts <- list("normals"=adjNormal, 
+                      "normalsGTEx"=normalGTEx)
+
+preprocNormals <- preprocessCohorts(normalCohorts, metaGenes)
+conClustNormals <- lapply(preprocNormals,
+                          consensusClusterCohort,
+                          maxK=5, distance="pearson", method="hc")
+```
+
+```{r append_normals_to_cohorts}
+allConClusters <- c(consensusClusters, conClustNormals)
+allProcCohorts <- c(preprocCohorts, preprocNormals)
+```
+
+
+```{r get_all_pairs}
+cohortPairs <- findAllCohortPairs(names(allConClusters))
+```
+
+
+```{r calculate_thresholds}
+# 
+MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohorts,
+                                      nthread=15)
+```
+
+
+```{r }
+```
+
+
+```{r }
+```
+
+
+## 2. Network Community Search
+
+```{r get_all_cluster_pairs}
+
+
+```
+
+## 3. Gene Signature Comaprison
+
+```{r }
+```
+
+## 4. Biomarker Comparison
+
+```{r }
+```
+
+## 5. Single Sample Classifier 
+
+```{r }
+```
+
+## 6. Compass Subtyping Waterfall
+
+
+```{r }
+```
+
+## 7. PharmacoGx Cellline Subtyping
+
+```{r }
+```
+
+## 8. PharmacoGx Cellline Drug Sensitivity 
+
+
+```{r }
+```
+
+## 9. PDXE Drug Subtyping
+
+
+```{r }
+```
+
+
+## 10. Cellarity Comparison
+
+
+```{r }
+```
+
+## 11. Copy Number Abberation
+
+```{r }
+```
+
+## 12. Caclulate Cluster Meta-Effect Size
+
+```{r }
+```
+
+## 13. Pathway Analysis
+
+```{r }
+```
+
+## 14. Published Classifier Subtyping
+
+```{r }
+```
+
+
+
+```{r }
+```
+
+
+
