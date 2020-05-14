@@ -47,7 +47,7 @@ adjNormal <- readRDS('../data/adjacentNormal.rds')
 source('../R/cluster_me_cont.R')
 source('../R/comare_interclusters_cont_pearson.R')
 source('../R/mgsub_function.R')
-source('../R/msm_threshold.r')
+source('../R/utilities.R')
 ```
 
 ```{r ranking_genes_based_on_mad}
@@ -109,12 +109,14 @@ cohortPairs <- findAllCohortPairs(names(allConClusters))
 
 ```{r calculate_thresholds}
 # 
-MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohorts,
-                                      nthread=15)
+MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohorts, nthread=15)
 ```
 
 
-```{r }
+```{r compare_all_clusters}
+allClusterRepro <- calcAllClusterRepro(MSMthresholds, allConClusters, 
+                                       allProcCohorts, nthread=15, seed=1987, 
+                                       sampleKind="Rounding")
 ```
 
 

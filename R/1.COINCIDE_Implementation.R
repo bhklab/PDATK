@@ -338,9 +338,9 @@ calcMSMthresholds <- function(cohortPair, allConClusters, allProcCohorts) {
   clust2Ks <- seq_len(allConClusters[[cohortPair[2]]]$optimalK)
   
   # Extract data
-  clust1Centroid <- allConClusters[[cohortPair[1]]]$centroidClusters
-  clust2Data <- allProcCohorts[[cohortPair[2]]]
-  clust2Classes <- allConClusters[[cohortPair[2]]]$classes
+  clust1Centroid <- na.omit(allConClusters[[cohortPair[1]]]$centroidClusters)
+  clust2Data <- na.omit(allProcCohorts[[cohortPair[2]]])
+  clust2Classes <- na.omit(allConClusters[[cohortPair[2]]]$classes)
   
   # Find common genes
   sharedGenes <- intersect(rownames(clust1Centroid), rownames(clust2Data))
@@ -371,12 +371,12 @@ calcMSMthresholds <- function(cohortPair, allConClusters, allProcCohorts) {
   return(meanCors)
 }
 
-#'
-#'
-#'
-#'
-#'
-#'
+#' 
+#' 
+#' 
+#' 
+#' 
+#' 
 calcAllMSMthresholds <- function(cohortPairs, allConClusters, 
                                  allProcCohorts, nthread) {
   if (!missing(nthread)) {
@@ -392,77 +392,186 @@ calcAllMSMthresholds <- function(cohortPairs, allConClusters,
            pairs=cohortPairs,
            cluster=allConClusters,
            data=allProcCohorts)
-  rbindlist(DTlist, fill=TRUE)[, comparison := rownames(cohortPairs)]
+  rbindlist(DTlist, fill=TRUE)[, `:=`(comparison=rownames(cohortPairs), 
+                                      x=cohortPairs$x, y=cohortPairs$y)]
 }
 
 
-#'
-#'
-#'
-#'
-#'
-#'
-compareClusters <- function() {
+
+calcClusterRepro <- function(MSMthreshold, allConClusters, allProcCohorts, 
+                             seed, sampleKind) {
   
-}
-
-z_normal= cluster_me(data.matrix(nn2)[as.character(meta_genes),], 5, "pearson","hc")
-z_gtex= cluster_me(data.matrix(normal_gtex)[as.character(meta_genes),], 5, "pearson","hc")
-
-datasets = c("ICGC_seq",
-             "PCSI",
-             "TCGA",
-             "Kirby",
-             "OUH",
-             "Winter",
-             "Collisson",
-             "Zhang",
-             "Chen",
-             "UNC",
-             "ICGC_arr",
-             "Balagurunathan",
-             "Pei",
-             "Grutzmann",
-             "Badea", 
-             "haider",
-             "lunardi",
-             "yang",
-             "hamidi",
-             "janky",
-             "bauer", 
-             "Normals",
-             "GTEX_Normals")
-clusters = list(z_ICGC, z_PCSI, z_TCGA, z_Kirby, z_OUH, z_winter,z_Collisson,
-                z_zhang,z_chen,z_unc,z_icgc_arr,z_balagurunathan, z_pei, 
-                z_grutzmann, z_badea, z_haider, z_lunardi, z_yang, 
-                z_hamidi, z_janky, z_bauer, z_normal,z_gtex)
-zz=expand.grid(x =1:length(datasets), y = 1:length(datasets))
-allPairs <-  zz[-which(zz[,1] == zz[,2]),]
-
-data=list(icgc, pcsi, tcga, kirby, ouh, winter, collisson, zhang, chen, unc, 
-          icgc_arr, balagurunathan, pei, grutzmann, badea, haider, lunardi,
-          yang,hamidi,janky,bauer, 
-          data.matrix(nn2)[as.character(meta_genes),],
-          data.matrix(normal_gtex)[as.character(meta_genes),])
-
-
-cores=detectCores()
-cl <- makeCluster(cores[1]-1, outfile="") #not to overload your computer
-registerDoParallel(cl)
-
-
-threshold_msm = list()
-threshold_msm = foreach(i = 1: dim(allPairs)[1], 
-                        .packages = c( "doParallel","ConsensusClusterPlus", "clusterRepro","foreach")) %dopar% 
-  {                                                        
-  msm_thresholds(datasets[allPairs[i,1]],
-                 datasets[allPairs[i,2]], 
-                 clusters[[allPairs[i,1]]],
-                 clusters[[allPairs[i,2]]],
-                 data.frame(data[allPairs[i,2]]),
-                 i)
+  if (!missing(seed)) set.seed(seed, sample.kind=sampleKind)
   
+  # Get cluster indexes
+  cohort1 <- MSMthreshold$x
+  cohort2 <- MSMthreshold$y
+  
+  # Get cluster names
+  cohNames <- unlist(strsplit(MSMthreshold$comparison, '-'))
+  
+  # Extract appropriate data
+  # Find all pair-wise K comparisons between the two consensus clusters
+  clust1Ks <- seq_len(allConClusters[[cohort1]]$optimalK)
+  clust2Ks <- seq_len(allConClusters[[cohort2]]$optimalK)
+  
+  # Extract data
+  clust1Centroid <- na.omit(allConClusters[[cohort1]]$centroidClusters)
+  clust2Data <- na.omit(allProcCohorts[[cohort2]])
+  clust2Classes <- na.omit(allConClusters[[cohort2]]$classes)
+  
+  # Find common genes
+  sharedGenes <- intersect(rownames(clust1Centroid), rownames(clust2Data))
+  
+  # Subset to common genes
+  clust1Centroid <- clust1Centroid[sharedGenes, ]
+  clust2Data <- clust2Data[sharedGenes, ]
+  
+  # Reproduce clusters
+  repClusters <- clusterRepro(clust1Centroid, clust2Data, 
+                              Number.of.permutations=500)
+  return(repClusters)
 }
+
+
+#' Permutations test for null distribution of of each consensus clustering results 
+#' 
+#' Calculate reproducibility statistics for each consensus clustering result 
+#'    using random samples from the the second cohort in a comparison.
+#' 
+#' @param MSMthresholds A \code{data.table} where columns 1 through 5 represent
+#' @param allConClusters A \code{list} of consensus clustering results for
+#'     all non-self pair-wise comparisons of cohorts.
+#' @param allProcCohorts A \code{list} of preprocessed expression cohorts
+#'     
+#' @param nthread 
+#' @param seed
+#' @param sampleKind
+#' @export
+calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts, 
+                                 nthread, seed, sampleKind=NULL) {
+  if (!missing(nthread)) {
+    opts <- options()
+    options(mc.cores=nthread)
+    on.exit(options(opts))
+  }
+  
+  if (missing(seed)) {
+    reproList <- bplapply(seq_len(nrow(MSMthresholds)),
+                          function(idx, thresholds, cluster, data) {
+                            message(thresholds[idx, ]$comparison)
+                            calcClusterRepro(thresholds[idx, ], cluster, data)
+                          },
+                          thresholds=MSMthresholds,
+                          cluster=allConClusters,
+                          data=allProcCohorts)
+  } else {
+    reproList <- 
+      bplapply(seq_len(nrow(MSMthresholds)),
+               function(idx, thresholds, cluster, data, seed, kind) {
+                        message(thresholds[idx, ]$comparison)
+                        calcClusterRepro(thresholds[idx, ], cluster, data, 
+                                         seed=seed, sampleKind=sampleKind)
+                        },
+               thresholds=MSMthresholds,
+               cluster=allConClusters,
+               data=allProcCohorts,
+               seed=seed,
+               kind=sampleKind)
+  }
+  reproList
+}
+
+
+#' Compare the consensus clustering results for cohort one of a pair 
+#'    against the null distribution for cohort2
+#' 
+#' 
+#' 
+#' @param MSMthresholds
+#' 
+#' @importFrom ClusterRepro ClusterRepro
+#' @export
+compareClusters <- function(MSMthreshold, conClusterResult, , 
+                            seed, sampleKind=NULL) {
+  
+  # Get cluster indexes
+  cohort1 <- MSMthreshold$x
+  cohort2 <- MSMthreshold$y
+  
+  # Get cluster names
+  cohNames <- unlist(strsplit(MSMthreshold$comparison, '-'))
+  
+  # Extract appropriate data
+  # Find all pair-wise K comparisons between the two consensus clusters
+  clust1Ks <- seq_len(allConClusters[[cohort1]]$optimalK)
+  clust2Ks <- seq_len(allConClusters[[cohort2]]$optimalK)
+  
+  # Extract data
+  clust1Centroid <- na.omit(allConClusters[[cohort1]]$centroidClusters)
+  clust2Data <- na.omit(allProcCohorts[[cohort2]])
+  clust2Classes <- na.omit(allConClusters[[cohort2]]$classes)
+  
+  # Find common genes
+  sharedGenes <- intersect(rownames(clust1Centroid), rownames(clust2Data))
+  
+  # Subset to common genes
+  clust1Centroid <- clust1Centroid[sharedGenes, ]
+  clust2Data <- clust2Data[sharedGenes, ]
+  
+  # Extract non-null threshold values
+  thresholds <- as.numeric(MSMthreshold[, .SD, .SDcols=clust2Ks])
+  thresholds <- replace(thresholds, is.na(thresholds), 0)
+  # Fill missing thresholds if cluster 1 has more ks than cluster 2
+  # This is to make the for loop work
+  ## FIXME:: Refactor this to .fillZeroes function
+  if (length(thresholds) < length(clust1Ks)) {
+    .fillVector(thresholds, length(clust1Ks, 0))
+  }
+  
+  results <- vector("list", length(clust1Ks))
+  cummThresh <- numeric()
+  for (i in clust1Ks) {
+    cummThresh <- append(cummThresh, thresholds[i])
+    if (!is.na(repClusters$p.value[i])) {
+      if (repClusters$Actual.IGP[i] > 0.5 &&
+          repClusters$p.value[i] < 0.05 &&
+          max(cummThresh) > 0) {
+        results[[i]] <-
+          c(paste(cohNames[1], i, sep="-"),
+            paste(cohNames[2], which.max(cummThresh), sep="-"),
+            max(cummThresh),
+            repClusters$Actual.IGP[i],
+            repClusters$p.value[i]
+          )
+      }
+    }
+  }
+  notNull <- results[!vapply(results, is.null, logical(1))]
+  if (length(notNull) == 0) {
+    # Create an empty data.table with 8 named columns and return
+    return(
+      data.table("coh1Cluster"=numeric(), 
+                 "coh2Cluster"=numeric(), 
+                 "maxThreshold"=numeric(), 
+                 "actualIGP"=numeric(), 
+                 "pValue"=numeric(),
+                 "comparison"=numeric(),
+                 "cohort1"=numeric(),
+                 "cohort2"=numeric())
+    )
+  }
+  # Assemble the data.table for this cluster comparison
+  DTlist <- lapply(notNull, function(vec) transpose(data.table(vec)))
+  resultDT <- rbindlist(DTlist)
+  colnames(resultDT) <- c("coh1Cluster", "coh2Cluster", "maxThreshold", "actualIGP", "pValue")
+  resultDT[, `:=`(comparison=rep(MSMthreshold$comparison, length(DTlist)),
+                  cohort1=rep(cohort1, length(DTlist)),
+                  cohort2=rep(cohort2, length(notNull)))]
+  return(resultDT)
+}
+
+
 pdf("../results/densityplot.pdf")
 
 densityplot(unlist(threshold_msm ))
@@ -471,10 +580,17 @@ cores=detectCores()
 cl <- makeCluster(cores[1]-1, outfile="") #not to overload your computer
 registerDoParallel(cl)
 
+###################################3
 
 edges=list()
-edges= foreach(i = 1: dim(allPairs)[1], .packages = c( "doParallel","ConsensusClusterPlus", "clusterRepro","foreach")) %dopar% {                                                        
-  compare_interclusters(datasets[allPairs[i,1]], datasets[allPairs[i,2]], clusters[[allPairs[i,1]]],clusters[[allPairs[i,2]]],data.frame(data[allPairs[i,2]]),i)
+edges= foreach(i = 1:dim(allPairs)[1], 
+               .packages = c( "doParallel",
+                              "ConsensusClusterPlus", 
+                              "clusterRepro",
+                              "foreach")) %dopar% {                                                        
+  compare_interclusters(datasets[allPairs[i,1]], datasets[allPairs[i,2]], 
+                        clusters[[allPairs[i,1]]],clusters[[allPairs[i,2]]],
+                        data.frame(data[allPairs[i,2]]),i)
   
 }
 edges_define = matrix(unlist(edges), ncol = 5, byrow = TRUE)

@@ -227,3 +227,29 @@ calcRowMADdf <- function(dataset) {
     return(structure(as.data.frame(madDT, row.names=madDT$genes), 
                      datasetCols=ncol(dataset)))
 }
+
+#' Extend a vector to the desired length, filling with specified value
+#'
+#' @param vector An input vector to extend using `fillVal``
+#' @param desiredLength How long the output vector should be
+#' @param fillVal Fill with NA or some value the same type as `vector`
+#' 
+#' @return A \code{vector} of the same type as `vector` filled with `fillVal`
+#'     up to `desiredLength`.
+#'
+#' 
+#' @keywords internal
+#' @export
+.fillVector <- function(vector, desiredLength, fillVal) {
+    if (length(vector) < desiredLength) 
+        stop("`desiredLength` is shorter than vector?")
+    if (length(fillVal) > 1) 
+        stop("Only supports single fill value!")
+    if (fillVal != NA) {
+        if (class(fillVal) != class(vector))
+            stop("Please pass NA or a fill value of the same type
+                 as `vector`")
+    }
+    
+    c(vector, rep(fillVal, desiredLength - length(vector)))
+}
