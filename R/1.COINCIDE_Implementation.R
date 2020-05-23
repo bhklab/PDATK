@@ -115,16 +115,16 @@ calcGeneWiseWeightedMADdf <- function(cohortMADrankings) {
 #' @export
 getTopGenes <- function(cohortMADrankings, n) {
   topN <- seq_len(n)
-  rankings <- lapply(cohortMADrankings, `[[`, "madValues")
-  topRankIdxs <- lapply(rankings, 
-                        function(rank, topN) order(rank, decreasing=TRUE)[topN], 
+  MADs <- lapply(cohortMADrankings, `[[`, "madValues")
+  topRankIdxs <- lapply(MADs, 
+                        function(MAD, topN) order(MAD, decreasing=TRUE)[topN], 
                         topN=topN)
   topGeneDFs <- lapply(seq_along(cohortMADrankings),
                        function(i, topRankIdx, cohortMADrankings) 
                          cohortMADrankings[[i]][topRankIdx[[i]], ],
                        topRankIdxs,
                        cohortMADrankings)
-  structure(lapply(topGeneDFs, function(df) df[order(df$rank), ]),
+  structure(topGeneDFs,
             .Names=names(cohortMADrankings))
 }
 
