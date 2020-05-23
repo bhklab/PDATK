@@ -390,14 +390,13 @@ calcAllMSMthresholds <- function(cohortPairs, allConClusters,
   
   DTlist <- bplapply(seq_len(nrow(cohortPairs)),
            function(idx, pairs, cluster, data) {
-             calcMSMthresholds(pairs[idx, ], cluster, data)
+             transpose(data.table(calcMSMthresholds(pairs[idx, ], cluster, data)))
            },
            pairs=cohortPairs,
            cluster=allConClusters,
            data=allProcCohorts)
-  DTlist
-  # rbindlist(DTlist, fill=TRUE)[, `:=`(comparison=rownames(cohortPairs), 
-  #                                     x=cohortPairs$x, y=cohortPairs$y)]
+  rbindlist(DTlist, fill=TRUE)[, `:=`(comparison=rownames(cohortPairs), 
+                                     x=cohortPairs$x, y=cohortPairs$y)]
 }
 
 
