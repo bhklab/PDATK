@@ -44,10 +44,21 @@ adjNormal <- readRDS('../data/adjacentNormal.rds')
 
 
 ```{r source_function}
-source('../R/cluster_me_cont.R')
-source('../R/comare_interclusters_cont_pearson.R')
-source('../R/mgsub_function.R')
 source('../R/utilities.R')
+```
+
+```{r rorder_cohorts_to_match}
+cohortOrder <-c("pcsi", "tcga", 
+                "kirby", "icgc_seq", 
+                "ouh", "winter", 
+                "collisson", "zhang", 
+                "grutzmann", "chen", 
+                "unc", "icgc_arr", 
+                "balagurunathan", "badea", 
+                "pei", "haider", 
+                "lunardi", "yang", 
+                "hamidi", "janky", "bauer")
+cohorts <- cohorts[cohortOrder]
 ```
 
 ```{r ranking_genes_based_on_mad}
@@ -80,10 +91,10 @@ preprocCohorts <- preprocessCohorts(cohorts, metaGenes)
 
 
 ```{r compute_consensus_cluster}
-set.seed(1987, sample.kind="Rounding")
-consensusClusters <- lapply(preprocCohorts,
-                            consensusClusterCohort,
-                            maxK=5, distance="pearson", method="hc")
+consensusClusters <- bplapply(preprocCohorts,
+                              consensusClusterCohort,
+                              maxK=5, distance="pearson", 
+                              method="hc", seed=1987)
 ```
 
 ```{r consensus_cluster_normals_and_GTEx_normals}
@@ -91,9 +102,10 @@ normalCohorts <- list("normals"=adjNormal,
                       "normalsGTEx"=normalGTEx)
 
 preprocNormals <- preprocessCohorts(normalCohorts, metaGenes)
-conClustNormals <- lapply(preprocNormals,
-                          consensusClusterCohort,
-                          maxK=5, distance="pearson", method="hc")
+conClustNormals <- bplapply(preprocNormals,
+                            consensusClusterCohort,
+                            maxK=5, distance="pearson", 
+                            method="hc", seed=1987)
 ```
 
 ```{r append_normals_to_cohorts}
@@ -109,18 +121,25 @@ cohortPairs <- findAllCohortPairs(names(allConClusters))
 
 ```{r calculate_thresholds}
 # 
-MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohorts, nthread=15)
+MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohorts, nthread=16)
 ```
 
 
 ```{r compare_all_clusters}
+a <- Sys.time()
 allClusterRepro <- calcAllClusterRepro(MSMthresholds, allConClusters, 
-                                       allProcCohorts, nthread=15, seed=1987, 
-                                       sampleKind="Rounding")
+                                       allProcCohorts, nthread=16, seed=1987)
+b <- Sys.time()
+b - a
 ```
 
 
 ```{r }
+qsave(allClusterRepro, file.path('..', 'data', 'allClusterRepro.qs'))
+```
+
+```{r }
+
 ```
 
 

@@ -32,9 +32,9 @@ library(lattice)
 ### Loading Normal, GTEx and other cohorts
 #########################################################################################################
 
-load('../data/common_genes_cohorts_new.RData')       
-load('../data/normal_GTEx.RData')
-load('../data/adjacent_normal.RData')
+# load('../data/common_genes_cohorts_new.RData')       
+# load('../data/normal_GTEx.RData')
+# load('../data/adjacent_normal.RData')
 
 
 #########################################################################################################
@@ -115,9 +115,9 @@ calcGeneWiseWeightedMADdf <- function(cohortMADrankings) {
 #' @export
 getTopGenes <- function(cohortMADrankings, n) {
   topN <- seq_len(n)
-  rankings <- lapply(cohortMADrankings, `[[`, "rank")
+  rankings <- lapply(cohortMADrankings, `[[`, "madValues")
   topRankIdxs <- lapply(rankings, 
-                        function(rank, topN) which(rank %in% topN), 
+                        function(rank, topN) order(rank, decreasing=TRUE)[topN], 
                         topN=topN)
   topGeneDFs <- lapply(seq_along(cohortMADrankings),
                        function(i, topRankIdx, cohortMADrankings) 
@@ -145,11 +145,12 @@ getTopGenes <- function(cohortMADrankings, n) {
 #'     per cohort and top m genes in the meta-cohort ranking.
 #' 
 #' @export
-getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, m) {
-  topNgenesPerCohort <- Reduce(c, lapply(top20genesPerCohort, `[`, i=TRUE, j="genes"))
-  topMgenesMeta <- geneWiseWeigthedMADdf$genes[seq_len(m)]
-  unique(c(topNgenesPerCohort, topMgenesMeta))
-}
+  getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, m) {
+      top20genesPerCohort <- getTopGenes(cohortMADrankings, n)
+      topNgenesPerCohort <- Reduce(c, lapply(top20genesPerCohort, `[`, i=TRUE, j="genes"))
+      topMgenesMeta <- geneWiseWeigthedMADdf$genes[seq_len(m)]
+      unique(c(topNgenesPerCohort, topMgenesMeta))
+  }
 
 ##################### CLUSTER DATA ##########################################################################
 
@@ -184,7 +185,7 @@ getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, m) {
 #' @importFrom ConsensusClusterPlus ConsensusClusterPlus
 #' @export
 consensusClusterCohort <- function(cohort, maxK, distance, method, 
-                                   suppressPlots=TRUE, plotTo=NULL, ...) {
+                                   suppressPlots=TRUE, plotTo=NULL, seed=NULL, ...) {
   
   if (suppressPlots) pdf(NULL)
   
@@ -201,7 +202,8 @@ consensusClusterCohort <- function(cohort, maxK, distance, method,
                                      pFeature=1,
                                      innerLinkage="complete",
                                      corUse="pairwise.complete.obs",
-                                     plot=plotTo)
+                                     plot=plotTo,
+                                     seed=seed)
   }
   
   if (suppressPlots) dev.off()
@@ -329,6 +331,8 @@ findAllCohortPairs <- function(clusterNames) {
 #'
 #'
 calcMSMthresholds <- function(cohortPair, allConClusters, allProcCohorts) {
+  set.seed("1987", sample.kind="Rounding")
+  
   # Get the name of the comparison and a vector of the cohort list indexes
   comparison <- names(cohortPair)
   cohortPair <- as.numeric(cohortPair)
@@ -356,16 +360,15 @@ calcMSMthresholds <- function(cohortPair, allConClusters, allProcCohorts) {
       classIdxs <- which(clust2Classes == j)
       centroid <- clust1Centroid[, i]
       meanCors[j] <- mean(unlist(lapply(classIdxs,
-                                        function(idx, centroid, data) {
-                                          as.numeric(
-                                            cor.test(
-                                              centroid,
-                                              data[, idx],
-                                              method="pearson")$estimate
-                                          )
-                                        }, 
-                                        centroid=centroid,
-                                        data=clust2Data)))
+                            function(idx, centroid, data) {
+                              as.numeric(
+                                cor.test(
+                                  centroid,
+                                  data[, idx],
+                                  method="pearson")$estimate
+                                )}, 
+                            centroid=centroid,
+                            data=clust2Data)))
     }
   }
   return(meanCors)
@@ -387,13 +390,14 @@ calcAllMSMthresholds <- function(cohortPairs, allConClusters,
   
   DTlist <- bplapply(seq_len(nrow(cohortPairs)),
            function(idx, pairs, cluster, data) {
-             transpose(as.data.table(calcMSMthresholds(pairs[idx, ], cluster, data)))
+             calcMSMthresholds(pairs[idx, ], cluster, data)
            },
            pairs=cohortPairs,
            cluster=allConClusters,
            data=allProcCohorts)
-  rbindlist(DTlist, fill=TRUE)[, `:=`(comparison=rownames(cohortPairs), 
-                                      x=cohortPairs$x, y=cohortPairs$y)]
+  DTlist
+  # rbindlist(DTlist, fill=TRUE)[, `:=`(comparison=rownames(cohortPairs), 
+  #                                     x=cohortPairs$x, y=cohortPairs$y)]
 }
 
 
@@ -459,7 +463,7 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
   if (missing(seed)) {
     reproList <- bplapply(seq_len(nrow(MSMthresholds)),
                           function(idx, thresholds, cluster, data) {
-                            message(thresholds[idx, ]$comparison)
+                            print(thresholds[idx, ]$comparison)
                             calcClusterRepro(thresholds[idx, ], cluster, data)
                           },
                           thresholds=MSMthresholds,
@@ -469,7 +473,7 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
     reproList <- 
       bplapply(seq_len(nrow(MSMthresholds)),
                function(idx, thresholds, cluster, data, seed, kind) {
-                        message(thresholds[idx, ]$comparison)
+                        print(thresholds[idx, ]$comparison)
                         calcClusterRepro(thresholds[idx, ], cluster, data, 
                                          seed=seed, sampleKind=sampleKind)
                         },
@@ -492,7 +496,7 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
 #' 
 #' @importFrom ClusterRepro ClusterRepro
 #' @export
-compareClusters <- function(MSMthreshold, conClusterResult, , 
+compareClusters <- function(MSMthreshold, conClusterResult, 
                             seed, sampleKind=NULL) {
   
   # Get cluster indexes
@@ -524,9 +528,8 @@ compareClusters <- function(MSMthreshold, conClusterResult, ,
   thresholds <- replace(thresholds, is.na(thresholds), 0)
   # Fill missing thresholds if cluster 1 has more ks than cluster 2
   # This is to make the for loop work
-  ## FIXME:: Refactor this to .fillZeroes function
   if (length(thresholds) < length(clust1Ks)) {
-    .fillVector(thresholds, length(clust1Ks, 0))
+    .fillVector(thresholds, length(clust1Ks), 0)
   }
   
   results <- vector("list", length(clust1Ks))
@@ -570,6 +573,11 @@ compareClusters <- function(MSMthreshold, conClusterResult, ,
                   cohort2=rep(cohort2, length(notNull)))]
   return(resultDT)
 }
+
+
+
+
+
 
 
 pdf("../results/densityplot.pdf")
