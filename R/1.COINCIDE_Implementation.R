@@ -1,56 +1,3 @@
-########################################################################################################
-### Required libraries
-#########################################################################################################
-
-require(IDPmisc)
-library(dplyr)
-library(matrixStats)
-library(factoextra)
-library(NbClust)
-library(cluster)
-library(ConsensusClusterPlus)
-library(clusterRepro)
-library(igraph)
-library(gtools)
-library(plyr)
-library(survival)
-library(KMsurv)
-library(survminer)
-library(limma)
-library(piano)
-require(ggplot2)
-library(ggpubr)
-library(doParallel)
-library(foreach)
-library(effsize)
-library(vcdExtra)
-library(survcomp)
-library(RColorBrewer)
-library(lattice)
-
-#########################################################################################################
-### Loading Normal, GTEx and other cohorts
-#########################################################################################################
-
-# load('../data/common_genes_cohorts_new.RData')       
-# load('../data/normal_GTEx.RData')
-# load('../data/adjacent_normal.RData')
-
-
-#########################################################################################################
-### Sourcing helping functions
-#########################################################################################################
-source('../R/cluster_me_cont.R')
-source('../R/comare_interclusters_cont_pearson.R')
-source('../R/mgsub_function.R')
-source('../R/msm_threshold.r')
-
-
-########################################################################################################
-### Ranking the genes based on MAD
-#########################################################################################################
-
-
 #' Calculate the weighted MAD across all cohorts per gene
 #'
 #' @param cohortMADrankings A \code{list} of \code{data.frames} containing
@@ -475,6 +422,9 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
   
   uniqueThresholds <- unique(MSMthresholds[, .(comparison, cohort1, cohort2)])
   
+  registerDoParallel(nthread)
+  p <- DoparParam()
+  
   reproList <- 
       bplapply(seq_len(nrow(uniqueThresholds)),
                function(idx, thresholds, cluster, data, n, seed) {
@@ -493,7 +443,8 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
                cluster=allConClusters,
                data=allProcCohorts,
                n=numReps,
-               seed=seed)
+               seed=seed,
+               BPPARAM=p)
   
   rbindlist(reproList)
 }
@@ -530,13 +481,16 @@ compareClusters <- function(MSMthresholds, allClusterRepro, pValue, actualIGP, m
 #'
 #' @param clusterEdges A \code{data.table} containing the statistics for significant
 #'    inter-cohort cluster comparisons, as returned by `compareClusters`.
-#' @param directed A \code{logical} vector indicating if the graph is directed
-#'    or not.
-#' @param ... Fallthrough arguments to `igraph::graph_from_edgelist`.
+#' @param seed
+#' @param savePath
+#' @param fileName
 #'
 #' @import igraph
 #' @export
-plotClusterNetwork <- function(clusterEdges, ...) {
+plotClusterNetwork <- function(clusterEdges, seed=NULL, savePath, fileName, ...) {
+  # Set seed for reproducible results
+  if (!is.null(seed)) set.seed(seed)
+  
   # Prepare the edge labels
   cohort1 <- vapply(strsplit(clusterEdges$comparison, '-'), `[`,i= 1, character(1))
   cohort2 <- vapply(strsplit(clusterEdges$comparison, '-'), `[`, i=2, character(1))
@@ -552,7 +506,23 @@ plotClusterNetwork <- function(clusterEdges, ...) {
   metaClusters <- fastgreedy.community(ugraph, weights=clusterEdges$threshold)
   colours <-  c("blue", brewer.pal(n=8, name="Dark2")[c(4, 5)])
   
+  plotNetwork <- call('.plotNetwork', ugraph, metaClusters, coords, colours)
+  
   # Plot the network graph
+  plot <- base2grob(as.expression(plotNetwork))
+  
+  if (!missing(savePath) && !missing(fileName))
+      ggsave(file.path(savePath, fileName), plot)
+ 
+  grid.draw(plot)
+}
+
+#'
+#'
+#'
+#'
+#'
+.plotNetwork <- function(ugraph, metaClusters, coords, colours) {
   plot.igraph(ugraph, 
               vertex.color=colours[membership(metaClusters)],  
               vertex.shape="sphere", 
@@ -570,11 +540,6 @@ plotClusterNetwork <- function(clusterEdges, ...) {
          pt.cex=1.8, pch=21, pt.bg=colours, bty='n', col=colours)
 }
 
-
-
-
-
-pdf("../results/densityplot.pdf")
 
 densityplot(unlist(threshold_msm ))
 

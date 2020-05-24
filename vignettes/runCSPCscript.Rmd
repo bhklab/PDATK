@@ -128,7 +128,7 @@ MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohort
 ```{r compare_all_clusters}
 a <- Sys.time()
 allClusterRepro <- calcAllClusterRepro(MSMthresholds, allConClusters, 
-                                       allProcCohorts, nthread=16, numReps=10,
+                                       allProcCohorts, nthread=16, numReps=500,
                                        seed=1987)
 b <- Sys.time()
 b - a
@@ -136,22 +136,23 @@ b - a
 
 
 ```{r }
-qsave(allClusterRepro, file.path('..', 'data', 'allClusterRepro.qs'))
+qsave(allClusterRepro, file.path('..', 'data', 'allClusterRepro.qs'), nthread=16)
 ```
 
 ```{r }
 clusterEdges <- compareClusters(MSMthresholds, allClusterRepro, pValue=0.05, actualIGP=0.5, minThresh=0)
 ```
 
-```{r }
-plotClusterNetwork(clusterEdges)
+```{r cluster_network, fig.height=10, fig.width=10}
+plotClusterNetwork(clusterEdges, seed=1987, 
+                   savePath=file.path('..', 'results'),
+                   fileName='clusterNetworkGraph.pdf')
 ```
 
 ## 2. Network Community Search
 
 ```{r get_all_cluster_pairs}
-
-
+ggsave(file.path('..', 'results', 'clusterNetwork.pdf'))
 ```
 
 ## 3. Gene Signature Comaprison

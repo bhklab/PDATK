@@ -160,7 +160,7 @@ forestPlotMetaEstimate <- function(validationStats, stat, isSummary, filePath,
             }
         })
         # Make the plot
-        plot <-grid::grid.grabExpr(forestplot::forestplot(labelText,
+        plot <- grid::grid.grabExpr(forestplot::forestplot(labelText,
                                                      validationStatsDF[, c("mean", "lower", "upper")],
                                                      xlab="C-index",
                                                      is.summary=isSummary,
