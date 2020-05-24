@@ -509,8 +509,20 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
 #' 
 #' @importFrom ClusterRepro ClusterRepro
 #' @export
-compareClusters <- function(MSMthresholds, allClusterRepro, pValue, actualIGP) {
+compareClusters <- function(MSMthresholds, allClusterRepro, pValue, actualIGP, minThresh) {
+  # Subset to best clustering match per cluster in cohort 1
+  MSMmaxThresholds <- MSMthresholds[, .('c2Clust'=which.max(threshold), 'threshold'=max(threshold)), 
+                                    by=.(comparison, c1Clust)]
+  # Get indexes of significant rows
+  sigClustIdx <- allClusterRepro[, na.omit(.I[p.value < pValue & Actual.IGP > actualIGP])]
   
+  # Subset to significant rows and add old idxs to join on
+  sigClusters <- allClusterRepro[sigClustIdx, ][, idx := sigClustIdx]
+  sigMaxThresholds <- MSMmaxThresholds[sigClustIdx, ][, idx := sigClustIdx]
+  
+  # Join on idx, filter below minThresh and drop idx
+  clustStats <- merge(sigMaxThresholds, sigClusters, on='idx')[threshold > minThresh, -'idx']
+  return(clustStats)
 }
 
 

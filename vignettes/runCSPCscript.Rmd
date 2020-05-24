@@ -140,7 +140,7 @@ qsave(allClusterRepro, file.path('..', 'data', 'allClusterRepro.qs'))
 ```
 
 ```{r }
-
+clusterEdges <- compareClusters(MSMthresholds, allClusterRepro, pValue=0.05, actualIGP=0.5, minThresh=0)
 ```
 
 
