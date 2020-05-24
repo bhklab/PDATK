@@ -143,6 +143,9 @@ qsave(allClusterRepro, file.path('..', 'data', 'allClusterRepro.qs'))
 clusterEdges <- compareClusters(MSMthresholds, allClusterRepro, pValue=0.05, actualIGP=0.5, minThresh=0)
 ```
 
+```{r }
+plotClusterNetwork(clusterEdges)
+```
 
 ## 2. Network Community Search
 

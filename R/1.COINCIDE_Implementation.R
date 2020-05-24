@@ -525,7 +525,50 @@ compareClusters <- function(MSMthresholds, allClusterRepro, pValue, actualIGP, m
   return(clustStats)
 }
 
-
+#' Draw a plot showing the network graph of the significant cluster edges
+#' 
+#'
+#' @param clusterEdges A \code{data.table} containing the statistics for significant
+#'    inter-cohort cluster comparisons, as returned by `compareClusters`.
+#' @param directed A \code{logical} vector indicating if the graph is directed
+#'    or not.
+#' @param ... Fallthrough arguments to `igraph::graph_from_edgelist`.
+#'
+#' @import igraph
+#' @export
+plotClusterNetwork <- function(clusterEdges, ...) {
+  # Prepare the edge labels
+  cohort1 <- vapply(strsplit(clusterEdges$comparison, '-'), `[`,i= 1, character(1))
+  cohort2 <- vapply(strsplit(clusterEdges$comparison, '-'), `[`, i=2, character(1))
+  edges <- cbind(
+    'cluster1'=unlist(mapply(paste0, cohort1, '-', clusterEdges$c1Clust, SIMPLIFY=FALSE)),
+    'cluster2'=unlist(mapply(paste0, cohort2, '-', clusterEdges$c2Clust, SIMPLIFY=FALSE))
+  )
+  
+  # Format the network graph
+  graph <- graph_from_edgelist(edges)
+  coords <- layout_with_fr(graph)
+  ugraph <- as.undirected(graph)
+  metaClusters <- fastgreedy.community(ugraph, weights=clusterEdges$threshold)
+  colours <-  c("blue", brewer.pal(n=8, name="Dark2")[c(4, 5)])
+  
+  # Plot the network graph
+  plot.igraph(ugraph, 
+              vertex.color=colours[membership(metaClusters)],  
+              vertex.shape="sphere", 
+              vertex.size=6,
+              edge.arrow.size=0.5,
+              vertex.label.cex=0.8, 
+              vertex.label.dist=2, 
+              edge.curved=0.1, 
+              vertex.color=colours[membership(metaClusters)],
+              edge.arrow.size=0.4, 
+              layout=layout_with_dh(ugraph), 
+              layout=coords)
+  legend('topleft',
+         legend=c("Basal","Exocrine","Classical"), 
+         pt.cex=1.8, pch=21, pt.bg=colours, bty='n', col=colours)
+}
 
 
 
