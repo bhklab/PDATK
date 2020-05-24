@@ -128,7 +128,8 @@ MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohort
 ```{r compare_all_clusters}
 a <- Sys.time()
 allClusterRepro <- calcAllClusterRepro(MSMthresholds, allConClusters, 
-                                       allProcCohorts, nthread=16, seed=1987)
+                                       allProcCohorts, nthread=16, numReps=10,
+                                       seed=1987)
 b <- Sys.time()
 b - a
 ```
