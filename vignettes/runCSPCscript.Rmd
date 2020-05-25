@@ -32,6 +32,7 @@ library(vcdExtra)
 library(survcomp)
 library(RColorBrewer)
 library(lattice)
+library(ggplotify)
 ```
 
 ## 1. COINCIDE Implementation
@@ -141,7 +142,36 @@ qsave(allClusterRepro, file.path('..', 'data', 'allClusterRepro.qs'), nthread=16
 
 ```{r }
 clusterEdges <- compareClusters(MSMthresholds, allClusterRepro, pValue=0.05, actualIGP=0.5, minThresh=0)
+qsave(clusterEdges, file.path('..', 'data', 'clusterEdges.qs'), nthread=15)
 ```
+
+
+```{r }
+graphData <- getClusterNetworkData(clusterEdges, seed=1987)
+graphData$metaClusters
+```
+
+```{r }
+possibleClusters <- findAllPossibleClusters(allConClusters)
+notClustered <- findCohortsNotClustered(possibleClusters, graphData$metaClusters)
+notClustered
+```
+
+```{r cohortwise_classes}
+cohortwiseClasses <- getCohortwiseClasses(graphData$metaClusters, notClustered)
+cohortwiseClasses
+```
+
+```{r cohortCluster_samples}
+clusterwiseSamples <- getClusterwiseSamples(cohortwiseClasses, allConClusters)
+```
+
+```{r }
+annotatedClusters <- annotateSampleMetaClasses(allConClusters, clusterwiseSamples)
+saveRDS(annotatedClusters, file.path("..", "results", "annotatedClusters.rds"))
+```
+
+## 2. Network Community Search
 
 ```{r cluster_network, fig.height=10, fig.width=10}
 plotClusterNetwork(clusterEdges, seed=1987, 
@@ -149,10 +179,7 @@ plotClusterNetwork(clusterEdges, seed=1987,
                    fileName='clusterNetworkGraph.pdf')
 ```
 
-## 2. Network Community Search
-
-```{r get_all_cluster_pairs}
-ggsave(file.path('..', 'results', 'clusterNetwork.pdf'))
+```{r }
 ```
 
 ## 3. Gene Signature Comaprison

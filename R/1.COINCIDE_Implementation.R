@@ -462,7 +462,7 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
 #' @export
 compareClusters <- function(MSMthresholds, allClusterRepro, pValue, actualIGP, minThresh) {
   # Subset to best clustering match per cluster in cohort 1
-  MSMmaxThresholds <- MSMthresholds[, .('c2Clust'=which.max(threshold), 'threshold'=max(threshold)), 
+  MSMmaxThresholds <- MSMthresholds[, .('c2Clust'=which.max(threshold), 'threshold'=max(threshold)),
                                     by=.(comparison, c1Clust)]
   # Get indexes of significant rows
   sigClustIdx <- allClusterRepro[, na.omit(.I[p.value < pValue & Actual.IGP > actualIGP])]
@@ -472,22 +472,21 @@ compareClusters <- function(MSMthresholds, allClusterRepro, pValue, actualIGP, m
   sigMaxThresholds <- MSMmaxThresholds[sigClustIdx, ][, idx := sigClustIdx]
   
   # Join on idx, filter below minThresh and drop idx
-  clustStats <- merge(sigMaxThresholds, sigClusters, on='idx')[threshold > minThresh, -'idx']
+  clustStats <- merge(sigMaxThresholds, sigClusters, on='idx', sort=FALSE)[threshold > minThresh, -'idx']
   return(clustStats)
 }
 
-#' Draw a plot showing the network graph of the significant cluster edges
-#' 
+
+#' Retrieve the network graph information based on a set of significant cluster
+#'    edges.
 #'
-#' @param clusterEdges A \code{data.table} containing the statistics for significant
-#'    inter-cohort cluster comparisons, as returned by `compareClusters`.
+#'
+#' @param clusterEdges
 #' @param seed
-#' @param savePath
-#' @param fileName
 #'
-#' @import igraph
+#' @
 #' @export
-plotClusterNetwork <- function(clusterEdges, seed=NULL, savePath, fileName, ...) {
+getClusterNetworkData <- function(clusterEdges, seed=NULL) {
   # Set seed for reproducible results
   if (!is.null(seed)) set.seed(seed)
   
@@ -506,176 +505,120 @@ plotClusterNetwork <- function(clusterEdges, seed=NULL, savePath, fileName, ...)
   metaClusters <- fastgreedy.community(ugraph, weights=clusterEdges$threshold)
   colours <-  c("blue", brewer.pal(n=8, name="Dark2")[c(4, 5)])
   
-  plotNetwork <- call('.plotNetwork', ugraph, metaClusters, coords, colours)
-  
-  # Plot the network graph
-  plot <- base2grob(as.expression(plotNetwork))
-  
-  if (!missing(savePath) && !missing(fileName))
-      ggsave(file.path(savePath, fileName), plot)
- 
-  grid.draw(plot)
+  return(list("graph"=graph, "coords"=coords, 
+              "ugraph"=ugraph, "metaClusters"=metaClusters))
 }
 
 #'
 #'
 #'
 #'
+findAllPossibleClusters <- function(allConClusters) {
+  optKs <- lapply(allConClusters, `[[`, "optimalK")
+  possibleClusters <- lapply(optKs, seq_len)
+  clusterList <- lapply(names(allConClusters), 
+                        function(name, possibleClusters)
+                          paste(name, possibleClusters[[name]], sep="-"),
+                        possibleClusters=possibleClusters)
+  return(unlist(clusterList))
+}
+
 #'
-.plotNetwork <- function(ugraph, metaClusters, coords, colours) {
-  plot.igraph(ugraph, 
-              vertex.color=colours[membership(metaClusters)],  
-              vertex.shape="sphere", 
-              vertex.size=6,
-              edge.arrow.size=0.5,
-              vertex.label.cex=0.8, 
-              vertex.label.dist=2, 
-              edge.curved=0.1, 
-              vertex.color=colours[membership(metaClusters)],
-              edge.arrow.size=0.4, 
-              layout=layout_with_dh(ugraph), 
-              layout=coords)
-  legend('topleft',
-         legend=c("Basal","Exocrine","Classical"), 
-         pt.cex=1.8, pch=21, pt.bg=colours, bty='n', col=colours)
+#'
+#'
+#'
+findCohortsNotClustered <- function(allPossibleClusters, metaClusters) {
+  setdiff(allPossibleClusters, metaClusters$name)
 }
 
-
-densityplot(unlist(threshold_msm ))
-
-cores=detectCores()
-cl <- makeCluster(cores[1]-1, outfile="") #not to overload your computer
-registerDoParallel(cl)
-
-###################################3
-
-edges=list()
-edges= foreach(i = 1:dim(allPairs)[1], 
-               .packages = c( "doParallel",
-                              "ConsensusClusterPlus", 
-                              "clusterRepro",
-                              "foreach")) %dopar% {                                                        
-  compare_interclusters(datasets[allPairs[i,1]], datasets[allPairs[i,2]], 
-                        clusters[[allPairs[i,1]]],clusters[[allPairs[i,2]]],
-                        data.frame(data[allPairs[i,2]]),i)
-  
-}
-edges_define = matrix(unlist(edges), ncol = 5, byrow = TRUE)
-save(edges_define, file='../results/edges.RData')
-
-######### FIND EDGES ###############################
-edges_defined = edges_define[,1:2]
-
-######### FIND METACLUSTERS ########################
-g = graph_from_edgelist(edges_defined)
-coords = layout_with_fr(g)
-
-
-#### Fast greedy
-
-g1=as.undirected(g)
-c5=fastgreedy.community(g1,weights = as.numeric(edges_define[,3]))
-table(membership(c5))
-plot(c5, g1, layout=coords,vertex.size=6)
-
-l <- layout_with_fr(g1)
-#plot(g1, vertex.color=membership(c5),  vertex.size=6,edge.arrow.size=0.5,vertex.label.cex=0.8, vertex.label.dist=2, edge.curved=0.4, vertex.color="gray",edge.arrow.size=.4,layout=l)
-
-
-colrs <-  c( "blue", brewer.pal(n = 8, name = "Dark2")[c(4,5)])
-shapes <- c("circle", "square", "sphere")
-plot(g1, vertex.color=colrs[membership(c5)],  vertex.shape= "sphere", vertex.size=6,edge.arrow.size=0.5,vertex.label.cex=0.8, vertex.label.dist=2, edge.curved=0.1, vertex.color=colrs[membership(c5)],
-     edge.arrow.size=.4, layout=layout.davidson.harel(g1))
-
-
-zz=sapply(1:length(membership(c5)), function(x) strsplit(names(membership(c5))[x], "-")[[1]][1])
-x1= match(zz, unique(zz))
-
-cc= rainbow(22)
-
-pdf("../results/Meta_clusters_Network_community.pdf")
-
-plot.igraph(g1, vertex.color=colrs[membership(c5)],  vertex.shape= "sphere", vertex.size=6,edge.arrow.size=0.5,vertex.label.cex=0.8, vertex.label.dist=2, edge.curved=0.1, vertex.color=colrs[membership(c5)],
-     edge.arrow.size=.4, layout=layout_with_dh(g1), layout=coords)
-legend('topleft',legend=c("Basal","Exocrine","Classical"), pt.cex=1.8,pch=21, pt.bg=colrs, bty='n', col=colrs)
-
-################## Samples not clustered
-datasets = c("ICGC_seq","PCSI","TCGA","Kirby","OUH","Winter","Collisson","Zhang","Chen","UNC","ICGC_arr","Balagurunathan","Pei","Grutzmann","Badea", "haider","lunardi","yang","hamidi","janky","bauer", "Normals","GTEX_Normals")
-clusters = list(z_ICGC, z_PCSI, z_TCGA, z_Kirby, z_OUH, z_winter,z_Collisson,z_zhang,z_chen,z_unc,z_icgc_arr,z_balagurunathan, z_pei, z_grutzmann, z_badea, z_haider, z_lunardi, z_yang, z_hamidi, z_janky, z_bauer, z_normal,z_gtex)
-
-total_clusters=list()
-for(i in 1:length(datasets)){
-  
-  total_clusters[[i]]=paste(datasets[i], 1:clusters[[i]]$optimumK, sep="-" )
-  
+#'
+#'
+#'
+#'
+getCohortwiseClasses <- function(metaClusters, notClustered) {
+  cohortClusters <- strsplit(c(metaClusters$names, notClustered), '-')
+  cohortClasses <- data.table(do.call(rbind, cohortClusters))
+  cohortClasses$metaCluster <- c(metaClusters$membership, rep("NA", length(notClustered)))
+  colnames(cohortClasses) <- c("cohort", "cohortCluster", "metaCluster")
+  cohortClasses[, `:=`(cohortCluster=as.numeric(cohortCluster),
+                       metaCluster=c(as.numeric(metaCluster)))]
+  return(cohortClasses[order(cohort), ])
 }
 
-not_found=setdiff(unlist(total_clusters), c5$names)
-
-not_found
-
-########### Samples in classes ###################
-datasets = c("ICGC_seq","PCSI","TCGA","Kirby","OUH","Winter","Collisson","Zhang","Chen","UNC","ICGC_arr","Balagurunathan","Pei","Grutzmann","Badea", "haider","lunardi","yang","hamidi","janky","bauer", "Normals","GTEX_Normals")
-clusters = list(z_ICGC, z_PCSI, z_TCGA, z_Kirby, z_OUH, z_winter,z_Collisson,z_zhang,z_chen,z_unc,z_icgc_arr,z_balagurunathan, z_pei, z_grutzmann, z_badea, z_haider, z_lunardi, z_yang, z_hamidi, z_janky, z_bauer, z_normal,z_gtex)
-
-samples=list()
-for(i in 1: length(unique(membership(c5)))){
-  
-  clust = names(membership(c5))[which(membership(c5)==i)]  
-  
-  dataset_no = sapply(1:length(clust), function(x) which(strsplit(clust[x],"-")[[1]][1] == datasets))
-  cluster_no = as.numeric(sapply(1:length(clust), function(x) strsplit( names(membership(c5))[which(membership(c5)==i)],"-")[[x]][2]))
-  
-  samples[[i]]=sapply(1:length(dataset_no),function(x) names(clusters[[dataset_no[x]]]$classes)[which(clusters[[dataset_no[x]]]$classes == cluster_no[x])])
-  
+#'
+#'
+#' @param
+#' @param 
+#'
+#'
+annotateSampleMetaClasses <- function(allConClusters, clusterwiseSamples) {
+  setorderv(clusterwiseSamples, cols=c('cohort', 'cohortCluster'))
+  cohorts <- split(clusterwiseSamples, by='cohort')
+  sampleMetaClusters <- 
+      lapply(cohorts, 
+             function(cohort, conClusters) {
+               cohortClusters <- cohort$cohortCluster
+               samples <- numeric()
+               for (cl in cohortClusters) {
+                 samplesLength <- length(unlist(cohort[cohortClusters==cl, ]$samples))
+                 namedMetaclusters <- rep(cohort[cohortCluster==cl, ]$metaCluster, samplesLength)
+                 names(namedMetaclusters) <- unlist(cohort[cohortClusters == cl, ]$samples)
+                 samples <- append(samples,
+                                   namedMetaclusters)
+               }
+               return(samples)
+             }, conClusters=allConClusters)[names(allConClusters)]
+  annotatedClusters <- mapply(.annotateConClusters, 
+                              cohort=sampleMetaClusters,
+                              cluster=allConClusters, 
+                              SIMPLIFY=FALSE)
 }
 
-sample_groups<- list()
-for(i in 1:length(samples)){
-  
-  sample_groups[[i]]=unlist(samples[[i]])
-  
+.annotateConClusters <- function(cohort, cluster) {
+  cluster$metaClasses <- cohort[names(cluster$classes)]
+  return(cluster)
 }
 
-#save(sample_groups, file="/Users/vandanasandhu/Desktop/Subtyping_PDACs/PDAC_meta_Classes.RData")
-
-########### Samples classes cohort wise #################################################
-clusters = list(PCSI= z_PCSI, TCGA=z_TCGA, ICGC_seq=z_ICGC, 
-                Kirby = z_Kirby, OUH= z_OUH, Winter= z_winter,
-                Collisson=z_Collisson,Zhang=z_zhang,Chen=z_chen,
-                UNC=z_unc,ICGC_arr=z_icgc_arr,Balagurunathan=z_balagurunathan, 
-                Grutzmann=z_grutzmann,Badea= z_badea,Pei=z_pei,
-                hamidi=z_hamidi,yang=z_yang, lunardi=z_lunardi,
-                janky=z_janky, bauer=z_bauer, haider=z_haider)
-#, Normals=z_normal, GTEX_Normals= z_gtex
-#)
-
-
-x=unlist(strsplit(names(membership(c5)),"-"))
-mm=matrix(unlist(x), ncol=2, byrow = TRUE)
-mm=data.frame(mm)
-colnames(mm)= c("dataset","cohort_clusters")
-
-mm$meta_classes=as.numeric( membership(c5))
-mm=mm[order(mm$dataset),]
-
-### ADDING NOT FOUND ROWS
-dim(mm)
-
-j=1
-for(i in (dim(mm)[1] +1 ):(dim(mm)[1]+length(not_found))){
-  
-  pp = unlist(strsplit(not_found[j],"-"))
-  mm[i,]=c(pp[1],pp[2],NA)
-  j=j+1
+#' 
+#'
+#' @param cohortwiseClasses
+#' @param allConClusters
+#'
+#' @return A \code{data.table} equivalent to `cohortwiseClasses`, except with
+#'   a \code{list} column called samples, containing the samples for each
+#'   cohort per cluster per metacluster.
+#'
+getClusterwiseSamples <- function(cohortwiseClasses, allConClusters) {
+  metaclusterDTs <- split(cohortwiseClasses, by="metaCluster")
+  sampleNames <- lapply(metaclusterDTs, 
+         function(DT, conClust) {
+           cohort <- DT$cohort
+           cluster <- DT$cohortCluster
+           m <- mapply(.extractSamples, 
+                       cohort=cohort, 
+                       cluster=cluster,
+                       MoreArgs=list(allConCluster=conClust),
+                       SIMPLIFY=FALSE)
+           names(m) <- paste0(DT$cohort, DT$cohortCluster)
+           m
+         },
+         conClust=allConClusters)
+  for (cluster in unique(cohortwiseClasses$metaCluster)) {
+    cohortwiseClasses[metaCluster==cluster, samples := sampleNames[[as.character(cluster)]]]
+  }
+  return(cohortwiseClasses)
 }
 
-for(i in 1:length(clusters)){
-  
-  z= which(mm[,1] %in% names(clusters)[i])
-  clusters[[i]]$meta_classes=mapvalues(clusters[[i]]$classes, mm[,2][z], mm[,3][z]) 
-  
+#' Get the sample names in a cohort cluster
+#'
+#' @param allConClusters
+#' @param cohort
+#' @param cluster
+#'
+#' @return a \code{character} vector of sample names for that cohort cluster
+#'    combination.
+#' 
+.extractSamples <- function(allConClusters, cohort, cluster) {
+  classes <- allConClusters[[cohort]]$classes
+  names(classes)[classes == cluster]
 }
-
-save(clusters,file= '../results/clusters.RData')
-
