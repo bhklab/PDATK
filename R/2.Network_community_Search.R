@@ -1,35 +1,3 @@
-########################################################################################################
-### Required libraries
-#########################################################################################################
-
-
-#library(survminer)
-
-require(IDPmisc)
-library(dplyr)
-library(matrixStats)
-#library(factoextra)
-library(NbClust)
-library(cluster)
-library(ConsensusClusterPlus)
-library(clusterRepro)
-library(igraph)
-library(gtools)
-library(plyr)
-library(survival)
-library(KMsurv)
-library(limma)
-library(piano)
-require(ggplot2)
-library(ggpubr)
-library(doParallel)
-library(foreach)
-library(effsize)
-library(vcdExtra)
-library(survcomp)
-library(RColorBrewer)
-library(lattice)
-
 #' Draw a plot showing the network graph of the significant cluster edges
 #' 
 #'
@@ -96,219 +64,149 @@ plotClusterNetwork <- function(clusterEdges, seed=NULL, savePath, fileName, ...)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#########################################################################################################
-#########################################################################################################
-
-load('../data/edges.RData')
-load('../data/clusters.RData')
-source('../../code/Functions/mgsub_function.R')
-
-
-######### FIND EDGES ###############################
-edges_defined = edges_define[,1:2]
-
-g = graph_from_edgelist(edges_defined)
-coords = layout_with_fr(g)
-
-
-#### Fast greedy
-
-g1=as.undirected(g)
-c5=fastgreedy.community(g1,weights = as.numeric(edges_define[,3]))
-table(membership(c5))
-plot(c5, g1, layout=coords,vertex.size=6)
-
-l <- layout_with_fr(g1)
-#plot(g1, vertex.color=membership(c5),  vertex.size=6,edge.arrow.size=0.5,vertex.label.cex=0.8, vertex.label.dist=2, edge.curved=0.4, vertex.color="gray",edge.arrow.size=.4,layout=l)
-
-
-colrs <-  c( "blue", brewer.pal(n = 8, name = "Dark2")[c(4,5)])
-shapes <- c("circle", "square", "sphere")
-plot(g1, vertex.color=colrs[membership(c5)],  vertex.shape= "sphere", vertex.size=6,edge.arrow.size=0.5,vertex.label.cex=0.8, vertex.label.dist=2, edge.curved=0.1, vertex.color=colrs[membership(c5)],
-     edge.arrow.size=.4, layout=layout.davidson.harel(g1))
-
-
-zz=sapply(1:length(membership(c5)), function(x) strsplit(names(membership(c5))[x], "-")[[1]][1])
-x1= match(zz, unique(zz))
-
-cc= rainbow(22)
-
-pdf("../results/Meta_clusters_Network_community.pdf")
-
-plot.igraph(g1, vertex.color=colrs[membership(c5)],  vertex.shape= "sphere", vertex.size=6,edge.arrow.size=0.5,vertex.label.cex=0.8, vertex.label.dist=2, edge.curved=0.1, vertex.color=colrs[membership(c5)],
-     edge.arrow.size=.4, layout=layout_with_dh(g1), layout=coords)
-legend('topleft',legend=c("Basal","Exocrine","Classical"), pt.cex=1.8,pch=21, pt.bg=colrs, bty='n', col=colrs)
-
-################## Samples not clustered
-datasets = c("ICGC_seq","PCSI","TCGA","Kirby","OUH","Winter","Collisson","Zhang","Chen","UNC","ICGC_arr","Balagurunathan","Pei","Grutzmann","Badea", "haider","lunardi","yang","hamidi","janky","bauer")
-
-total_clusters=list()
-for(i in 1:length(datasets)){
-  
-  total_clusters[[i]]=paste(datasets[i], 1:clusters[[i]]$optimumK, sep="-" )
-  
+#' 
+#'
+#' @param expressionData
+#' @param survivalData
+#'
+#' @importFrom 
+#' @export
+extractSurvivalData <- function(expressionData, survivalData) {
+  sampleLengths <- c(vapply(expressionData, nrow, FUN.VALUE=numeric(1)),
+                     'yang'=nrow(survivalData))
+  cohorts <- unlist(mapply(rep, x=names(sampleLengths), times=sampleLengths, SIMPLIFY=FALSE))
+  samples <- c(unlist(lapply(expressionData, rownames)),
+               as.character(survivalData$ID))
+  os <- c(unlist(lapply(expressionData, `[[`, "OS")),
+          as.numeric(survivalData$OS))
+  osStatus <- c(unlist(lapply(expressionData, `[[`, "OS_Status")),
+                as.numeric(survivalData$OS_Status))
+  return(data.frame("cohorts"=cohorts, 
+                    "sampleNames"=samples, 
+                    "OS"=as.numeric(os), 
+                    "OSstatus"=as.numeric(osStatus)))
 }
 
-not_found=setdiff(unlist(total_clusters), c5$names)
-
-not_found
-
-########### Samples in classes ###################
-datasets = c("ICGC_seq","PCSI","TCGA","Kirby","OUH","Winter","Collisson","Zhang","Chen","UNC","ICGC_arr","Balagurunathan","Pei","Grutzmann","Badea", "haider","lunardi","yang","hamidi","janky","bauer")
-
-
-################ ICGC-array and ICGC-seq
-
-common_seq = which(names(clusters$ICGC_seq$meta_classes) %in% names(clusters$ICGC_arr$meta_classes))
-common_arr = which(names(clusters$ICGC_arr$meta_classes) %in% names(clusters$ICGC_seq$meta_classes))
-
-names(clusters$ICGC_seq$meta_classes[sort(names(clusters$ICGC_seq$meta_classes)[common_seq])])==  names(clusters$ICGC_arr$meta_classes[sort(names(clusters$ICGC_arr$meta_classes)[common_arr])])
-
-seq_classes= clusters$ICGC_seq$meta_classes[sort(names(clusters$ICGC_seq$meta_classes)[common_seq])]
-arr_classes= clusters$ICGC_arr$meta_classes[sort(names(clusters$ICGC_arr$meta_classes)[common_arr])]
-
-table(seq_classes, arr_classes)
-length(which(seq_classes == arr_classes))
-write.table(table(seq_classes, arr_classes), '../results/commmon_ICGC_seq_array.txt')
-##################################################################################################
-### SURVIVAL 
-##########################################################################
-##########################################################################
-load('../../data/PDAC_Expression_dataset.RData')
-yang_survival=read.csv('../../data/yang_survival.txt', sep="\t", header=T)
-
-samples=c(rownames(rs_coh$PCSI_new), rownames(rs_coh$TCGA), rownames(rs_coh$Kirby),
-          rownames(rs_coh$ICGC_arr),rownames(rs_coh$ICGC_seq), rownames(rs_coh$UNC),
-          rownames(rs_coh$Chen), rownames(rs_coh$Collisson), rownames(rs_coh$Zhang),
-          rownames(rs_coh$OUH), rownames(rs_coh$Winter), as.character(yang_survival$ID))
-
-
-os= c(as.numeric(as.character(rs_coh$PCSI_new$OS)), as.numeric(as.character(rs_coh$TCGA$OS)), 
-      as.numeric(as.character(rs_coh$Kirby$OS)),as.numeric(as.character(rs_coh$ICGC_arr$OS)),
-      as.numeric(as.character(rs_coh$ICGC_seq$OS)), as.numeric(as.character(rs_coh$UNC$OS)),
-      as.numeric(as.character(rs_coh$Chen$OS)), as.numeric(as.character(rs_coh$Collisson$OS)), 
-      as.numeric(as.character(rs_coh$Zhang$OS)), as.numeric(as.character(rs_coh$OUH$OS)), 
-      as.numeric(as.character(rs_coh$Winter$OS)),as.numeric(as.character(yang_survival$OS)))
-
-
-os_status= c(as.numeric(as.character(rs_coh$PCSI_new$OS_Status)), as.numeric(as.character(rs_coh$TCGA$OS_Status)), 
-             as.numeric(as.character(rs_coh$Kirby$OS_Status)),as.numeric(as.character(rs_coh$ICGC_arr$OS_Status)),
-             as.numeric(as.character(rs_coh$ICGC_seq$OS_Status)), as.numeric(as.character(rs_coh$UNC$OS_Status)),
-             as.numeric(as.character(rs_coh$Chen$OS_Status)), as.numeric(as.character(rs_coh$Collisson$OS_Status)), 
-             as.numeric(as.character(rs_coh$Zhang$OS_Status)), as.numeric(as.character(rs_coh$OUH$OS_Status)), 
-             as.numeric(as.character(rs_coh$Winter$OS_Status)), as.numeric(as.character(yang_survival$OS_Status)))
-
-
-
-survival= data.frame(samples=samples, os=os, os_status=os_status)
-
-
-##########################################################################
-##########################################################################
-##########################################################################
-##########################################################################
-##########################################################################
-##########################################################################
-
-clusters1=clusters
-classes=list()
-sample_names=list()
-cohorts=list()
-for(i in 1:length(clusters1)){
-  
-  classes[[i]]=clusters1[[i]]$meta_classes
-  sample_names[[i]]=names(clusters1[[i]]$meta_classes)
-  cohorts[[i]]=rep(names(clusters1)[i],length(names(clusters1[[i]]$meta_classes)))
+#'
+#'
+#'
+#'
+#'
+#'
+extractMetaClusters <- function(clusters, survivalData) {
+  metaClusters <- lapply(clusters, `[[`, "metaClasses")
+  sampleNames <- lapply(metaClusters, names)
+  sampleLengths <- lapply(sampleNames, length)
+  cohorts <- unlist(mapply(rep, x=names(clusters), times=sampleLengths, SIMPLIFY=FALSE))
+  mClust <- data.frame("cohorts"=cohorts, 
+                       "sampleNames"=unlist(sampleNames), 
+                       "metaClusters"=unlist(metaClusters))
+  mClust[!duplicated(mClust$sampleNames), ]
 }
 
-meta_Cluster= data.frame(sample = unlist(sample_names), meta_class= unlist(classes), cohorts=unlist(cohorts))
-
-#save(meta_Cluster, file="/Users/vandanasandhu/Desktop/meta_clusters.RData")
-
-## Removing common samples between ICGC seq and ICGC array
-clusters1$ICGC_arr$meta_classes= clusters1$ICGC_arr$meta_classes[- which(names(clusters$ICGC_arr$meta_classes) %in% names(clusters$ICGC_seq$meta_classes))]
-clusters1$ICGC_arr$classes= clusters1$ICGC_arr$classes[- which(names(clusters$ICGC_arr$meta_classes) %in% names(clusters$ICGC_seq$meta_classes))]
-
-classes=list()
-sample_names=list()
-cohorts=list()
-for(i in 1:length(clusters1)){
-  
-  classes[[i]]=clusters1[[i]]$meta_classes
-  sample_names[[i]]=names(clusters1[[i]]$meta_classes)
-  cohorts[[i]]=rep(names(clusters1)[i],length(names(clusters1[[i]]$meta_classes)))
+#'
+#'
+#' @data1 A \code{data.frame} 
+#' @data1 A \code{data.frame}
+#' @param sharedColumn
+#'
+#' @export
+mergeOn <- function(data1, data2, sharedColumn) {
+  df <- merge(data1, data2, by=c("cohorts", sharedColumn))
+  return(df)
 }
 
-meta_Cluster= data.frame(sample = unlist(sample_names), meta_class= unlist(classes), cohorts=unlist(cohorts))
-
-#save(meta_Cluster, file="/Users/vandanasandhu/Desktop/meta_clusters.RData")
-
-meta_survival_cluster=merge(survival, meta_Cluster, by.x="samples", by.y="sample")
-meta_survival_cluster$meta_class= mgsub(c("1","2","3"), c("Basal","Exocrine","Classical"), meta_survival_cluster$meta_class)
-
-
-#meta_survival_cluster1=meta_survival_cluster[-is.na(meta_survival_cluster$meta_class),]
-su=coxph(Surv(os, os_status == 1) ~ meta_class + strata(cohorts), data=meta_survival_cluster)
-summary(su)
-
-meta_survival_cluster1=meta_survival_cluster[meta_survival_cluster$meta_class %in% c("Basal","Exocrine","Classical"),]
-fit <- survfit(Surv(meta_survival_cluster1$os, meta_survival_cluster1$os_status == 1) ~ meta_survival_cluster1$meta_class + strata(cohorts), data=meta_survival_cluster1)
-survdiff(Surv(meta_survival_cluster1$os, meta_survival_cluster1$os_status == 1) ~ meta_survival_cluster1$meta_class + strata(cohorts), data=meta_survival_cluster1)
-
-fit <- survfit(Surv(meta_survival_cluster1$os, meta_survival_cluster1$os_status == 1) ~ meta_survival_cluster1$meta_class , data=meta_survival_cluster1)
-
-
-#meta_survival_cluster1= meta_survival_cluster1[-which(meta_survival_cluster1$meta_class == "Exocrine"),]
-survdiff(Surv(meta_survival_cluster1$os, meta_survival_cluster1$os_status == 1) ~ meta_survival_cluster1$meta_class , data=meta_survival_cluster1)
-
-pdf("../results/survival_metaclusters.pdf")
-plot( fit,col=c("tomato","green","purple"), lwd=2, p.val=TRUE, xlab="Days", ylab="Survival Probability")
-  legend("bottomleft",paste("P =", round(0.02,2), sep = ""), bty = "n")
-
-#ggsurvplot(fit, data = meta_survival_cluster1, risk.table = TRUE, legend="none", risk.table.ticks.col = TRUE,pval = TRUE,ggtheme #= theme_minimal(), pval.size=5 , 
- #          pval.coord= c(1500, 0.9))
-
-
-
-
-#pairwise_survdiff(Surv(os, os_status == 1) ~ meta_class, data=meta_survival_cluster1)
-
-
-######################
-
-
-pdf("../results/cohorts_survival_metaclusters.pdf")
-
-unique_cohorts=unique(meta_survival_cluster1$cohorts)
-par(mfrow=c(3,4))
-
-for(i in 1:length(unique(meta_survival_cluster1$cohorts))){
-  zz=meta_survival_cluster1[which(meta_survival_cluster1$cohorts == unique_cohorts[i] ),]
-  
-  fit <- survfit(Surv(zz$os, zz$os_status == 1) ~ zz$meta_class, data=zz)
-  
-  sd=survdiff(Surv(zz$os, zz$os_status == 1) ~  zz$meta_class, data=zz)
-  p.val <- 1 - pchisq(sd$chisq, length(sd$n) - 1)
-  plot(fit,col=c("tomato","green","purple"), lwd=2, main=unique_cohorts[i], p.val=TRUE)
-  legend("bottomleft",paste("P =", round(p.val,2), sep = ""), bty = "n") 
-  
+#'
+#'
+#'
+#'
+annotateMetaClusters <- function(metaClusterSurvival, clusterLabels) {
+  DT <- as.data.table(metaClusterSurvival, keep.rownames=TRUE)
+  DT[, metaClusters := as.character(metaClusters)]
+  i <- 1
+  for (val in na.omit(unique(DT$metaClusters))) {
+    DT[metaClusters == val, metaClusters := clusterLabels[i]]
+    i <- i + 1
+  }
+  DT[is.na(metaClusters), metaClusters := "None"]
+  return(as.data.frame(DT[, -'rn'], row.names=DT$rn))
 }
-##########################################################################################
-##########################################################################################
+
+#'
+#'
+#'
+#' 
+#'
+fitProportionalHazardsModel <- function(metaClusterSurvAnnot) {
+  coxph(Surv(OS, OSstatus == 1) ~ metaClusters + strata(cohorts), 
+        data=metaClusterSurvAnnot)
+}
+
+#'
+#'
+#'
+#'
+#'
+fitSurvivalCurves <- function(metaClusterSurvAnnot) {
+  fit <- survfit(Surv(OS, OSstatus == 1) ~ metaClusters, 
+          data=metaClusterSurvAnnot)
+  survDiff <- survdiff(Surv(OS, OSstatus == 1) ~ metaClusters, 
+                 data=metaClusterSurvAnnot)
+  pval <- 1 - pchisq(survDiff$chisq, length(survDiff$n) - 1)
+  return(list("fit"=fit, "pval"=pval))
+}
+
+#'
+#'
+#'
+#'
+#'
+plotSurvivalCurves <- function(survivalCurves, title="", plot=TRUE, saveDir, fileName) {
+  plotFunction <- as.expression(call(".plotSurvivalCurve", survivalCurves, title))
+  
+  grob <- base2grob(plotFunction)
+
+  if(!missing(saveDir) && !missing(fileName))
+    ggsave(grob, file=file.path(saveDir, fileName))
+  
+  if (plot) {
+    grid.draw(grob)
+  } else {
+    return(grob)
+  }
+}
+
+#'
+#'
+#'
+#'
+.plotSurvivalCurve <- function(survivalCurves, title) {
+  plot(survivalCurves$fit, col=c("tomato", "green", "purple"), lwd=2,
+       xlab="Days", ylab="Survival Probability")
+  legend("bottomleft", paste0("P = ", round(survivalCurves$pval, 2)), bty="n")
+  title(title, line=0.2)
+}
+
+#'
+#'
+#'
+#'
+#'
+plotCohortwiseSurvivalCurves <- function(metaClusterSurvAnnot, plot=TRUE, saveDir, fileName) {
+  DT <- as.data.table(metaClusterSurvAnnot, keep.rownames=TRUE)
+  perCohort <- split(DT, by='cohorts')
+  cohortCurves <- lapply(perCohort, fitSurvivalCurves)
+  plotGrobs <- mapply(plotSurvivalCurves, cohortCurves, title=names(perCohort), 
+                      MoreArgs=list(plot=FALSE), SIMPLIFY=FALSE)
+  
+  grob <- grid.arrange(grobs=plotGrobs, ncol=ceiling(sqrt(length(plotGrobs))))
+  
+  if(!missing(saveDir) && !missing(fileName))
+    ggsave(grob, file=file.path(saveDir, fileName))
+  
+  if (plot) {
+    grid.draw(grob)
+  } else {
+    return(grob)
+  }
+}

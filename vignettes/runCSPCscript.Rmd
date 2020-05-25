@@ -179,10 +179,55 @@ plotClusterNetwork(clusterEdges, seed=1987,
                    fileName='clusterNetworkGraph.pdf')
 ```
 
-```{r }
+```{r load_expression_data}
+load(file=file.path('..', 'data', 'PDACexpressionData.rda'))
+load(file=file.path('..', 'data', 'yangSurvival.rda'))
 ```
 
-## 3. Gene Signature Comaprison
+```{r extract_survival_data}
+# Drop old PCSI
+PDACexpressionData <- PDACexpressionData[which(names(PDACexpressionData) != "pcsi")]
+survivalData <- extractSurvivalData(PDACexpressionData, yangSurvival)
+head(survivalData)
+```
+
+
+```{r extract_meta_clusters}
+metaClusters <- extractMetaClusters(annotatedClusters, survivalData)
+head(metaClusters)
+```
+
+
+```{r merge_to_samples_with_survival_data}
+metaClusterSurvival <- mergeOn(survivalData, metaClusters, "sampleNames")
+head(metaClusterSurvival)
+```
+
+
+```{r annotate_metaClusters}
+metaClusterSurvAnnot <- annotateMetaClusters(metaClusterSurvival, c("Basal", "Exocrine", "Classical"))
+head(metaClusterSurvAnnot)
+```
+
+
+```{r fit_cox_model}
+proportionalHarzardsModel <- fitProportionalHazardsModel(metaClusterSurvAnnot)
+summary(proportionalHarzardsModel)
+```
+
+```{r }
+survivalCurves <- fitSurvivalCurves(metaClusterSurvAnnot)
+```
+
+```{r }
+plotSurvivalCurves(survivalCurves)
+```
+
+```{r, fig.height=12, fig.width=12}
+plotCohortwiseSurvivalCurves(metaClusterSurvAnnot)
+```
+
+## 3. Gene Signature Comparison
 
 ```{r }
 ```
