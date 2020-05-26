@@ -35,6 +35,7 @@ library(lattice)
 library(ggplotify)
 library(gridExtra)
 library(ggsci)
+library(cowplot)
 ```
 
 ## 1. COINCIDE Implementation
@@ -48,6 +49,10 @@ adjNormal <- readRDS('../data/adjacentNormal.rds')
 
 ```{r source_function}
 source('../R/utilities.R')
+source('../R/COINCIDE.R')
+source('../R/networkCommunitySearch.R')
+source('../R/geneSignatureComparison.R')
+source('../R/biomarkerComparison.R')
 ```
 
 ```{r rorder_cohorts_to_match}
@@ -257,24 +262,47 @@ sigScorePlots <- grid.arrange(grobs=sigScorePlotL)
 ggsave(file=file.path("..", "data", "sigScorePlots.pdf"), sigScorePlots)
 ```
 
-```{r }
-```
-
-```{r }
-```
-
-
 
 ## 4. Biomarker Comparison
 
 ```{r }
+biomarkersOfInterest <- c("EGFR", "SNAI2", "KRT81", "GATA6", "CYP3A5", "HNF1A",
+                         "REG1A", "REG1B", "REG3A", "CEL")
+names(biomarkersOfInterest) <- c(rep("Basal", 3), rep("Classical", 3), rep("Exocrine", 4))
+geneBiomarkerScoreL <- lapply(biomarkersOfInterest, computeGeneBiomarkerScores, 
+                              cohortsDataL=cohortsDataL,
+                              sampleMetaClassDT=sampleMetaClassDT)
+names(geneBiomarkerScoreL) <- biomarkersOfInterest
 ```
 
 ```{r }
+biomarkerScoreBoxplotL <- boxplotBiomarkerScoresList(geneBiomarkerScoreL, 
+                                                     biomarkersOfInterest,
+                                                     comparisons)
 ```
 
-```{r }
+```{r basal_class_boxplots, fig.height=10, fig.width=10}
+scoreClasses <- names(biomarkerScoreBoxplotL)
+scoreIdxs <- which(scoreClasses %in% "Basal")
+basalPlots <- grid.arrange(grobs=biomarkerScoreBoxplotL[scoreIdxs], ncol=2)
+ggsave(file.path("..", "results", "basalBiomarkerBoxPlots.pdf"))
+basalPlots
 ```
+
+```{r classical_class_boxplots, fig.height=10, fig.width=10}
+scoreIdxs1 <- which(scoreClasses %in% "Classical")
+classicalPlots <- grid.arrange(grobs=biomarkerScoreBoxplotL[scoreIdxs], ncol=2)
+ggsave(file.path("..", "results", "classicalBiomarkerBoxPlots.pdf"))
+classicalPlots
+```
+
+```{r exocrine_class_boxplots, fig.height=10, fig.width=10}
+scoreIdxs <- which(scoreClasses %in% "Exocrine")
+exocrinePlots <- grid.arrange(grobs=biomarkerScoreBoxplotL[scoreIdxs], ncol=2)
+ggsave(file.path("..", "results", "exocrineBiomarkerBoxPlots.pdf"))
+exocrinePlots
+```
+
 
 
 ## 5. Single Sample Classifier 
