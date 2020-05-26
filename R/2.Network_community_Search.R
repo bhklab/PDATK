@@ -128,7 +128,6 @@ annotateMetaClusters <- function(metaClusterSurvival, clusterLabels) {
     DT[metaClusters == val, metaClusters := clusterLabels[i]]
     i <- i + 1
   }
-  DT[is.na(metaClusters), metaClusters := "None"]
   return(as.data.frame(DT[, -'rn'], row.names=DT$rn))
 }
 

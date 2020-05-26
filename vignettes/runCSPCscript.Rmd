@@ -33,12 +33,14 @@ library(survcomp)
 library(RColorBrewer)
 library(lattice)
 library(ggplotify)
+library(gridExtra)
+library(ggsci)
 ```
 
 ## 1. COINCIDE Implementation
 
 ```{r load_data}
-cohorts <- readRDS('../data/cohortsCommonGenes.rds')       
+cohortsDataL <- readRDS('../data/cohortsCommonGenes.rds')       
 normalGTEx <- readRDS('../data/normalGTEx.rds')
 adjNormal <- readRDS('../data/adjacentNormal.rds')
 ```
@@ -59,11 +61,11 @@ cohortOrder <-c("pcsi", "tcga",
                 "pei", "haider", 
                 "lunardi", "yang", 
                 "hamidi", "janky", "bauer")
-cohorts <- cohorts[cohortOrder]
+cohortsDataL <- cohortsDataL[cohortOrder]
 ```
 
 ```{r ranking_genes_based_on_mad}
-cohortMADrankings <- bplapply(cohorts, function(cohort) calcRowMADdf(cohort))
+cohortMADrankings <- bplapply(cohortsDataL, function(cohort) calcRowMADdf(cohort))
 ```
 
 ```{r rank_cohort_genes_by_MAD}
@@ -230,12 +232,50 @@ plotCohortwiseSurvivalCurves(metaClusterSurvAnnot)
 ## 3. Gene Signature Comparison
 
 ```{r }
+sampleMetaClassDT <- extractSampleMetaClasses(annotatedClusters)
+head(sampleMetaClassDT)
 ```
+
+```{r }
+geneSigL <- readRDS(file=file.path("..", "data", "geneSigList.rds"))
+sigScoreL <- mapply(computeSignatureScoreDT, geneSigL, 
+                    MoreArgs=list(cohortsDataL=cohortsDataL, 
+                                  sampleMetaClassDT=sampleMetaClassDT),
+                    SIMPLIFY=FALSE)
+```
+
+```{r fig.height=10, fig.width=12}
+comparisons <- list(c("Basal", "Classical"), 
+                    c("Classical", "Exocrine"),
+                    c("Exocrine", "Basal"))
+sigScorePlotL <- mapply(plotSigScores, 
+                        cohortSignatureScoreDT=sigScoreL,
+                        signatureScoreName=names(sigScoreL),
+                        MoreArgs=list(comparisons=comparisons),
+                        SIMPLIFY=FALSE)
+sigScorePlots <- grid.arrange(grobs=sigScorePlotL)
+ggsave(file=file.path("..", "data", "sigScorePlots.pdf"), sigScorePlots)
+```
+
+```{r }
+```
+
+```{r }
+```
+
+
 
 ## 4. Biomarker Comparison
 
 ```{r }
 ```
+
+```{r }
+```
+
+```{r }
+```
+
 
 ## 5. Single Sample Classifier 
 

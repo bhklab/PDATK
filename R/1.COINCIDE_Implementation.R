@@ -558,6 +558,7 @@ annotateSampleMetaClasses <- function(allConClusters, clusterwiseSamples) {
       lapply(cohorts, 
              function(cohort, conClusters) {
                cohortClusters <- cohort$cohortCluster
+               cohortClusters <- na.omit(cohortClusters)
                samples <- numeric()
                for (cl in cohortClusters) {
                  samplesLength <- length(unlist(cohort[cohortClusters==cl, ]$samples))
@@ -576,6 +577,7 @@ annotateSampleMetaClasses <- function(allConClusters, clusterwiseSamples) {
 
 .annotateConClusters <- function(cohort, cluster) {
   cluster$metaClasses <- cohort[names(cluster$classes)]
+  names(cluster$metaClasses) <- names(cluster$classes)
   return(cluster)
 }
 
