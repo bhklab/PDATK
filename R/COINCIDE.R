@@ -92,12 +92,12 @@ getTopGenes <- function(cohortMADrankings, n) {
 #'     per cohort and top m genes in the meta-cohort ranking.
 #' 
 #' @export
-  getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, m) {
-      top20genesPerCohort <- getTopGenes(cohortMADrankings, n)
-      topNgenesPerCohort <- Reduce(c, lapply(top20genesPerCohort, `[`, i=TRUE, j="genes"))
-      topMgenesMeta <- geneWiseWeigthedMADdf$genes[seq_len(m)]
-      unique(c(topNgenesPerCohort, topMgenesMeta))
-  }
+getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, m) {
+    top20genesPerCohort <- getTopGenes(cohortMADrankings, n)
+    topNgenesPerCohort <- Reduce(c, lapply(top20genesPerCohort, `[`, i=TRUE, j="genes"))
+    topMgenesMeta <- geneWiseWeigthedMADdf$genes[seq_len(m)]
+    unique(c(topNgenesPerCohort, topMgenesMeta))
+}
 
 ##################### CLUSTER DATA ##########################################################################
 

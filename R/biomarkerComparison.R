@@ -24,7 +24,7 @@ boxplotBiomarkerScores <- function(geneBiomarkerScores, comparisons, geneName, s
   plot <- ggboxplot(geneBiomarkerScores, x="metaClasses", y = "expression",
                     color = "metaClasses", palette = "jco",
                     add = "jitter", xlab = "", ylab=geneName, 
-                    legend =NULL) +
+                    legend ="none") +
           stat_compare_means(label="p.format", comparisons=comparisons)
   
   if (!missing(saveDir) && !missing(fileName)) {

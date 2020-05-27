@@ -5,7 +5,7 @@ date: "11/05/2020"
 output: html_document
 ---
 
-```{r}
+```{r message=FALSE}
 #library(PanCuRx)
 require(IDPmisc)
 library(dplyr)
@@ -19,7 +19,10 @@ library(igraph)
 library(gtools)
 library(plyr)
 library(survival)
+library(randomForest)
+library(impute)
 library(KMsurv)
+library(switchBox)
 library(survminer)
 library(limma)
 library(piano)
@@ -93,7 +96,7 @@ saveRDS(metaGenes, file.path(resultsDir, "metaGenes.rds"))
 
 
 ```{r preprocess_cohort_expression_matrixes}
-preprocCohorts <- preprocessCohorts(cohorts, metaGenes)
+preprocCohorts <- preprocessCohorts(cohortsDataL, metaGenes)
 ```
 
 
@@ -151,7 +154,6 @@ qsave(allClusterRepro, file.path('..', 'data', 'allClusterRepro.qs'), nthread=16
 clusterEdges <- compareClusters(MSMthresholds, allClusterRepro, pValue=0.05, actualIGP=0.5, minThresh=0)
 qsave(clusterEdges, file.path('..', 'data', 'clusterEdges.qs'), nthread=15)
 ```
-
 
 ```{r }
 graphData <- getClusterNetworkData(clusterEdges, seed=1987)
@@ -262,7 +264,6 @@ sigScorePlots <- grid.arrange(grobs=sigScorePlotL)
 ggsave(file=file.path("..", "data", "sigScorePlots.pdf"), sigScorePlots)
 ```
 
-
 ## 4. Biomarker Comparison
 
 ```{r }
@@ -304,10 +305,65 @@ exocrinePlots
 ```
 
 
-
 ## 5. Single Sample Classifier 
 
 ```{r }
+cohortCommMat <- computeCohortCommunityMatrix(cohortsDataL, metaGenes)
+```
+```{r train_single_sample_classifiers}
+uniqueMetaClasses <- na.omit(unique(sampleMetaClassDT$metaClasses))
+singleSampleClassifiers <- lapply(uniqueMetaClasses,
+                                  trainSingleSampleClassifer,
+                                  cohortComMat=cohortCommMat,
+                                  sampleMetaClassDT=sampleMetaClassDT,
+                                  maxK=20)
+names(singleSampleClassifiers) <- uniqueMetaClasses
+```
+
+```{r get_predicted_genes}
+classTSPs <- lapply(singleSampleClassifiers, `[[`, "TSPs")
+topGenes1 <- lapply(classTSPs, `[`, i=TRUE, j=1)
+topGenes2 <- lapply(classTSPs, `[`, i=TRUE, j=2)
+```
+
+```{r get_top_features}
+lengthTopGenes <- lapply(topGenes1, length)
+topGenesClasses <- mapply(rep, names(topGenes1), times=lengthTopGenes, SIMPLIFY=FALSE)
+featuresDT <- data.table("class"=unlist(topGenesClasses),
+                         "genes"=unlist(lapply(c(topGenes1, topGenes2), unlist)))
+genePairs <- paste(unlist(topGenes1), unlist(topGenes2), sep=">")
+```
+
+```{r subset_matrix_to_top_genes}
+keepSamples <- intersect(colnames(cohortCommMat), unique(sampleMetaClassDT$samples))
+cohortTopGenesMat <- cohortCommMat[featuresDT$genes, keepSamples]
+sampleMetaClassDT <- sampleMetaClassDT[!duplicated(samples) & samples %in% keepSamples, ]
+metaClassesFactor <- as.factor(sampleMetaClassDT$metaClasses)
+```
+
+```{r compare_top_genes}
+g1Gt2Matrix <- calcTopGenes1Gt2Matrix(cohortTopGenesMat, topGenes1, topGenes2, genePairs)
+g1Gt2Matrix[1:5, 1:5]
+```
+
+```{r make_model_predictions}
+sampleClassPreds <- predictSingleSampleClasses(g1Gt2Matrix, metaClassesFactor, nthread=14)
+qsave(sampleClassPreds, file.path('..', 'results', 'sampleClassPreds'))
+```
+
+```{r predict_binary_rf_model}
+binaryRfModel <- randomForest(t(g1Gt2Matrix), metaClassesFactor)
+
+```
+
+```{r }
+topGenesDT <- data.table("topGenes1"=unlist(topGenes1), "topGenes2"=unlist(topGenes2), "genePairs"=genePairs, "classes"=unlist(topGenesClasses))
+```
+
+```{r }
+classPredDT <- data.table(sampleClassPreds)
+classPredDT$samples <- names(sampleClassPreds)
+singleSampClassifDT <- merge(classPredDT, sampleMetaClassDT, on=samples, sort=FALSE)
 ```
 
 ## 6. Compass Subtyping Waterfall
@@ -319,20 +375,21 @@ exocrinePlots
 ## 7. PharmacoGx Cellline Subtyping
 
 ```{r }
+
 ```
 
 ## 8. PharmacoGx Cellline Drug Sensitivity 
 
-
 ```{r }
+
 ```
 
 ## 9. PDXE Drug Subtyping
 
 
 ```{r }
-```
 
+```
 
 ## 10. Cellarity Comparison
 
@@ -345,7 +402,7 @@ exocrinePlots
 ```{r }
 ```
 
-## 12. Caclulate Cluster Meta-Effect Size
+## 12. Calculate Cluster Meta-Effect Size
 
 ```{r }
 ```
