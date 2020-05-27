@@ -2,9 +2,6 @@
 #'
 #'
 #'
-#'
-#'
-#'
 computeCohortCommunityMatrix <- function(cohortsDataL, metaGenes) {
   # Subset on metaGenes and convert to matrix
   cohortsMetaGenesL <- lapply(cohortsDataL, `[`, i=metaGenes, j=TRUE)
@@ -79,21 +76,3 @@ predictSingleSampleClasses <- function(g1Gt2Matrix, metaClassesFactor, nthread) 
   names(sampleClassPredictions) <- colnames(g1Gt2Matrix)
   return(sampleClassPredictions)
 }
-
-
-binary_rf_model <- randomForest( t(output1), y1)
-gg=list(gene1=gene1, gene2= gene2, genepairs =genepairs)
-
-save(binary_rf_model, file="../results/binary_rf_model.RData")
-save(output1, file="../results/output1_RF.RData")
-save(y1, file="../results/RF_response.RData")
-save(gg, file="../results/gg.RData")
-
-pred1 <- do.call("c", pred)
-table(pred1, as.character(y1))
-a <- data.frame(predictions = pred1,group = y1)
-a1 <- xtabs(~a[,1] + a[,2], data = a)
-summary(assocstats(a1))
-length(which(pred1 == as.character(y1)))/length(pred1)
-
-        

@@ -20,6 +20,7 @@ library(gtools)
 library(plyr)
 library(survival)
 library(randomForest)
+library(switchBox)
 library(impute)
 library(KMsurv)
 library(switchBox)
@@ -56,6 +57,7 @@ source('../R/COINCIDE.R')
 source('../R/networkCommunitySearch.R')
 source('../R/geneSignatureComparison.R')
 source('../R/biomarkerComparison.R')
+source('../R/singleSampleClassifier.R')
 ```
 
 ```{r rorder_cohorts_to_match}
@@ -310,6 +312,7 @@ exocrinePlots
 ```{r }
 cohortCommMat <- computeCohortCommunityMatrix(cohortsDataL, metaGenes)
 ```
+
 ```{r train_single_sample_classifiers}
 uniqueMetaClasses <- na.omit(unique(sampleMetaClassDT$metaClasses))
 singleSampleClassifiers <- lapply(uniqueMetaClasses,
@@ -348,12 +351,11 @@ g1Gt2Matrix[1:5, 1:5]
 
 ```{r make_model_predictions}
 sampleClassPreds <- predictSingleSampleClasses(g1Gt2Matrix, metaClassesFactor, nthread=14)
-qsave(sampleClassPreds, file.path('..', 'results', 'sampleClassPreds'))
+qsave(sampleClassPreds, file.path('..', 'results', 'sampleClassPreds.qs'))
 ```
 
 ```{r predict_binary_rf_model}
-binaryRfModel <- randomForest(t(g1Gt2Matrix), metaClassesFactor)
-
+binaryRFmodel <- randomForest(t(g1Gt2Matrix), metaClassesFactor)
 ```
 
 ```{r }
@@ -369,7 +371,55 @@ singleSampClassifDT <- merge(classPredDT, sampleMetaClassDT, on=samples, sort=FA
 ## 6. Compass Subtyping Waterfall
 
 
+```{r load_data}
+compassSurvDT <- fread(file.path("..", "data", "compassSurvDT.csv"))
+compassLogExprMat <- read.csv(file.path("..", "data", "compassLogExprMat.csv"),
+                              row.names="X")
+```
+
 ```{r }
+sampleMetaClassPredDT <- predictSampleMetaClass(compassLogExprMat, binaryRFmodel, topGenesDT)
+table(sampleMetaClassPredDT$predClass)
+```
+
+```{r }
+sampClassPredwSurvivalDT <- merge(sampleMetaClassPredDT, compassSurvDT, by="sample")
+setorderv(sampClassPredwSurvivalDT, cols="tumorResponse", order=-1)
+head(sampClassPredwSurvivalDT)
+```
+
+```{r tumor_response_all_drug_all_classes, fig.height=8, fig.width=12}
+barplotTumorResponse(sampClassPredwSurvivalDT)
+```
+
+```{r tumor_response_basalvclassical_ffx, fig.height=8, fig.width=12}
+survBasalvClassicalDT <- 
+  sampClassPredwSurvivalDT[predClass %in% c("Basal", "Classical") & 
+                             drug %in% c("FFx", "FFx x 1")]
+
+classSurvComparison <- survfit(Surv(OS, OSstatus) ~ predClass, 
+                               data=survBasalvClassical)
+
+pValue <- surv_pvalue(classSurvComparison)$pval.txt
+
+barplotTumorResponse(survBasalvClassicalDT, noXaxis=TRUE, pVal=pValue)
+```
+
+```{r prop_hazards_model}
+classSurvProHarzardsModel <- coxph(Surv(OS, OSstatus) ~ predClass, 
+                                  data=survBasalvClassicalDT)
+summary(classSurvProHarzardsModel)
+```
+
+```{r compass_NLR}
+classNLRcompDT <- sampClassPredwSurvivalDT[order(NLR, decreasing=TRUE), ]
+classNLRcompDT <-classNLRcompDT[!is.na(NLR), ]
+boxplotClassNLR(classNLRcompDT)
+```
+
+```{r fig.height=8, fig.width=12}
+compassPlotBiomarkers(compassLogExprMat, sampClassPredwSurvivalDT, 
+                      biomarkers=biomarkers[names(biomarkers) %in% c("Basal", "Classical")])
 ```
 
 ## 7. PharmacoGx Cellline Subtyping
