@@ -50,7 +50,7 @@ calcTopGenes1Gt2Matrix <- function(cohortTopGenesMat, topGenes1, topGenes2, gene
 }
 
 #'
-#'
+#' 
 #'
 #'
 #'

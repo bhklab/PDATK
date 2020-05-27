@@ -5,22 +5,40 @@
 #' @param
 #'
 #' @export
-predictSampleMetaClass <- function(compassLogExprMat, binaryRFmodel, topGenesDT, classLabs=c("Basal", "Classical", "Exocrine")) {
-  # Subset data
+predictSampleMetaClass <- function(exprTable, classifModel, topGenesDT, 
+                                   trainData, trainLabels,  classLabs=c("Basal", "Classical", "Exocrine")) {
+  # Find matching features
   topFeatures <- unlist(topGenesDT[, .(topGenes1, topGenes2)])
+  
+  # Retrain on subset of original training data if test data is missing feats
+  if (!all(rownames(exprTable) %in% topFeatures)) {
+    # Subset to shared features
+    keepFeats <- intersect(rownames(exprTable), topFeatures)
+    topGenesDT <- topGenesDT[topGenes1 %in% keepFeats & topGenes2 %in% keepFeats, ]
+    exprTable <- exprTable[keepFeats, ]
+    
+    # Get the rownames to keep in the training data
+    genePairs <- topGenesDT$genePairs
+    
+    # Retrain the model
+    trainGn1Gt2Matrix <- trainData[genePairs, ]
+    classifModel <- randomForest(t(trainGn1Gt2Matrix), trainLabels)
+  }
+  
+  # Extract features
   topGn1 <- topGenesDT$topGenes1
   topGn2 <- topGenesDT$topGenes2
-  compassExprFeatsM <- compassLogExprMat[topFeatures, ]
-
+  genePairs <- topGenesDT$genePairs
+  
   # Compare log expression between topGn1 and topGn2
-  gn1Gt2Matrix <- compassExprFeatsM[topGn1, ] > compassExprFeatsM[topGn2, ] * 1
+  gn1Gt2Matrix <- exprTable[topGn1, ] > exprTable[topGn2, ] * 1
   gn1Gt2Matrix <- t(gn1Gt2Matrix * 1) # Convert logical to numeric
   colnames(gn1Gt2Matrix) <- topGenesDT$genePairs
   
   # Make predictions
-  binaryModelPredProbs <- predict(binaryRFmodel, gn1Gt2Matrix, type="prob")
+  binaryModelPredProbs <- predict(classifModel, gn1Gt2Matrix, type="prob")
   colnames(binaryModelPredProbs) <- paste0('p', classLabs)
-  binaryModelPredClasses <- as.character(predict(binaryRFmodel, gn1Gt2Matrix))
+  binaryModelPredClasses <- as.character(predict(classifModel, gn1Gt2Matrix))
   
   # Build data.table
   binaryModPredDT <- as.data.table(binaryModelPredProbs)
@@ -31,9 +49,13 @@ predictSampleMetaClass <- function(compassLogExprMat, binaryRFmodel, topGenesDT,
   for (i in seq_along(classLabs)) {
     binaryModPredDT[predClass == i, predClass := classLabs[i]]
   }
-  
   return(binaryModPredDT[, .(sample, predClass, pBasal, pClassical, pExocrine)])
 }
+
+
+
+
+
 
 #'
 #'

@@ -378,7 +378,9 @@ compassLogExprMat <- read.csv(file.path("..", "data", "compassLogExprMat.csv"),
 ```
 
 ```{r }
-sampleMetaClassPredDT <- predictSampleMetaClass(compassLogExprMat, binaryRFmodel, topGenesDT)
+sampleMetaClassPredDT <- predictSampleMetaClass(compassLogExprMat, binaryRFmodel, 
+                                                topGenesDT, g1Gt2Matrix, 
+                                                metaClassesFactor)
 table(sampleMetaClassPredDT$predClass)
 ```
 
@@ -424,8 +426,19 @@ compassPlotBiomarkers(compassLogExprMat, sampClassPredwSurvivalDT,
 
 ## 7. PharmacoGx Cellline Subtyping
 
-```{r }
+```{r load_and_format_data}
+PGxCelllinesL <- readRDS(file.path('..', 'data', "PharmacoGxCelllines.rds"))
+PGxCLLAvgRepsL <- lapply(PGxCelllinesL, limma::avereps)
+```
 
+```{r }
+PGxCCLpreds <- lapply(PGxCLLAvgRepsL, predictSampleMetaClass, 
+                      classifModel=binaryRFmodel, topGenesDT=topGenesDT, 
+                      trainData=g1Gt2Matrix, trainLabels=metaClassesFactor)
+```
+
+```{r }
+saveRDS(PGxCCLpreds, file.path("..", "results", "PGxSubtypePredictions"))
 ```
 
 ## 8. PharmacoGx Cellline Drug Sensitivity 
