@@ -532,7 +532,24 @@ for (pGrid in plotGrids) {
 ## 10. Cellarity Comparison
 
 
+```{r load_data}
+cellularityFileL <- list.files(file.path("..", "data"), 
+                               pattern="cellularity.*tsv", 
+                               full.names=TRUE)
+cohortCellularity <- lapply(cellularityFileL, fread, sep="\t")
+names(cohortCellularity) <- gsub('^.*/|_.*$', '', cellularityFileL)
+cohortCellularityDT <- rbindlist(cohortCellularity)
+```
+
 ```{r }
+annotSampMetaClassDT <- annotateSampleMetaClassDT(sampleMetaClassDT)
+mergedCohortCellDT <- merge(cohortCellularityDT, annotSampMetaClassDT, by.x="sample", by.y="samples")
+```
+
+```{r }
+boxplotCellarityByCohort(mergedCohortCellDT, 
+                         saveDir=file.path("..", "results"),
+                         fileName="cohortCellularityBoxplot.pdf")
 ```
 
 ## 11. Copy Number Abberation

@@ -53,7 +53,7 @@ normalizeCohortsList <- function(cohortsList) {
 #'
 #'
 #'
-annotateSampleMetaClassDT <- function(sampleMetaClassDT, clusterLabels) {
+annotateSampleMetaClassDT <- function(sampleMetaClassDT, clusterLabels=c("Basal", "Classical", "Exocrine")) {
   DT <- sampleMetaClassDT
   DT[, metaClasses := as.character(DT$metaClasses)]
   i <- 1
