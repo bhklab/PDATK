@@ -488,12 +488,45 @@ ggarrange(plotlist=plot, ncol=.ceilSqrt(plot), nrow=.ceilSqrt(plot))
 
 
 ```{r load_data}
-PDXgeneExprDT <- fread(file.path("..", "data", "PDXgeneExpr.csv"))
+# Why is first dataset here? Nothing is done with it?
+PDXgeneExpr <- fread(file.path("..", "data", "PDXgeneExpr.csv"))
+PDXgeneExprSet <- readRDS(file.path("..", "data", 'PDXexprSet.rds'))
+PDXdrugResponse <- fread(file.path('..', 'data', 'PDXdrugResponse.csv'))
 ```
 
 ```{r }
-preprocGeneExprDT <- preprocPDXdata(PDXgeneExprDT, binaryRFmodel, topGeneDT,
-                                    g1Gt2Matrix, metaClassesFactor)
+PDXgeneExprClassDT1 <- preprocPDXdata(PDXgeneExprDT, binaryRFmodel, topGenesDT,
+                                      g1Gt2Matrix, metaClassesFactor)
+```
+
+```{r}
+PDXgeneExprClassDT2 <- preprocPDXdata(exprs(PDXgeneExprSet), binaryRFmodel, 
+                                      topGenesDT, g1Gt2Matrix, 
+                                      metaClassesFactor)
+table(PDXgeneExprClassDT2$predClass)
+```
+
+```{r format_drug_response}
+PDXdrugResp <- PDXdrugResponse[, .(patient.id, drug, AAC)]
+colnames(PDXdrugResp) <- c('sample', 'drug', 'AAC')
+```
+
+```{r }
+PDXmergedDT <- merge(PDXgeneExprClassDT2, PDXdrugResp, by="sample")
+```
+
+```{r }
+plots <- boxplotPDXsubtypePerDrug(PDXmergedDT)
+```
+
+```{r }
+plotGrids <- ggarrangePlotL(plots, 6)
+```
+
+```{r fig.height=12, fig.width=8}
+for (pGrid in plotGrids) {
+  grid.draw(pGrid)
+}
 ```
 
 ## 10. Cellarity Comparison
