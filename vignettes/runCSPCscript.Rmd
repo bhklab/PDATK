@@ -58,6 +58,7 @@ source('../R/networkCommunitySearch.R')
 source('../R/geneSignatureComparison.R')
 source('../R/biomarkerComparison.R')
 source('../R/singleSampleClassifier.R')
+source('../R/compassSubtypeWaterfall.R')
 ```
 
 ```{r rorder_cohorts_to_match}
@@ -269,18 +270,18 @@ ggsave(file=file.path("..", "data", "sigScorePlots.pdf"), sigScorePlots)
 ## 4. Biomarker Comparison
 
 ```{r }
-biomarkersOfInterest <- c("EGFR", "SNAI2", "KRT81", "GATA6", "CYP3A5", "HNF1A",
+biomarkers <- c("EGFR", "SNAI2", "KRT81", "GATA6", "CYP3A5", "HNF1A",
                          "REG1A", "REG1B", "REG3A", "CEL")
-names(biomarkersOfInterest) <- c(rep("Basal", 3), rep("Classical", 3), rep("Exocrine", 4))
-geneBiomarkerScoreL <- lapply(biomarkersOfInterest, computeGeneBiomarkerScores, 
+names(biomarkers) <- c(rep("Basal", 3), rep("Classical", 3), rep("Exocrine", 4))
+geneBiomarkerScoreL <- lapply(biomarkers, computeGeneBiomarkerScores, 
                               cohortsDataL=cohortsDataL,
                               sampleMetaClassDT=sampleMetaClassDT)
-names(geneBiomarkerScoreL) <- biomarkersOfInterest
+names(geneBiomarkerScoreL) <- biomarkers
 ```
 
 ```{r }
 biomarkerScoreBoxplotL <- boxplotBiomarkerScoresList(geneBiomarkerScoreL, 
-                                                     biomarkersOfInterest,
+                                                     biomarkers,
                                                      comparisons)
 ```
 
@@ -307,7 +308,7 @@ exocrinePlots
 ```
 
 
-## 5. Single Sample Classifier 
+## 5. Single Sample Classifier
 
 ```{r }
 cohortCommMat <- computeCohortCommunityMatrix(cohortsDataL, metaGenes)
@@ -350,6 +351,7 @@ g1Gt2Matrix[1:5, 1:5]
 ```
 
 ```{r make_model_predictions}
+################## DONT CLICK ME ############################
 sampleClassPreds <- predictSingleSampleClasses(g1Gt2Matrix, metaClassesFactor, nthread=14)
 qsave(sampleClassPreds, file.path('..', 'results', 'sampleClassPreds.qs'))
 ```
@@ -369,7 +371,6 @@ singleSampClassifDT <- merge(classPredDT, sampleMetaClassDT, on=samples, sort=FA
 ```
 
 ## 6. Compass Subtyping Waterfall
-
 
 ```{r load_data}
 compassSurvDT <- fread(file.path("..", "data", "compassSurvDT.csv"))
@@ -391,7 +392,7 @@ head(sampClassPredwSurvivalDT)
 ```
 
 ```{r tumor_response_all_drug_all_classes, fig.height=8, fig.width=12}
-barplotTumorResponse(sampClassPredwSurvivalDT)
+waterfallPlotTumorResponse(sampClassPredwSurvivalDT)
 ```
 
 ```{r tumor_response_basalvclassical_ffx, fig.height=8, fig.width=12}
@@ -400,11 +401,11 @@ survBasalvClassicalDT <-
                              drug %in% c("FFx", "FFx x 1")]
 
 classSurvComparison <- survfit(Surv(OS, OSstatus) ~ predClass, 
-                               data=survBasalvClassical)
+                               data=survBasalvClassicalDT)
 
 pValue <- surv_pvalue(classSurvComparison)$pval.txt
 
-barplotTumorResponse(survBasalvClassicalDT, noXaxis=TRUE, pVal=pValue)
+waterfallPlotTumorResponse(survBasalvClassicalDT, noXaxis=TRUE, pVal=pValue)
 ```
 
 ```{r prop_hazards_model}
@@ -443,8 +444,44 @@ saveRDS(PGxCCLpreds, file.path("..", "results", "PGxSubtypePredictions"))
 
 ## 8. PharmacoGx Cellline Drug Sensitivity 
 
-```{r }
+```{r load_data_and_process}
+CCLsensitivityL <- readRDS(file.path("..", "data", "CCLdrugSensitivityAUCs.rds"))
+```
 
+```{r format_data}
+CCLsensitivityDtL <- formatCCLsensitivityLtoDT(CCLsensitivityDtL)
+```
+
+```{r merge_drugs_and_classes}
+mergedCelllineDT <- mergeClassAndDrugs(PGxCCLpreds, CCLsensitivityDtL)
+```
+
+```{r get_wilcox_test_pvals}
+# Remove GDSC as non-NA AUCs are only in one class
+wilcoxPvals <- computeWilcoxOnSharedDrugs(mergedCelllineDT[dataset != "GDSC"], 
+                                          class1="Basal", class0="Classical")
+wilcoxPvals$CCLE
+```
+
+```{r }
+concordanceInds <- computeConcIndOnSharedDrugs(mergedCelllineDT, class="Basal")
+concordanceInds
+```
+
+```{r meta_stats}
+metaStatsDT <- calculateMetaStats(concordanceInds)
+```
+
+```{r AUC_boxplots}
+# Exclude GDSC due to NA stats
+plot <- boxplotAUCperSubtypePerDataset(mergedCelllineDT[dataset != "GDSC"],
+                                       concordanceInds[names(concordanceInds) != "GDSC"])
+## TODO:: Write utility function for setting grid rows/cols
+.ceilSqrt <- function(x) ceiling(sqrt(length(plot)))
+```
+
+```{r fig.height=12, fig.width=12}
+ggarrange(plotlist=plot, ncol=.ceilSqrt(plot), nrow=.ceilSqrt(plot))
 ```
 
 ## 9. PDXE Drug Subtyping
@@ -478,6 +515,7 @@ saveRDS(PGxCCLpreds, file.path("..", "results", "PGxSubtypePredictions"))
 ## 14. Published Classifier Subtyping
 
 ```{r }
+
 ```
 
 

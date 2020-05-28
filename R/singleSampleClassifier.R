@@ -36,7 +36,7 @@ trainSingleSampleClassifer <- function(cohortComMat, sampleMetaClassDT, class, m
 #'
 calcTopGenes1Gt2Matrix <- function(cohortTopGenesMat, topGenes1, topGenes2, genePairs) {
   topGenes1Gt2 <- apply(cohortTopGenesMat, 2, 
-                        function(col, genes1, genes2) 
+                        function(col, genes1, genes2)
                           list(as.numeric(col[genes1] > col[genes2])),
                         genes1=unlist(topGenes1),
                         genes2=unlist(topGenes2))
