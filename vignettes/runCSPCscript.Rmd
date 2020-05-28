@@ -487,8 +487,13 @@ ggarrange(plotlist=plot, ncol=.ceilSqrt(plot), nrow=.ceilSqrt(plot))
 ## 9. PDXE Drug Subtyping
 
 
-```{r }
+```{r load_data}
+PDXgeneExprDT <- fread(file.path("..", "data", "PDXgeneExpr.csv"))
+```
 
+```{r }
+preprocGeneExprDT <- preprocPDXdata(PDXgeneExprDT, binaryRFmodel, topGeneDT,
+                                    g1Gt2Matrix, metaClassesFactor)
 ```
 
 ## 10. Cellarity Comparison
