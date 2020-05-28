@@ -30,6 +30,7 @@ library(piano)
 require(ggplot2)
 library(ggpubr)
 library(BiocParallel)
+library(qs)
 library(data.table)
 library(effsize)
 library(vcdExtra)
@@ -59,7 +60,11 @@ source('../R/geneSignatureComparison.R')
 source('../R/biomarkerComparison.R')
 source('../R/singleSampleClassifier.R')
 source('../R/compassSubtypeWaterfall.R')
+source('../R/PDXdrugSubtyping.R')
+source('../R/cancerCellineDrugSensitivities.R')
+source('../R/cellularityComparison.R')
 ```
+
 
 ```{r rorder_cohorts_to_match}
 cohortOrder <-c("pcsi", "tcga", 
@@ -486,7 +491,6 @@ ggarrange(plotlist=plot, ncol=.ceilSqrt(plot), nrow=.ceilSqrt(plot))
 
 ## 9. PDXE Drug Subtyping
 
-
 ```{r load_data}
 # Why is first dataset here? Nothing is done with it?
 PDXgeneExpr <- fread(file.path("..", "data", "PDXgeneExpr.csv"))
@@ -531,7 +535,6 @@ for (pGrid in plotGrids) {
 
 ## 10. Cellarity Comparison
 
-
 ```{r load_data}
 cellularityFileL <- list.files(file.path("..", "data"), 
                                pattern="cellularity.*tsv", 
@@ -554,12 +557,25 @@ boxplotCellarityByCohort(mergedCohortCellDT,
 
 ## 11. Copy Number Abberation
 
+```{r load_data}
+copyNumSNPposDT <- fread(file.path("..", "data", "copyNumSNPpos.csv"))
+osloTCGAcnScores <- fread(file.path('..', 'data', 'osloTCGAcnScores.csv'))
+```
+
 ```{r }
+setDTthreads(14)
+CNAscoreByProbeDT <- countCNAscoresByProbe(osloTCGAcnScores, copyNumSNPposDT, annotSampMetaClassDT)
+```
+
+```{r fig.height=14, fig.width=14}
+chrScorePlots <- plotPerChromosomeCNAscores(CNAscoreByProbeDT)
+ggarrangePlotL(chrScorePlots, 6)
 ```
 
 ## 12. Calculate Cluster Meta-Effect Size
 
 ```{r }
+
 ```
 
 ## 13. Pathway Analysis
@@ -572,7 +588,6 @@ boxplotCellarityByCohort(mergedCohortCellDT,
 ```{r }
 
 ```
-
 
 
 ```{r }
