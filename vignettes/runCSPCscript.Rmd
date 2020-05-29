@@ -600,11 +600,11 @@ rankedMetaClassGenes <- rankMetaClassGenesByEffSize(classByGnEffSizeDT)
 
 ```{r }
 referenceGenes <- rownames(cohortsDataL[[1]])
-
+pathwayStatsDT <- computePathwayScores(rankedMetaClassGenes, pathwayL, referenceGenes)
 ```
 
 ```{r }
-
+pathwayHMPs <- heatmapPathwayScores(pathwayStatsDT, significance=0.05)
 ```
 
 
@@ -617,6 +617,3 @@ referenceGenes <- rownames(cohortsDataL[[1]])
 
 ```{r }
 ```
-
-
-
