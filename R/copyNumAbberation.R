@@ -55,7 +55,8 @@ plotPerChromosomeCNAscores <- function(CNAscoreDT) {
                       geom_line(aes(x=Position, y=-down), color="black") +
                       xlab("") + xlab("") +
                       ggtitle(paste0("Chromosome: ", unique(DT$Chr))) +
-                      theme_classic()
+                      theme_classic() +
+                      facet_grid(rows=vars(metaClass))
                   })
   return(plots)
 }

@@ -575,7 +575,12 @@ ggarrangePlotL(chrScorePlots, 6)
 ## 12. Calculate Cluster Meta-Effect Size
 
 ```{r }
+genewiseCohortsDT <- makeGenewiseCohortsDT(preprocCohortDataL, annotSampMetaClassDT)
+```
 
+```{r }
+# TODO:: Rewrite this with group by in data.table
+weightedMeanDT <- calcClustMetaEstStats(genewiseCohortsDT)
 ```
 
 ## 13. Pathway Analysis
