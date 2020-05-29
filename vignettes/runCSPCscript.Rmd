@@ -580,13 +580,33 @@ genewiseCohortsDT <- makeGenewiseCohortsDT(preprocCohortDataL, annotSampMetaClas
 
 ```{r }
 # TODO:: Rewrite this with group by in data.table
-weightedMeanDT <- calcClustMetaEstStats(genewiseCohortsDT)
+classByGnEffSizeDT <- calcClustMetaEstStats(genewiseCohortsDT)
+```
+
+```{r save_results}
+fwrite(classByGnEffSizeDT, file.path('..', 'results', 'classByGeneWeigthedEffSize.csv'))
 ```
 
 ## 13. Pathway Analysis
 
-```{r }
+```{r load_data}
+pathwayL <- loadPathwayGMTs(file.path("..", "data"))
+names(pathwayL)
 ```
+
+```{r }
+rankedMetaClassGenes <- rankMetaClassGenesByEffSize(classByGnEffSizeDT)
+```
+
+```{r }
+referenceGenes <- rownames(cohortsDataL[[1]])
+
+```
+
+```{r }
+
+```
+
 
 ## 14. Published Classifier Subtyping
 
