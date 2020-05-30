@@ -38,6 +38,7 @@ library(survcomp)
 library(RColorBrewer)
 library(lattice)
 library(ggplotify)
+library(BBmisc)
 library(gridExtra)
 library(ggsci)
 library(cowplot)
@@ -63,6 +64,9 @@ source('../R/compassSubtypeWaterfall.R')
 source('../R/PDXdrugSubtyping.R')
 source('../R/cancerCellineDrugSensitivities.R')
 source('../R/cellularityComparison.R')
+source('../R/copyNumAberration.R')
+source('../R/clusterMetaEffectSizeCalculation.R')
+source('../R/pathwayAnalysis.R')
 ```
 
 
@@ -481,8 +485,7 @@ metaStatsDT <- calculateMetaStats(concordanceInds)
 # Exclude GDSC due to NA stats
 plot <- boxplotAUCperSubtypePerDataset(mergedCelllineDT[dataset != "GDSC"],
                                        concordanceInds[names(concordanceInds) != "GDSC"])
-## TODO:: Write utility function for setting grid rows/cols
-.ceilSqrt <- function(x) ceiling(sqrt(length(plot)))
+
 ```
 
 ```{r fig.height=12, fig.width=12}
@@ -567,9 +570,11 @@ setDTthreads(14)
 CNAscoreByProbeDT <- countCNAscoresByProbe(osloTCGAcnScores, copyNumSNPposDT, annotSampMetaClassDT)
 ```
 
-```{r fig.height=14, fig.width=14}
+```{r }
 chrScorePlots <- plotPerChromosomeCNAscores(CNAscoreByProbeDT)
-ggarrangePlotL(chrScorePlots, 6)
+```
+```{r fig.height=14, fig.width=14}
+ggarrangePlotL(chrScorePlots, 9)
 ```
 
 ## 12. Calculate Cluster Meta-Effect Size
@@ -590,8 +595,8 @@ fwrite(classByGnEffSizeDT, file.path('..', 'results', 'classByGeneWeigthedEffSiz
 ## 13. Pathway Analysis
 
 ```{r load_data}
-pathwayL <- loadPathwayGMTs(file.path("..", "data"))
-names(pathwayL)
+geneSetL <- loadGnSetGMTs(file.path("..", "data"))
+names(geneSetL)
 ```
 
 ```{r }
@@ -600,18 +605,31 @@ rankedMetaClassGenes <- rankMetaClassGenesByEffSize(classByGnEffSizeDT)
 
 ```{r }
 referenceGenes <- rownames(cohortsDataL[[1]])
-pathwayStatsDT <- computePathwayScores(rankedMetaClassGenes, pathwayL, referenceGenes)
+pathwayStatsDT <- computePathwayScores(rankedMetaClassGenes, geneSetL, referenceGenes)
 ```
 
 ```{r }
 pathwayHMPs <- heatmapPathwayScores(pathwayStatsDT, significance=0.05)
 ```
 
+```{r}
+ggarrangePlotL(pathwayHMPs, 3)
+```
 
 ## 14. Published Classifier Subtyping
 
 ```{r }
+classifFileL <- list.files(file.path('..', 'data'), pattern="centroid", 
+                          ignore.case=TRUE, full.names=TRUE)
 
+classifL <- lapply(classifFileL, readRDS)
+names(classifL) <- gsub('^.*\\/|[Cc]entroid*|\\.[^\\.]*$', '', classifFileL)
+```
+
+```{r }
+publishedClassifSubtypel <- subtypeDataLwClassifCentroidL(PGxCelllinesL, classifL, 
+                                                          PGxCCLpreds, seed=1987, 
+                                                          nthread=14)
 ```
 
 

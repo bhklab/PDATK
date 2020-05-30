@@ -1,7 +1,7 @@
 ##FIXME:: Make sure all the data is either a factor, or not a factor?
 ##FIXME:: This breaks when written with levels because not all of them are factors
 #' Convert the levels of a factor to number
-#' 
+#'
 #' A convenience function for converting factor levels into numeric
 #'
 #' @param factor A \code{factor} vector to convert to numeric.
@@ -209,8 +209,8 @@ subsetSharedCohortsAndSamples <- function(metaestimateData) {
 #'
 #' @param dataset A \code{matrix} of cohort gene expression data.
 #'     Genes are rows, samples are columns.
-#' 
-#' @return A \code{data.frame} containing the gene names, row-wise median 
+#'
+#' @return A \code{data.frame} containing the gene names, row-wise median
 #'     absolute deviances and MAD rankings for the specified cohort. The
 #'     \code{data.frame} has an attribute holding the number of columns
 #'     in the original `dataset` for use in other functions.
@@ -219,12 +219,12 @@ subsetSharedCohortsAndSamples <- function(metaestimateData) {
 #' @importFrom data.table data.table transpose
 #' @export
 calcRowMADdf <- function(dataset) {
-    
+
     DT <- data.table(dataset)
-    madDT <- DT[, `:=`(madValues=vapply(transpose(.SD), function(row) mad(row, na.rm=TRUE), FUN.VALUE=numeric(1)), 
+    madDT <- DT[, `:=`(madValues=vapply(transpose(.SD), function(row) mad(row, na.rm=TRUE), FUN.VALUE=numeric(1)),
                        genes=rownames(dataset))][, .(genes, madValues)]
     madDT[, rank := dense_rank(-madValues)]
-    return(structure(as.data.frame(madDT, row.names=madDT$genes), 
+    return(structure(as.data.frame(madDT, row.names=madDT$genes),
                      datasetCols=ncol(dataset)))
 }
 
@@ -233,23 +233,29 @@ calcRowMADdf <- function(dataset) {
 #' @param vector An input vector to extend using `fillVal``
 #' @param desiredLength How long the output vector should be
 #' @param fillVal Fill with NA or some value the same type as `vector`
-#' 
+#'
 #' @return A \code{vector} of the same type as `vector` filled with `fillVal`
 #'     up to `desiredLength`.
 #'
-#' 
+#'
 #' @keywords internal
 #' @export
 .fillVector <- function(vector, desiredLength, fillVal) {
-    if (length(vector) < desiredLength) 
+    if (length(vector) < desiredLength)
         stop("`desiredLength` is shorter than vector?")
-    if (length(fillVal) > 1) 
+    if (length(fillVal) > 1)
         stop("Only supports single fill value!")
     if (fillVal != NA) {
         if (class(fillVal) != class(vector))
             stop("Please pass NA or a fill value of the same type
                  as `vector`")
     }
-    
+
     c(vector, rep(fillVal, desiredLength - length(vector)))
 }
+
+#'
+#'
+#'
+#'
+.ceilSqrt <- function(x) ceiling(sqrt(length(plot)))

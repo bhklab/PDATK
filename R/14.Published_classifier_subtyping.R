@@ -33,9 +33,9 @@ source("../../data/Published_classifiers_data/bailey_centroid_function.R")
 source("../../data/Published_classifiers_data/moffitt_centroid_function.r")
 source("../../data/Published_classifiers_data/pam50_centroid_function.r")
 
-####### Pharmacogx celllines 
+####### Pharmacogx celllines
 dataset_format <- function(dataset){
-  
+
   dataset1=avereps(dataset)
   dataset1=data.frame(dataset1)
   dataset2= sapply(dataset1, function(x) as.numeric(as.character(x)))
@@ -51,28 +51,28 @@ ctrpv2= dataset_format(panc_celllines1$CTRPV2)
 
 ##### PDACs
 
-load('../../data/common_genes_cohorts_new.RData')       
+load('../../data/common_genes_cohorts_new.RData')
 
 
 #######################################################################################
 #################################### Clustering using all the methods
 cluster_all <-function(dataset){
   #dataset<-ctrpv2
-  
+
   dataset_collisson = collisson_subtyping(dataset,collisson_centroid)
   dataset_bailey = bailey_subtyping(dataset,bailey_centroid)
   dataset_moffitt = moffitt_subtyping(dataset,moff_centroid)
   dataset_pam50 = pam50_subtyping(dataset,pam50_centroid)
   dataset_metasubtypes = mgsub( c(1,2,3), c("Meta_Basal","Meta_Exocrine","Meta_Classical"),meta_subtype_cellines(dataset)$subtypes  )
-  
-  ################################# Making the heatmap 
-  
+
+  ################################# Making the heatmap
+
   Moffitt = mgsub( c("Classical","Basal"), c("Moffitt_Classical", "Moffitt_Basal"),dataset_moffitt[[3]] )
   Collisson = mgsub( c("Classical PDA","QM-PDA","Exocrine-like PDA"), c("Collisson_classical","Collisson-QM-PDA","Collisson-Exocrine-like PDA"),dataset_collisson[[3]] )
   PAM50 = dataset_pam50[[3]]
   Bailey = mgsub( c("Pancreatic Progenitor","Squamous","ADEX","Immunogenic"), c("Bailey_PP", "Bailey_Squamous","Bailey_ADEX","Bailey_Immune"), dataset_bailey[[3]] )
   Metaclusters = dataset_metasubtypes
-  
+
   dat<- rbind(Metaclusters, Bailey,  Moffitt,Collisson, PAM50)
   dat1<- data.frame(dat)
   colnames(dat1) = colnames(dataset)
@@ -117,7 +117,7 @@ new[upper.tri(new)] <- cramer_matrix[upper.tri(cramer_matrix)]
 new[lower.tri(new)] <- p_value[upper.tri(p_value)]
 
 rownames(new) = rownames(dat1)
-colnames(new)= rownames(new) 
+colnames(new)= rownames(new)
 new
 
 ###
@@ -156,15 +156,15 @@ melted_cormat <- melt(upper_tri, na.rm = TRUE)
 library(ggplot2)
 ggheatmap <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
   geom_tile(color = "white")+
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
                        name="Cramer's V index") +
-  theme_minimal()+ 
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,
                                    size = 12, hjust = 1))+
   coord_fixed()
 
-gg_heatmap =ggheatmap + 
+gg_heatmap =ggheatmap +
   geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
   theme(
     axis.title.x = element_blank(),
@@ -204,8 +204,8 @@ theme_none <- theme(
   #axis.ticks.length = element_blank()
 )
 # Dendrogram 2
-p3 <- ggplot(segment(ddata_y)) + 
-  geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) + 
+p3 <- ggplot(segment(ddata_y)) +
+  geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
   coord_flip() + theme_none
 pdf("../results/Other_classifiers_PHARMACOGX_heatmap_cramer.pdf")
 
@@ -220,7 +220,7 @@ big_matrix1 =list()
 
 for( i in 1: length(cohorts1)){
   print(paste("Clustering Dataset",i))
-  
+
   big_matrix1[[i]]= cluster_all(cohorts1[[i]])
   #temp = cbind(big_matrix1,temp)
 }
@@ -261,7 +261,7 @@ new[upper.tri(new)] <- cramer_matrix[upper.tri(cramer_matrix)]
 new[lower.tri(new)] <- p_value[upper.tri(p_value)]
 
 rownames(new) = rownames(dat1)
-colnames(new)= rownames(new) 
+colnames(new)= rownames(new)
 new
 
 ###
@@ -299,15 +299,15 @@ melted_cormat <- melt(upper_tri, na.rm = TRUE)
 library(ggplot2)
 ggheatmap <- ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
   geom_tile(color = "white")+
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
                        name="Cramer's V index") +
-  theme_minimal()+ 
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,
                                    size = 12, hjust = 1))+
   coord_fixed()
 
-gg_heatmap =ggheatmap + 
+gg_heatmap =ggheatmap +
   geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
   theme(
     axis.title.x = element_blank(),
@@ -347,11 +347,12 @@ theme_none <- theme(
   #axis.ticks.length = element_blank()
 )
 # Dendrogram 2
-p3 <- ggplot(segment(ddata_y)) + 
-  geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) + 
+p3 <- ggplot(segment(ddata_y)) +
+  geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
   coord_flip() + theme_none
 
 pdf("../results/Other_classifiers_all_cohorts_CRAMER.pdf")
 grid.newpage()
 print(gg_heatmap , vp=viewport(0.8, 0.8, x=0.4, y=0.4))
 print(p3, vp=viewport(0.1, 0.65, x=0.8, y=0.4))
+
