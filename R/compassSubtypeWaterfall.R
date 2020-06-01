@@ -56,14 +56,6 @@ predictSampleMetaClass <- function(exprTable, classifModel, topGenesDT,
 #'
 #'
 #'
-#'
-calculateClust
-
-
-#'
-#'
-#'
-#'
 waterfallPlotTumorResponse<- function(classSurvCompDT, noXaxis=FALSE, pVal, saveDir, fileName) {
   plot <- ggbarplot(classSurvCompDT[!is.na(tumorResponse), ],
                     x="studyID", y="tumorResponse",

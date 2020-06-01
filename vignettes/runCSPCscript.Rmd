@@ -23,6 +23,7 @@ library(randomForest)
 library(switchBox)
 library(impute)
 library(KMsurv)
+library(scales)
 library(switchBox)
 library(survminer)
 library(limma)
@@ -627,11 +628,11 @@ names(classifL) <- gsub('^.*\\/|[Cc]entroid*|\\.[^\\.]*$', '', classifFileL)
 ```
 
 ```{r }
-publishedClassifSubtypel <- subtypeDataLwClassifCentroidL(PGxCelllinesL, classifL, 
-                                                          PGxCCLpreds, seed=1987, 
-                                                          nthread=14)
+publishedClassifSubtypeDT <- subtypeDataLwClassifCentroidL(PGxCelllinesL, classifL, 
+                                                          PGxCCLpreds, seed=1987)
 ```
 
 
 ```{r }
+plotClassifierComparisons(publishedClassifSubtypeDT)
 ```

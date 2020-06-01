@@ -17,9 +17,10 @@ subtypeWithClassifier <- function(exprData, centroid, seed=NULL, repeats=100) {
     exprData <- .scaleGenewise(limma::avereps(exprData[keepGenes, ]),
                                      scale=TRUE, center=TRUE)
 
+    ## FIXME:: Original COINCIDE clustering used Pearson distance?
     exprDataClust <- consensusClusterCohort(cohort=exprData,
                                             maxK=4,
-                                            distance="pearson",
+                                            distance="spearman",
                                             method="hc",
                                             reps=repeats,
                                             seed=seed)
@@ -55,13 +56,7 @@ subtypeWithClassifier <- function(exprData, centroid, seed=NULL, repeats=100) {
 #'
 #'
 subtypeDataLwClassifCentroidL <- function(rawDataL, classifCentroidL,
-                                          predMetaClassL, seed=NULL, nthread) {
-    ## Temporily change number of cores to parallelize over
-    if (!missing(nthread)) {
-        opts <- options()
-        options("mc.cores"=nthread)
-        on.exit(options(opts))
-    }
+                                          predMetaClassL, seed=NULL) {
 
     ## Match classification using consenus method with cluaster from different
     ## classifiers
@@ -105,7 +100,6 @@ subtypeDataLwClassifCentroidL <- function(rawDataL, classifCentroidL,
                                        pair=paste("meta", predClass, sep='-'),
                                        pairCor=rep(NA, nrow))]
         }
-        browser()
         metaDT <- rbindlist(predMetaClassL)[, .SD, .SDcols=colnames(subtypeDT)]
         subtypeDT <- rbind(subtypeDT, metaDT)
     }
@@ -129,6 +123,31 @@ correlateCentroids <- function(centroid1, centroid2) {
     return(clustMatches)
 }
 
+
+#'
+#'
+#'
+#'
+#'
+plotClassifierComparisons <- function(pubClassifSubtypeDT, samplesInAllClassif=TRUE) {
+    if (samplesInAllClassif) {
+        splitOnClassifL <- split(pubClassifSubtypeDT, by='classif')
+        sharedSamples <- Reduce(intersect, lapply(splitOnClassifL, `[[`, "sample"))
+        DT <- copy(pubClassifSubtypeDT[sample %in% sharedSamples, ])
+    } else {
+        DT <- copy(pubClassifSubtypeDT)
+    }
+
+    DT[, classifSubtype := mapply(paste, classif, metaClusters, sep=":")]
+
+    ggplot(DT, aes(x=classif, y=sample, fill=classifSubtype)) +
+        geom_tile(color='black')
+}
+
+
+
+
+##TODO:: Move below to utilities.R
 
 #'
 #'
