@@ -91,7 +91,7 @@ boxplotClassNLR <- function(classSurvCompDT, method="kruskal.test",
                              label.y=max(classSurvCompDT$NLR) * 1.1)
 
   if(!missing(saveDir) && !missing(fileName)) {
-    ggsave(plot, file.path(saveDir, fileName))
+    ggsave(file.path(saveDir, fileName), plot)
     message(paste0("Saved to ", file.path(saveDir, fileName)))
   }
   return(plot)

@@ -29,9 +29,9 @@ whichNotCensoredYearOne <- function(seqCohort) {
 #' Merge common samples not censored before year 1
 #'
 #' @param seqCohort A \code{matrix} containing expression data for the sequence
-#'   cohort
+#'   cohort.
 #' @param arrayCohort A \code{matrix} containing expression data for the array
-#'   cohort
+#'   cohort.
 #'
 #' @return A \code{data.frame} containing the merged cohorts
 #'
@@ -131,7 +131,7 @@ convertCohortToMatrix <- function(cohort) {
     ))
 }
 
-##TODO:: Should this go in utilties?
+
 #' Merge n lists element-wise into a list of sublists n items long
 #'
 #' Take n lists and combine them element-wise into a single list with each sublist
@@ -237,7 +237,6 @@ calcRowMADdf <- function(dataset) {
 #' @return A \code{vector} of the same type as `vector` filled with `fillVal`
 #'     up to `desiredLength`.
 #'
-#'
 #' @keywords internal
 #' @export
 .fillVector <- function(vector, desiredLength, fillVal) {
@@ -245,7 +244,7 @@ calcRowMADdf <- function(dataset) {
         stop("`desiredLength` is shorter than vector?")
     if (length(fillVal) > 1)
         stop("Only supports single fill value!")
-    if (fillVal != NA) {
+    if (!is.na(fillVal)) {
         if (class(fillVal) != class(vector))
             stop("Please pass NA or a fill value of the same type
                  as `vector`")
@@ -254,8 +253,9 @@ calcRowMADdf <- function(dataset) {
     c(vector, rep(fillVal, desiredLength - length(vector)))
 }
 
+#' Get the ceiling of the square root of the length of a vector or list.
 #'
+#' @param x A vector-like object for which `length` is defined.`
 #'
-#'
-#'
+#' @keywords internal
 .ceilSqrt <- function(x) ceiling(sqrt(length(plot)))

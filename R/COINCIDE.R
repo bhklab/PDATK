@@ -8,7 +8,7 @@
 #'
 #' @importFrom matrixStats weightedMad
 #' @export
-calcGeneWiseWeightedMADs <- function(cohortMADrankings) {
+calcGenewiseWeightedMADs <- function(cohortMADrankings) {
 
   cohortMADvals <- lapply(cohortMADrankings, `[[`, "madValues")
   cohortNcols <- vapply(cohortMADrankings,
@@ -31,15 +31,15 @@ calcGeneWiseWeightedMADs <- function(cohortMADrankings) {
 #'
 #' @param cohortMADrankings A \code{list} of \code{data.frames} containing
 #'     the genes, madValuesa nd ranking for each cohort. As returned by
-#'     the `rowMADdfs` function.
+#'     the `rankAllCohortGenesByMAD` function.`
 #'
 #' @return A \code{data.frame} with columns genes, weightedMADs and rankings
 #'     ordered by decreasing weightedMAD values.
 #'
 #' @importFrom dplyr dense_rank
 #' @export
-calcGeneWiseWeightedMADdf <- function(cohortMADrankings) {
-  weightedMADs <- calcGeneWiseWeightedMADs(cohortMADrankings)
+calcGenewiseWeightedMADdf <- function(cohortMADrankings) {
+  weightedMADs <- calcGenewiseWeightedMADs(cohortMADrankings)
   data <- data.frame(
     "genes"=cohortMADrankings[[1]]$genes,
     "weightedMADs"=weightedMADs,
@@ -115,10 +115,14 @@ getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, m) {
 #' @param method A \code{character} vector containing the name of
 #'    the clustering method to use in `ConsensusClusterPlus`. See
 #'    `?ConsensusClusterPlus` for more information.
+#' @param reps A \code{numeric} vector containing the integer number of times
+#'    to repeat clustering. Defaults to 1000.
 #' @param suppressPlots A \code{logical} vector indicating whether to suppress
 #'    the plots fomr ConsensusClusterPlus. Defaults to TRUE.
 #' @param plotTo A \code{character} vector passed to the plot argument of
 #'    `ConsensusClusterPlus`. Defaults to NULL.
+#' @param seed A \code{numeric} vector containing an integer random seed to
+#'    set for sampling in the `ConsensusClustPlus` function.
 #' @param ... Fallthrough arguments to `ConsensusClusterPlus`. If specficied
 #'     the function defaults are overridden.
 #'
@@ -131,7 +135,7 @@ getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, m) {
 #' @importFROM IDPmisc NaRV.omit
 #' @importFrom ConsensusClusterPlus ConsensusClusterPlus
 #' @export
-consensusClusterCohort <- function(cohort, maxK, distance, method, reps=1000,
+conClustCohort <- function(cohort, maxK, distance, method, reps=1000,
                                    suppressPlots=TRUE, plotTo=NULL, seed=NULL, ...) {
 
   if (suppressPlots) pdf(NULL)
@@ -185,11 +189,48 @@ consensusClusterCohort <- function(cohort, maxK, distance, method, reps=1000,
   )
 }
 
+#' Consensus cluster a list of normalized expression matixes
+#'
+#' @param cohortL A \code{list} of expression data matrixes, with rows
+#'     as genes and columns as samples. As retruned by the `preprocCohorts`
+#'     function.
+#' @param maxK A \code{numeric} vector containing the integer number max
+#'     number of clusters to use. See
+#'    `?ConsensusClusterPlus` for more information.
+#' @param distance A \code{character} vector containing the name of
+#'    the distance metric to use in `ConsensusClusterPlus`. See
+#'    `?ConsensusClusterPlus` for more information.
+#' @param method A \code{character} vector containing the name of
+#'    the clustering method to use in `ConsensusClusterPlus`. See
+#'    `?ConsensusClusterPlus` for more information.
+#' @param reps A \code{numeric} vector containing the integer number of times
+#'    to repeat clustering. Defaults to 1000.
+#' @param seed A \code{numeric} vector containing an integer random seed to
+#'    set for sampling in the `ConsensusClustPlus` function. Defaults to NULL,
+#'    as in no seed.
+#' @param nthread An optional argument specifying the number of threads to
+#'    parallelize over. If excluded, the default number of threads from the
+#'    `BiocParallel` package will be used.
+#'
+conClustAllCohorts <- function(preprocCohorts, maxK=5, distance="pearson",
+                               method="hc", nthread, reps=1000, seed=NULL) {
+  # Temporily change number of cores to parallelize over
+  opts <- options()
+  options("mc.cores"=nthread)
+  on.exit(options(opts))
+
+  bplapply(preprocCohorts,
+           conClustCohort,
+           maxK=maxK, distance=distance,
+           method=method, seed=seed,
+           reps=reps)
+}
+
+#' Calculate the centroid from a
 #'
 #' @param i The cluster index
 #' @param cohort The cohort data with genes as columns, rows as samples
 #' @param clusterClasses The
-#'
 #'
 #'
 #' @importFrom matrixStats colMeans
@@ -215,11 +256,31 @@ consensusClusterCohort <- function(cohort, maxK, distance, method, reps=1000,
 #'    the `base::scale` function. Defaults to FALSE if excluded.
 #'
 #' @export
-preprocessCohorts <- function(cohorts, metaGenes, center=TRUE, scale=FALSE) {
+preprocCohorts <- function(cohorts, metaGenes, center=TRUE, scale=FALSE) {
   cohortSubsets <- .subsetCohorts(cohorts, genes=metaGenes)
   structure(lapply(cohortSubsets, .scaleGenewise,
                    center=center, scale=scale),
             .Names=names(cohorts))
+}
+
+#' Rank genes in a list of expression matrices by MAD
+#'
+#' @param cohortDataL A \code{list} of cohort expression matrixes.
+#' @param nthread A \code{numeric} vector containing the integer number of
+#'    threads to parallelize over.
+#'
+#' @return A \code{list} of `data.frame`s containng the gene names, MAD score
+#'    and rankingsfor each cohort in `cohortDataL`
+#'
+#' @importFrom BiocParallel bplapply
+#' @export
+rankAllCohortGenesByMAD <- function(cohortDataL, nthread) {
+  # Temporily change number of cores to parallelize over
+  opts <- options()
+  options("mc.cores"=nthread)
+  on.exit(options(opts))
+
+  bplapply(cohortsDataL, function(cohort) calcRowMADdf(cohort))
 }
 
 #' Convert to matrix, transform, scale row-wise, transform, return
@@ -254,7 +315,7 @@ preprocessCohorts <- function(cohorts, metaGenes, center=TRUE, scale=FALSE) {
 #'
 #'
 #'
-#'
+#' @export
 findAllCohortPairs <- function(clusterNames) {
     pairs <- expand.grid(x=seq_along(clusterNames), y=seq_along(clusterNames))
     namePairs <- expand.grid(x=clusterNames, y=clusterNames)
@@ -272,11 +333,17 @@ findAllCohortPairs <- function(clusterNames) {
     return(allPairs)
 }
 
+
+#' Calculate the MSM threshold between
 #'
+#' @param cohortPair
+#' @param allConClusters
+#' @param allProcCohorts
 #'
+#' @return A \code{}
 #'
-#'
-#'
+#' @importFrom
+#' @export
 calcMSMthresholds <- function(cohortPair, allConClusters, allProcCohorts) {
 
   # Get the name of the comparison and a vector of the cohort list indexes
@@ -337,6 +404,7 @@ calcMSMthresholds <- function(cohortPair, allConClusters, allProcCohorts) {
 #' @param nthread
 #'
 #' @importFrom BiocParallel bplapply
+#' @import data.table
 #' @export
 calcAllMSMthresholds <- function(cohortPairs, allConClusters,
                                  allProcCohorts, nthread) {
@@ -358,15 +426,23 @@ calcAllMSMthresholds <- function(cohortPairs, allConClusters,
 
 
 #' Calculate reproduction statistics for consensus clustering between two
-#'    cohorts using `numReps` random samples.
+#'    cohorts using `reps` random samples.
 #'
-#' @param conClusters
-#' @param procCohorts
-#' @param numReps
-#' @param seed
+#' @param conClusters A \code{list} of concensus clustering results, as returned
+#'    by the `conClustCohort` function or as a list item from `conClustAllCohorts`.
+#' @param procCohort A \code{matrix} of normalized gene expression data with genes
+#'    as rows and samples as columns.
+#' @param reps The number of permutations to use in `clusterRepro` function. Defaults
+#'    to 100.
+#' @param seed The integer seed to set when reproducing clusters.
 #'
+#' @return A \code{data.table} containing the p.value, Number, Actual.IGP,
+#'   Actual.Size values for each cluster pair-wise cluster comparison.
+#'
+#' @importFrom clusterRepro clusterRepro
+#' @import data.table
 #' @export
-calcClusterRepro <- function(conClusters, procCohorts, numReps=100,
+calcClusterRepro <- function(conClusters, procCohort, reps=100,
                              seed=NULL) {
 
   if (!is.null(seed)) set.seed(seed)
@@ -378,7 +454,7 @@ calcClusterRepro <- function(conClusters, procCohorts, numReps=100,
 
   # Extract data
   clust1Centroid <- na.omit(conClusters[[1]]$centroidClusters)
-  clust2Data <- na.omit(procCohorts[[2]])
+  clust2Data <- na.omit(procCohort[[2]])
   clust2Classes <- na.omit(conClusters[[2]]$classes)
 
   # Find common genes
@@ -390,7 +466,7 @@ calcClusterRepro <- function(conClusters, procCohorts, numReps=100,
 
   # Reproduce clusters
   repClusters <- clusterRepro(clust1Centroid, clust2Data,
-                              Number.of.permutations=numReps)
+                              Number.of.permutations=reps)
   return(as.data.table(repClusters))
 }
 
@@ -402,18 +478,22 @@ calcClusterRepro <- function(conClusters, procCohorts, numReps=100,
 #'
 #' @param MSMthresholds A \code{data.table} where columns 1 through 5 represent
 #' @param allConClusters A \code{list} of consensus clustering results for
-#'     all non-self pair-wise comparisons of cohorts.
-#' @param allProcCohorts A \code{list} of preprocessed expression cohorts
-#' @param numReps A \code{numeric} vector containing the integer number of
+#'     all non-self pair-wise comparisons of cohorts, as returned by the
+#'     `conClustAllCohorts` function.
+#' @param allProcCohorts A \code{list} of preprocessed gene expression data
+#'     for each cohort. As returned by the `preprocCohorts` function.
+#' @param reps A \code{numeric} vector containing the integer number of
 #'     random samples to reproduce clustering over.
 #' @param nthread A \code{numeric} vector containing the integer number of
 #'     threads to parallelize over.
-#' @param seed A \code{numeric} vector containing the desired seed to be
+#' @param seed A \code{numeric} vector containing the desired seed to be used
 #'     for sampling.
 #'
+#' @importFrom BiocParallel bpplappy DoparParam
+#' @importFrom doParallel registerDoParallel
 #' @export
 calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
-                                 numReps, nthread, seed=NULL) {
+                                 reps, nthread, seed=NULL) {
   if (!missing(nthread)) {
     opts <- options()
     options(mc.cores=nthread)
@@ -434,7 +514,7 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
                                thresholds[idx, ]$cohort2)
                  cl <- calcClusterRepro(cluster[cohortIdxs],
                                         data[cohortIdxs],
-                                        numReps=n,
+                                        reps=n,
                                         seed=seed)
                  cl$comparison <- rep(comp, nrow(cl))
                  cl
@@ -442,7 +522,7 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
                thresholds=uniqueThresholds,
                cluster=allConClusters,
                data=allProcCohorts,
-               n=numReps,
+               n=reps,
                seed=seed,
                BPPARAM=p)
 
@@ -459,10 +539,12 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
 #'    statistics, as calculated with `calcAllClusterRepro`.
 #'
 #' @importFrom ClusterRepro ClusterRepro
+#' @import data.table
 #' @export
 compareClusters <- function(MSMthresholds, allClusterRepro, pValue, actualIGP, minThresh) {
   # Subset to best clustering match per cluster in cohort 1
-  MSMmaxThresholds <- MSMthresholds[, .('c2Clust'=which.max(threshold), 'threshold'=max(threshold)),
+  MSMmaxThresholds <- MSMthresholds[, .('c2Clust'=which.max(threshold),
+                                        'threshold'=max(threshold)),
                                     by=.(comparison, c1Clust)]
   # Get indexes of significant rows
   sigClustIdx <- allClusterRepro[, na.omit(.I[p.value < pValue & Actual.IGP > actualIGP])]
@@ -480,11 +562,12 @@ compareClusters <- function(MSMthresholds, allClusterRepro, pValue, actualIGP, m
 #' Retrieve the network graph information based on a set of significant cluster
 #'    edges.
 #'
+#' @param clusterEdges A \code{list} of significant cluster edges
+#' @param seed An integer seed to set for for the community search.
 #'
-#' @param clusterEdges
-#' @param seed
-#'
-#' @
+#' @importFrom igraph graph_from_edgelist layout_with_fr as.undirected
+#'     fastgreedy.community
+#' @importFrom RColorBrewer brewer.pal
 #' @export
 getClusterNetworkData <- function(clusterEdges, seed=NULL) {
   # Set seed for reproducible results
@@ -509,10 +592,15 @@ getClusterNetworkData <- function(clusterEdges, seed=NULL) {
               "ugraph"=ugraph, "metaClusters"=metaClusters))
 }
 
+#' Find all possible clusters in all cohorts based on the optimal K value.
 #'
+#' @param allConClusters A \code{list} of consensus clustering results, as
+#'    returned by the `conClustAllCohorts` function.
 #'
+#' @return A \code{character} vector containing the cluster number appended to
+#'    the cohort name.
 #'
-#'
+#' @export
 findAllPossibleClusters <- function(allConClusters) {
   optKs <- lapply(allConClusters, `[[`, "optimalK")
   possibleClusters <- lapply(optKs, seq_len)
@@ -523,18 +611,35 @@ findAllPossibleClusters <- function(allConClusters) {
   return(unlist(clusterList))
 }
 
+#' Return which cohorts were not successfully clustered in `conClustAllCohorts`
 #'
+#' @param allPossibleClusters A \code{character} vector of cohort clusters,
+#'    as returned by the `findAllPossibleClusters` function.
+#' @param metaClusters A \code{communities} object from the `igraph` package,
+#'    as in the `metaClusters` item in the list returned by the
+#'    `getClusterNetworkData` function.
 #'
+#' @return A \code{character} vector of the cohort clusters which were not
+#'    successfully metaclustered.
 #'
-#'
+#' @export
 findCohortsNotClustered <- function(allPossibleClusters, metaClusters) {
   setdiff(allPossibleClusters, metaClusters$name)
 }
 
+#' Extract the per cohort cluster and meta cluster indexes from metaclustering
+#'    results.
 #'
+#' @param metaClusters A \code{communities} object from the `igraph` package,
+#'    as in the `metaClusters` item in the list returned by the
+#'    `getClusterNetworkData` function.
 #'
+#' @return A \code{data.table} with the columns cohort, cohortCluster and
+#'    metaCluster columns, matching the clusters from each individual cohort
+#'    clustering with the calculated metaclusters.
 #'
-#'
+#' @import data.table
+#' @export
 getCohortwiseClasses <- function(metaClusters, notClustered) {
   cohortClusters <- strsplit(c(metaClusters$names, notClustered), '-')
   cohortClasses <- data.table(do.call(rbind, cohortClusters))
@@ -545,12 +650,15 @@ getCohortwiseClasses <- function(metaClusters, notClustered) {
   return(cohortClasses[order(cohort), ])
 }
 
+#' Replace the metacluster indexes with name of the metaclusters
 #'
+#' @param allConClusters A \code{list} of consensus clustering results, as
+#'   returned byt he `conClustAllCohorts` function.
+#' @param clusterwiseSamples A \code{data.table} with the samples per cluster
+#'   in a list column, as returne dby the `getClusterwiseSamples` function.
 #'
-#' @param
-#' @param
-#'
-#'
+#' @import data.table
+#' @export
 annotateSampleMetaClasses <- function(allConClusters, clusterwiseSamples) {
   setorderv(clusterwiseSamples, cols=c('cohort', 'cohortCluster'))
   cohorts <- split(clusterwiseSamples, by='cohort')
@@ -575,21 +683,38 @@ annotateSampleMetaClasses <- function(allConClusters, clusterwiseSamples) {
                               SIMPLIFY=FALSE)
 }
 
+#' Helper function for `annotatedSampleMetaClasses` to convert metacluster
+#'     indexes to names.
+#'
+#' @param cohort A \code{data.table} of non-NA per cohort metacluster identities,
+#'    as in the `data.table` returned from `getClusterwiseSamples` if subset
+#'    to a single cohort.
+#' @param cluster A \code{list} of consensus clustering results, as retured
+#'    by the `conClustCohort` function or an item in list returned by
+#'    `conClustAllCohorts`.
+#'
+#' @keywords internal
 .annotateConClusters <- function(cohort, cluster) {
   cluster$metaClasses <- cohort[names(cluster$classes)]
   names(cluster$metaClasses) <- names(cluster$classes)
   return(cluster)
 }
 
+#' Append a list column with the vector of sample names in each cohort cluster
+#'   to the `data.table` returned by the `getCohortwiseClasses` function.
 #'
-#'
-#' @param cohortwiseClasses
-#' @param allConClusters
+#' @param cohortwiseClasses A \code{data.table} containing the meta cluster
+#'    index for each cohort cluster, as returned by the `getCohortwiseClasses`
+#'    function in this package.
+#' @param allConClusters A \code{list} of per cohort conensus clustering results,
+#'    as returned by the `conClustAllCohorts` function in this package.
 #'
 #' @return A \code{data.table} equivalent to `cohortwiseClasses`, except with
 #'   a \code{list} column called samples, containing the samples for each
 #'   cohort per cluster per metacluster.
 #'
+#' @import data.table
+#' @export
 getClusterwiseSamples <- function(cohortwiseClasses, allConClusters) {
   metaclusterDTs <- split(cohortwiseClasses, by="metaCluster")
   sampleNames <- lapply(metaclusterDTs,
@@ -613,13 +738,19 @@ getClusterwiseSamples <- function(cohortwiseClasses, allConClusters) {
 
 #' Get the sample names in a cohort cluster
 #'
-#' @param allConClusters
-#' @param cohort
-#' @param cluster
+#' @param allConClusters A \code{list} of per cohort conensus clustering results,
+#'    as returned by the `conClustAllCohorts` function in this package.
+#' @param cohort A \code{data.table} of non-NA per cohort metacluster identities,
+#'    as in the `data.table` returned from `getCohortwiseClasses` if subset
+#'    to a single cohort.
+#' @param cluster A \code{list} of consensus clustering results, as retured
+#'    by the `conClustCohort` function or an item in list returned by
+#'    `conClustAllCohorts`.
 #'
 #' @return a \code{character} vector of sample names for that cohort cluster
 #'    combination.
 #'
+#' @keywords internal
 .extractSamples <- function(allConClusters, cohort, cluster) {
   classes <- allConClusters[[cohort]]$classes
   names(classes)[classes == cluster]

@@ -51,10 +51,23 @@ subtypeWithClassifier <- function(exprData, centroid, seed=NULL, repeats=100) {
 }
 
 
+#' Predict the meta class for a list of datasets using a list of classifiers
 #'
+#' @param rawDataL A \code{list} of `data.table`s containing the raw expression
+#'    data for a set of sample, such as for an experimental cohort.
+#' @param classifCentroidL A \code{list} of classifier centroids to
+#' @param predMetaClassL A \code{list} of predicted meta-classes using the COINCIDE
+#'    classifier in this pacakge. Each list item should correspond to the dataset
+#'    in `rawDataL`.
+#' @param seed An optional \code{numeric} vector containing the random seed
+#'    to use when consensus clustering data using the supplied classifier list.
+#'    If a seed was used for the initial COINCIDE classification, the same seed
+#'    should be used here to ensure comparability of the results.
 #'
+#' @return A \code{data.table} containing the classification results
 #'
-#'
+#' @import data.table
+#' @export
 subtypeDataLwClassifCentroidL <- function(rawDataL, classifCentroidL,
                                           predMetaClassL, seed=NULL) {
 
@@ -107,12 +120,14 @@ subtypeDataLwClassifCentroidL <- function(rawDataL, classifCentroidL,
 }
 
 
+#' Calculate the correlation between the centroids from two classifiers
 #'
+#' @param centroid1 A \code{data.table}, \code{data.frame} or \code{matrix}
+#'     containing the centroids from a classifier
+#' @param centroid2 A \code{data.table}, \code{data.frame} or \code{matrix}
+#'     containing the centroids from a classifier
 #'
-#'
-#'
-#'
-#'
+#' @export
 correlateCentroids <- function(centroid1, centroid2) {
     clustCors <- cor(centroid1, centroid2)
     maxRowCors <- apply(clustCors, 1, which.max)
@@ -128,8 +143,8 @@ correlateCentroids <- function(centroid1, centroid2) {
 #'
 #'
 #'
-#'
-plotClassifierComparisons <- function(pubClassifSubtypeDT, allClassif=TRUE) {
+#' @export
+plotClassifierComparisons <- function(pubClassifSubtypeDT, allClassif=TRUE, saveDir, fileName) {
     if (allClassif) {
         splitOnClassifL <- split(pubClassifSubtypeDT, by='classif')
         sharedSamples <- Reduce(intersect, lapply(splitOnClassifL, `[[`, "sample"))
@@ -140,9 +155,15 @@ plotClassifierComparisons <- function(pubClassifSubtypeDT, allClassif=TRUE) {
 
     DT[, classifSubtype := mapply(paste, classif, metaClusters, sep=":")]
 
-    ggplot(DT, aes(x=factor(classif, levels=unique(classif)), y=sample, fill=classifSubtype)) +
+    plot <- ggplot(DT, aes(x=factor(classif, levels=unique(classif)), y=sample, fill=classifSubtype)) +
         geom_tile(color='black') +
         labs(y="Cell-line", x="Classifier", fill="Subtype")
+
+    if(!missing(saveDir) && !missing(fileName)) {
+        ggsave(file.path(saveDir, fileName), plot)
+        message(paste0("Saved to ", file.path(saveDir, fileName)))
+    }
+    return(plot)
 }
 
 #'
@@ -208,22 +229,25 @@ calcAssocStats <- function(pubClassifSubtypeDT) {
 }
 
 #'
+#' @param assocStatsDT
+#' @param dendro
+#' @param saveDir
+#' @param fileName
 #'
 #'
-#'
-#'
-heatmapClassifCors <- function(assocStatsDT, saveDir, fileName) {
+#' @export
+heatmapClassifCors <- function(assocStatsDT, dendro=TRUE, saveDir, fileName) {
 
     # Set the upper triangle of the cramer stats to NAs
     cramerMat <- as.matrix(dcast(assocStatsDT, classif1 ~ classif2, value.var="cramersV")[, -'classif1'])
 
-    # Build classifer dendrogram
-    # classifDendro <- as.dendrogram(hclust(dist(t(cramerMat))))
-    # sortClassifDendro <- order.dendrogram(classifDendro)
-    # classifDendroData <- ggdendro::dendro_data(classifDendro)
-    # dendroPlot <- ggplot(ggdendro::segment(classifDendroData)) +
-    #                 geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
-    #                 coord_flip() + .noneTheme
+    # Build classifier dendrogram
+    classifDendro <- as.dendrogram(hclust(dist(t(cramerMat))))
+    sortClassifDendro <- order.dendrogram(classifDendro)
+    classifDendroData <- ggdendro::dendro_data(classifDendro)
+    dendroPlot <- ggplot(ggdendro::segment(classifDendroData)) +
+                    geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
+                    coord_flip() + .noneTheme
 
     # Reorder the classifiers in the cramer mat and convert to DT
     cramerMat <- cramerMat[sortClassifDendro, sortClassifDendro]
@@ -234,7 +258,9 @@ heatmapClassifCors <- function(assocStatsDT, saveDir, fileName) {
 
     # Plot the correlation matrix heatmap with the dendrogram
     corHeatmap <-
-        ggplot(cramerDT, aes(x=classif1, y=classif2, fill=cramersV)) +
+        ggplot(cramerDT, aes(x=factor(classif1, levels=colnames(cramerMat)),
+                                      y=factor(classif2, levels=colnames(cramerMat)),
+                             fill=cramersV)) +
             geom_tile(color = "white")+
             scale_fill_gradient2(low = "blue", high = "red", mid = "white",
                                  midpoint = 0, limit = c(-1,1), space = "Lab",
@@ -255,11 +281,24 @@ heatmapClassifCors <- function(assocStatsDT, saveDir, fileName) {
             guides(fill = guide_colorbar(barwidth = 10, barheight = 3,
                                          title.position = "top", title.hjust = 0.5))
 
-    spacingPlot1 <- ggplot() + theme_void()
-    spacingPlot2 <- ggplot() + theme_void()
+    if (dendro) {
+        spacingPlot1 <- ggplot() + theme_void()
+        spacingPlot2 <- ggplot() + theme_void()
 
-    dendro <- as.ggplot(grid.arrange(spacingPlot1, dendroPlot, spacingPlot2, ncol=1, heights=c(0.2, 1, 0.2)))
-    plot <- as.ggplot(grid.arrange(corHeatmap, dendro, ncol=2, widths=c(1, 0.2)))
+        dendro <- as.ggplot(grid.arrange(spacingPlot1, dendroPlot,
+                                         spacingPlot2, ncol=1,
+                                         heights=c(0.2, 1, 0.2)))
+        plot <- as.ggplot(grid.arrange(corHeatmap, dendro, ncol=2,
+                                       widths=c(1, 0.2)))
+    } else {
+        plot <- corHeatmap
+    }
+
+    if(!missing(saveDir) && !missing(fileName)) {
+        ggsave(file.path(saveDir, fileName), plot)
+        message(paste0("Saved to ", file.path(saveDir, fileName)))
+    }
+    return(plot)
 }
 
 .noneTheme <- theme(
@@ -279,10 +318,11 @@ heatmapClassifCors <- function(assocStatsDT, saveDir, fileName) {
 ##TODO:: Move below to utilities.R
 
 #'
+#' @param clusterData A \code{data.table}, \code{data.frame} or \code{matrix}
+#'   containing the clustering data.
+#' @param clusterLabels A \code{}
 #'
-#'
-#'
-#'
+#' @keywords internal
 .annotateClusters <- function(clusterData, clusterLabels) {
     if (!is.data.table(clusterData)) {
         DT <- as.data.table(clusterData, keep.rownames=TRUE)

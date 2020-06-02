@@ -86,11 +86,11 @@ cohortsDataL <- cohortsDataL[cohortOrder]
 ```
 
 ```{r ranking_genes_based_on_mad}
-cohortMADrankings <- bplapply(cohortsDataL, function(cohort) calcRowMADdf(cohort))
+cohortMADrankings <- rankAllCohortGenesByMAD(cohortsDataL, nthread=15)
 ```
 
 ```{r rank_cohort_genes_by_MAD}
-geneWiseWeightedMADdf <- calcGeneWiseWeightedMADdf(cohortMADrankings)
+genewiseWeightedMADdf <- calcGenewiseWeightedMADdf(cohortMADrankings)
 ```
 
 
@@ -100,7 +100,7 @@ top20genesPerCohort <- getTopGenes(cohortMADrankings, n=20)
 
 
 ```{r get_top_genes_and_meta_genes}
-metaGenes <- getMetaGenes(cohortMADrankings, geneWiseWeightedMADdf, n=20, m=2066)
+metaGenes <- getMetaGenes(cohortMADrankings, genewiseWeightedMADdf, n=20, m=2066)
 
 resultsDir <- file.path("..", "results")
 saveRDS(metaGenes, file.path(resultsDir, "metaGenes.rds"))
@@ -109,32 +109,36 @@ saveRDS(metaGenes, file.path(resultsDir, "metaGenes.rds"))
 
 
 ```{r preprocess_cohort_expression_matrixes}
-preprocCohorts <- preprocessCohorts(cohortsDataL, metaGenes)
+preprocCohortL <- preprocCohorts(cohortsDataL, metaGenes)
 ```
 
 
 
 ```{r compute_consensus_cluster}
-consensusClusters <- bplapply(preprocCohorts,
-                              consensusClusterCohort,
-                              maxK=5, distance="pearson", 
-                              method="hc", seed=1987)
+consensusClusters <- conClustAllCohorts(preprocCohortL, maxK=5, reps=1000,
+                                        distance="pearson", method="hc",
+                                        nthread=4, seed=1987)
 ```
 
+
+```{r }
+saveRDS(consensusClusters, file.path("..", "results", "consensusClusters.rds"))
+```
+
+
 ```{r consensus_cluster_normals_and_GTEx_normals}
-normalCohorts <- list("normals"=adjNormal, 
+normalCohortL <- list("normals"=adjNormal, 
                       "normalsGTEx"=normalGTEx)
 
-preprocNormals <- preprocessCohorts(normalCohorts, metaGenes)
-conClustNormals <- bplapply(preprocNormals,
-                            consensusClusterCohort,
-                            maxK=5, distance="pearson", 
-                            method="hc", seed=1987)
+preprocNormalL <- preprocCohorts(normalCohorts, metaGenes)
+conClustNormals <- conClustAllCohorts(preprocNormalL, maxK=5, reps=1000,
+                                        distance="pearson", method="hc",
+                                        nthread=4, seed=1987)
 ```
 
 ```{r append_normals_to_cohorts}
 allConClusters <- c(consensusClusters, conClustNormals)
-allProcCohorts <- c(preprocCohorts, preprocNormals)
+allProcCohorts <- c(preprocCohortL, preprocNormalL)
 ```
 
 
@@ -144,7 +148,6 @@ cohortPairs <- findAllCohortPairs(names(allConClusters))
 
 
 ```{r calculate_thresholds}
-# 
 MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohorts, nthread=16)
 ```
 
@@ -152,7 +155,7 @@ MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohort
 ```{r compare_all_clusters}
 a <- Sys.time()
 allClusterRepro <- calcAllClusterRepro(MSMthresholds, allConClusters, 
-                                       allProcCohorts, nthread=16, numReps=500,
+                                       allProcCohorts, nthread=12, reps=500,
                                        seed=1987)
 b <- Sys.time()
 b - a
@@ -160,12 +163,12 @@ b - a
 
 
 ```{r }
-qsave(allClusterRepro, file.path('..', 'data', 'allClusterRepro.qs'), nthread=16)
+saveRDS(allClusterRepro, file.path('..', 'results', 'allClusterRepro.rds'))
 ```
 
 ```{r }
 clusterEdges <- compareClusters(MSMthresholds, allClusterRepro, pValue=0.05, actualIGP=0.5, minThresh=0)
-qsave(clusterEdges, file.path('..', 'data', 'clusterEdges.qs'), nthread=15)
+saveRDS(clusterEdges, file.path('..', 'results', 'clusterEdges.rds'))
 ```
 
 ```{r }
@@ -198,6 +201,7 @@ saveRDS(annotatedClusters, file.path("..", "results", "annotatedClusters.rds"))
 ```{r cluster_network, fig.height=10, fig.width=10}
 plotClusterNetwork(clusterEdges, seed=1987, 
                    savePath=file.path('..', 'results'),
+                   clusterLabels=c("Basal", "Classical", "Exocrine", "Other"),
                    fileName='clusterNetworkGraph.pdf')
 ```
 
@@ -221,13 +225,13 @@ head(metaClusters)
 
 
 ```{r merge_to_samples_with_survival_data}
-metaClusterSurvival <- mergeOn(survivalData, metaClusters, "sampleNames")
+metaClusterSurvival <- mergeSurvOn(survivalData, metaClusters, "sampleNames")
 head(metaClusterSurvival)
 ```
 
 
 ```{r annotate_metaClusters}
-metaClusterSurvAnnot <- annotateMetaClusters(metaClusterSurvival, c("Basal", "Exocrine", "Classical"))
+metaClusterSurvAnnot <- annotateMetaClusters(metaClusterSurvival, c("Basal", "Exocrine", "Classical", "Other"))
 head(metaClusterSurvAnnot)
 ```
 
@@ -238,15 +242,16 @@ summary(proportionalHarzardsModel)
 ```
 
 ```{r }
+metaClusterSurvAnnot <- as.data.table(metaClusterSurvAnnot)[metaClusters %in% c("Basal", "Classical", "Exocrine")]
 survivalCurves <- fitSurvivalCurves(metaClusterSurvAnnot)
 ```
 
-```{r }
-plotSurvivalCurves(survivalCurves)
+```{r fig.height=6, fig.width=8}
+plotSurvivalCurves(survivalCurves, saveDir=file.path("..", "results"), fileName="survivalMetaclusters.pdf")
 ```
 
 ```{r, fig.height=12, fig.width=12}
-plotCohortwiseSurvivalCurves(metaClusterSurvAnnot)
+plotCohortwiseSurvivalCurves(metaClusterSurvAnnot,  saveDir=file.path("..", "results"), fileName="cohortSurvivalMetaclusters.pdf")
 ```
 
 ## 3. Gene Signature Comparison
