@@ -634,5 +634,13 @@ publishedClassifSubtypeDT <- subtypeDataLwClassifCentroidL(PGxCelllinesL, classi
 
 
 ```{r }
-plotClassifierComparisons(publishedClassifSubtypeDT)
+plotClassifierComparisons(publishedClassifSubtypeDT, allClassif=TRUE)
+```
+
+```{r caclualte_association_stats}
+assocStatsDT <- calcAssocStats(publishedClassifSubtypeDT)
+```
+
+```{r heatmap_classif_assoc_stats}
+heatmapClassifCors(assocStatsDT)
 ```

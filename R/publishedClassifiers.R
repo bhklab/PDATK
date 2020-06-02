@@ -45,7 +45,7 @@ subtypeWithClassifier <- function(exprData, centroid, seed=NULL, repeats=100) {
                            allow.cartesian=TRUE)
 
     annotSampClustLabs <- .annotateClusters(sampClustLabs,
-                                            gsub('.*-', '', clustCors$pair))
+                                            gsub('^[^-]*-', '', clustCors$pair))
 
     return(annotSampClustLabs[, .(sample, metaClusters, pair, pairCor)])
 }
@@ -129,8 +129,8 @@ correlateCentroids <- function(centroid1, centroid2) {
 #'
 #'
 #'
-plotClassifierComparisons <- function(pubClassifSubtypeDT, samplesInAllClassif=TRUE) {
-    if (samplesInAllClassif) {
+plotClassifierComparisons <- function(pubClassifSubtypeDT, allClassif=TRUE) {
+    if (allClassif) {
         splitOnClassifL <- split(pubClassifSubtypeDT, by='classif')
         sharedSamples <- Reduce(intersect, lapply(splitOnClassifL, `[[`, "sample"))
         DT <- copy(pubClassifSubtypeDT[sample %in% sharedSamples, ])
@@ -140,11 +140,140 @@ plotClassifierComparisons <- function(pubClassifSubtypeDT, samplesInAllClassif=T
 
     DT[, classifSubtype := mapply(paste, classif, metaClusters, sep=":")]
 
-    ggplot(DT, aes(x=classif, y=sample, fill=classifSubtype)) +
-        geom_tile(color='black')
+    ggplot(DT, aes(x=factor(classif, levels=unique(classif)), y=sample, fill=classifSubtype)) +
+        geom_tile(color='black') +
+        labs(y="Cell-line", x="Classifier", fill="Subtype")
 }
 
+#'
+#'
+#'
+#'
+#'
+calcAssocStats <- function(pubClassifSubtypeDT) {
+    # Get all samples classified with metaClassifier
+    samples <- pubClassifSubtypeDT[classif == "metaClass",]$sample
 
+    # Make a copy to prevent modifying source by reference
+    DT <- copy(pubClassifSubtypeDT)
+
+    # Get cartesian product of classifiers
+    classifComparisons <- as.data.table(DT[, expand.grid(unique(classif), unique(classif),
+                                                         stringsAsFactors=FALSE)])
+
+    # Find the best pair for each sample (by pair correlation)
+    maxCors <- DT[sample %in% samples, max(pairCor), by=.(classif, sample, cohort)]
+    colnames(maxCors)[4] <- "pairCor"
+    DT <- merge(DT, maxCors, by=c("classif", "sample", "pairCor", "cohort"))
+
+    # Append the classifier name to the predicted subtypes
+    DT[, classifSubtype := mapply(paste, classif, metaClusters, sep=":")]
+
+    # Count the number of classical and metaclassical classes per sample per dataset
+    DT[, `:=`(classical=sum(classifSubtype == "metaClass:Classical"),
+              basal=sum(classifSubtype == "metaClass:Basal")),
+       by=.(cohort, sample)]
+
+    # Count the total times each sample was classified by metalcass for all cohorts
+    metaClassCounts <- DT[, list("basal"=sum(basal), "classical"=sum(classical)),
+                          by=classifSubtype]
+
+    #
+    DT <- dcast(DT, sample + cohort ~ classif, value.var="classifSubtype")
+
+
+    # Calculate association stats
+    assocStats <- vector("list", nrow(classifComparisons))
+    for (i in seq_len(nrow(classifComparisons))) {
+        assocStats[[i]] <- summary(assocstats(table(DT[[classifComparisons[i, ]$Var1]],
+                                                    DT[[classifComparisons[i, ]$Var2]])))
+    }
+
+    names(assocStats) <- mapply(paste,
+                                classifComparisons$Var1, classifComparisons$Var2,
+                                sep='-')
+
+    pvals <- vapply(assocStats, function(stats) stats$summary$p.value,
+                    FUN.VALUE=numeric(1))
+    cramersVs <- vapply(assocStats, function(stats) stats$object$cramer,
+                       FUN.VALUE=numeric(1))
+
+    assocStatsDT <- data.table("comparison"=names(assocStats),
+                               "classif1"=classifComparisons$Var1,
+                               "classif2"=classifComparisons$Var2,
+                               "cramersV"=cramersVs,
+                               "pval"=pvals)
+
+    return(assocStatsDT)
+}
+
+#'
+#'
+#'
+#'
+#'
+heatmapClassifCors <- function(assocStatsDT, saveDir, fileName) {
+
+    # Set the upper triangle of the cramer stats to NAs
+    cramerMat <- as.matrix(dcast(assocStatsDT, classif1 ~ classif2, value.var="cramersV")[, -'classif1'])
+
+    # Build classifer dendrogram
+    # classifDendro <- as.dendrogram(hclust(dist(t(cramerMat))))
+    # sortClassifDendro <- order.dendrogram(classifDendro)
+    # classifDendroData <- ggdendro::dendro_data(classifDendro)
+    # dendroPlot <- ggplot(ggdendro::segment(classifDendroData)) +
+    #                 geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
+    #                 coord_flip() + .noneTheme
+
+    # Reorder the classifiers in the cramer mat and convert to DT
+    cramerMat <- cramerMat[sortClassifDendro, sortClassifDendro]
+    cramerMat[upper.tri(cramerMat)] <- 0
+    cramerMatDT <- as.data.table(cramerMat)[, classif1 := colnames(cramerMat)]
+    cramerDT <- melt(cramerMatDT, id.vars="classif1", variable.name="classif2",
+                     value.name="cramersV")
+
+    # Plot the correlation matrix heatmap with the dendrogram
+    corHeatmap <-
+        ggplot(cramerDT, aes(x=classif1, y=classif2, fill=cramersV)) +
+            geom_tile(color = "white")+
+            scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                                 midpoint = 0, limit = c(-1,1), space = "Lab",
+                                 name="Cramer's V index") +
+            theme(axis.text.x = element_text(angle = 45, vjust = 1,
+                                             size = 12, hjust = 1)) +
+            coord_fixed() +
+            theme(
+                axis.title.x = element_blank(),
+                axis.title.y = element_blank(),
+                panel.grid.major = element_blank(),
+                panel.border = element_blank(),
+                panel.background = element_blank(),
+                axis.ticks = element_blank(),
+                legend.justification = c(1, 0),
+                legend.position = c(0.5, 0.8),
+                legend.direction = "horizontal") +
+            guides(fill = guide_colorbar(barwidth = 10, barheight = 3,
+                                         title.position = "top", title.hjust = 0.5))
+
+    spacingPlot1 <- ggplot() + theme_void()
+    spacingPlot2 <- ggplot() + theme_void()
+
+    dendro <- as.ggplot(grid.arrange(spacingPlot1, dendroPlot, spacingPlot2, ncol=1, heights=c(0.2, 1, 0.2)))
+    plot <- as.ggplot(grid.arrange(corHeatmap, dendro, ncol=2, widths=c(1, 0.2)))
+}
+
+.noneTheme <- theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.title.x = element_text(colour=NA),
+    axis.title.y = element_blank(),
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.line = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank()
+)
 
 
 ##TODO:: Move below to utilities.R
