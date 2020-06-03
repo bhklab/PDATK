@@ -89,7 +89,8 @@ normalizeCohortsList <- function(cohortsList) {
 #'
 #' @import data.table
 #' @export
-annotateSampleMetaClassDT <- function(sampleMetaClassDT, clusterLabels=c("Basal", "Classical", "Exocrine")) {
+annotateSampleMetaClassDT <- function(sampleMetaClassDT,
+                                      clusterLabels=c("Basal", "Classical", "Exocrine")) {
   if (!is.data.table(sampleMetaClassDT)) {
     DT <- as.data.table(sampleMetaClassDT, keep.rownames='rownames')
   } else {
