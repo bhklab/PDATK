@@ -242,7 +242,7 @@ summary(proportionalHarzardsModel)
 ```
 
 ```{r }
-metaClusterSurvAnnot <- as.data.table(metaClusterSurvAnnot)[metaClusters %in% c("Basal", "Classical", "Exocrine")]
+metaClusterSurvAnnot <- as.data.table(metaClusterSurvAnnot)#[metaClusters %in% c("Basal", "Classical", "Exocrine")]
 survivalCurves <- fitSurvivalCurves(metaClusterSurvAnnot)
 ```
 
@@ -251,7 +251,7 @@ plotSurvivalCurves(survivalCurves, saveDir=file.path("..", "results"), fileName=
 ```
 
 ```{r, fig.height=12, fig.width=12}
-plotCohortwiseSurvivalCurves(metaClusterSurvAnnot,  saveDir=file.path("..", "results"), fileName="cohortSurvivalMetaclusters.pdf")
+plotCohortwiseSurvCurves(metaClusterSurvAnnot,  saveDir=file.path("..", "results"), fileName="cohortSurvivalMetaclusters.pdf")
 ```
 
 ## 3. Gene Signature Comparison
@@ -263,23 +263,14 @@ head(sampleMetaClassDT)
 
 ```{r }
 geneSigL <- readRDS(file=file.path("..", "data", "geneSigList.rds"))
-sigScoreL <- mapply(computeSignatureScoreDT, geneSigL, 
-                    MoreArgs=list(cohortsDataL=cohortsDataL, 
-                                  sampleMetaClassDT=sampleMetaClassDT),
-                    SIMPLIFY=FALSE)
+sigScoreL <- calcAllGeneSetSigScores(geneSigL, cohortsDataL, sampleMetaClassDT)
 ```
 
 ```{r fig.height=10, fig.width=12}
 comparisons <- list(c("Basal", "Classical"), 
                     c("Classical", "Exocrine"),
                     c("Exocrine", "Basal"))
-sigScorePlotL <- mapply(plotSigScores, 
-                        cohortSignatureScoreDT=sigScoreL,
-                        signatureScoreName=names(sigScoreL),
-                        MoreArgs=list(comparisons=comparisons),
-                        SIMPLIFY=FALSE)
-sigScorePlots <- grid.arrange(grobs=sigScorePlotL)
-ggsave(file=file.path("..", "data", "sigScorePlots.pdf"), sigScorePlots)
+plotSigScoreL(sigScoreL, comparisons, saveDir=file.path("..", "data"), fileName="sigScorePlots.pdf")
 ```
 
 ## 4. Biomarker Comparison

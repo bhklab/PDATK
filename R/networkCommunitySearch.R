@@ -225,6 +225,9 @@ fitSurvivalCurves <- function(metaClusterSurvAnnot) {
 #'    will not work.
 #' @param palette An optional RColorBrewer palette to colour the survival curves,
 #'   defaults to 'Set1'.
+#' @param showPlot A \code{boolean} indicating wether or not to draw the plot.
+#'   For internal use in `plotCohortwiseSurvivalCurves` to prevent plotting
+#'   twice.
 #' @param fileName An optional \code{character} vector specifying the
 #'    name and extension of the file to save the plot it. This is passed to
 #'    the `ggplot2::ggsave`.
@@ -234,16 +237,19 @@ fitSurvivalCurves <- function(metaClusterSurvAnnot) {
 #' @importFrom grid grid.draw
 #' @importFrom ggplotify base2grob as.ggplot
 #' @export
-plotSurvivalCurves <- function(survivalCurves, title="", palette="Set1", saveDir, fileName) {
+plotSurvivalCurves <- function(survivalCurves, title="", showPlot=TRUE, palette="Set1", saveDir, fileName) {
   plotFunction <- as.expression(call(".plotSurvivalCurve", survivalCurves, title, palette))
 
-  plot <- as.ggplot(base2grob(plotFunction))
+  grob <- base2grob(plotFunction)
 
-  if(!missing(saveDir) && !missing(fileName)) {
-    ggsave(file.path(saveDir, fileName), plot)
-    message(paste0("Saved to ", file.path(saveDir, fileName)))
+  if(!missing(saveDir) && !missing(fileName))
+    ggsave(grob, file=file.path(saveDir, fileName))
+
+  if (showPlot) {
+    grid.draw(grob)
+  } else {
+    return(grob)
   }
-  return(plot)
 }
 
 #' Draw a survival curve; for use in plotSurvivalCurves to label plots by
@@ -281,22 +287,24 @@ plotSurvivalCurves <- function(survivalCurves, title="", palette="Set1", saveDir
 #' @import data.table
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom ggplot2 ggsave
-#' @importFrom ggpubr
+#' @importFrom gridExtra grid.arrange
 #' @importFrom ggplotify base2grob as.ggplot
 #' @export
-plotCohortwiseSurvivalCurves <- function(metaClusterSurvAnnot, palette, saveDir,
-                                         fileName) {
+plotCohortwiseSurvCurves <- function(metaClusterSurvAnnot, plot=TRUE, saveDir, fileName) {
   DT <- as.data.table(metaClusterSurvAnnot, keep.rownames=TRUE)
   perCohort <- split(DT, by='cohorts')
   cohortCurves <- lapply(perCohort, fitSurvivalCurves)
-  plots <- mapply(plotSurvivalCurves, cohortCurves, title=names(perCohort),
-                  palette=palette, SIMPLIFY=FALSE)
+  plotGrobs <- mapply(plotSurvivalCurves, cohortCurves, title=names(perCohort),
+                      MoreArgs=list(showPlot=FALSE), SIMPLIFY=FALSE)
 
-  plot <- ggarrange(plotlist=plots, ncol=ceiling(sqrt(length(plots))))
+  grob <- grid.arrange(grobs=plotGrobs, ncol=ceiling(sqrt(length(plotGrobs))))
 
-  if(!missing(saveDir) && !missing(fileName)) {
-    ggsave(file.path(saveDir, fileName), plot)
-    message(paste0("Saved to ", file.path(saveDir, fileName)))
+  if(!missing(saveDir) && !missing(fileName))
+    ggsave(grob, file=file.path(saveDir, fileName))
+
+  if (plot) {
+    grid.draw(grob)
+  } else {
+    return(grob)
   }
-  return(plot)
 }
