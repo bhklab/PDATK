@@ -544,7 +544,6 @@ cohortCellularityDT <- rbindlist(cohortCellularity)
 ```
 
 ```{r }
-annotSampMetaClassDT <- annotateSampleMetaClassDT(sampleMetaClassDT)
 mergedCohortCellDT <- merge(cohortCellularityDT, annotSampMetaClassDT, by.x="sample", by.y="samples")
 ```
 
