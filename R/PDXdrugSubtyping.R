@@ -1,10 +1,25 @@
+#' Preprocess PDX gene expression data
 #'
+#' @param PDXdata A \code{data.table}
+#' @param classifModel A trained \code{randomForest} classifier, as returned
+#'    by the `randomForest::randomForest` function.
+#' @param topGenesDT A \code{data.table} with the columns 'topGenes1'
+#'    and 'topGenes2' containing the top scoring pairs, 'genePairs' containing
+#'    a label for each pair, and 'classes' indicating the meta-class each gene pair.
+#'    is associated with.
+#' @param trainData A gene-pair by sample binary \code{matrix} where 1 represents
+#'    the predicted top scoring pair being correctly ordered, as returned
+#'    by the `calcTopGenes1Gt2Matrix` function in this pacakge.
+#' @param trainLabels A \code{factor} vector with the meta-class for each
+#'    sample in the training data.
 #'
+#' @return A \code{data.table} of per sample per drug AAC values, labelled
+#'    with sample name and predicted meta-class/subtype.
 #'
-#'
-#'
-#'
-preprocPDXdata <- function(PDXdata, classifModel, topGenesDT, trainData, trainLabels) {
+#' @import data.table
+#' @export
+preprocPDXdata <- function(PDXdata, classifModel, topGenesDT, trainData,
+                           trainLabels) {
   # Deal with matrix and df input
   if (is.matrix(PDXdata)) {
     PDXdata <- as.data.table(PDXdata)[, gene_name := rownames(PDXdata)]
@@ -25,18 +40,20 @@ preprocPDXdata <- function(PDXdata, classifModel, topGenesDT, trainData, trainLa
   # Predict subtypes
   subtypeDT <- predictSampleMetaClass(normMat, classifModel, topGenesDT,
                                       trainData, trainLabels)
-  # normDT <- as.data.table(t(normMat))[, sample := colnames(normMat)]
-  #
-  # preprocDT <- merge(subtypeDT, normDT, by="sample")
-  # meltPreproc
   return(subtypeDT)
 }
 
+#' Boxplot per drug AAC values between subclasses
 #'
+#' @param PDXmergedDT A \code{data.table} of merge patient derived xenograph
+#'   drug sensitivity and predicted meta-class/subtype.
 #'
+#' @return A \code{list} of ggplot objects, one for each drug in `PDXmergedDT`.
+#'    This can be format to a plot grid using the `ggarrangePlotL` function.`
 #'
-#'
-#'
+#' @importFrom ggpubr ggboxplot stat_compare_means
+#' @import data.table
+#' @export
 boxplotPDXsubtypePerDrug <- function(PDXmergedDT) {
   splitOnDrug <- split(PDXmergedDT, by="drug")
   names(splitOnDrug) <- unlist(lapply(splitOnDrug, function(DT) unique(DT$drug)))
@@ -44,7 +61,7 @@ boxplotPDXsubtypePerDrug <- function(PDXmergedDT) {
                   function(DT)
                     ggboxplot(DT, x="predClass", y="AAC", color="predClass",
                               add="jitter", ylab="AAC", xlab="Subtype",
-                              pallette="jco", title=unique(DT$drug),
+                              pallette="Set1", title=unique(DT$drug),
                               legend="none") +
                               stat_compare_means(method="kruskal.test")
                               )
