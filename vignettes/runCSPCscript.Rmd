@@ -155,7 +155,7 @@ MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohort
 ```{r compare_all_clusters}
 a <- Sys.time()
 allClusterRepro <- calcAllClusterRepro(MSMthresholds, allConClusters, 
-                                       allProcCohorts, nthread=12, reps=500,
+                                       allProcCohorts, nthread=14, reps=500,
                                        seed=1987)
 b <- Sys.time()
 b - a
@@ -317,7 +317,7 @@ exocrinePlots
 ## 5. Single Sample Classifier
 
 ```{r }
-cohortCommMat <- computeCohortCommunityMatrix(cohortsDataL, metaGenes)
+cohortCommMat <- computeCohortCommMat(cohortsDataL, metaGenes)
 ```
 
 ```{r train_single_sample_classifiers}

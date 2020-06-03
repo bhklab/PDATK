@@ -64,7 +64,7 @@ computeGeneBiomarkerScores <- function(cohortsDataL, sampleMetaClassDT, geneName
 boxplotBiomarkerScores <- function(geneBiomarkerScores, comparisons, geneName,
                                    palette="Set1", saveDir, fileName) {
   plot <- ggboxplot(geneBiomarkerScores[order(metaClasses)], x="metaClasses",
-                    y="expression", color = "metaClasses",palette=palette,
+                    y="expression", color = "metaClasses", palette=palette,
                     add = "jitter", xlab = "", ylab=geneName,
                     legend ="none") +
           stat_compare_means(label="p.format", comparisons=comparisons)
@@ -86,13 +86,20 @@ boxplotBiomarkerScores <- function(geneBiomarkerScores, comparisons, geneName,
 #' @param comparison A \code{list} of character vectors containing the names
 #'    of cohorts to compare. All comparisons must be pairwise (i.e., each
 #'    character vector can have only two names).
+#' @param palette A \code{character} vector specifying the name of a palette
+#'   from RColorBrewer for the plot. Passed as `palette` argument to
+#'   `ggpubr:ggboxplot`. Defaults to 'Set1'.
+#'
+#' @return A \code{list} of `ggplot`as
 #'
 #' @export
-boxplotBiomarkerScoresL <- function(geneBiomarkerScoreL, biomarkers, comparisons) {
+boxplotBiomarkerScoresL <- function(geneBiomarkerScoreL, biomarkers, comparisons,
+                                    palette="Set1") {
   plotL <- mapply(boxplotBiomarkerScores,
                   geneBiomarkerScores=geneBiomarkerScoreL,
                   geneName=biomarkers,
-                  MoreArgs=list(comparisons=comparisons),
+                  MoreArgs=list(comparisons=comparisons,
+                                palette=palette),
                   SIMPLIFY=FALSE)
   names(plotL) <- names(biomarkersOfInterest)
   return(plotL)

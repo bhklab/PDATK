@@ -169,8 +169,8 @@ plotClassifierComparisons <- function(pubClassifSubtypeDT, allClassif=TRUE, save
 #'
 #'
 #'
-#'
-#'
+#' @import data.table
+#' @export
 calcAssocStats <- function(pubClassifSubtypeDT) {
     # Get all samples classified with metaClassifier
     samples <- pubClassifSubtypeDT[classif == "metaClass",]$sample
@@ -202,7 +202,6 @@ calcAssocStats <- function(pubClassifSubtypeDT) {
     #
     DT <- dcast(DT, sample + cohort ~ classif, value.var="classifSubtype")
 
-
     # Calculate association stats
     assocStats <- vector("list", nrow(classifComparisons))
     for (i in seq_len(nrow(classifComparisons))) {
@@ -229,12 +228,15 @@ calcAssocStats <- function(pubClassifSubtypeDT) {
 }
 
 #'
+#'
 #' @param assocStatsDT
 #' @param dendro
 #' @param saveDir
 #' @param fileName
 #'
+#' @return
 #'
+#' @importFrom
 #' @export
 heatmapClassifCors <- function(assocStatsDT, dendro=TRUE, saveDir, fileName) {
 
