@@ -88,7 +88,7 @@ computePathwayScores <- function(rankedMetaClassGenes, pathwayL, referenceGenes)
   return(pathStatsDT)
 }
 
-
+## TODO:: Implement palette selection for this function
 #' Heatmap the gene expression signatures for each pathway in each meta-class
 #'
 #' @param pathStatsDT A \code{data.table} with the pathway score and p-value for each
@@ -98,7 +98,7 @@ computePathwayScores <- function(rankedMetaClassGenes, pathwayL, referenceGenes)
 #'   from the heatmap.
 #' @param significance The alpha level to use as a cutoff for gene signatures
 #'    to be included in the heatmap.
-#' @param palette The RColorBrewer palette to use when colouring the graph.
+# @param palette The RColorBrewer palette to use when colouring the graph.
 #'
 #' @return A \code{list} of `ggplot`s, one for each pathway when calculating
 #'    the pathway statistics.
@@ -107,8 +107,7 @@ computePathwayScores <- function(rankedMetaClassGenes, pathwayL, referenceGenes)
 #' @importFrom gplots heatmap.2
 #' @import data.table
 #' @export
-heatmapPathwayScores <- function(pathStatsDT, exclude, significance=0.05,
-                                 palette="Set1") {
+heatmapPathwayScores <- function(pathStatsDT, exclude, significance=0.05) {
 
     if (!missing(exclude)) {
         pStatsDT <- pathStatsDT[pval < significance & !(class %in% exclude), ][, -'pval']

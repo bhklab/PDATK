@@ -1,9 +1,20 @@
+#' Use an existing classifier centroid to classify exprData
 #'
+#' @param exprData A \code{matrix} of gene by cell-line gene expression values.
+#' @param centroid A \code{matrix} of gene by subtype cluster centroids from
+#'    an existing classifer.
+#' @param seed A \code{numeric} vector with the integer seed to set for
+#'    consensus clustering in this function.
+#' @param reps A \code{numeric} vector with the integer number of times to
+#'    repeat consensus clustering.
 #'
+#' @return A \code{data.table} with the predicted subtype for each classifier
+#'   in each cell-line.
 #'
-#'
-#'
-subtypeWithClassifier <- function(exprData, centroid, seed=NULL, repeats=100) {
+#' @importFrom ConsensusClusterPlus ConsensusClusterPlus
+#' @import data.table
+#' @export
+subtypeWithClassifier <- function(exprData, centroid, seed=NULL, reps=100) {
     if (!(all(rownames(exprData) %in% rownames(centroid)))) {
         gnNotMapped <- setdiff(rownames(centroid), rownames(exprData))
         message(paste0(
@@ -22,7 +33,7 @@ subtypeWithClassifier <- function(exprData, centroid, seed=NULL, repeats=100) {
                                             maxK=4,
                                             distance="spearman",
                                             method="hc",
-                                            reps=repeats,
+                                            reps=reps,
                                             seed=seed)
 
     keepCentGenes <- intersect(rownames(exprDataClust$centroidClusters),
@@ -127,6 +138,10 @@ subtypeDataLwClassifCentroidL <- function(rawDataL, classifCentroidL,
 #' @param centroid2 A \code{data.table}, \code{data.frame} or \code{matrix}
 #'     containing the centroids from a classifier
 #'
+#' @return A \code{data.table} with the correlation the cluster centroids
+#'     in each clustering result.
+#'
+#' @import data.table
 #' @export
 correlateCentroids <- function(centroid1, centroid2) {
     clustCors <- cor(centroid1, centroid2)
@@ -139,9 +154,22 @@ correlateCentroids <- function(centroid1, centroid2) {
 }
 
 
+#' Plot a heatmap showing the classification identify of each cell-line using
+#'   each classifier.
 #'
+#' @param pubClassifSubtypeDT \code{data.table} with the predicted subtype for each classifier
+#'   in each cell-line.
+#' @param allClassif A \code{boolean} indicating whether plot only cell-line
+#'   with sybtypes in all classifiers.
+#' @param saveDir An optional \code{character} vector specifying the path
+#'    to the directory where the plot should be saved. If excluded, fileName
+#'    will not work.
+#' @param fileName An optional \code{character} vector specifying the
+#'    name and extension of the file to save the plot it. This is passed to
+#'    the `ggplot2::ggsave`.
 #'
-#'
+#' @return A \code{ggplot} object showing the classification of each cell-line
+#'   in each classifier.
 #'
 #' @export
 plotClassifierComparisons <- function(pubClassifSubtypeDT, allClassif=TRUE, saveDir, fileName) {
@@ -166,9 +194,15 @@ plotClassifierComparisons <- function(pubClassifSubtypeDT, allClassif=TRUE, save
     return(plot)
 }
 
+#' Calculate the correlation betwen
 #'
+#' @param pubClassifSubtypeDT \code{data.table} with the predicted subtype for each classifier
+#'   in each cell-line.
 #'
+#' @return A \code{data.table} with the cramers V and p.value for each pair-wise
+#'   classifier comparison.
 #'
+#' @importFrom vcd assocstats
 #' @import data.table
 #' @export
 calcAssocStats <- function(pubClassifSubtypeDT) {
@@ -227,21 +261,33 @@ calcAssocStats <- function(pubClassifSubtypeDT) {
     return(assocStatsDT)
 }
 
-#'
+#' Heatmap the correlation between classifier subtypes
 #'
 #' @param assocStatsDT
-#' @param dendro
-#' @param saveDir
-#' @param fileName
+#' @param dendro A \code{boolean} specifying whether or not to add a dendrogram
+#'   to the right side of the plot.
+#' @param saveDir An optional \code{character} vector specifying the path
+#'    to the directory where the plot should be saved. If excluded, fileName
+#'    will not work.
+#' @param fileName An optional \code{character} vector specifying the
+#'    name and extension of the file to save the plot it. This is passed to
+#'    the `ggplot2::ggsave`.
 #'
-#' @return
+#' @return A \code{ggplot} object with a heatmap showing the correlation
+#'   between subtypes between each classifier.
 #'
-#' @importFrom
+#' @importFrom ggplot geom_tile scale_fill_gradient coord_fixed theme guides
+#'    theme_void ggsave element_blank element_text guide_colorbar geom_segment
+#' @importFrom gridExtra grid.arrange
+#' @importFrom ggplotify as.ggplot
+#' @importFrom ggdendro dendro_data segment
+#' @import data.table
 #' @export
 heatmapClassifCors <- function(assocStatsDT, dendro=TRUE, saveDir, fileName) {
 
     # Set the upper triangle of the cramer stats to NAs
-    cramerMat <- as.matrix(dcast(assocStatsDT, classif1 ~ classif2, value.var="cramersV")[, -'classif1'])
+    cramerMat <- as.matrix(dcast(assocStatsDT, classif1 ~ classif2,
+                                 value.var="cramersV")[, -'classif1'])
 
     # Build classifier dendrogram
     classifDendro <- as.dendrogram(hclust(dist(t(cramerMat))))
@@ -324,6 +370,7 @@ heatmapClassifCors <- function(assocStatsDT, dendro=TRUE, saveDir, fileName) {
 #'   containing the clustering data.
 #' @param clusterLabels A \code{}
 #'
+#'
 #' @keywords internal
 .annotateClusters <- function(clusterData, clusterLabels) {
     if (!is.data.table(clusterData)) {
@@ -343,9 +390,13 @@ heatmapClassifCors <- function(assocStatsDT, dendro=TRUE, saveDir, fileName) {
 
 #'
 #'
+#' @param centroid1 A \code{matrix}
+#' @param centroid2 A \code{matrix}
 #'
+#' @return A \code{character} vector with the names of each pairwise
+#'   comparison possible between two classifier centroids.
 #'
-#'
+#' @keywords internal
 .findClusterCombinations <- function(centroid1, centroid2) {
     if (missing(centroid2)) centroid2 <- centroid1
 

@@ -610,7 +610,7 @@ pathwayStatsDT <- computePathwayScores(rankedMetaClassGenes, geneSetL, reference
 pathwayHMPs <- heatmapPathwayScores(pathwayStatsDT, significance=0.05)
 ```
 
-```{r plot_grid_heatmap_of_gene_signature_scores}
+```{r plot_grid_heatmap_of_gene_signature_scores, fig.height=12, fig.width=10}
 ggarrangePlotL(pathwayHMPs, 3)
 ```
 

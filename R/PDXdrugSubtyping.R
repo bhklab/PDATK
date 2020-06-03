@@ -49,7 +49,7 @@ preprocPDXdata <- function(PDXdata, classifModel, topGenesDT, trainData,
 #'   drug sensitivity and predicted meta-class/subtype.
 #'
 #' @return A \code{list} of ggplot objects, one for each drug in `PDXmergedDT`.
-#'    This can be format to a plot grid using the `ggarrangePlotL` function.`
+#'    This can be format to a plot grid using the `ggarrangePlotL` function.
 #'
 #' @importFrom ggpubr ggboxplot stat_compare_means
 #' @import data.table
