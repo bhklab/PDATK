@@ -78,8 +78,8 @@ predictSampleMetaClass <- function(exprTable, classifModel, topGenesDT,
 #'    drug response, also subset to the drugs of interest.
 #' @param noXaxis A \code{boolean} indicating wheter to hide x-axis labels and
 #'    ticks.
-#' @param pVal A \code{character} vector containing the p-value for difference
-#'    in survival between the classes in the plot.
+#' @param pVal An optional \code{character} vector containing the p-value for
+#'    difference in survival between the classes in the plot.
 #' @param saveDir An optional \code{character} vector specifying the path
 #'    to the directory where the plot should be saved. If excluded, fileName
 #'    will not work.
@@ -93,11 +93,12 @@ predictSampleMetaClass <- function(exprTable, classifModel, topGenesDT,
 #' @importFrom ggplot2 ggsave annotate theme
 #' @import data.table
 #' @export
-waterfallPlotTumorResponse<- function(classSurvCompDT, noXaxis=FALSE, pVal, saveDir, fileName) {
+waterfallPlotTumorResponse<- function(classSurvCompDT, noXaxis=FALSE, pVal,
+                                      saveDir, fileName) {
   plot <- ggbarplot(classSurvCompDT[!is.na(tumorResponse), ],
                     x="studyID", y="tumorResponse",
                     fill="predClass", color="predClass",
-                    pallette="jco", xlab="Study ID", ylab="% Change in Tumor Size",) +
+                    pallette="Set1", xlab="Study ID", ylab="% Change in Tumor Size",) +
           theme(axis.text.x=element_text(angle=90, size=9, vjust=0))
   if (noXaxis) {
     plot <- plot + theme(axis.title.x=element_blank(),
