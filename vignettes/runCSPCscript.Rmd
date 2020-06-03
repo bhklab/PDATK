@@ -568,6 +568,8 @@ CNAscoreByProbeDT <- countCNAscoresByProbe(osloTCGAcnScores, copyNumSNPposDT, an
 ```{r }
 chrScorePlots <- plotPerChromosomeCNAscores(CNAscoreByProbeDT)
 ```
+
+
 ```{r fig.height=14, fig.width=14}
 ggarrangePlotL(chrScorePlots, 9)
 ```
