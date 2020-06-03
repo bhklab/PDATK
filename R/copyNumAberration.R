@@ -58,7 +58,7 @@ countCNAscoresByProbe <- function(CNAscoreDT, SNPposDT, annotSampMetaClassDT) {
 #'   predicted meta-class/subtype showing the percenage of copy gain vs
 #'   copy losses for each probe (genomic region).
 #'
-#' @importFrom ggplot geom_line xlab ylab ggtitle theme_classic facet_grid
+#' @importFrom ggplot2 geom_line xlab ylab ggtitle theme_classic facet_grid
 #' @export
 plotPerChromosomeCNAscores <- function(CNAscoreDT) {
   CNAscoreDT <- copy(CNAscoreDT)

@@ -231,8 +231,6 @@ conClustAllCohorts <- function(preprocCohorts, maxK=5, distance="pearson",
 #' @param cohort The cohort data with genes as columns, rows as samples
 #' @param clusterClasses The
 #'
-#'
-#' @importFrom matrixStats colMeans
 #' @keywords internal
 .calcClusterCentroid <- function(i, cohort, clusterClasses) {
   clusterIdxs <- which(clusterClasses == i)
@@ -251,7 +249,7 @@ conClustAllCohorts <- function(preprocCohorts, maxK=5, distance="pearson",
 #'    returned by `getMetaGenes`.
 #' @param center A \code{logical} vector passed to the `center` argument of
 #'    the `base::scale`` function. Defaults to TRUE if excluded.
-#' @param scale A \cpde{logical} vector passed to the `scale` argument of
+#' @param scale A \code{logical} vector passed to the `scale` argument of
 #'    the `base::scale` function. Defaults to FALSE if excluded.
 #'
 #' @export
@@ -340,7 +338,7 @@ findAllCohortPairs <- function(clusterNames) {
 #' @param allConClusters
 #' @param allProcCohorts
 #'
-#' @return A \code{data.table} 
+#' @return A \code{data.table}
 #'
 #' @import data.table
 #' @export
@@ -489,7 +487,7 @@ calcClusterRepro <- function(conClusters, procCohort, reps=100,
 #' @param seed A \code{numeric} vector containing the desired seed to be used
 #'     for sampling.
 #'
-#' @importFrom BiocParallel bpplappy DoparParam
+#' @importFrom BiocParallel bplapply DoparParam
 #' @importFrom doParallel registerDoParallel
 #' @export
 calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
@@ -538,7 +536,7 @@ calcAllClusterRepro <-  function(MSMthresholds, allConClusters, allProcCohorts,
 #' @param allClusterRepro A \code{data.table} containing the cluster reproduction
 #'    statistics, as calculated with `calcAllClusterRepro`.
 #'
-#' @importFrom ClusterRepro ClusterRepro
+#' @importFrom clusterRepro clusterRepro
 #' @import data.table
 #' @export
 compareClusters <- function(MSMthresholds, allClusterRepro, pValue, actualIGP, minThresh) {

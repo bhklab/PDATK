@@ -276,14 +276,27 @@ calcAssocStats <- function(pubClassifSubtypeDT) {
 #' @return A \code{ggplot} object with a heatmap showing the correlation
 #'   between subtypes between each classifier.
 #'
-#' @importFrom ggplot geom_tile scale_fill_gradient coord_fixed theme guides
-#'    theme_void ggsave element_blank element_text guide_colorbar geom_segment
+#' @import ggplot2
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplotify as.ggplot
 #' @importFrom ggdendro dendro_data segment
 #' @import data.table
 #' @export
 heatmapClassifCors <- function(assocStatsDT, dendro=TRUE, saveDir, fileName) {
+
+    # Define custom theme
+    .noneTheme <- ggplot2::theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.title.x = element_text(colour=NA),
+        axis.title.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank()
+    )
 
     # Set the upper triangle of the cramer stats to NAs
     cramerMat <- as.matrix(dcast(assocStatsDT, classif1 ~ classif2,
@@ -349,19 +362,6 @@ heatmapClassifCors <- function(assocStatsDT, dendro=TRUE, saveDir, fileName) {
     return(plot)
 }
 
-.noneTheme <- theme(
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.background = element_blank(),
-    axis.title.x = element_text(colour=NA),
-    axis.title.y = element_blank(),
-    axis.text.x = element_blank(),
-    axis.text.y = element_blank(),
-    axis.line = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank()
-)
-
 
 ##TODO:: Move below to utilities.R
 
@@ -370,7 +370,7 @@ heatmapClassifCors <- function(assocStatsDT, dendro=TRUE, saveDir, fileName) {
 #'   containing the clustering data.
 #' @param clusterLabels A \code{}
 #'
-#'
+#' @import data.table
 #' @keywords internal
 .annotateClusters <- function(clusterData, clusterLabels) {
     if (!is.data.table(clusterData)) {

@@ -167,7 +167,7 @@ boxplotClassNLR <- function(classSurvCompDT, method="kruskal.test", palette="Set
 #' @return A \code{gglot} object containing a plot grid with a boxplot
 #'   for each specified biomarker.
 #'
-#' @importFrom cow_plot plot_grid
+#' @importFrom cowplot plot_grid
 #' @export
 compassPlotBiomarkers <- function(compassLogExprMat, sampClassPredwSurvivalDT,
                                   biomarkers, saveDir, fileName) {
@@ -201,13 +201,13 @@ compassPlotBiomarkers <- function(compassLogExprMat, sampClassPredwSurvivalDT,
 #'    to compare between subtypes
 #' @param exprMat A \code{matrix} with X by Y gene expression data
 #' @param palette A \code{character} vector specifying the name of the
-#'    RColorBrewer palette to use for the plot. Passed to `ggpubr::ggpboxplot`
+#'    RColorBrewer palette to use for the plot. Passed to `ggpubr::ggboxplot`
 #'    as the `palette` argument.
 #'
 #' @return A \code{ggplot} object containing a boxplot of log2 expression
 #'    for the specified biomarker in each subtype.
 #'
-#' @importFrom ggpubr ggplotplot
+#' @importFrom ggpubr ggboxplot
 #' @export
 compassPlotBiomarker <- function(subtypes, biomarker, exprMat) {
   DF <- data.frame(subtypes, as.numeric(exprMat[biomarker, ]))

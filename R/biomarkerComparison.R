@@ -54,7 +54,7 @@ computeGeneBiomarkerScores <- function(cohortsDataL, annotSampMetaClassDT, geneN
 #'
 #' @return A \code{ggplot} object of the resulting boxplot.
 #'
-#' @importFrom ggpubr ggboxplot stat_comapre_means
+#' @importFrom ggpubr ggboxplot stat_compare_means
 #' @importFrom ggplot2 ggsave
 #' @export
 boxplotBiomarkerScores <- function(geneBiomarkerScores, comparisons, geneName,

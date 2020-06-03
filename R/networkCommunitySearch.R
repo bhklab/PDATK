@@ -97,7 +97,6 @@ plotClusterNetwork <- function(clusterEdges, seed=NULL, palette="Set1",
 #' @return A \code{data.frame} with columns cohorts, sampleNames, OS and OSstatus
 #'   containing the per sample survival information.
 #'
-#' @importFrom
 #' @export
 extractSurvivalData <- function(expressionData, survivalData, survivalDataLabel="additonal") {
   sampleLengths <- c(vapply(expressionData, nrow, FUN.VALUE=numeric(1)),

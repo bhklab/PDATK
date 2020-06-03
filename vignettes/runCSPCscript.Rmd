@@ -6,70 +6,17 @@ output: html_document
 ---
 
 ```{r message=FALSE}
-require(IDPmisc)
-library(dplyr)
-library(matrixStats)
-library(factoextra)
-library(NbClust)
-library(cluster)
-library(ConsensusClusterPlus)
-library(clusterRepro)
-library(igraph)
-library(gtools)
-library(plyr)
-library(survival)
-library(randomForest)
-library(switchBox)
-library(impute)
-library(KMsurv)
-library(scales)
-library(switchBox)
-library(survminer)
-library(limma)
-library(piano)
-require(ggplot2)
-library(ggpubr)
-library(BiocParallel)
-library(qs)
-library(data.table)
-library(doParallel)
-library(effsize)
-library(vcdExtra)
-library(survcomp)
-library(RColorBrewer)
-library(lattice)
-library(ggplotify)
-library(BBmisc)
-library(gridExtra)
-library(ggsci)
-library(cowplot)
+library(PDATK)
+library(Biobase)
 ```
 
 ## 1. COINCIDE Implementation
 
-```{r load_data}
+```{r load_cohort_data}
 cohortsDataL <- readRDS('../data/cohortsCommonGenes.rds')       
 normalGTEx <- readRDS('../data/normalGTEx.rds')
 adjNormal <- readRDS('../data/adjacentNormal.rds')
 ```
-
-
-```{r source_function}
-source('../R/utilities.R')
-source('../R/COINCIDE.R')
-source('../R/networkCommunitySearch.R')
-source('../R/geneSignatureComparison.R')
-source('../R/biomarkerComparison.R')
-source('../R/singleSampleClassifier.R')
-source('../R/compassSubtypeWaterfall.R')
-source('../R/PDXdrugSubtyping.R')
-source('../R/cancerCellineDrugSensitivities.R')
-source('../R/cellularityComparison.R')
-source('../R/copyNumAberration.R')
-source('../R/clusterMetaEffectSizeCalculation.R')
-source('../R/pathwayAnalysis.R')
-```
-
 
 ```{r rorder_cohorts_to_match}
 cohortOrder <-c("pcsi", "tcga", 
@@ -379,7 +326,7 @@ singleSampClassifDT <- merge(classPredDT, sampleMetaClassDT, on=samples, sort=FA
 
 ## 6. Compass Subtyping Waterfall
 
-```{r load_data}
+```{r compass_load_data}
 compassSurvDT <- fread(file.path("..", "data", "compassSurvDT.csv"))
 compassLogExprMat <- read.csv(file.path("..", "data", "compassLogExprMat.csv"),
                               row.names="X")
@@ -491,7 +438,7 @@ ggarrange(plotlist=plot, ncol=.ceilSqrt(plot), nrow=.ceilSqrt(plot))
 
 ## 9. PDXE Drug Subtyping
 
-```{r load_data}
+```{r load_PDX_data}
 # Why is first dataset here? Nothing is done with it?
 PDXgeneExprDT <- fread(file.path("..", "data", "PDXgeneExpr.csv"))
 PDXgeneExprSet <- readRDS(file.path("..", "data", 'PDXexprSet.rds'))
@@ -534,7 +481,7 @@ plotGrids
 
 ## 10. Cellularity Comparison
 
-```{r load_data}
+```{r load_cellularity_data}
 cellularityFileL <- list.files(file.path("..", "data"), 
                                pattern="cellularity.*tsv", 
                                full.names=TRUE)
@@ -555,7 +502,7 @@ boxplotCellarityByCohort(mergedCohortCellDT,
 
 ## 11. Copy Number Abberation
 
-```{r load_data}
+```{r load_CNA_data}
 copyNumSNPposDT <- fread(file.path("..", "data", "copyNumSNPpos.csv"))
 osloTCGAcnScores <- fread(file.path('..', 'data', 'osloTCGAcnScores.csv'))
 ```
@@ -592,7 +539,7 @@ fwrite(classByGnEffSizeDT, file.path('..', 'results', 'classByGeneWeigthedEffSiz
 
 ## 13. Pathway Analysis
 
-```{r load_data}
+```{r load_oathway_data}
 geneSetL <- loadGnSetGMTs(file.path("..", "data"))
 names(geneSetL)
 ```

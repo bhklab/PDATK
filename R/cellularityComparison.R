@@ -12,7 +12,7 @@
 #' @return A \code{ggplot} object with a grouped boxplot comparing the
 #'    distribution of sample cellularity between the predicted meta-classes.
 #'
-#' @importFrom ggplot geom_boxplot scale_fill_brewer ylab guides
+#' @importFrom ggplot2 geom_boxplot scale_fill_brewer ylab guides
 #' theme ggsave
 #' @export
 boxplotCellarityByCohort <- function(mergedDT, saveDir, fileName) {

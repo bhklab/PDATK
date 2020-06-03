@@ -1,7 +1,7 @@
 ##FIXME:: Make sure all the data is either a factor, or not a factor?
 ##FIXME:: This breaks when written with levels because not all of them are factors
 #' Convert the levels of a factor to number
-#' 
+#'
 #' A convenience function for converting factor levels into numeric
 #'
 #' @param factor A \code{factor} vector to convert to numeric.
@@ -210,12 +210,12 @@ subsetSharedCohortsAndSamples <- function(metaestimateData) {
 #' @param dataset
 #'
 #' @importFrom dplyr dense_rank
-#' @importFrom BiocParllel bpplapply
+#' @importFrom BiocParallel bplapply
 #' @export
 calculateMedAbsDev <- function(dataset){
-    
+
     dataset <- data.table(dataset, rown)
-    
+
     data.frame(
         "genes"=rownames(dataset),
         "madValues"=madValues,

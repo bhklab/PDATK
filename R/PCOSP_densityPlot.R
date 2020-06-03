@@ -24,7 +24,7 @@
 #' @return A \code{grob} object from \code{ggplot2}. Also saves to disk if `filePath`
 #'     and `fileName` are specified.
 #'
-#' @importFrom ggplot2 geom_density geom_vline labs ggtitle facet_wrap theme ggsave
+#' @import ggplot2
 #' @export
 densityPlotModel <- function(formattedValCohorts, selectedModels, seqCohorts, title,
                              vlines, nthread, filePath, fileName) {
