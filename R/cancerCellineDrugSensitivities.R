@@ -2,8 +2,8 @@
 #'
 #'
 #'
-#'
-#'
+#' @import data.table
+#' @export
 formatCCLsensitivityLtoDT <- function(sensitivityList) {
   CCLsensitivityDtL <- lapply(CCLsensitivityL, t)
   .addSampNames <- function(mat) {DF <- as.data.frame(mat)
@@ -18,8 +18,8 @@ formatCCLsensitivityLtoDT <- function(sensitivityList) {
 #'
 #'
 #'
-#'
-#'
+#' @import data.table
+#' @export
 mergeClassAndDrugs <- function(classPredL, drugSensL) {
   if (!all(names(classPredL) == names(drugSensL))) {
     drugSensL <- drugSensL[names(classPredL)]
@@ -67,11 +67,16 @@ mergeClassAndDrugs <- function(classPredL, drugSensL) {
   rbindlist(meltMergedByDataset)
 }
 
+#' 
+#' 
+#' @param mergedDT
+#' @param class1
+#' @param class2
 #'
-#'
-#'
-#'
-#'
+#' @return
+#' 
+#' @import data.table
+#' @export
 computeWilcoxOnSharedDrugs <- function(mergedDT, class1, class0) {
   ## TODO:: Can I make this faster than O(n^2)?
   mergedDT <- mergedDT[predClass %in% c(class1, class0)]
@@ -101,11 +106,20 @@ computeWilcoxOnSharedDrugs <- function(mergedDT, class1, class0) {
   return(datasetL)
 }
 
+#' 
+#' 
+#' @param mergedDT A \code{data.table}
+#' @param class A \code{character} vecotr specifying the meta-class/subtype
+#'     to compute concordance index for.
+#' @param na.rm A \code{boolean} specifying whether to 
+#'     remove NA's from the data when calculating concordance index.
+#' @parm method A \code{character} vector specifying the method to use
+#'     for calculating concordance index. Passed to `survcomp::concordance.index`
+#'     as the `method` argument.
 #'
-#'
-#'
-#'
-#'
+#' @importFrom survcomp concordance.index
+#' @import data.table
+#' @export
 computeConcIndOnSharedDrugs <- function(mergedDT, class, na.rm=TRUE, method="noether") {
   ## TODO:: Can I make this faster than O(n^2)?
   splitOnDataset <- split(mergedDT, by="dataset")
@@ -113,7 +127,8 @@ computeConcIndOnSharedDrugs <- function(mergedDT, class, na.rm=TRUE, method="noe
   allDSdrugs <- Reduce(intersect, datasetDrugs)
   
   subsetSharedDrugs <- lapply(splitOnDataset, 
-                              function(DT, allDSdrugs) subset(DT, drug %in% allDSdrugs),
+                              function(DT, allDSdrugs) 
+                                    subset(DT, drug %in% allDSdrugs),
                               allDSdrugs=allDSdrugs)
   rm(splitOnDataset); gc()
   
@@ -139,11 +154,12 @@ computeConcIndOnSharedDrugs <- function(mergedDT, class, na.rm=TRUE, method="noe
   return(datasetL)
 }
 
+#' Calculate 
+#' 
+#' @param concordanceInds
 #'
-#'
-#'
-#'
-#'
+#' @importFrom survcomp combine.est
+#' @export
 calculateMetaStats <- function(concordanceInds) {
     drugs <- colnames(concordanceInds[[1]])
     
@@ -164,13 +180,20 @@ calculateMetaStats <- function(concordanceInds) {
     data.table("drugs"=drugs, "metaCI"=metaCI, "metaPval"=metaPval)
 }
 
+#' 
+#' 
+#' @param mergedDT A \code{data.table}
+#' @param conIdx A \code{numeric}
+#' @param paletee A \code{character} vector specifying the RColorBrewer palette
+#'     to use for the plot. Passed to `ggpubr::ggboxplot`s `palette` argument.
 #'
+#' @return A \code{ggplot} object
 #'
-#'
-#'
-#'
-#'
-boxplotAUCperSubtypePerDataset <- function(mergedDT, conIdx) {
+#' @importFrom ggpubr ggboxplot 
+#' @importFrom scales scientific
+#' @import data.table
+#' @export
+boxplotAUCperSubtypePerDataset <- function(mergedDT, conIdx, palette="Set1") {
   splitOnDataset <- split(mergedDT, by="dataset")
   allDSdrugs <- colnames(conIdx[[1]])
   
@@ -186,7 +209,7 @@ boxplotAUCperSubtypePerDataset <- function(mergedDT, conIdx) {
     title <- paste0(nm, "\n", drg, " CI: ", ci, ", P: ", p)
     p <- ggboxplot(DT[drug == drg], x="predClass", y="drug", color="predClass", add="jitter",
                    xlab="Subtype", ylab="AUC",
-                   title=title, pallette="jco", legend="none")
+                   title=title, pallette=palette, legend="none")
     return(p)
     }
   

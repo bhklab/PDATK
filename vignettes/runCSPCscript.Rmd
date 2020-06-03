@@ -6,7 +6,6 @@ output: html_document
 ---
 
 ```{r message=FALSE}
-#library(PanCuRx)
 require(IDPmisc)
 library(dplyr)
 library(matrixStats)
@@ -33,6 +32,7 @@ library(ggpubr)
 library(BiocParallel)
 library(qs)
 library(data.table)
+library(doParallel)
 library(effsize)
 library(vcdExtra)
 library(survcomp)
@@ -155,7 +155,7 @@ MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohort
 ```{r compare_all_clusters}
 a <- Sys.time()
 allClusterRepro <- calcAllClusterRepro(MSMthresholds, allConClusters, 
-                                       allProcCohorts, nthread=14, reps=500,
+                                       allProcCohorts, nthread=10, reps=500,
                                        seed=1987)
 b <- Sys.time()
 b - a
@@ -219,7 +219,7 @@ head(survivalData)
 
 
 ```{r extract_meta_clusters}
-metaClusters <- extractMetaClusters(annotatedClusters, survivalData)
+metaClusters <- extractMetaClusters(annotatedClusters)
 head(metaClusters)
 ```
 
@@ -242,7 +242,7 @@ summary(proportionalHarzardsModel)
 ```
 
 ```{r }
-metaClusterSurvAnnot <- as.data.table(metaClusterSurvAnnot)#[metaClusters %in% c("Basal", "Classical", "Exocrine")]
+metaClusterSurvAnnot <- as.data.table(metaClusterSurvAnnot)[metaClusters %in% c("Basal", "Classical", "Exocrine")]
 survivalCurves <- fitSurvivalCurves(metaClusterSurvAnnot)
 ```
 
@@ -256,17 +256,18 @@ plotCohortwiseSurvCurves(metaClusterSurvAnnot,  saveDir=file.path("..", "results
 
 ## 3. Gene Signature Comparison
 
-```{r }
+```{r get_metaclass_by_cohort_and_sample}
 sampleMetaClassDT <- extractSampleMetaClasses(annotatedClusters)
-head(sampleMetaClassDT)
+annotSampeMetaClassDT <- annotateSampleMetaClassDT(sampleMetaClassDT, c("Basal", "Exocrine", "Classical", "Other"))
+head(annotSampeMetaClassDT)
 ```
 
-```{r }
+```{r read_in_gene_signature_data}
 geneSigL <- readRDS(file=file.path("..", "data", "geneSigList.rds"))
-sigScoreL <- calcAllGeneSetSigScores(geneSigL, cohortsDataL, sampleMetaClassDT)
+sigScoreL <- calcAllGeneSetSigScores(geneSigL, cohortsDataL, annotSampeMetaClassDT)
 ```
 
-```{r fig.height=10, fig.width=12}
+```{r plot_gene_signatures_between_metaclasses, fig.height=10, fig.width=12}
 comparisons <- list(c("Basal", "Classical"), 
                     c("Classical", "Exocrine"),
                     c("Exocrine", "Basal"))
@@ -281,14 +282,14 @@ biomarkers <- c("EGFR", "SNAI2", "KRT81", "GATA6", "CYP3A5", "HNF1A",
 names(biomarkers) <- c(rep("Basal", 3), rep("Classical", 3), rep("Exocrine", 4))
 geneBiomarkerScoreL <- lapply(biomarkers, computeGeneBiomarkerScores, 
                               cohortsDataL=cohortsDataL,
-                              sampleMetaClassDT=sampleMetaClassDT)
+                              annotSampMetaClassDT=annotSampMetaClassDT)
 names(geneBiomarkerScoreL) <- biomarkers
 ```
 
 ```{r }
-biomarkerScoreBoxplotL <- boxplotBiomarkerScoresList(geneBiomarkerScoreL, 
-                                                     biomarkers,
-                                                     comparisons)
+biomarkerScoreBoxplotL <- boxplotBiomarkerScoresL(geneBiomarkerScoreL, 
+                                                  biomarkers,
+                                                  comparisons)
 ```
 
 ```{r basal_class_boxplots, fig.height=10, fig.width=10}
@@ -359,7 +360,7 @@ g1Gt2Matrix[1:5, 1:5]
 ```{r make_model_predictions}
 ################## DONT CLICK ME ############################
 sampleClassPreds <- predictSingleSampleClasses(g1Gt2Matrix, metaClassesFactor, nthread=14)
-qsave(sampleClassPreds, file.path('..', 'results', 'sampleClassPreds.qs'))
+saveRDS(sampleClassPreds, file.path('..', 'results', 'sampleClassPreds.rds'))
 ```
 
 ```{r predict_binary_rf_model}

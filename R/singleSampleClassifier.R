@@ -35,7 +35,7 @@ computeCohortCommMat <- function(cohortsDataL, metaGenes) {
 #' @param maxK A \code{numeric} vector with the integer maximum K to use in
 #'      `switchBox::SWAP.KTSP.Train`.
 #'
-#' @return A \code{list} of KTSP classifiers, one for each meta-class
+#' @return A \code{list} of KTSP classifiers, one for each meta-class.
 #'
 #' @importFrom switchBox SWAP.KTSP.Train
 #' @export
@@ -53,10 +53,10 @@ trainSingleSampleClassifer <- function(cohortComMat, sampleMetaClassDT, class, m
 #' @param cohortTopGenesMat A \code{matrix} of normalized gene expression
 #'    values for the genes in `topGenes1` and `topGenes2`. Subset from the
 #'    matrix returned by `computeCohortCommMat` function in this pacakge.
-#' @param topGenes1 A \code{character} vector of genes names for the TSPs predicted
-#'    to have higher expression on average.
-#' @param topGenes2 A \code{character} vector of gene names for t he TSPs predicted
-#'    to have lower expression on avareage.
+#' @param topGenes1 A \code{character} vector of genes names for the top scoring
+#'    pairs item predicted to have higher expression on average.
+#' @param topGenes2 A \code{character} vector of gene names for the top scoring
+#'    gene pairs item predicted to have lower expression on avareage.
 #' @param genePairs A \code{character} vector with `topGenes1` and `topGenes`
 #'    pasted together with '>'. This is used for label the gene pairs and can
 #'    be any character vector of length equal to `topGenes`.`
@@ -90,6 +90,8 @@ calcTopGenes1Gt2Matrix <- function(cohortTopGenesMat, topGenes1, topGenes2, gene
 #'     each sample in g1Gt2Matrix.
 #' @param nthread A \code{numeric} vector with the integer number of threads to
 #'     parallelize over.
+#'
+#' @return A \code{list} of per sample metaclass predictions
 #'
 #' @importFrom randomForest randomForest
 #' @export

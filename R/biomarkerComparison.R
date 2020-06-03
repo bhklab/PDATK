@@ -2,8 +2,9 @@
 #'
 #' @param cohortsDataL A \code{list} per cohort gene by sample gene expression
 #'   matrixes.
-#' @param sampleMetaClassDT A \code{data.table} containing the per cohort per
-#'   sample meta-class predictions.
+#' @param annotSampMetaClassDT A \code{data.table} containing the per cohort per
+#'   labelled sample meta-class predictions. As returned by the
+#'   `annotateSampleMetaClasses` function in this package.
 #' @param geneName A \code{character} vector with the name of the biomarker
 #'   gene to score.
 #' @param clusterLabels An optional \code{character} vector to use when
@@ -16,24 +17,19 @@
 #'     cohort for the sspecified gene.
 #'
 #' @export
-computeGeneBiomarkerScores <- function(cohortsDataL, sampleMetaClassDT, geneName,
-                                       clusterLabels) {
-  if (missing(clusterLabels)) {
-    clusterLabels <- unique(sampleMetaClassDT[order(metaClasses)]$metaClasses)
-  }
-  cohortsDataL <- lapply(cohortsDataL, na.omit)
+computeGeneBiomarkerScores <- function(cohortsDataL, annotSampMetaClassDT, geneName) {
 
   subsetExpressionL <- lapply(cohortsDataL, `[`, i=geneName, j=TRUE)
   subsetExpressionL <- normalizeCohortsList(subsetExpressionL)
-  sampleMetaClassDT <- na.omit(sampleMetaClassDT)[!duplicated(samples), ]
+  annotSampMetaClassDT <- na.omit(annotSampMetaClassDT)[!duplicated(samples), ]
   subsetCohortExpression <- unlist(subsetExpressionL)
   names(subsetCohortExpression) <- unlist(lapply(cohortsDataL, colnames))
 
-  keep <- intersect(names(subsetCohortExpression), sampleMetaClassDT$samples)
-  keepDT <- sampleMetaClassDT[samples %in% keep, ]
+  keep <- intersect(names(subsetCohortExpression), annotSampMetaClassDT$samples)
+  keepDT <- annotSampMetaClassDT[samples %in% keep, ]
   keepDT$expression <- subsetCohortExpression[keep]
 
-  annotateSampleMetaClassDT(keepDT, clusterLabels)
+  return(keepDT)
 }
 
 #' Boxplot the normalized per sample gene expression for the specified gene,

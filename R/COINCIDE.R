@@ -99,8 +99,6 @@ getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, m) {
     unique(c(topNgenesPerCohort, topMgenesMeta))
 }
 
-##################### CLUSTER DATA ##########################################################################
-
 #' Consensus cluster on gene expression for a cohort
 #'
 #' @param cohort A \code{matrix} of expression data for a cohort, with rows
@@ -132,7 +130,6 @@ getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, m) {
 #' @section Warning: This function uses random numbers, remember to set.seed()
 #'     before running it to ensure reproducible results!
 #'
-#' @importFROM IDPmisc NaRV.omit
 #' @importFrom ConsensusClusterPlus ConsensusClusterPlus
 #' @export
 conClustCohort <- function(cohort, maxK, distance, method, reps=1000,
@@ -212,6 +209,8 @@ conClustCohort <- function(cohort, maxK, distance, method, reps=1000,
 #'    parallelize over. If excluded, the default number of threads from the
 #'    `BiocParallel` package will be used.
 #'
+#' @importFrom BiocParallel bplapply
+#' @export
 conClustAllCohorts <- function(preprocCohorts, maxK=5, distance="pearson",
                                method="hc", nthread, reps=1000, seed=NULL) {
   # Temporily change number of cores to parallelize over
@@ -289,7 +288,6 @@ rankAllCohortGenesByMAD <- function(cohortDataL, nthread) {
 #'    data subset to the genes of interest. Rows are features,
 #'    columns are samples.
 #'
-#' @export
 #' @keywords internal
 .scaleGenewise <- function(cohortSubset, center, scale) {
   t(scale(t(data.matrix(cohortSubset)),
@@ -305,15 +303,17 @@ rankAllCohortGenesByMAD <- function(cohortDataL, nthread) {
 #' @param columns A \code{character} vector of samples to subset to,
 #'    if excluded all samples are returned.
 #'
-#' @export
 #' @keywords internal
 .subsetCohorts <- function(cohorts, genes=TRUE, columns=TRUE) {
   lapply(cohorts, `[`, i=genes, j=columns)
 }
 
+#' Find all non-self pair-wise combinations of cohorts
 #'
+#' @param clusterNames A \code{character} vector of cohort names
 #'
-#'
+#' @return A \code{data.frame} with the index of all non-self pair-wise cohort combinations. Rownames
+#'     are the names of the two clusters being compared.
 #'
 #' @export
 findAllCohortPairs <- function(clusterNames) {
@@ -340,9 +340,9 @@ findAllCohortPairs <- function(clusterNames) {
 #' @param allConClusters
 #' @param allProcCohorts
 #'
-#' @return A \code{}
+#' @return A \code{data.table} 
 #'
-#' @importFrom
+#' @import data.table
 #' @export
 calcMSMthresholds <- function(cohortPair, allConClusters, allProcCohorts) {
 
