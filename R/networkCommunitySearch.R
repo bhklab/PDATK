@@ -225,6 +225,9 @@ fitSurvivalCurves <- function(metaClusterSurvAnnot) {
 #'    will not work.
 #' @param palette An optional RColorBrewer palette to colour the survival curves,
 #'   defaults to 'Set1'.
+#' @param inset An optional parameter specifying the how far to inset the legend
+#'   in the plot. Useful for adjusting legend position in plot grids. Defualts
+#'   to zero.
 #' @param showPlot A \code{boolean} indicating wether or not to draw the plot.
 #'   For internal use in `plotCohortwiseSurvivalCurves` to prevent plotting
 #'   twice.
@@ -237,8 +240,10 @@ fitSurvivalCurves <- function(metaClusterSurvAnnot) {
 #' @importFrom grid grid.draw
 #' @importFrom ggplotify base2grob as.ggplot
 #' @export
-plotSurvivalCurves <- function(survivalCurves, title="", showPlot=TRUE, palette="Set1", saveDir, fileName) {
-  plotFunction <- as.expression(call(".plotSurvivalCurve", survivalCurves, title, palette))
+plotSurvivalCurves <- function(survivalCurves, title="", showPlot=TRUE,
+                               palette="Set1", inset=0, saveDir, fileName) {
+  plotFunction <- as.expression(call(".plotSurvivalCurve", survivalCurves, title,
+                                     palette, inset))
 
   grob <- base2grob(plotFunction)
 
@@ -261,11 +266,15 @@ plotSurvivalCurves <- function(survivalCurves, title="", showPlot=TRUE, palette=
 #'   defaults to 'Set1'.
 #'
 #' @importFrom RColorBrewer brewer.pal
+#' @importFrom scales scientific
 #' @keywords internal
-.plotSurvivalCurve <- function(survivalCurves, title, palette) {
+.plotSurvivalCurve <- function(survivalCurves, title, palette, inset=0) {
   plot(survivalCurves$fit, col=brewer.pal(n=8, palette), lwd=2,
        xlab="Days", ylab="Survival Probability")
-  legend("bottomleft", paste0("P = ", round(survivalCurves$pval, 2)), bty="n")
+  legend("topright", title=paste0("P = ", scientific(survivalCurves$pval, 2)), bty="n",
+         fill=brewer.pal(n=8, palette),
+         legend=sort(gsub('.*=', '', names(survivalCurves$fit$strata))),
+         inset=inset)
   title(title, line=0.2)
 }
 
@@ -275,6 +284,9 @@ plotSurvivalCurves <- function(survivalCurves, title="", showPlot=TRUE, palette=
 #'    survival data
 #' @param palette An optional RColorBrewer palette to colour the survival curves,
 #'   defaults to 'Set1'.
+#' @param inset An optional parameter specifying the how far to inset the legend
+#'   in the plot. Useful for adjusting legend position in plot grids. Defualts
+#'   to zero.
 #' @param saveDir An optional \code{character} vector specifying the path
 #'    to the directory where the plot should be saved. If excluded, fileName
 #'    will not work.
@@ -290,12 +302,13 @@ plotSurvivalCurves <- function(survivalCurves, title="", showPlot=TRUE, palette=
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplotify base2grob as.ggplot
 #' @export
-plotCohortwiseSurvCurves <- function(metaClusterSurvAnnot, plot=TRUE, saveDir, fileName) {
+plotCohortwiseSurvCurves <- function(metaClusterSurvAnnot, plot=TRUE, inset=0.2,
+                                     saveDir, fileName) {
   DT <- as.data.table(metaClusterSurvAnnot, keep.rownames=TRUE)
   perCohort <- split(DT, by='cohorts')
   cohortCurves <- lapply(perCohort, fitSurvivalCurves)
   plotGrobs <- mapply(plotSurvivalCurves, cohortCurves, title=names(perCohort),
-                      MoreArgs=list(showPlot=FALSE), SIMPLIFY=FALSE)
+                      MoreArgs=list(showPlot=FALSE, inset=inset), SIMPLIFY=FALSE)
 
   grob <- grid.arrange(grobs=plotGrobs, ncol=ceiling(sqrt(length(plotGrobs))))
 

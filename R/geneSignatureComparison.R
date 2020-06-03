@@ -112,6 +112,9 @@ annotateSampleMetaClassDT <- function(sampleMetaClassDT, clusterLabels=c("Basal"
 #'   the names of the metaclusters between which to compare means.
 #' @param sigScoreName A \code{character} vector with the name of the gene
 #'   signature being plotted. Becomes the y-axis label.
+#' @param palette A \code{character} vector specifying the name of a palette
+#'   from RColorBrewer for the plot. Passed as `palette` argument to
+#'   `ggpubr:ggboxplot`. Defaults to 'Set1'.
 #' @param saveDir An optional \code{character} vector specifying the path
 #'    to the directory where the plot should be saved. If excluded, fileName
 #'    will not work.
@@ -122,10 +125,11 @@ annotateSampleMetaClassDT <- function(sampleMetaClassDT, clusterLabels=c("Basal"
 #' @importFrom ggpubr ggboxplot stat_compare_means
 #' @importFrom ggplot2 ggsave
 #' @export
-plotSigScores <- function(signatureScoreDT, comparisons, sigScoreName, saveDir, fileName) {
-  plot <- ggboxplot(signatureScoreDT, x = "metaClasses", y = "sigScores",
+plotSigScores <- function(sigScoreDT, comparisons, sigScoreName,
+                          palette="Set1", saveDir, fileName) {
+  plot <- ggboxplot(sigScoreDT[order(metaClasses)], x="metaClasses", y="sigScores",
                     color="metaClasses",
-                    palette="jco",
+                    palette=palette,
                     ylab=sigScoreName,
                     add="jitter", xlab="", legend="none") +
           stat_compare_means(comparisons=comparisons)
@@ -144,6 +148,9 @@ plotSigScores <- function(signatureScoreDT, comparisons, sigScoreName, saveDir, 
 #' @param comparison A \code{list} of character vectors containing the names
 #'    of cohorts to compare. All comparisons must be pairwise (i.e., each
 #'    character vector can have only two names).
+#' @param palette A \code{character} vector specifying the name of a palette
+#'   from RColorBrewer for the plot. Passed as `palette` argument to
+#'   `ggpubr:ggboxplot`. Defaults to 'Set1'.
 #' @param saveDir An optional \code{character} vector specifying the path
 #'    to the directory where the plot should be saved. If excluded, fileName
 #'    will not work.
@@ -154,11 +161,12 @@ plotSigScores <- function(signatureScoreDT, comparisons, sigScoreName, saveDir, 
 #' @importFrom ggplot2 ggsave
 #' @importFrom ggplotify as.ggplot
 #' @export
-plotSigScoreL <- function(sigScoreL, comparisons, saveDir, fileName) {
+plotSigScoreL <- function(sigScoreL, comparisons, palette="Set1", saveDir, fileName) {
   sigScorePlotL <- mapply(plotSigScores,
-                          cohortSignatureScoreDT=sigScoreL,
-                          signatureScoreName=names(sigScoreL),
-                          MoreArgs=list(comparisons=comparisons),
+                          sigScoreDT=sigScoreL,
+                          sigScoreName=names(sigScoreL),
+                          MoreArgs=list(comparisons=comparisons,
+                                        palette=palette),
                           SIMPLIFY=FALSE)
 
   sigScorePlots <- grid.arrange(grobs=sigScorePlotL)
