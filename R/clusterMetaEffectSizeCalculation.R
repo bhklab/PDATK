@@ -1,11 +1,20 @@
+#' Build a long data.table holding the gene expresion values for each gene in
+#'    each sample in each cohort, labelled with the meta-class of each sample in
+#'    each cohort.
 #'
+#' @param preprocCohorts A \code{list} of preprocesed sample by gene cohort
+#'    expression data. As returned from the `preprocCohortL` function in this
+#'    package.
+#' @param annotSampleMetaClassDT A \code{data.table} with annotated meta-class
+#'    predictions for each sample in each cohort.
 #'
+#' @return A long \code{data.table} of gene expression values per gene per sample
+#'   per cohort, annotated with the predicted meta-class/subtype for each sample
+#'   in each cohort.
 #'
-#'
-#'
-#'
-#'
-makeGenewiseCohortsDT <- function(preprocCohortDataL, annotSampMetaClassDT) {
+#' @import data.table
+#' @export
+makeGenewiseCohortsDT <- function(preprocCohorts, annotSampMetaClassDT) {
   cohortNames <- names(preprocCohorts)
   cohortT <- lapply(preprocCohorts, t)
   cohortRNs <- lapply(cohortT, rownames)
@@ -21,14 +30,23 @@ makeGenewiseCohortsDT <- function(preprocCohortDataL, annotSampMetaClassDT) {
   return(genewiseCohortDT)
 }
 
+#' Calculate meta-estimate statistics for each gene in each sample in each
+#'    cohort
 #'
+#' @param gwCohortsDT A long \code{data.table} of gene expression values per
+#'   gene per samplw per cohort, annotated with the predicted meta-class/subtype
+#'   for each sample in each cohort. As returned by the `makeGenewiseCohortsDT`
+#'   function in this package.
 #'
+#' @return A gene by meta-class \code{data.table} containing the weigthed mean
+#'     of the meta-effectsize (calculated with `effsize::cohen.d`) for each
+#'     predicted subtype across all cohorts and samples.
 #'
-#'
-#'
-#'
-#'
+#' @importFrom effsize cohen.d
+#' @export
 calcClustMetaEstStats <- function(gwCohortsDT) {
+
+  ## FIXME:: These can probably be done with group by statements, fix it
   # Split into list of all cohort-gene combinations
   splitDT <- split(gwCohortsDT, by=c('cohorts', 'gene'))
 
@@ -40,7 +58,7 @@ calcClustMetaEstStats <- function(gwCohortsDT) {
   }
 
   message("Calculating cohen.d estimates")
-  # For each class, calculate the gene-wise cohen.d the predicted metaclass
+  # For each class, calculate the gene-wise cohen.d for the predicted metaclass
   # (i.e., all samples for that gene and class)
   cohenEstimateL <- list()
   for (class in c("Basal", "Classical", "Exocrine")) {
@@ -63,7 +81,7 @@ calcClustMetaEstStats <- function(gwCohortsDT) {
   }
 
   message("Reorganizing results...")
-  # Flattent he lists
+  # Flattent the lists
   cohL <- unlist(cohenEstimateL)
   wtL <- 1 / unlist(geneSD)
 
@@ -86,7 +104,6 @@ calcClustMetaEstStats <- function(gwCohortsDT) {
         wtClass[[class]][grepl(gene, names(wtClass[[class]]))]
     }
   }
-
 
   message("Computing weighted means...")
   # Add na.rm for
@@ -114,6 +131,7 @@ calcClustMetaEstStats <- function(gwCohortsDT) {
                                     MoreArgs=list(na.rm=TRUE))
   }
 
-  weightedMeans <- as.data.table(do.call(cbind, weightedMean), keep.rownames="gene")
+  weightedMeans <- as.data.table(do.call(cbind, weightedMean),
+                                 keep.rownames="gene")
   return(weightedMeans)
 }
