@@ -597,7 +597,7 @@ geneSetL <- loadGnSetGMTs(file.path("..", "data"))
 names(geneSetL)
 ```
 
-```{r }
+```{r rank_each_metaclass}
 rankedMetaClassGenes <- rankMetaClassGenesByEffSize(classByGnEffSizeDT)
 ```
 
@@ -610,7 +610,7 @@ pathwayStatsDT <- computePathwayScores(rankedMetaClassGenes, geneSetL, reference
 pathwayHMPs <- heatmapPathwayScores(pathwayStatsDT, significance=0.05)
 ```
 
-```{r}
+```{r plot_grid_heatmap_of_gene_signature_scores}
 ggarrangePlotL(pathwayHMPs, 3)
 ```
 

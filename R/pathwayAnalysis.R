@@ -1,7 +1,15 @@
+#' Get the top 1000 genes by meta-effect size within each meta-class.
 #'
-#' @param
+#' @param metaEstimateStatsDT A gene by meta-class \code{data.table} containing the weigthed mean
+#'     of the meta-effectsize (calculated with `effsize::cohen.d`) for each
+#'     predicted subtype across all cohorts and samples. As returned from the
+#'     `calcClustMetaEstStats` function this this package.
 #'
+#' @return A \code{data.table} with the top 1000 genes per meta-class along
+#'   with the associated weighted mean of the effect size and meta-class
+#'   annotations.
 #'
+#' @import data.table
 #' @export
 rankMetaClassGenesByEffSize <- function(metaEstimateStatsDT) {
   meltDT <- melt(metaEstimateStatsDT, id.vars='gene', variable.name="class",
@@ -10,11 +18,14 @@ rankMetaClassGenesByEffSize <- function(metaEstimateStatsDT) {
   return(topGenes)
 }
 
+#' Read in all .gmt fiels within the specified directory as a list
 #'
+#' @param gmtFldir GMT file directory, the path to the directory where
+#'    the .gmt files are located.
 #'
-#'
-#'
-#'
+#' @importFrom piano loadGSC
+#' @import data.table
+#' @export
 loadGnSetGMTs <- function(gmtFldir) {
   pathwayGMTfl <- list.files(gmtFldir, pattern='.gmt', full.names=TRUE)
   pathwayL <- lapply(pathwayGMTfl, loadGSC)
@@ -23,11 +34,23 @@ loadGnSetGMTs <- function(gmtFldir) {
   return(pathwayL)
 }
 
+#' Calculate the pathway score for a list of pathway specific gene-sets for
+#'    the top 1000 genes from each meta-class.
 #'
+#' @param rankedMetaClassGenes A \code{data.table} with the top 1000 genes per
+#'   meta-class along with the associated weighted mean of the effect size and
+#'   meta-class annotations.
+#' @param pathwayL A \code{list} of `GSC` objects from the `piano` package,
+#'   as returned by the `loadGnSetGMTs` function in this package.
+#' @param referenceGenes A \code{character} vector with the names of all common
+#'   genes in the gene exoression cohorts.
 #'
+#' @return A \code{data.table} with the pathway score and p-value for each
+#'   gene set in each pathway by mete-class.
 #'
-#'
-#'
+#' @importFrom piano runGSAhyper
+#' @import data.table
+#' @export
 computePathwayScores <- function(rankedMetaClassGenes, pathwayL, referenceGenes) {
   splitByClass <- split(rankedMetaClassGenes, by='class')
 
@@ -66,12 +89,26 @@ computePathwayScores <- function(rankedMetaClassGenes, pathwayL, referenceGenes)
 }
 
 
+#' Heatmap the gene expression signatures for each pathway in each meta-class
 #'
+#' @param pathStatsDT A \code{data.table} with the pathway score and p-value for each
+#'   gene set in each pathway by mete-class. As returned by the
+#'   `computePathwayScores` function in this package.
+#' @param exclude A \code{character} vector of meta-class labels to exclude
+#'   from the heatmap.
+#' @param significance The alpha level to use as a cutoff for gene signatures
+#'    to be included in the heatmap.
+#' @param palette The RColorBrewer palette to use when colouring the graph.
 #'
+#' @return A \code{list} of `ggplot`s, one for each pathway when calculating
+#'    the pathway statistics.
 #'
-#'
-#'
-heatmapPathwayScores <- function(pathStatsDT, exclude, significance=0.05) {
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom gplots heatmap.2
+#' @import data.table
+#' @export
+heatmapPathwayScores <- function(pathStatsDT, exclude, significance=0.05,
+                                 palette="Set1") {
 
     if (!missing(exclude)) {
         pStatsDT <- pathStatsDT[pval < significance & !(class %in% exclude), ][, -'pval']
