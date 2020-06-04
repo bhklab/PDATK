@@ -97,6 +97,6 @@ boxplotBiomarkerScoresL <- function(geneBiomarkerScoreL, biomarkers, comparisons
                   MoreArgs=list(comparisons=comparisons,
                                 palette=palette),
                   SIMPLIFY=FALSE)
-  names(plotL) <- names(biomarkersOfInterest)
+  names(plotL) <- names(biomarkers)
   return(plotL)
 }

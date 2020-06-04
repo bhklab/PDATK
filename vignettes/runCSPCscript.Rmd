@@ -205,13 +205,13 @@ plotCohortwiseSurvCurves(metaClusterSurvAnnot,  saveDir=file.path("..", "results
 
 ```{r get_metaclass_by_cohort_and_sample}
 sampleMetaClassDT <- extractSampleMetaClasses(annotatedClusters)
-annotSampeMetaClassDT <- annotateSampleMetaClassDT(sampleMetaClassDT, c("Basal", "Exocrine", "Classical", "Other"))
-head(annotSampeMetaClassDT)
+annotSampMetaClassDT <- annotateSampleMetaClassDT(sampleMetaClassDT, c("Basal", "Exocrine", "Classical", "Other"))
+head(annotSampMetaClassDT)
 ```
 
 ```{r read_in_gene_signature_data}
 geneSigL <- readRDS(file=file.path("..", "data", "geneSigList.rds"))
-sigScoreL <- calcAllGeneSetSigScores(geneSigL, cohortsDataL, annotSampeMetaClassDT)
+sigScoreL <- calcAllGeneSetSigScores(geneSigL, cohortsDataL, annotSampMetaClassDT)
 ```
 
 ```{r plot_gene_signatures_between_metaclasses, fig.height=10, fig.width=12}
