@@ -15,35 +15,15 @@
 #'    and extension of the file. Only used if `saveDir` is also specified.
 #'    Saving is done via the `ggsave` function from `ggplot2`.
 #'
-#' @importFrom igraph graph_from_edgelist layout_with_fr as.undirected
-#'     fastgreedy.community membership
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom ggplot2 ggsave
 #' @importFrom grid grid.draw
 #' @importFrom ggplotify base2grob as.ggplot
+#' @import igraph
 #' @export
 plotClusterNetwork <- function(clusterEdges, seed=NULL, palette="Set1",
                                clusterLabels, saveDir, fileName, ...) {
-  
- # A helper function for plotting network graphs
-  .plotNetwork <- function(ugraph, metaClusters, coords, colours, clusterLabels) {
-      plot(ugraph,
-          vertex.color=colours[membership(metaClusters)],
-          vertex.shape="sphere",
-          vertex.size=6,
-          edge.arrow.size=0.5,
-          vertex.label.cex=0.8,
-          vertex.label.dist=2,
-          edge.curved=0.1,
-          vertex.color=colours[membership(metaClusters)],
-          edge.arrow.size=0.4,
-          layout=layout_with_dh(ugraph),
-          layout=coords)
-      legend('topleft',
-          legend=clusterLabels,
-          pt.cex=1.8, pch=21, pt.bg=colours, bty='n', col=colours)
-  }
-  
+
   # Set seed for reproducible results
   if (!is.null(seed)) set.seed(seed)
 
@@ -65,8 +45,10 @@ plotClusterNetwork <- function(clusterEdges, seed=NULL, palette="Set1",
   if (missing(clusterLabels)) {
     clusterLabels <- as.character(sort(unique(membership(metaClusters))))
   }
-  plotNetwork <- call('.plotNetwork', ugraph, metaClusters, coords, colours,
-                      clusterLabels)
+  plotNetwork <- call('.plotNetwork', ugraph=ugraph,
+                      metaClusters=metaClusters,
+                      coords=coords, colours=colours,
+                      clusterLabels=clusterLabels)
 
   # Plot the network graph
   plot <- as.ggplot(base2grob(as.expression(plotNetwork)))
@@ -79,7 +61,29 @@ plotClusterNetwork <- function(clusterEdges, seed=NULL, palette="Set1",
 }
 
 
-
+# A helper function for plotting network graphs
+#' @import ggplot2
+#' @export
+#' @import igraph
+#' @keywords internal
+.plotNetwork <- function(ugraph, metaClusters, coords, colours, clusterLabels) {
+  igraph::plot.igraph(ugraph,
+       vertex.color=colours[membership(metaClusters)],
+       vertex.shape="sphere",
+       vertex.size=6,
+       edge.arrow.size=0.5,
+       vertex.label.cex=0.8,
+       vertex.label.dist=2,
+       edge.curved=0.1,
+       vertex.color=colours[membership(metaClusters)],
+       edge.arrow.size=0.4,
+       layout=layout_with_dh(ugraph),
+       layout=coords)
+  legend('topleft',
+         legend=clusterLabels,
+         pt.cex=1.8, pch=21, pt.bg=colours, bty='n',
+         col=colours)
+}
 
 
 #' Get the survival data from a list of expression
@@ -265,7 +269,7 @@ plotSurvivalCurves <- function(survivalCurves, title="", showPlot=TRUE,
 #'   defaults to 'Set1'.
 #'
 #' @importFrom RColorBrewer brewer.pal
-#' @importFrom scales scientific
+#' @import scales
 #' @keywords internal
 #' @export
 .plotSurvivalCurve <- function(survivalCurves, title, palette, inset=0) {

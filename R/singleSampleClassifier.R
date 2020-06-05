@@ -40,7 +40,7 @@ computeCohortCommMat <- function(cohortsDataL, metaGenes) {
 #' @importFrom switchBox SWAP.KTSP.Train
 #' @export
 trainSingleSampleClassifer <- function(cohortComMat, sampleMetaClassDT, class, maxK) {
-  sampleMetaClassDT <- sampleMetaClassDT[!duplicated(samples), ]
+  sampleMetaClassDT <- na.omit(sampleMetaClassDT[!duplicated(samples), ])
   keepSamples <- intersect(colnames(cohortComMat), sampleMetaClassDT$samples)
   cohortComMat <- cohortComMat[, keepSamples]
   metaClasses <- sampleMetaClassDT[samples %in% keepSamples, ]$metaClasses

@@ -27,6 +27,7 @@ Imports:
     ktspair,
     pROC,
     survcomp,
+    gplots,
     survival,
     data.table,
     reportROC,

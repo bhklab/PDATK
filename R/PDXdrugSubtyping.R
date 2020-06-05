@@ -17,6 +17,7 @@
 #'    with sample name and predicted meta-class/subtype.
 #'
 #' @import data.table
+#' @importFrom limma avereps
 #' @export
 preprocPDXdata <- function(PDXdata, classifModel, topGenesDT, trainData,
                            trainLabels) {
@@ -80,7 +81,7 @@ boxplotPDXsubtypePerDrug <- function(PDXmergedDT) {
 #' @importFrom BBmisc chunk
 #' @export
 ggarrangePlotL <- function(plotL, chunk) {
-  nrow <- .ceilSqrt(chunk)
+  nrow <- ceiling(sqrt(length(seq_len(5))))
   plotChunks <- chunk(plotL, chunk.size=chunk)
   plotGrids <- lapply(plotChunks,
                       function(plots, ncol, nrow)

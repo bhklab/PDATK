@@ -1,6 +1,12 @@
 ## ----message=FALSE----------------------------------------------------------------------------------------------------------------------------------------
 library(PDATK)
 library(Biobase)
+library(data.table)
+library(ggplot2)
+library(randomForest)
+library(survival)
+library(survminer)
+library(gridExtra)
 
 ## ----load_cohort_data-------------------------------------------------------------------------------------------------------------------------------------
 cohortsDataL <- readRDS('../data/cohortsCommonGenes.rds')
@@ -78,12 +84,17 @@ MSMthresholds <- calcAllMSMthresholds(cohortPairs, allConClusters, allProcCohort
 
 
 ## ----compare_all_clusters---------------------------------------------------------------------------------------------------------------------------------
-a <- Sys.time()
-allClusterRepro <- calcAllClusterRepro(MSMthresholds, allConClusters,
-                                       allProcCohorts, nthread=10, reps=500,
-                                       seed=1987)
-b <- Sys.time()
-b - a
+if (file.exists(file.path('..', 'results', 'allClusterRepro.rds'))) {
+    allClusterRepro <- readRDS(file.path('..', 'results', 'allClusterRepro.rds'))
+} else {
+    a <- Sys.time()
+    allClusterRepro <- calcAllClusterRepro(MSMthresholds, allConClusters,
+                                           allProcCohorts, nthread=12, reps=500,
+                                           seed=1987)
+    b <- Sys.time()
+    b - a
+}
+
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -122,8 +133,8 @@ saveRDS(annotatedClusters, file.path("..", "results", "annotatedClusters.rds"))
 
 ## ----cluster_network, fig.height=10, fig.width=10---------------------------------------------------------------------------------------------------------
 plotClusterNetwork(clusterEdges, seed=1987,
-                   savePath=file.path('..', 'results'),
                    clusterLabels=c("Basal", "Classical", "Exocrine", "Other"),
+                   saveDir=file.path('..', 'results'),
                    fileName='clusterNetworkGraph.pdf')
 
 
@@ -160,7 +171,7 @@ summary(proportionalHarzardsModel)
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
-metaClusterSurvAnnot <- as.data.table(metaClusterSurvAnnot)[metaClusters %in% c("Basal", "Classical", "Exocrine")]
+metaClusterSurvAnnot <- as.data.table(metaClusterSurvAnnot)[metaClusters %in% c("Basal", "Classical", "Exocrine")] # Remove this to include other cluster
 survivalCurves <- fitSurvivalCurves(metaClusterSurvAnnot)
 
 
@@ -173,8 +184,9 @@ plotCohortwiseSurvCurves(metaClusterSurvAnnot,  saveDir=file.path("..", "results
 
 
 ## ----get_metaclass_by_cohort_and_sample-------------------------------------------------------------------------------------------------------------------
-sampleMetaClassDT <- extractSampleMetaClasses(annotatedClusters)
+sampleMetaClassDT <- na.omit(extractSampleMetaClasses(annotatedClusters)[metaClasses %in% c(1, 2, 3)]) # Remove this to include other cluster
 annotSampMetaClassDT <- annotateSampleMetaClassDT(sampleMetaClassDT, c("Basal", "Exocrine", "Classical", "Other"))
+annotSampMetaClassDT <- annotSampMetaClassDT[metaClasses %in% c("Basal", "Classical", "Exocrine")] # Remove this to include other cluster
 head(annotSampMetaClassDT)
 
 
@@ -207,11 +219,12 @@ biomarkerScoreBoxplotL <- boxplotBiomarkerScoresL(geneBiomarkerScoreL,
 
 
 ## ----basal_class_boxplots, fig.height=10, fig.width=10----------------------------------------------------------------------------------------------------
+## TODO:: Put this inside a function to reduce libraries needed for analysis
 scoreClasses <- names(biomarkerScoreBoxplotL)
 scoreIdxs <- which(scoreClasses %in% "Basal")
 basalPlots <- grid.arrange(grobs=biomarkerScoreBoxplotL[scoreIdxs], ncol=2)
 ggsave(file.path("..", "results", "basalBiomarkerBoxPlots.pdf"))
-basalPlots
+grid::grid.draw(basalPlots)
 
 
 ## ----classical_class_boxplots, fig.height=10, fig.width=10------------------------------------------------------------------------------------------------
@@ -241,7 +254,6 @@ singleSampleClassifiers <- lapply(uniqueMetaClasses,
                                   maxK=20)
 names(singleSampleClassifiers) <- uniqueMetaClasses
 
-
 ## ----get_predicted_genes----------------------------------------------------------------------------------------------------------------------------------
 classTSPs <- lapply(singleSampleClassifiers, `[[`, "TSPs")
 topGenes1 <- lapply(classTSPs, `[`, i=TRUE, j=1)
@@ -260,7 +272,8 @@ genePairs <- paste(unlist(topGenes1), unlist(topGenes2), sep=">")
 keepSamples <- intersect(colnames(cohortCommMat), unique(sampleMetaClassDT$samples))
 cohortTopGenesMat <- cohortCommMat[featuresDT$genes, keepSamples]
 sampleMetaClassDT <- sampleMetaClassDT[!duplicated(samples) & samples %in% keepSamples, ]
-metaClassesFactor <- as.factor(sampleMetaClassDT$metaClasses)
+annotTopGeneMetaClassDT <- annotateSampleMetaClassDT(sampleMetaClassDT, c("Basal", "Classical", "Exocrine"))
+metaClassesFactor <- as.factor(annotTopGeneMetaClassDT$metaClasses)
 
 
 ## ----compare_top_genes------------------------------------------------------------------------------------------------------------------------------------
@@ -269,9 +282,15 @@ g1Gt2Matrix[1:5, 1:5]
 
 
 ## ----make_model_predictions-------------------------------------------------------------------------------------------------------------------------------
-################## DONT CLICK ME ############################
-sampleClassPreds <- predictSingleSampleClasses(g1Gt2Matrix, metaClassesFactor, nthread=14)
-saveRDS(sampleClassPreds, file.path('..', 'results', 'sampleClassPreds.rds'))
+if (file.exists(file.path("..", "results", "sampleClassPreds.rds"))) {
+    sampleClassPreds <- readRDS(file.path("..", "results", "sampleClassPreds.rds"))
+} else {
+    a <- Sys.time()
+    sampleClassPreds <- predictSingleSampleClasses(g1Gt2Matrix, metaClassesFactor, nthread=12)
+    saveRDS(sampleClassPreds, file.path('..', 'results', 'sampleClassPreds.rds'))
+    b <- Sys.time()
+    b - a
+}
 
 
 ## ----predict_binary_rf_model------------------------------------------------------------------------------------------------------------------------------
@@ -308,10 +327,12 @@ head(sampClassPredwSurvivalDT)
 
 
 ## ----tumor_response_all_drug_all_classes, fig.height=8, fig.width=12--------------------------------------------------------------------------------------
-waterfallPlotTumorResponse(sampClassPredwSurvivalDT)
+waterfallPlotTumorResponse(sampClassPredwSurvivalDT, saveDir=resultsDir,
+                           fileName="compassTumorResponseWaterfallPlot.pdf")
 
 
 ## ----tumor_response_basalvclassical_ffx, fig.height=8, fig.width=12---------------------------------------------------------------------------------------
+## TODO:: Make a function to complre the survival
 survBasalvClassicalDT <-
   sampClassPredwSurvivalDT[predClass %in% c("Basal", "Classical") &
                              drug %in% c("FFx", "FFx x 1")]
@@ -319,9 +340,11 @@ survBasalvClassicalDT <-
 classSurvComparison <- survfit(Surv(OS, OSstatus) ~ predClass,
                                data=survBasalvClassicalDT)
 
-pValue <- survminer::surv_pvalue(classSurvComparison)$pval.txt
+pValue <- surv_pvalue(classSurvComparison)$pval.txt
 
-waterfallPlotTumorResponse(survBasalvClassicalDT, noXaxis=TRUE, pVal=pValue)
+waterfallPlotTumorResponse(survBasalvClassicalDT, noXaxis=TRUE, pVal=pValue,
+                           saveDir=resultsDir,
+                           fileName="basalClassicalTumorResponseWaterfallPlot.pdf")
 
 
 ## ----prop_hazards_model-----------------------------------------------------------------------------------------------------------------------------------
@@ -391,7 +414,9 @@ plot <- boxplotAUCperSubtypePerDataset(mergedCelllineDT[dataset != "GDSC"],
 
 
 ## ----fig.height=12, fig.width=12--------------------------------------------------------------------------------------------------------------------------
-ggarrange(plotlist=plot, ncol=.ceilSqrt(plot), nrow=.ceilSqrt(plot))
+## TODO:: Put this into a function
+dims <- ceiling(sqrt(length(plot)))
+ggarrange(plotlist=plot, ncol=dims, nrow=dims)
 
 
 ## ----load_PDX_data----------------------------------------------------------------------------------------------------------------------------------------
@@ -407,7 +432,6 @@ PDXgeneExprClassDT1 <- preprocPDXdata(PDXgeneExprDT, binaryRFmodel, topGenesDT,
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
-library(Biobase)
 PDXgeneExprClassDT2 <- preprocPDXdata(exprs(PDXgeneExprSet), binaryRFmodel,
                                       topGenesDT, g1Gt2Matrix,
                                       metaClassesFactor)
@@ -428,8 +452,11 @@ plots <- boxplotPDXsubtypePerDrug(PDXmergedDT)
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
-plotGrids <- ggarrangePlotL(plots, 6)
-
+## TODO:: Add plot saving arguments to boxplotDPXsubtypePerDrug
+plotGrids <- ggarrangePlotL(plots, 5) # This function is buggy right now, need to fix
+for (i in seq_along(plotGrids)) {
+  ggsave(plotGrids[[i]], file=file.path(resultsDir, paste0('PDXdrugRespPerDrug', i, ".pdf")))
+}
 
 ## ----fig.height=12, fig.width=8---------------------------------------------------------------------------------------------------------------------------
 plotGrids
@@ -460,16 +487,24 @@ osloTCGAcnScores <- fread(file.path('..', 'data', 'osloTCGAcnScores.csv'))
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
-setDTthreads(14)
-CNAscoreByProbeDT <- countCNAscoresByProbe(osloTCGAcnScores, copyNumSNPposDT, annotSampMetaClassDT)
-
+if (file.exists(file.path(resultsDir, "CNAscoreByProbe.csv"))) {
+  CNAscoreByProbeDT <- fread(file.path(resultsDir, 'CNAscoreByProbe.csv'))
+} else {
+  setDTthreads(14)
+  CNAscoreByProbeDT <- countCNAscoresByProbe(osloTCGAcnScores, copyNumSNPposDT, annotSampMetaClassDT)
+  fwrite(CNAscoreByProbeDT, file.path(resultsDir, "CNAscoreByProbe.csv"))
+}
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## TODO:: Add plot saving functionality to plotPerChromosomeCNAscores
 chrScorePlots <- plotPerChromosomeCNAscores(CNAscoreByProbeDT)
 
-
 ## ----fig.height=14, fig.width=14--------------------------------------------------------------------------------------------------------------------------
-ggarrangePlotL(chrScorePlots, 9)
+chrScorePlotGridL <- ggarrangePlotL(chrScorePlots, 3)
+for (i in seq_along(chrScorePlotGridL)) {
+  ggsave(chrScorePlotGridL[[i]], file=file.path(resultsDir, paste0('CNAplotGrid', i, ".pdf")))
+}
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -478,17 +513,16 @@ genewiseCohortsDT <- makeGenewiseCohortsDT(allProcCohorts, annotSampMetaClassDT)
 
 ## ----calculate_the_genewise_metaeffect_size---------------------------------------------------------------------------------------------------------------
 # TODO:: Rewrite this with group by in data.table
-classByGnEffSizeDT <- calcClustMetaEstStats(genewiseCohortsDT)
-
-
-## ----save_results-----------------------------------------------------------------------------------------------------------------------------------------
-fwrite(classByGnEffSizeDT, file.path('..', 'results', 'classByGeneWeigthedEffSize.csv'))
-
+if (file.exists(file.path(resultsDir, 'classByGnEffSize.csv'))) {
+  classByGnEffSizeDT <- fread(file.path(resultsDir, 'classByGnEffSize.csv'))
+} else {
+  classByGnEffSizeDT <- calcClustMetaEstStats(genewiseCohortsDT)
+  fwrite(classByGnEffSizeDT, file.path(resultsDir, 'classByGnEffSize.csv'))
+}
 
 ## ----load_oathway_data------------------------------------------------------------------------------------------------------------------------------------
 geneSetL <- loadGnSetGMTs(file.path("..", "data"))
 names(geneSetL)
-
 
 ## ----rank_each_metaclass----------------------------------------------------------------------------------------------------------------------------------
 rankedMetaClassGenes <- rankMetaClassGenesByEffSize(classByGnEffSizeDT)
@@ -501,10 +535,14 @@ pathwayStatsDT <- computePathwayScores(rankedMetaClassGenes, geneSetL, reference
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
 pathwayHMPs <- heatmapPathwayScores(pathwayStatsDT, significance=0.05)
-
+for (i in seq_along(pathwayHMPs)) {
+  ggsave(pathwayHMPs[[i]], file=file.path(resultsDir, paste0('pathwayHMP', names(geneSetL)[i], ".pdf")))
+}
 
 ## ----plot_grid_heatmap_of_gene_signature_scores, fig.height=12, fig.width=10------------------------------------------------------------------------------
-ggarrangePlotL(pathwayHMPs, 3)
+##TODO:: Add plot saving functionality to heatmapPathwaysScores
+pathwayHMPgridL <- ggarrangePlotL(pathwayHMPs, 3)
+pathwayHMPgridL
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -512,22 +550,21 @@ classifFileL <- list.files(file.path('..', 'data'), pattern="centroid",
                           ignore.case=TRUE, full.names=TRUE)
 
 classifL <- lapply(classifFileL, readRDS)
+# Format file path into the name of the classifier
 names(classifL) <- gsub('^.*\\/|[Cc]entroid*|\\.[^\\.]*$', '', classifFileL)
-
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
 publishedClassifSubtypeDT <- subtypeDataLwClassifCentroidL(PGxCelllinesL, classifL,
                                                           PGxCCLpreds, seed=1987)
 
-
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
-plotClassifierComparisons(publishedClassifSubtypeDT, allClassif=TRUE)
-
+classifComparison <- plotClassifierComparisons(publishedClassifSubtypeDT, allClassif=TRUE)
+ggsave(classifComparison, file=file.path(resultsDir, "publishedClassifSubtypeComparison.pdf"))
 
 ## ----caclualte_association_stats--------------------------------------------------------------------------------------------------------------------------
 assocStatsDT <- calcAssocStats(publishedClassifSubtypeDT)
 
 
 ## ----heatmap_classif_assoc_stats--------------------------------------------------------------------------------------------------------------------------
-heatmapClassifCors(assocStatsDT)
-
+classifCorHMP <- heatmapClassifCors(assocStatsDT)
+ggsave(classifCorHMP, file=file.path(resultsDir, "publishedClassifCorrHMP.pdf"))

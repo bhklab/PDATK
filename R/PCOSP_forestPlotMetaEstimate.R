@@ -203,7 +203,7 @@ forestPlotMetaEstimate <- function(validationStats, stat, isSummary, filePath,
 #'     function from `ggplot2`.
 #' @param ... Additional arguments passed to forestplot.
 #'
-#' @importFrom scales scientific
+#' @import scales
 #' @importFrom forestplot forestplot fpTxtGp fpColors fpDrawNormalCI fpDrawSummaryCI
 #' @importFrom grid unit grid.grabExpr grid.draw gpar
 #' @importFrom ggplot2 ggsave
@@ -339,7 +339,7 @@ forestPlotModelComparison <- function(clinicalModelStats, stat, isSummary, fileP
     return(plot)
 }
 
-#' @importFrom scales scientific
+#' @import scales
 #' @importFrom forestplot forestplot fpTxtGp fpColors fpDrawNormalCI fpDrawSummaryCI
 #' @importFrom grid unit grid.grabExpr grid.draw gpar
 #' @importFrom ggplot2 ggsave
@@ -491,7 +491,7 @@ forestPlotClassifierModelComparision <- function(classifierStats, stat, names, f
 
 
 ## FIXME:: Refactor these into one function with more parameters!
-#' @importFrom scales scientific
+#' @import scales
 #' @importFrom forestplot forestplot fpTxtGp fpColors fpDrawNormalCI fpDrawSummaryCI
 #' @importFrom grid unit grid.grabExpr grid.draw gpar
 #' @importFrom ggplot2 ggsave
@@ -539,7 +539,7 @@ forestPlotClassifierModelComparision <- function(classifierStats, stat, names, f
     return(plot)
 }
 
-#' @importFrom scales scientific
+#' @import scales
 #' @importFrom forestplot forestplot fpTxtGp fpColors fpDrawNormalCI fpDrawSummaryCI
 #' @importFrom grid unit grid.grabExpr grid.draw gpar
 #' @importFrom ggplot2 ggsave
@@ -603,7 +603,7 @@ forestPlotClassifierModelComparision <- function(classifierStats, stat, names, f
 #'     function from `ggplot2`.
 #' @param ... Additional arguments passed to forestplot.
 #'
-#' @importFrom scales scientific
+#' @import scales
 #' @importFrom forestplot forestplot fpTxtGp fpColors fpDrawNormalCI fpDrawSummaryCI
 #' @importFrom grid unit grid.grabExpr grid.draw gpar
 #' @importFrom ggplot2 ggsave
@@ -719,7 +719,7 @@ forestPlotCohortSubtypeComparison <- function(cohortSubtypeStats, stat, cohortNa
 
 
 ## FIXME:: Refactor these into one function with more parameters!
-#' @importFrom scales scientific
+#' @import scales
 #' @importFrom forestplot forestplot fpTxtGp fpColors fpDrawNormalCI fpDrawSummaryCI
 #' @importFrom grid unit grid.grabExpr grid.draw gpar
 #' @importFrom ggplot2 ggsave
@@ -786,7 +786,7 @@ forestPlotCohortSubtypeComparison <- function(cohortSubtypeStats, stat, cohortNa
     return(plot)
 }
 
-#' @importFrom scales scientific
+#' @import scales
 #' @importFrom forestplot forestplot fpTxtGp fpColors fpDrawNormalCI fpDrawSummaryCI
 #' @importFrom grid unit grid.grabExpr grid.draw gpar
 #' @importFrom ggplot2 ggsave

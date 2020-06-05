@@ -269,7 +269,7 @@ preprocCohorts <- function(cohorts, metaGenes, center=TRUE, scale=FALSE) {
 #' @return A \code{list} of `data.frame`s containng the gene names, MAD score
 #'    and rankingsfor each cohort in `cohortDataL`
 #'
-#' @importFrom BiocParallel bplapply
+#' @import BiocParallel
 #' @export
 rankAllCohortGenesByMAD <- function(cohortDataL, nthread) {
   # Temporily change number of cores to parallelize over

@@ -232,7 +232,7 @@ calculateMetaStats <- function(concordanceInds) {
 #' @return A \code{list} object
 #'
 #' @importFrom ggpubr ggboxplot
-#' @importFrom scales scientific
+#' @import scales
 #' @import data.table
 #' @export
 boxplotAUCperSubtypePerDataset <- function(mergedDT, conIdx, palette="Set1") {

@@ -29,12 +29,12 @@ subtypeWithClassifier <- function(exprData, centroid, seed=NULL, reps=100) {
                                      scale=TRUE, center=TRUE)
 
     ## FIXME:: Original COINCIDE clustering used Pearson distance?
-    exprDataClust <- consensusClusterCohort(cohort=exprData,
-                                            maxK=4,
-                                            distance="spearman",
-                                            method="hc",
-                                            reps=reps,
-                                            seed=seed)
+    exprDataClust <- conClustCohort(cohort=exprData,
+                                   maxK=4,
+                                   distance="spearman",
+                                   method="hc",
+                                   reps=reps,
+                                   seed=seed)
 
     keepCentGenes <- intersect(rownames(exprDataClust$centroidClusters),
                            rownames(centroid))
@@ -171,6 +171,8 @@ correlateCentroids <- function(centroid1, centroid2) {
 #' @return A \code{ggplot} object showing the classification of each cell-line
 #'   in each classifier.
 #'
+#' @import ggplot2
+#' @import RColorBrewer
 #' @export
 plotClassifierComparisons <- function(pubClassifSubtypeDT, allClassif=TRUE, saveDir, fileName) {
     if (allClassif) {
@@ -183,9 +185,12 @@ plotClassifierComparisons <- function(pubClassifSubtypeDT, allClassif=TRUE, save
 
     DT[, classifSubtype := mapply(paste, classif, metaClusters, sep=":")]
 
+    cols <- colorRampPalette(brewer.pal(12, "Set3"))(length(unique(DT$classifSubtype)))
+
     plot <- ggplot(DT, aes(x=factor(classif, levels=unique(classif)), y=sample, fill=classifSubtype)) +
         geom_tile(color='black') +
-        labs(y="Cell-line", x="Classifier", fill="Subtype")
+        labs(y="Cell-line", x="Classifier", fill="Subtype") +
+        scale_fill_manual(values=cols, aesthetics = c("fill"))
 
     if(!missing(saveDir) && !missing(fileName)) {
         ggsave(file.path(saveDir, fileName), plot)
@@ -196,8 +201,8 @@ plotClassifierComparisons <- function(pubClassifSubtypeDT, allClassif=TRUE, save
 
 #' Calculate the correlation betwen
 #'
-#' @param pubClassifSubtypeDT \code{data.table} with the predicted subtype for each classifier
-#'   in each cell-line.
+#' @param pubClassifSubtypeDT \code{data.table} with the predicted subtype for
+#'   each classifier in each cell-line.
 #'
 #' @return A \code{data.table} with the cramers V and p.value for each pair-wise
 #'   classifier comparison.
@@ -239,7 +244,9 @@ calcAssocStats <- function(pubClassifSubtypeDT) {
     # Calculate association stats
     assocStats <- vector("list", nrow(classifComparisons))
     for (i in seq_len(nrow(classifComparisons))) {
-        assocStats[[i]] <- summary(assocstats(table(DT[[classifComparisons[i, ]$Var1]],
+        print(table(DT[[classifComparisons[i, ]$Var1]],
+              DT[[classifComparisons[i, ]$Var2]]))
+        assocStats[[i]] <- summary(vcd::assocstats(table(DT[[classifComparisons[i, ]$Var1]],
                                                     DT[[classifComparisons[i, ]$Var2]])))
     }
 
