@@ -8,6 +8,14 @@ library(survival)
 library(survminer)
 library(gridExtra)
 
+
+
+
+# -------------------------------------------------------------------------
+# 1. COINCIDE Implementation ----------------------------------------------
+# -------------------------------------------------------------------------
+
+
 ## ----load_cohort_data-------------------------------------------------------------------------------------------------------------------------------------
 cohortsDataL <- readRDS('../data/cohortsCommonGenes.rds')
 normalGTEx <- readRDS('../data/normalGTEx.rds')
@@ -95,8 +103,6 @@ if (file.exists(file.path('..', 'results', 'allClusterRepro.rds'))) {
     b - a
 }
 
-
-
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
 saveRDS(allClusterRepro, file.path('..', 'results', 'allClusterRepro.rds'))
 
@@ -129,6 +135,13 @@ clusterwiseSamples <- getClusterwiseSamples(cohortwiseClasses, allConClusters)
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
 annotatedClusters <- annotateSampleMetaClasses(allConClusters, clusterwiseSamples)
 saveRDS(annotatedClusters, file.path("..", "results", "annotatedClusters.rds"))
+
+
+
+
+# -------------------------------------------------------------------------
+# 2. Network Community Search ---------------------------------------------
+# -------------------------------------------------------------------------
 
 
 ## ----cluster_network, fig.height=10, fig.width=10---------------------------------------------------------------------------------------------------------
@@ -183,6 +196,13 @@ plotSurvivalCurves(survivalCurves, saveDir=file.path("..", "results"), fileName=
 plotCohortwiseSurvCurves(metaClusterSurvAnnot,  saveDir=file.path("..", "results"), fileName="cohortSurvivalMetaclusters.pdf")
 
 
+
+
+# -------------------------------------------------------------------------
+# 3. Gene Signature Comparison -----------------------------------------------
+# -------------------------------------------------------------------------
+
+
 ## ----get_metaclass_by_cohort_and_sample-------------------------------------------------------------------------------------------------------------------
 sampleMetaClassDT <- na.omit(extractSampleMetaClasses(annotatedClusters)[metaClasses %in% c(1, 2, 3)]) # Remove this to include other cluster
 annotSampMetaClassDT <- annotateSampleMetaClassDT(sampleMetaClassDT, c("Basal", "Exocrine", "Classical", "Other"))
@@ -200,6 +220,13 @@ comparisons <- list(c("Basal", "Classical"),
                     c("Classical", "Exocrine"),
                     c("Exocrine", "Basal"))
 plotSigScoreL(sigScoreL, comparisons, saveDir=file.path("..", "data"), fileName="sigScorePlots.pdf")
+
+
+
+
+# -------------------------------------------------------------------------
+# 4. Biomarker Comparison -------------------------------------------------
+# -------------------------------------------------------------------------
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -239,6 +266,13 @@ scoreIdxs <- which(scoreClasses %in% "Exocrine")
 exocrinePlots <- grid.arrange(grobs=biomarkerScoreBoxplotL[scoreIdxs], ncol=2)
 ggsave(file.path("..", "results", "exocrineBiomarkerBoxPlots.pdf"))
 exocrinePlots
+
+
+
+
+# -------------------------------------------------------------------------
+# 5. Single Sample Classifier ---------------------------------------------
+# -------------------------------------------------------------------------
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -307,6 +341,13 @@ classPredDT$samples <- names(sampleClassPreds)
 singleSampClassifDT <- merge(classPredDT, sampleMetaClassDT, on=samples, sort=FALSE)
 
 
+
+
+# -------------------------------------------------------------------------
+# 6. Compass Subtyping Waterfall ------------------------------------------
+# -------------------------------------------------------------------------
+
+
 ## ----compass_load_data------------------------------------------------------------------------------------------------------------------------------------
 compassSurvDT <- fread(file.path("..", "data", "compassSurvDT.csv"))
 compassLogExprMat <- read.csv(file.path("..", "data", "compassLogExprMat.csv"),
@@ -332,7 +373,7 @@ waterfallPlotTumorResponse(sampClassPredwSurvivalDT, saveDir=resultsDir,
 
 
 ## ----tumor_response_basalvclassical_ffx, fig.height=8, fig.width=12---------------------------------------------------------------------------------------
-## TODO:: Make a function to complre the survival
+## TODO:: Make a function to compare the survival
 survBasalvClassicalDT <-
   sampClassPredwSurvivalDT[predClass %in% c("Basal", "Classical") &
                              drug %in% c("FFx", "FFx x 1")]
@@ -364,6 +405,13 @@ compassPlotBiomarkers(compassLogExprMat, sampClassPredwSurvivalDT,
                       biomarkers=biomarkers[names(biomarkers) %in% c("Basal", "Classical")])
 
 
+
+
+# -------------------------------------------------------------------------
+# 7. PharmacoGx Cellline Subtyping ----------------------------------------
+# -------------------------------------------------------------------------
+
+
 ## ----load_and_format_data---------------------------------------------------------------------------------------------------------------------------------
 PGxCelllinesL <- readRDS(file.path('..', 'data', "PharmacoGxCelllines.rds"))
 PGxCLLAvgRepsL <- lapply(PGxCelllinesL, limma::avereps)
@@ -377,6 +425,13 @@ PGxCCLpreds <- lapply(PGxCLLAvgRepsL, predictSampleMetaClass,
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
 saveRDS(PGxCCLpreds, file.path("..", "results", "PGxSubtypePredictions"))
+
+
+
+
+# -------------------------------------------------------------------------
+# 8. PharmacoGx Cellline Drug Sensitivity ---------------------------------
+# -------------------------------------------------------------------------
 
 
 ## ----load_data_and_process--------------------------------------------------------------------------------------------------------------------------------
@@ -417,6 +472,13 @@ plot <- boxplotAUCperSubtypePerDataset(mergedCelllineDT[dataset != "GDSC"],
 ## TODO:: Put this into a function
 dims <- ceiling(sqrt(length(plot)))
 ggarrange(plotlist=plot, ncol=dims, nrow=dims)
+
+
+
+
+# -------------------------------------------------------------------------
+# 9. PDXE Drug Subtyping --------------------------------------------------
+# -------------------------------------------------------------------------
 
 
 ## ----load_PDX_data----------------------------------------------------------------------------------------------------------------------------------------
@@ -462,6 +524,13 @@ for (i in seq_along(plotGrids)) {
 plotGrids
 
 
+
+
+# -------------------------------------------------------------------------
+# 10. Cellularity Comparison ----------------------------------------------
+# -------------------------------------------------------------------------
+
+
 ## ----load_cellularity_data--------------------------------------------------------------------------------------------------------------------------------
 cellularityFileL <- list.files(file.path("..", "data"),
                                pattern="cellularity.*tsv",
@@ -479,6 +548,13 @@ mergedCohortCellDT <- merge(cohortCellularityDT, annotSampMetaClassDT, by.x="sam
 boxplotCellarityByCohort(mergedCohortCellDT,
                          saveDir=file.path("..", "results"),
                          fileName="cohortCellularityBoxplot.pdf")
+
+
+
+
+# -------------------------------------------------------------------------
+# 11. Copy Number Abberation ----------------------------------------------
+# -------------------------------------------------------------------------
 
 
 ## ----load_CNA_data----------------------------------------------------------------------------------------------------------------------------------------
@@ -507,6 +583,13 @@ for (i in seq_along(chrScorePlotGridL)) {
 }
 
 
+
+
+# -------------------------------------------------------------------------
+# 12. Calculate Cluster Meta-Effect Size ----------------------------------
+# -------------------------------------------------------------------------
+
+
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
 genewiseCohortsDT <- makeGenewiseCohortsDT(allProcCohorts, annotSampMetaClassDT)
 
@@ -519,6 +602,14 @@ if (file.exists(file.path(resultsDir, 'classByGnEffSize.csv'))) {
   classByGnEffSizeDT <- calcClustMetaEstStats(genewiseCohortsDT)
   fwrite(classByGnEffSizeDT, file.path(resultsDir, 'classByGnEffSize.csv'))
 }
+
+
+
+
+# -------------------------------------------------------------------------
+# 13. Pathway Analysis ----------------------------------------------------
+# -------------------------------------------------------------------------
+
 
 ## ----load_oathway_data------------------------------------------------------------------------------------------------------------------------------------
 geneSetL <- loadGnSetGMTs(file.path("..", "data"))
@@ -543,6 +634,13 @@ for (i in seq_along(pathwayHMPs)) {
 ##TODO:: Add plot saving functionality to heatmapPathwaysScores
 pathwayHMPgridL <- ggarrangePlotL(pathwayHMPs, 3)
 pathwayHMPgridL
+
+
+
+
+# -------------------------------------------------------------------------
+# 14. Published Classifier Subtyping --------------------------------------
+# -------------------------------------------------------------------------
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -238,7 +238,7 @@ calcAssocStats <- function(pubClassifSubtypeDT) {
     metaClassCounts <- DT[, list("basal"=sum(basal), "classical"=sum(classical)),
                           by=classifSubtype]
 
-    #
+    # Convert back to wide-table
     DT <- dcast(DT, sample + cohort ~ classif, value.var="classifSubtype")
 
     # Calculate association stats

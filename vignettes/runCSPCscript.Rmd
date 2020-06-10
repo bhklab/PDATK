@@ -77,7 +77,7 @@ saveRDS(consensusClusters, file.path("..", "results", "consensusClusters.rds"))
 normalCohortL <- list("normals"=adjNormal, 
                       "normalsGTEx"=normalGTEx)
 
-preprocNormalL <- preprocCohorts(normalCohorts, metaGenes)
+preprocNormalL <- preprocCohorts(normalCohortL, metaGenes)
 conClustNormals <- conClustAllCohorts(preprocNormalL, maxK=5, reps=1000,
                                         distance="pearson", method="hc",
                                         nthread=4, seed=1987)
@@ -534,7 +534,13 @@ classByGnEffSizeDT <- calcClustMetaEstStats(genewiseCohortsDT)
 ```
 
 ```{r save_results}
-fwrite(classByGnEffSizeDT, file.path('..', 'results', 'classByGeneWeigthedEffSize.csv'))
+# TODO:: Rewrite this with group by in data.table
+if (file.exists(file.path(resultsDir, 'classByGnEffSize.csv'))) {
+  classByGnEffSizeDT <- fread(file.path(resultsDir, 'classByGnEffSize.csv'))
+} else {
+  classByGnEffSizeDT <- calcClustMetaEstStats(genewiseCohortsDT)
+  fwrite(classByGnEffSizeDT, file.path(resultsDir, 'classByGnEffSize.csv'))
+}
 ```
 
 ## 13. Pathway Analysis
