@@ -146,6 +146,7 @@ load(file=file.path('..', 'data', 'yangSurvival.rda'))
 ## ----extract_survival_data--------------------------------------------------------------------------------------------------------------------------------
 # Drop old PCSI
 PDACexpressionData <- PDACexpressionData[which(names(PDACexpressionData) != "pcsi")]
+PDACexpressionData <- PDACexpressionData[which(names(PDACexpressionData) != "icgc_arr")]
 survivalData <- extractSurvivalData(PDACexpressionData, yangSurvival)
 head(survivalData)
 
