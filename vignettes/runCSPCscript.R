@@ -48,7 +48,7 @@ top20genesPerCohort <- getTopGenes(cohortMADrankings, n=20)
 
 
 ## ----get_top_genes_and_meta_genes-------------------------------------------------------------------------------------------------------------------------
-metaGenes <- getMetaGenes(cohortMADrankings, genewiseWeightedMADdf, n=20, m=2066)
+metaGenes <- getMetaGenes(cohortMADrankings, genewiseWeightedMADdf, n=20, pct=20)
 
 resultsDir <- file.path("..", "results")
 saveRDS(metaGenes, file.path(resultsDir, "metaGenes.rds"))
@@ -159,6 +159,7 @@ load(file=file.path('..', 'data', 'yangSurvival.rda'))
 ## ----extract_survival_data--------------------------------------------------------------------------------------------------------------------------------
 # Drop old PCSI
 PDACexpressionData <- PDACexpressionData[which(names(PDACexpressionData) != "pcsi")]
+PDACexpressionData <- PDACexpressionData[which(names(PDACexpressionData) != "icgc_arr")]
 survivalData <- extractSurvivalData(PDACexpressionData, yangSurvival)
 head(survivalData)
 
