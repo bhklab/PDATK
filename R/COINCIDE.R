@@ -85,16 +85,17 @@ getTopGenes <- function(cohortMADrankings, n) {
 #'     rankings across all cohorts, as returned by `calcGeneWiseWeightedMADdf`.
 #' @param n A \code{numeric} vector with the integer number of top genes
 #'     to return from each cohort.
-#' @param m A \code{numeric} vector with the integer number of top genes
+#' @param pct A \code{numeric} vector with the percentage of top genes
 #'     to return from the meta-cohort rankings.
 #'
 #' @return A \code{character} vector of the unique top n ranked genes
 #'     per cohort and top m genes in the meta-cohort ranking.
 #'
 #' @export
-getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, m) {
+getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, pct) {
     top20genesPerCohort <- getTopGenes(cohortMADrankings, n)
     topNgenesPerCohort <- Reduce(c, lapply(top20genesPerCohort, `[`, i=TRUE, j="genes"))
+    m <- floor(nrow(genewiseWeightedMADdf) * pct / 100)
     topMgenesMeta <- geneWiseWeigthedMADdf$genes[seq_len(m)]
     unique(c(topNgenesPerCohort, topMgenesMeta))
 }
