@@ -88,36 +88,29 @@ plotClusterNetwork <- function(clusterEdges, seed=NULL, palette="Set1",
 
 #' Get the survival data from a list of expression
 #'
-#' @param expressionData A \code{list} of per cohort sample by gene expression
-#'    matrixes annotated witht he columns 'OS' for overall survival time and
-#'    'OS_Status' for survival event.
-#' @param survivalData A \code{data.frame} containing additional sample
-#'    survival data.
-#' @param survivalDataLabel A \code{character} vector with the name to use
-#'    when labelling the additional survival data. Defaults to 'additional'
-#'    if not specified. This label will identify the additional survival data
-#'    in the returned \code{data.frame}
+#' @param cohortsDataL A \code{list}
 #'
 #' @return A \code{data.frame} with columns cohorts, sampleNames, OS and OSstatus
 #'   containing the per sample survival information.
 #'
 #' @export
-extractSurvivalData <- function(expressionData, survivalData, survivalDataLabel="additonal") {
-  sampleLengths <- c(vapply(expressionData, nrow, FUN.VALUE=numeric(1)),
-                     nrow(survivalData))
-  names(sampleLengths)[length(expressionData) + 1 ] <- survivalDataLabel
-  cohorts <- unlist(mapply(rep, x=names(sampleLengths), times=sampleLengths, SIMPLIFY=FALSE))
-  samples <- c(unlist(lapply(expressionData, rownames)),
-               as.character(survivalData$ID))
-  os <- c(unlist(lapply(expressionData, `[[`, "OS")),
-          as.numeric(survivalData$OS))
-  osStatus <- c(unlist(lapply(expressionData, `[[`, "OS_Status")),
-                as.numeric(survivalData$OS_Status))
-  return(data.frame("cohorts"=cohorts,
-                    "sampleNames"=samples,
-                    "OS"=as.numeric(os),
-                    "OSstatus"=as.numeric(osStatus)))
+extractSurvivalData <- function(cohortsDataL)
+{
+    sampleLengths <- lapply(cohortsDataL, function(cohort) length(colnames(cohort)))
+    sampleMerged <- cbind(cohorts <- unlist(mapply(rep, x = names(sampleLengths), times = sampleLengths, SIMPLIFY = FALSE)),
+                          c(unlist(lapply(cohortsDataL, function(cohort) as.character(colnames(cohort))))))
+    osMerged <- cbind(c(unlist(lapply(cohortsDataL, function(cohort) as.character(colData(cohort)$days_to_death)))),
+                      c(unlist(lapply(cohortsDataL, function(cohort) as.character(colData(cohort)$vital_status)))))
+    merged <- merge(x = sampleMerged, y = osMerged, by = "row.names", all.y = T)
+    merged$osStatus <- 0
+    merged$osStatus[merged[,5] == "deceased"] <- 1
+    merged$osStatus[merged[,5] == "Dead"] <- 1 # TCGA
+    return(data.frame(cohorts = merged[,2],
+                      sampleNames = merged[,3],
+                      OS = as.numeric(merged[,4]),
+                      OSstatus = as.numeric(merged[,6])))
 }
+
 
 #' Get sample metaclusters
 #'

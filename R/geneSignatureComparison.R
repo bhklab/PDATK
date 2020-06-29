@@ -30,21 +30,21 @@ extractSampleMetaClasses <- function(annotatedClusters) {
 #'    'sigScores', 'cohorts' and 'metaClasses'.
 #'
 #' @export
-computeSigScoreDT <- function(cohortsDataL, sampleMetaClassDT, signatureGenes) {
-    cohortsSigGenes <- lapply(cohortsDataL, `[`, i=signatureGenes, j=TRUE)
+computeSigScoreDT <- function(cohortsDataL, sampleMetaClassDT, signatureGenes)
+{
+    browser()
+    cohortsSigGenes <- lapply(cohortsDataL, function(cohort) cohort[rownames(cohort) %in% signatureGenes, ])
     cohortsSigGenes <- lapply(cohortsSigGenes, na.omit)
     normalizedCohorts <- normalizeCohortsList(cohortsSigGenes)
     geneScoreList <- lapply(normalizedCohorts, colMeans)
     sampleNames <- unlist(lapply(geneScoreList, names))
-    geneScoreDT <- data.table("samples"=sampleNames,
-                              "sigScores"=unlist(geneScoreList))
+    geneScoreDT <- data.table(samples = sampleNames, sigScores = unlist(geneScoreList))
     sampleClassDT <- annotateSampleMetaClassDT(sampleMetaClassDT,
-                                         c('Basal', 'Exocrine', 'Classical'))
-    sigScoreDT <- merge(geneScoreDT[!duplicated(samples)],
-                        sampleClassDT[!duplicated(samples)],
-                        on="samples")
-
+                                               c("Cluster 1", "Cluster 2", "Cluster 3"))
+    sigScoreDT <- merge(geneScoreDT[!duplicated(samples)], sampleClassDT[!duplicated(samples)],
+                        on = "samples")
 }
+
 
 #' Calculate the signature scores for a set of gene signatures
 #'
@@ -65,6 +65,7 @@ calcAllGeneSetSigScores <- function(geneSigL, cohortsDataL, sampleMetaClassDT) {
                        sampleMetaClassDT=sampleMetaClassDT),
          SIMPLIFY=FALSE)
 }
+
 
 #' Z-score normalize a list of per cohort expression data
 #'
@@ -89,22 +90,25 @@ normalizeCohortsList <- function(cohortsList) {
 #'
 #' @import data.table
 #' @export
-annotateSampleMetaClassDT <- function(sampleMetaClassDT,
-                                      clusterLabels=c("Basal", "Classical", "Exocrine")) {
-  if (!is.data.table(sampleMetaClassDT)) {
-    DT <- as.data.table(sampleMetaClassDT, keep.rownames='rownames')
-  } else {
-    DT <- copy(sampleMetaClassDT)
-  }
-  DT[, metaClasses := as.character(DT$metaClasses)]
-  i <- 1
-  for (val in na.omit(unique(DT$metaClasses))) {
-    DT[metaClasses == val, metaClasses := clusterLabels[i]]
-    i <- i + 1
-  }
-  return(na.omit(DT))
+annotateSampleMetaClassDT <- function(sampleMetaClassDT, clusterLabels)
+{
+    if(missing(clusterLabels)) {
+      clusterLabels <- paste0('Cluster ', unique(sampleMetaClassDT$metaClasses))
+    }
+    if (!is.data.table(sampleMetaClassDT)) {
+        DT <- as.data.table(sampleMetaClassDT, keep.rownames = "rownames")
+    }
+    else {
+        DT <- copy(sampleMetaClassDT)
+    }
+    DT[, `:=`(metaClasses, as.character(DT$metaClasses))]
+    i <- 1
+    for (val in na.omit(unique(DT$metaClasses))) {
+        DT[metaClasses == val, `:=`(metaClasses, clusterLabels[i])]
+        i <- i + 1
+    }
+    return(na.omit(DT))
 }
-
 
 #' Draw a boxplot of the signature scores per sample per meta-class
 #'

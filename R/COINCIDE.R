@@ -1,3 +1,28 @@
+#' Get a list of common genes between all `SummarizedExperiment` in a list
+#'
+#' @param cohortsDataL A \code{list} of `SummarizedExperiments`, on for each cohort
+#' @return A \code{charater} vector containing the genes common to all `SummarizedExperiments` in the list
+#'
+#' @export
+getCommonGenes <- function (cohortsDataL)
+{
+    Reduce(intersect, lapply(cohortsDataL, FUN=getGeneSymbols))
+}
+
+
+#' Get expression from list of SummarizedExperiments for a specified list of genes
+#'
+#' @param cohortsDataL A \code{list} of `SummarizedExperiment` objects, one per cohort
+#' @param genes A \code{character} vector specifying the gene symbols of genes to return
+#'
+#' @importFrom SummarizedExperiment assay
+#' @export
+subsetCohortExprs <- function (cohortsDataL, genes)
+{
+    return(lapply(lapply(cohortsDataL, FUN=`[`, i=genes), FUN=assay, 'exprs'))
+}
+
+
 #' Calculate the weighted MAD across all cohorts per gene
 #'
 #' @param cohortMADrankings A \code{list} of \code{data.frames} containing
@@ -48,6 +73,7 @@ calcGenewiseWeightedMADdf <- function(cohortMADrankings) {
   data[order(data$weightedMADs, decreasing=TRUE), ]
 }
 
+
 #' Extract the top n genes from each cohort
 #'
 #' @param cohortMADrankings A \code{list} of \code{data.frames} containing
@@ -75,6 +101,7 @@ getTopGenes <- function(cohortMADrankings, n) {
             .Names=names(cohortMADrankings))
 }
 
+
 #' Get a vector of the unique top n genes for each cohort appended to the
 #'     top m genes from the
 #'
@@ -99,6 +126,21 @@ getMetaGenes <- function(cohortMADrankings, geneWiseWeigthedMADdf, n, pct) {
     topMgenesMeta <- geneWiseWeigthedMADdf$genes[seq_len(m)]
     unique(c(topNgenesPerCohort, topMgenesMeta))
 }
+
+#' Subset a list of cohort SummarizedExperiments to a specified set of genes
+#'
+#' @param cohorts A \code{list} of `SummarizedExperiment` objects, one per cohort
+#' @param genes A \code{character} vector of gene symbols to keep for each SummarizedExperiment
+#'
+#' @return A \code{list} of `SummarizedExperiment` objects, subset to contain only the genes in `genes`
+#'
+#' @export
+subsetCohorts <- function(cohorts, genes) {
+  lapply(cohorts, function(cohort)
+    cohort[which(rownames(cohort) %in% genes),]
+  )
+}
+
 
 #' Consensus cluster on gene expression for a cohort
 #'
@@ -245,7 +287,7 @@ conClustAllCohorts <- function(preprocCohorts, maxK=5, distance="pearson",
 
 #' Subset all cohorts to meta genes, transform
 #'
-#' @param cohorts A \code{list} of cohort \code{data.frame}s or \code{matrix}es
+#' @param cohorts A \code{list} of per cohort `SummarizedExperiments`
 #' @param metaGenes A \code{character} vector of meta genes to subset on, as
 #'    returned by `getMetaGenes`.
 #' @param center A \code{logical} vector passed to the `center` argument of
@@ -255,8 +297,8 @@ conClustAllCohorts <- function(preprocCohorts, maxK=5, distance="pearson",
 #'
 #' @export
 preprocCohorts <- function(cohorts, metaGenes, center=TRUE, scale=FALSE) {
-  cohortSubsets <- .subsetCohorts(cohorts, genes=metaGenes)
-  structure(lapply(cohortSubsets, .scaleGenewise,
+  cohortSubsets <- subsetCohorts(cohorts, genes=metaGenes)
+  structure(lapply(cohortSubsets, PDATK:::.scaleGenewise, # Once loaded as a package you no longer need ':::' to use unexported functions
                    center=center, scale=scale),
             .Names=names(cohorts))
 }
@@ -294,17 +336,19 @@ rankAllCohortGenesByMAD <- function(cohortDataL, nthread) {
     )
 }
 
-#' Subset all cohorts in a list of
+#' Subset all cohorts in a list of `SummarizedExperiments` to the genes specified in `genes`
 #'
 #' @param cohorts A \code{list} of cohorts to subset
 #' @param genes A \code{character} vector of genes to subset to, if
 #'    excluded all genes are returned.
-#' @param columns A \code{character} vector of samples to subset to,
-#'    if excluded all samples are returned.
 #'
-#' @keywords internal
-.subsetCohorts <- function(cohorts, genes=TRUE, columns=TRUE) {
-  lapply(cohorts, `[`, i=genes, j=columns)
+#' @return A \code{list} of `SummarizedExperiment`s containing only the genes in `genes`
+#'
+#' @export
+subsetCohorts <- function(cohorts, genes) {
+  lapply(cohorts, function(cohort)
+    cohort[rownames(cohort) %in% genes, ]
+  )
 }
 
 #' Find all non-self pair-wise combinations of cohorts
@@ -573,7 +617,7 @@ getClusterNetworkData <- function(clusterEdges, seed=NULL) {
   if (!is.null(seed)) set.seed(seed)
 
   # Prepare the edge labels
-  cohort1 <- vapply(strsplit(clusterEdges$comparison, '-'), `[`,i= 1, character(1))
+  cohort1 <- vapply(strsplit(clusterEdges$comparison, '-'), `[`, i=1, character(1))
   cohort2 <- vapply(strsplit(clusterEdges$comparison, '-'), `[`, i=2, character(1))
   edges <- cbind(
     'cluster1'=unlist(mapply(paste0, cohort1, '-', clusterEdges$c1Clust, SIMPLIFY=FALSE)),

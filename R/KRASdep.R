@@ -64,6 +64,8 @@ calcLScore <- function(dat)
 
     return(mean(dat[upGenesIdx]) - mean(dat[downGenesIdx])) 
 }
+
+
 #' Calculate S-score
 #'
 #' @param dat \code{vector} A single sample gene expression profile
@@ -122,6 +124,8 @@ calcSScore <- function(dat)
 
     return(mean(dat[upGenesIdx]) - mean(dat[downGenesIdx])) 
 }
+
+
 #' Transform raw TPM to log10(TPM)
 #'
 #' @param mat \code{matrix} A expression profile in raw TPM values
