@@ -217,9 +217,9 @@ sigScoreL <- calcAllGeneSetSigScores(geneSigL, cohortsDataL, annotSampMetaClassD
 
 
 ## ----plot_gene_signatures_between_metaclasses, fig.height=10, fig.width=12--------------------------------------------------------------------------------
-comparisons <- list(c("Basal", "Classical"),
-                    c("Classical", "Exocrine"),
-                    c("Exocrine", "Basal"))
+comparisons <- list(c("Cluster 1", "Cluster 2"),
+                    c("Cluster 2", "Cluster 3"),
+                    c("Cluster 3", "Cluster 1"))
 plotSigScoreL(sigScoreL, comparisons, saveDir=file.path("..", "data"), fileName="sigScorePlots.pdf")
 
 

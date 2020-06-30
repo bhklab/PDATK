@@ -56,7 +56,7 @@ mergeClassAndDrugs <- function(classPredL, drugSensL) {
 
   datasetNames <- names(fClassPredL)
 
-  # Define utilit functions
+  # Define utility functions
   .addDSnames <- function(DT, dsName) {DT$dataset <- rep(dsName, nrow(DT)); DT}
 
   fClassPredL <- mapply(.addDSnames,
@@ -72,7 +72,7 @@ mergeClassAndDrugs <- function(classPredL, drugSensL) {
                       function(DT)
                           colnames(DT[, .SD, .SDcols=-c("sample", "dataset")]))
 
-  # Merge the DTs on cellline and datset
+  # Merge the DTs on cellline and dataset
   mergedByDataset <- mapply(function(DT1, DT2) merge(DT1, DT2, by=c("sample", "dataset")),
                             DT1=fClassPredL,
                             DT2=fDrugSensL,

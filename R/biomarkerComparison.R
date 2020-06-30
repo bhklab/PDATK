@@ -20,7 +20,7 @@
 computeGeneBiomarkerScores <- function(cohortsDataL, annotSampMetaClassDT, geneName) {
 
   subsetExpressionL <- lapply(cohortsDataL, `[`, i=geneName, j=TRUE)
-  subsetExpressionL <- normalizeCohortsList(subsetExpressionL)
+  subsetExpressionL <- lapply(subsetExpressionL, scale)
   annotSampMetaClassDT <- na.omit(annotSampMetaClassDT)[!duplicated(samples), ]
   subsetCohortExpression <- unlist(subsetExpressionL)
   names(subsetCohortExpression) <- unlist(lapply(cohortsDataL, colnames))

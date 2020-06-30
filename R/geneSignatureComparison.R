@@ -17,6 +17,7 @@ extractSampleMetaClasses <- function(annotatedClusters) {
              "metaClasses"=unlist(metaClasses))
 }
 
+
 #' Calculate the gene signature score
 #'
 #' @param cohortsDataL A \code{list} of gene by sample cohort gene expression
@@ -32,7 +33,6 @@ extractSampleMetaClasses <- function(annotatedClusters) {
 #' @export
 computeSigScoreDT <- function(cohortsDataL, sampleMetaClassDT, signatureGenes)
 {
-    browser()
     cohortsSigGenes <- lapply(cohortsDataL, function(cohort) cohort[rownames(cohort) %in% signatureGenes, ])
     cohortsSigGenes <- lapply(cohortsSigGenes, na.omit)
     normalizedCohorts <- normalizeCohortsList(cohortsSigGenes)
@@ -43,6 +43,7 @@ computeSigScoreDT <- function(cohortsDataL, sampleMetaClassDT, signatureGenes)
                                                c("Cluster 1", "Cluster 2", "Cluster 3"))
     sigScoreDT <- merge(geneScoreDT[!duplicated(samples)], sampleClassDT[!duplicated(samples)],
                         on = "samples")
+    return(sigScoreDT)
 }
 
 
@@ -60,10 +61,7 @@ computeSigScoreDT <- function(cohortsDataL, sampleMetaClassDT, signatureGenes)
 #'
 #' @export
 calcAllGeneSetSigScores <- function(geneSigL, cohortsDataL, sampleMetaClassDT) {
-  mapply(computeSigScoreDT, geneSigL,
-         MoreArgs=list(cohortsDataL=cohortsDataL,
-                       sampleMetaClassDT=sampleMetaClassDT),
-         SIMPLIFY=FALSE)
+  lapply(geneSigL, FUN=computeSigScoreDT, cohortsDataL=cohortsDataL, sampleMetaClassDT=sampleMetaClassDT)
 }
 
 
@@ -74,7 +72,7 @@ calcAllGeneSetSigScores <- function(geneSigL, cohortsDataL, sampleMetaClassDT) {
 #'
 #' @export
 normalizeCohortsList <- function(cohortsList) {
-  .normalize <- function(cohort) t(scale(t(cohort)))
+  .normalize <- function(cohort) t(scale(t(cohort), na.rm=TRUE))
   lapply(cohortsList, .normalize)
 }
 
