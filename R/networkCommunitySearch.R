@@ -18,7 +18,8 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom ggplot2 ggsave
 #' @importFrom grid grid.draw
-#' @importFrom ggplotify base2grob as.ggplot
+#' @importFrom ggplotify as.ggplot
+#' @importFrom base2grob base2grob
 #' @import igraph
 #' @export
 plotClusterNetwork <- function(clusterEdges, seed=NULL, palette="Set1",
@@ -234,7 +235,8 @@ fitSurvivalCurves <- function(metaClusterSurvAnnot) {
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom ggplot2 ggsave
 #' @importFrom grid grid.draw
-#' @importFrom ggplotify base2grob as.ggplot
+#' @importFrom ggplotify as.ggplot
+#' @importFrom base2grob base2grob
 #' @export
 plotSurvivalCurves <- function(survivalCurves, title="", showPlot=TRUE,
                                palette="Set1", inset=0, saveDir, fileName) {
@@ -297,7 +299,8 @@ plotSurvivalCurves <- function(survivalCurves, title="", showPlot=TRUE,
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom ggplot2 ggsave
 #' @importFrom gridExtra grid.arrange
-#' @importFrom ggplotify base2grob as.ggplot
+#' @importFrom ggplotify as.ggplot
+#' @importFrom base2grob base2grob
 #' @export
 plotCohortwiseSurvCurves <- function(metaClusterSurvAnnot, plot=TRUE, inset=0.2,
                                      saveDir, fileName) {

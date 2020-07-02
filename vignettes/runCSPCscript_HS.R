@@ -432,10 +432,9 @@ mergedCelllineDT <- mergeClassAndDrugs(PGxCCLpreds, CCLsensitivityDtL)
 
 
 ## ----get_wilcox_test_pvals--------------------------------------------------------------------------------------------------------------------------------
-# Remove GDSC as non-NA AUCs are only in one class
-wilcoxPvals <- computeWilcoxOnSharedDrugs(mergedCelllineDT[dataset != "GDSC"],
+wilcoxPvals <- computeWilcoxOnSharedDrugs(mergedCelllineDT,
                                           class1="Basal", class0="Classical")
-wilcoxPvals$CCLE
+wilcoxPvals$CTRPv2
 
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------------
