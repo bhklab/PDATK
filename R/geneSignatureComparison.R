@@ -72,7 +72,7 @@ calcAllGeneSetSigScores <- function(geneSigL, cohortsDataL, sampleMetaClassDT) {
 #'
 #' @export
 normalizeCohortsList <- function(cohortsList) {
-  .normalize <- function(cohort) t(scale(t(cohort), na.rm=TRUE))
+  .normalize <- function(cohort) t(scale(t(cohort)))
   lapply(cohortsList, .normalize)
 }
 
@@ -130,6 +130,7 @@ annotateSampleMetaClassDT <- function(sampleMetaClassDT, clusterLabels)
 #' @export
 plotSigScores <- function(sigScoreDT, comparisons, sigScoreName,
                           palette="Set1", saveDir, fileName) {
+  browser()
   plot <- ggboxplot(sigScoreDT[order(metaClasses)], x="metaClasses", y="sigScores",
                     color="metaClasses",
                     palette=palette,
@@ -175,7 +176,7 @@ plotSigScoreL <- function(sigScoreL, comparisons, palette="Set1", saveDir, fileN
   sigScorePlots <- grid.arrange(grobs=sigScorePlotL)
 
   if (!missing(saveDir) && !missing(fileName)) {
-    ggsave(plot, file=file.path(saveDir, fileName))
+    ggsave(sigScorePlots, file=file.path(saveDir, fileName))
     return(as.ggplot(sigScorePlots))
   } else {
     return(as.ggplot(sigScorePlots))

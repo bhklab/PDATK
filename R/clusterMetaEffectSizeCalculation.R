@@ -2,7 +2,7 @@
 #'    each sample in each cohort, labelled with the meta-class of each sample in
 #'    each cohort.
 #'
-#' @param preprocCohorts A \code{list} of preprocesed sample by gene cohort
+#' @param procCohorts A \code{list} of preprocesed sample by gene cohort
 #'    expression data. As returned from the `preprocCohortL` function in this
 #'    package.
 #' @param annotSampleMetaClassDT A \code{data.table} with annotated meta-class
@@ -14,14 +14,14 @@
 #'
 #' @import data.table
 #' @export
-makeGenewiseCohortsDT <- function(preprocCohorts, annotSampMetaClassDT) {
-  cohortNames <- names(preprocCohorts)
-  cohortT <- lapply(preprocCohorts, t)
+makeGenewiseCohortsDT <- function(procCohorts, annotSampMetaClassDT) {
+  cohortNames <- names(procCohorts)
+  cohortT <- lapply(procCohorts, t)
   cohortRNs <- lapply(cohortT, rownames)
   cohortLengths <- lapply(cohortRNs, length)
   cohDT <- lapply(cohortT, as.data.table)
   cohortNames <- mapply(rep, x=cohortNames, times=cohortLengths)
-  mergeCohortDT <- rbindlist(cohDT)
+  mergeCohortDT <- rbindlist(cohDT, fill=TRUE)
   mergeCohortDT[, `:=`(cohorts=unlist(..cohortNames), samples=unlist(..cohortRNs))]
   meltCohortDT <- melt(mergeCohortDT, id.vars=c('cohorts', 'samples'),
                        value.name="expr", variable.name="gene")
