@@ -127,13 +127,20 @@ computeWilcoxOnSharedDrugs <- function(mergedDT, class1, class0) {
   datasetL <- list()
   i <- 1
   for (DT in subsetSharedDrugs) {
-    message(paste0("Computing for:", names(subsetSharedDrugs)[i]))
+    message(paste0("Computing for: ", names(subsetSharedDrugs)[i]))
     datasetPvals <- list()
     for (drg in allDSdrugs) {
       DT1 <- DT[drug == drg, ]
-      datasetPvals[[drg]] <- wilcox.test(DT1$AUC ~ as.numeric(DT1$predClass == class1))
+      tryCatch({datasetPvals[[drg]] <- wilcox.test(x=DT1[predClass==class1]$AUC, y=DT1[predClass==class0]$AUC, paired=FALSE)},
+               error=function(e) {
+                 message(paste0('   Caught error:\n     ', e, "   Returning NA for drug: ", drg, "!\n"))
+                 datasetPvals[[drg]] <- NA
+               })
     }
-    datasetL[[i]] <- simplify2array(datasetPvals)
+    if (!all(is.na(datasetPvals)))
+      datasetL[[i]] <- simplify2array(datasetPvals)
+    else
+      datasetL[[i]] <- NA
     i <- i + 1
   }
   names(datasetL) <- names(subsetSharedDrugs)
