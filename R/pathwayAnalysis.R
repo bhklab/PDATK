@@ -105,6 +105,7 @@ computePathwayScores <- function(rankedMetaClassGenes, pathwayL, referenceGenes)
 #'
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom gplots heatmap.2
+#' @importFrom ggplotify as.ggplot
 #' @import gplots
 #' @import data.table
 #' @export
@@ -128,6 +129,7 @@ heatmapPathwayScores <- function(pathStatsDT, exclude, significance=0.05) {
         mat
     })
 
+    heatmap.2 <- gplots::heatmap.2
     colorFun <- colorRampPalette(c("gold", "white", "black"))
     plotExpressions <- lapply(preprocMats,
                     function(mat) {

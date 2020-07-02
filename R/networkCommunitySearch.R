@@ -270,7 +270,7 @@ plotSurvivalCurves <- function(survivalCurves, title="", showPlot=TRUE,
 .plotSurvivalCurve <- function(survivalCurves, title, palette, inset=0) {
   plot(survivalCurves$fit, col=brewer.pal(n=8, palette), lwd=2,
        xlab="Days", ylab="Survival Probability")
-  legend("topright", title=paste0("P = ", scientific(survivalCurves$pval, 2)), bty="n",
+  legend("topright", title=paste0("P = ", scales::scientific(survivalCurves$pval, 2)), bty="n",
          fill=brewer.pal(n=8, palette),
          legend=sort(gsub('.*=', '', names(survivalCurves$fit$strata))),
          inset=inset)

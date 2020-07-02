@@ -253,8 +253,8 @@ boxplotAUCperSubtypePerDataset <- function(mergedDT, conIdx, palette="Set1") {
 
   DTnames <- names(subsetSharedDrugs)
   .boxplot <- function(DT, drg, CI, nm) {
-    ci <- scientific(CI["c.index", ][[drg]], 2)
-    p <- scientific(CI["p.value", ][[drg]], 2)
+    ci <- scales::scientific(CI["c.index", ][[drg]], 2)
+    p <- scales::scientific(CI["p.value", ][[drg]], 2)
     title <- paste0(nm, "\n", drg, " CI: ", ci, ", P: ", p)
     p <- ggboxplot(DT[drug == drg], x="predClass", y="drug", color="predClass", add="jitter",
                    xlab="Subtype", ylab="AUC",
