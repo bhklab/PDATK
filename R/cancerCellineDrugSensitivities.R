@@ -36,6 +36,7 @@ formatCCLsensitivityLtoDT <- function(CCLsensitivityL) {
 #'    'predClass', 'pBasal', 'pClassical', 'pExocrine', 'drug' and 'AUC'.
 #'
 #' @import data.table
+#' @importFrom data.table merge
 #' @export
 mergeClassAndDrugs <- function(classPredL, drugSensL) {
   if (!all(names(classPredL) == names(drugSensL))) {

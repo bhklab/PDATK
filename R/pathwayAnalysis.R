@@ -104,6 +104,7 @@ computePathwayScores <- function(rankedMetaClassGenes, pathwayL, referenceGenes)
 #'    the pathway statistics.
 #'
 #' @importFrom RColorBrewer brewer.pal
+#' @importFrom grDevices colorRampPalette
 #' @importFrom gplots heatmap.2
 #' @importFrom ggplotify as.ggplot
 #' @import data.table

@@ -9,6 +9,7 @@
 #'
 #' @return None, draws a plot
 #'
+#' @importFrom grDevices colorRampPalette dev.off pdf
 #' @export
 plotROCcurves <- function(formattedValidationCohorts, PCOSPscores,
                           colours, legendLoc="bottomright", filePath, fileName) {

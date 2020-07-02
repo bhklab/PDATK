@@ -191,6 +191,8 @@ calculateCohortProbabilties <- function(fitModels, clinicalCohorts) {
 #'
 #' @return Nothing, draws a plot
 #'
+#' @importFrom grDevices colorRampPalette dev.off pdf
+#' @importFrom graphics barplot legend
 #' @export
 barplotModelComparison <- function(modelComparisonStats, model=1, names, colours, filePath, fileName, ...) {
     data <-data.frame(
