@@ -130,7 +130,6 @@ annotateSampleMetaClassDT <- function(sampleMetaClassDT, clusterLabels)
 #' @export
 plotSigScores <- function(sigScoreDT, comparisons, sigScoreName,
                           palette="Set1", saveDir, fileName) {
-  browser()
   plot <- ggboxplot(sigScoreDT[order(metaClasses)], x="metaClasses", y="sigScores",
                     color="metaClasses",
                     palette=palette,
