@@ -35,6 +35,7 @@ Imports:
     genefu,
     BiocParallel,
     doParallel,
+    BBmisc,
     scales,
     IDPmisc,
     dplyr,  
