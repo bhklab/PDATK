@@ -72,7 +72,7 @@ calcAllGeneSetSigScores <- function(geneSigL, cohortsDataL, sampleMetaClassDT) {
 #'
 #' @export
 normalizeCohortsList <- function(cohortsList) {
-  .normalize <- function(cohort) t(scale(t(cohort)))
+  .normalize <- function(cohort) t(scale(t(assays(cohort)$exprs)))
   lapply(cohortsList, .normalize)
 }
 
