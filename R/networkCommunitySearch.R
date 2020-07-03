@@ -105,7 +105,6 @@ extractSurvivalData <- function(cohortsDataL)
     merged <- merge(x = sampleMerged, y = osMerged, by = "row.names", all.y = T)
     merged$osStatus <- 0
     merged$osStatus[merged[,5] == "deceased"] <- 1
-    merged$osStatus[merged[,5] == "Dead"] <- 1 # TCGA
     return(data.frame(cohorts = merged[,2],
                       sampleNames = merged[,3],
                       OS = as.numeric(merged[,4]),
