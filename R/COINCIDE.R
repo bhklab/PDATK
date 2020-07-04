@@ -28,8 +28,8 @@ subsetCohortExprs <- function (cohortsDataL, genes)
 #'     the genes, madValues and ranking for each cohort. As returned by
 #'     the `rankAllCohortGenesByMAD` function.`
 #'
-#' @return A \code{data.table} with columns genes, weightedMADs and rankings
-#'     ordered by decreasing weightedMAD values.
+#' @return A \code{data.frame} with columns genes, weightedMADs and rankings
+#'     ordered by ranking.
 #'
 #' @import data.table
 #' @export
@@ -54,8 +54,8 @@ calcPerGeneWeigthedMAD <- function(cohortMADrankings) {
   cohortWeightings <- cohortSampleSizes / max(cohortSampleSizes)
 
   genewiseWeigthedMadDT <- longCohortDT[, .('weigthedMAD'=weightedMad(madValues, cohortWeightings)), by='genes']
-  genewiseWeigthedMadDT[, ranking := dense_rank(-weigthedMAD)]
-  return(genewiseWeigthedMadDT[order(-ranking)])
+  setorderv(genewiseWeigthedMadDT[, ranking := dense_rank(-weigthedMAD)], 'ranking')
+  return(data.frame(genewiseWeigthedMadDT, row.names=genewiseWeigthedMadDT$genes))
 }
 
 #' Extract the top n genes from each cohort

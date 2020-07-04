@@ -12,8 +12,8 @@ the genes, madValues and ranking for each cohort. As returned by
 the `rankAllCohortGenesByMAD` function.`}
 }
 \value{
-A \code{data.table} with columns genes, weightedMADs and rankings
-    ordered by decreasing weightedMAD values.
+A \code{data.frame} with columns genes, weightedMADs and rankings
+    ordered by ranking.
 }
 \description{
 Calculate aggregate MAD per gene across all cohorts, weighted by the sample size of each cohort
