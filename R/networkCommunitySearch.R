@@ -138,10 +138,11 @@ extractMetaClusters <- function(clusters) {
 #' @param sharedColumn A \code{character} vector containing the name
 #'   of a shared column to merge on, in addition to cohorts.
 #'
+#' @import data.table
 #' @export
 mergeSurvOn <- function(data1, data2, sharedColumn) {
   if (is(data2, 'data.table') && is(data2, 'data.table')) {
-    df <- as.data.frame(data.table::merge(data1, data2,
+    df <- as.data.frame(data.table::merge.data.table(data1, data2,
                                           by=c("cohorts", sharedColumn)))
   } else {
     df <- base::merge(data1, data2, by=c("cohorts", sharedColumn))

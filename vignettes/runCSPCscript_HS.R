@@ -29,8 +29,9 @@ mode(cohortsDataL$TCGA)
 cohortMADrankings <- rankAllCohortGenesByMAD(cohortsDataL, nthread=15)
 head(cohortMADrankings$TCGA[order(cohortMADrankings$TCGA$rank),])
 
+
 ## ----rank_cohort_genes_by_MAD-----------------------------------------------------------------------------------------------------------------------------
-genewiseWeightedMADdf <- calcGenewiseWeightedMADdf(cohortMADrankings)
+genewiseWeightedMADdf <- calcPerGeneWeigthedMAD(cohortMADrankings)
 head(genewiseWeightedMADdf)
 
 ## ----get_top_ranked_genes---------------------------------------------------------------------------------------------------------------------------------

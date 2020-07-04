@@ -22,57 +22,41 @@ subsetCohortExprs <- function (cohortsDataL, genes)
     return(lapply(lapply(cohortsDataL, FUN=`[`, i=genes), FUN=assay, 'exprs'))
 }
 
-
-#' Calculate the weighted MAD across all cohorts per gene
+#' Calculate aggregate MAD per gene across all cohorts, weighted by the sample size of each cohort
 #'
 #' @param cohortMADrankings A \code{list} of \code{data.frames} containing
-#'     the genes, madValuesa nd ranking for each cohort. As returned by
-#'     the `rowMADdfs` function.
-#'
-#' @return A \code{numeric} vector
-#'
-#' @importFrom matrixStats weightedMad
-#' @export
-calcGenewiseWeightedMADs <- function(cohortMADrankings) {
-
-  cohortMADvals <- lapply(cohortMADrankings, `[[`, "madValues")
-  cohortNcols <- vapply(cohortMADrankings,
-                        function(cohort) attributes(cohort)$datasetCols,
-                        FUN.VALUE=numeric(1))
-
-  perGeneMADs <- lapply(seq_along(rownames(cohortMADrankings[[1]])),
-                        function(i, MADs) vapply(MADs, `[`, i=i,
-                                                 FUN.VALUE=numeric(1)),
-                        MADs=cohortMADvals)
-
-  vapply(perGeneMADs,
-         function(x, cohortNcols, na.rm) weightedMad(x, cohortNcols, na.rm=na.rm),
-         cohortNcols, na.rm=TRUE,
-         FUN.VALUE=numeric(1))
-}
-
-#' Calculate the weighted MAD across all cohorts per gene and
-#'     return a `data.frame` of the results.
-#'
-#' @param cohortMADrankings A \code{list} of \code{data.frames} containing
-#'     the genes, madValuesa nd ranking for each cohort. As returned by
+#'     the genes, madValues and ranking for each cohort. As returned by
 #'     the `rankAllCohortGenesByMAD` function.`
 #'
-#' @return A \code{data.frame} with columns genes, weightedMADs and rankings
+#' @return A \code{data.table} with columns genes, weightedMADs and rankings
 #'     ordered by decreasing weightedMAD values.
 #'
-#' @importFrom dplyr dense_rank
+#' @import data.table
 #' @export
-calcGenewiseWeightedMADdf <- function(cohortMADrankings) {
-  weightedMADs <- calcGenewiseWeightedMADs(cohortMADrankings)
-  data <- data.frame(
-    "genes"=cohortMADrankings[[1]]$genes,
-    "weightedMADs"=weightedMADs,
-    "rankings"=dense_rank(-weightedMADs)
-  )
-  data[order(data$weightedMADs, decreasing=TRUE), ]
-}
+calcPerGeneWeigthedMAD <- function(cohortMADrankings) {
+  cohortNames <- names(cohortMADrankings)
 
+  .convertCohortMADrankingsToDT <- function(rankings, name) {
+    DT <- data.table::data.table(rankings)
+    DT[, `:=`(cohort=rep(name, nrow(DT)), rank=NULL)]
+    return(DT)
+  }
+
+  cohortDatatableL <- mapply(.convertCohortMADrankingsToDT,
+                            rankings=cohortMADrankings, name=cohortNames,
+                            SIMPLIFY=FALSE)
+
+  longCohortDT <- data.table::rbindlist(cohortDatatableL)
+
+  .getDatasetCols <- function(cohort) attributes(cohort)$datasetCols
+
+  cohortSampleSizes <- vapply(cohortMADrankings, .getDatasetCols, numeric(1))
+  cohortWeightings <- cohortSampleSizes / max(cohortSampleSizes)
+
+  genewiseWeigthedMadDT <- longCohortDT[, .('weigthedMAD'=weightedMad(madValues, cohortWeightings)), by='genes']
+  genewiseWeigthedMadDT[, ranking := dense_rank(-weigthedMAD)]
+  return(genewiseWeigthedMadDT[order(-ranking)])
+}
 
 #' Extract the top n genes from each cohort
 #'
@@ -798,3 +782,55 @@ getClusterwiseSamples <- function(cohortwiseClasses, allConClusters) {
   classes <- allConClusters[[cohort]]$classes
   names(classes)[classes == cluster]
 }
+
+## ---- DEPRECATED ------------------------------------------------------------------
+#
+##' Calculate the weighted MAD across all cohorts per gene
+##'
+##' @param cohortMADrankings A \code{list} of \code{data.frames} containing
+##'     the genes, madValuesa nd ranking for each cohort. As returned by
+##'     the `rowMADdfs` function.
+##'
+##' @return A \code{numeric} vector
+##'
+##' @importFrom matrixStats weightedMad
+##' @export
+#calcGenewiseWeightedMADs <- function(cohortMADrankings) {
+#
+#  cohortMADvals <- lapply(cohortMADrankings, `[[`, "madValues")
+#  cohortNcols <- vapply(cohortMADrankings,
+#                        function(cohort) attributes(cohort)$datasetCols,
+#                        FUN.VALUE=numeric(1))
+#
+#  perGeneMADs <- lapply(seq_along(rownames(cohortMADrankings[[1]])),
+#                        function(i, MADs) vapply(MADs, `[`, i=i,
+#                                                 FUN.VALUE=numeric(1)),
+#                        MADs=cohortMADvals)
+#
+#  vapply(perGeneMADs,
+#         function(x, cohortNcols, na.rm) weightedMad(x, cohortNcols/max(cohortNcols), na.rm=na.rm),
+#         cohortNcols, na.rm=TRUE,
+#         FUN.VALUE=numeric(1))
+#}
+#
+##' Calculate the weighted MAD across all cohorts per gene and
+##'     return a `data.frame` of the results.
+##'
+##' @param cohortMADrankings A \code{list} of \code{data.frames} containing
+##'     the genes, madValues and ranking for each cohort. As returned by
+##'     the `rankAllCohortGenesByMAD` function.`
+##'
+##' @return A \code{data.frame} with columns genes, weightedMADs and rankings
+##'     ordered by decreasing weightedMAD values.
+##'
+##' @importFrom dplyr dense_rank
+##' @export
+#calcGenewiseWeightedMADdf <- function(cohortMADrankings) {
+#  weightedMADs <- calcGenewiseWeightedMADs(cohortMADrankings)
+#  data <- data.frame(
+#    "genes"=cohortMADrankings[[1]]$genes,
+#    "weightedMADs"=weightedMADs,
+#    "rankings"=dense_rank(-weightedMADs)
+#  )
+#  data[order(data$weightedMADs, decreasing=TRUE), ]
+#}

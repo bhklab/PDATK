@@ -36,7 +36,7 @@ formatCCLsensitivityLtoDT <- function(CCLsensitivityL) {
 #'    'predClass', 'pBasal', 'pClassical', 'pExocrine', 'drug' and 'AUC'.
 #'
 #' @import data.table
-#' @importFrom data.table merge
+#' @importFrom data.table merge.data.table
 #' @export
 mergeClassAndDrugs <- function(classPredL, drugSensL) {
   if (!all(names(classPredL) == names(drugSensL))) {
@@ -74,7 +74,7 @@ mergeClassAndDrugs <- function(classPredL, drugSensL) {
                           colnames(DT[, .SD, .SDcols=-c("sample", "dataset")]))
 
   # Merge the DTs on cellline and dataset
-  mergedByDataset <- mapply(function(DT1, DT2) merge(DT1, DT2, by=c("sample", "dataset")),
+  mergedByDataset <- mapply(function(DT1, DT2) merge.data.table(DT1, DT2, by=c("sample", "dataset")),
                             DT1=fClassPredL,
                             DT2=fDrugSensL,
                             SIMPLIFY=FALSE)
