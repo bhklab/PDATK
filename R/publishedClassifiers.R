@@ -82,7 +82,7 @@ subtypeWithClassifier <- function(exprData, centroid, seed=NULL, reps=100) {
 subtypeDataLwClassifCentroidL <- function(rawDataL, classifCentroidL,
                                           predMetaClassL, seed=NULL) {
 
-    ## Match classification using consenus method with cluaster from different
+    ## Match classification using consenus method with cluster from different
     ## classifiers
     DtL <- lapply(rawDataL,
                   function(exprData, classifs, seed) {

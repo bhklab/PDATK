@@ -5,27 +5,265 @@
 # -------------------------------------------------------------------------
 
 
-
 ## ----build_and_select_models---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 library(PCOSP)
-
+library(MetaGxPancreas)
 
 # -------------------------------------------------------------------------
 # 1. PCOSP Model Building -------------------------------------------------
 # -------------------------------------------------------------------------
 
+# NOTE: The train/test splits were extracted from the original PCOSP .rda files and are assumed to be random
+#       It may be worth checking for correlations between training/testing data to ensure this assumption is valid
+
+## -- ICGC sequencing
+ICGCseqTrain <- c("ICGC_0006", "ICGC_0007", "ICGC_0009", "ICGC_0020", "ICGC_0021",
+                  "ICGC_0149", "ICGC_0150", "ICGC_0153", "ICGC_0169", "ICGC_0185",
+                  "ICGC_0025", "ICGC_0026", "ICGC_0031", "ICGC_0033", "ICGC_0037",
+                  "ICGC_0048", "ICGC_0051", "ICGC_0052", "ICGC_0053", "ICGC_0054",
+                  "ICGC_0055", "ICGC_0059", "ICGC_0061", "ICGC_0063", "ICGC_0066",
+                  "ICGC_0067", "ICGC_0075", "ICGC_0087", "ICGC_0088", "ICGC_0099",
+                  "ICGC_0115", "ICGC_0124", "ICGC_0134", "ICGC_0135", "ICGC_0139",
+                  "ICGC_0103", "ICGC_0105", "ICGC_0108", "ICGC_0109", "ICGC_0114",
+                  "ICGC_0188", "ICGC_0192", "ICGC_0199", "ICGC_0201", "ICGC_0205",
+                  "ICGC_0206", "ICGC_0207", "ICGC_0214", "ICGC_0223", "ICGC_0224",
+                  "ICGC_0227", "ICGC_0230", "ICGC_0235", "ICGC_0295", "ICGC_0296",
+                  "ICGC_0300", "ICGC_0301", "ICGC_0303", "ICGC_0304", "ICGC_0309",
+                  "ICGC_0312", "ICGC_0313", "ICGC_0315", "ICGC_0321", "ICGC_0326",
+                  "ICGC_0338", "ICGC_0365", "ICGC_0391", "ICGC_0392", "ICGC_0393",
+                  "ICGC_0395", "ICGC_0406", "ICGC_0412", "ICGC_0415", "ICGC_0417",
+                  "ICGC_0419", "ICGC_0420", "ICGC_0486", "ICGC_0518", "ICGC_0521",
+                  "ICGC_0140", "ICGC_0141", "ICGC_0143", "ICGC_0144", "ICGC_0146",
+                  "ICGC_0526", "ICGC_0535", "ICGC_0536", "ICGC_0543")
+
+ICGCseqValidation <- c("ICGC_0006", "ICGC_0007", "ICGC_0009", "ICGC_0020", "ICGC_0021",
+                       "ICGC_0048", "ICGC_0051", "ICGC_0052", "ICGC_0053", "ICGC_0054",
+                       "ICGC_0025", "ICGC_0026", "ICGC_0031", "ICGC_0033", "ICGC_0037",
+                       "ICGC_0055", "ICGC_0059", "ICGC_0061", "ICGC_0063", "ICGC_0066",
+                       "ICGC_0067", "ICGC_0075", "ICGC_0087", "ICGC_0088", "ICGC_0099",
+                       "ICGC_0103", "ICGC_0105", "ICGC_0108", "ICGC_0109", "ICGC_0114",
+                       "ICGC_0115", "ICGC_0124", "ICGC_0134", "ICGC_0135", "ICGC_0139",
+                       "ICGC_0140", "ICGC_0141", "ICGC_0143", "ICGC_0144", "ICGC_0146",
+                       "ICGC_0149", "ICGC_0150", "ICGC_0153", "ICGC_0169", "ICGC_0185",
+                       "ICGC_0188", "ICGC_0192", "ICGC_0199", "ICGC_0201", "ICGC_0205",
+                       "ICGC_0206", "ICGC_0207", "ICGC_0212", "ICGC_0214", "ICGC_0215",
+                       "ICGC_0223", "ICGC_0224", "ICGC_0227", "ICGC_0230", "ICGC_0235",
+                       "ICGC_0295", "ICGC_0296", "ICGC_0300", "ICGC_0301", "ICGC_0303",
+                       "ICGC_0304", "ICGC_0309", "ICGC_0312", "ICGC_0313", "ICGC_0315",
+                       "ICGC_0321", "ICGC_0326", "ICGC_0338", "ICGC_0354", "ICGC_0365",
+                       "ICGC_0391", "ICGC_0392", "ICGC_0393", "ICGC_0395", "ICGC_0406",
+                       "ICGC_0412", "ICGC_0415", "ICGC_0417", "ICGC_0419", "ICGC_0420",
+                       "ICGC_0486", "ICGC_0502", "ICGC_0507", "ICGC_0518", "ICGC_0521",
+                       "ICGC_0522", "ICGC_0526", "ICGC_0535", "ICGC_0536", "ICGC_0543")
+
+ICGCseqTrainTestSplit <- length(ICGCseqTrain) / (length(ICGCseqTrain) + length(ICGCseqValidation))
+print(ICGCseqTrainTestSplit)
+
+# -- ICGC microarray
+ICGCmicroTrain <- c("ICGC_0006", "ICGC_0007", "ICGC_0009", "ICGC_0020", "ICGC_0021",
+                    "ICGC_0055", "ICGC_0059", "ICGC_0061", "ICGC_0063", "ICGC_0066",
+                    "ICGC_0025", "ICGC_0026", "ICGC_0031", "ICGC_0033", "ICGC_0037",
+                    "ICGC_0067", "ICGC_0075", "ICGC_0087", "ICGC_0088", "ICGC_0099",
+                    "ICGC_0103", "ICGC_0105", "ICGC_0108", "ICGC_0109", "ICGC_0114",
+                    "ICGC_0115", "ICGC_0124", "ICGC_0134", "ICGC_0135", "ICGC_0139",
+                    "ICGC_0140", "ICGC_0141", "ICGC_0143", "ICGC_0144", "ICGC_0146",
+                    "ICGC_0149", "ICGC_0150", "ICGC_0153", "ICGC_0169", "ICGC_0185",
+                    "ICGC_0188", "ICGC_0192", "ICGC_0199", "ICGC_0201", "ICGC_0205",
+                    "ICGC_0206", "ICGC_0207", "ICGC_0214", "ICGC_0223", "ICGC_0224",
+                    "ICGC_0227", "ICGC_0230", "ICGC_0235", "ICGC_0295", "ICGC_0296",
+                    "ICGC_0300", "ICGC_0301", "ICGC_0303", "ICGC_0304", "ICGC_0309",
+                    "ICGC_0312", "ICGC_0313", "ICGC_0315", "ICGC_0321", "ICGC_0326",
+                    "ICGC_0338", "ICGC_0365", "ICGC_0391", "ICGC_0392", "ICGC_0393",
+                    "ICGC_0395", "ICGC_0406", "ICGC_0412", "ICGC_0415", "ICGC_0417",
+                    "ICGC_0419", "ICGC_0420", "ICGC_0486", "ICGC_0518", "ICGC_0521",
+                    "ICGC_0048", "ICGC_0051", "ICGC_0052", "ICGC_0053", "ICGC_0054",
+                    "ICGC_0526", "ICGC_0535", "ICGC_0536", "ICGC_0543")
+
+ICGCmicroValidation <- c("ICGC_0001", "ICGC_0002", "ICGC_0003", "ICGC_0004", "ICGC_0005",
+                         "ICGC_0019", "ICGC_0023", "ICGC_0024", "ICGC_0027", "ICGC_0028",
+                         "ICGC_0029", "ICGC_0030", "ICGC_0032", "ICGC_0034", "ICGC_0035",
+                         "ICGC_0036", "ICGC_0038", "ICGC_0039", "ICGC_0040", "ICGC_0041",
+                         "ICGC_0042", "ICGC_0043", "ICGC_0044", "ICGC_0046", "ICGC_0047",
+                         "ICGC_0049", "ICGC_0050", "ICGC_0056", "ICGC_0057", "ICGC_0058",
+                         "ICGC_0060", "ICGC_0062", "ICGC_0064", "ICGC_0065", "ICGC_0069",
+                         "ICGC_0071", "ICGC_0077", "ICGC_0078", "ICGC_0079", "ICGC_0080",
+                         "ICGC_0089", "ICGC_0090", "ICGC_0091", "ICGC_0092", "ICGC_0093",
+                         "ICGC_0094", "ICGC_0095", "ICGC_0096", "ICGC_0097", "ICGC_0101",
+                         "ICGC_0102", "ICGC_0104", "ICGC_0106", "ICGC_0107", "ICGC_0110",
+                         "ICGC_0111", "ICGC_0112", "ICGC_0116", "ICGC_0118", "ICGC_0119",
+                         "ICGC_0122", "ICGC_0125", "ICGC_0128", "ICGC_0136", "ICGC_0145",
+                         "ICGC_0147", "ICGC_0152", "ICGC_0154", "ICGC_0157", "ICGC_0158",
+                         "ICGC_0159", "ICGC_0161", "ICGC_0162", "ICGC_0164", "ICGC_0166",
+                         "ICGC_0167", "ICGC_0170", "ICGC_0173", "ICGC_0175", "ICGC_0177",
+                         "ICGC_0178", "ICGC_0180", "ICGC_0187", "ICGC_0189", "ICGC_0190",
+                         "ICGC_0194", "ICGC_0197", "ICGC_0202", "ICGC_0203", "ICGC_0208",
+                         "ICGC_0209", "ICGC_0216", "ICGC_0217", "ICGC_0218", "ICGC_0219",
+                         "ICGC_0225", "ICGC_0226", "ICGC_0229", "ICGC_0232", "ICGC_0233",
+                         "ICGC_0234", "ICGC_0236", "ICGC_0237", "ICGC_0238", "ICGC_0298",
+                         "ICGC_0299", "ICGC_0302", "ICGC_0305", "ICGC_0307", "ICGC_0308",
+                         "ICGC_0310", "ICGC_0311", "ICGC_0314", "ICGC_0316", "ICGC_0317",
+                         "ICGC_0319", "ICGC_0323", "ICGC_0325", "ICGC_0336", "ICGC_0337",
+                         "ICGC_0339", "ICGC_0340", "ICGC_0341", "ICGC_0342", "ICGC_0343",
+                         "ICGC_0346", "ICGC_0349", "ICGC_0350", "ICGC_0352", "ICGC_0356",
+                         "ICGC_0359", "ICGC_0360", "ICGC_0361", "ICGC_0362", "ICGC_0363",
+                         "ICGC_0364", "ICGC_0394", "ICGC_0396", "ICGC_0397", "ICGC_0398",
+                         "ICGC_0400", "ICGC_0402", "ICGC_0403", "ICGC_0404", "ICGC_0405",
+                         "ICGC_0407", "ICGC_0408", "ICGC_0410", "ICGC_0414", "ICGC_0416",
+                         "ICGC_0418", "ICGC_0421", "ICGC_0422", "ICGC_0423", "ICGC_0487",
+                         "ICGC_0488", "ICGC_0490", "ICGC_0493", "ICGC_0499", "ICGC_0514",
+                         "ICGC_0523", "ICGC_0530", "ICGC_0531", "ICGC_0537", "ICGC_0538",
+                         "ICGC_0014", "ICGC_0015", "ICGC_0016", "ICGC_0017", "ICGC_0018",
+                         "ICGC_0008", "ICGC_0010", "ICGC_0011", "ICGC_0012", "ICGC_0013",
+                         "ICGC_0540", "ICGC_0542", "ICGC_0544")
+
+ICGCmicroTrainTestSplit <- length(ICGCmicroTrain) / (length(ICGCmicroTrain) + length(ICGCmicroValidation))
+print(ICGCmicroTrainTestSplit)
+
+load(file.path('..', 'data', 'PCOSP_trainingCohorts.rda'), verbose=TRUE)
+load(file.path('..', 'data', 'PCOSP_validationCohorts.rda'), verbose=TRUE)
 
 
-## ----load_data-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-load(file.path("..", "data", "trainingCohorts.rda"))
+oldICGCdata <- mapply(rbind, trainingCohorts, validationCohorts[c('ICGC_arr', 'ICGC_seq')], SIMPLIFY=FALSE)
+oldData <- c(oldICGCdata, validationCohorts[!(names(validationCohorts) %in% c("ICGC_arr", "ICGC_seq", "ICGC_array_all"))])
+names(oldData)[1:2] <- c('icgcmicro', 'icgcseq')
+names(oldData)[8] <- c("collison")
 
+.multiGrepL <- function(patterns, x, ...) vapply(patterns, grepl, x=x, ..., FUN.VALUE=logical(length(x)))
+nameIdxs <- unlist(apply(.multiGrepL(names(oldData), x=names(cohortSEs), ignore.case=TRUE), 2, which))
+names(oldData) <- names(cohortSEs)[nameIdxs]
+
+oldSurivalData <- lapply(oldData, function(cohort)
+    data.table(cohort, keep.rownames="sample_id")[, .(sample_id, OS, OS_Status)])
+
+pancreasData <- loadPancreasDatasets()
+cohortSEs <- pancreasData$SummarizedExperiments
+
+oldSurvivalData <- lapply(oldData, function(cohort) data.table(cohort, keep.rownames='sample_id'))
+cohortSEs <- cohortSEs[names(oldSurivalData)]
+
+updateSumExpSurvival <- function(SE, survivalDT) {
+    colDataDT <- data.table(colData(SE), keep.rownames='sample_id')
+
+    colDataDT[is.na(days_to_death)]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ----split_data-------------------------------------------------------------------------------------------------------------------
+
+
+# Find common genes
+commonGenes <- Reduce(intersect, lapply(cohortSEs, rownames))
+cohortSEs <- lapply(cohortSEs, `[`, i=commonGenes, j=TRUE)
+
+# -- Extract ICGC sequencing and microarray
+ICGCmicro_SE <- cohortSEs$ICGCMICRO_SumExp
+ICGCseq_SE <- cohortSEs$ICGCSEQ_SumExp
+
+ICGCmicro_exprs <- data.table(t(assay(ICGCmicro_SE, 'exprs')), keep.rownames='sample_id')
+ICGCseq_exprs <- data.table(t(assay(ICGCseq_SE, 'exprs')), keep.rownames='sample_id')
+
+ICGCmicro_survival <- as.data.table(as.data.frame(colData(ICGCmicro_SE)[, c("unique_patient_ID", "days_to_death", "vital_status")]))
+ICGCseq_survival <- as.data.table(as.data.frame(colData(ICGCseq_SE)[, c("unique_patient_ID", "days_to_death", "vital_status")]))
+
+# Death to 1, Living to 0
+ICGCmicro_survival[vital_status == 'deceased', vital_status := 1]
+ICGCmicro_survival[vital_status == 'living', vital_status := 0]
+ICGCseq_survival[vital_status == 'deceased', vital_status := 1]
+ICGCseq_survival[vital_status == 'living', vital_status := 0]
+
+# -- Updating missing survival data from Vandanas old data
+
+# Read in old data and make into data.table
+load(file.path('..', 'data', 'PCOSP_trainingCohorts.rda'), verbose=TRUE)
+load(file.path('..', 'data', 'PCOSP_validationCohorts.rda'), verbose=TRUE)
+
+oldMicroSurvival <- rbind(data.table(trainingCohorts$icgc_array_cohort, keep.rownames=sample_id)[, .(rn, OS, OS_Status)],
+                  data.table(validationCohorts$ICGC_arr, keep.rownames=sample_id)[, .(rn, OS, OS_Status)])
+
+.factorToNumeric <- function(col) as.numeric(levels(col)[col])
+
+oldMicroSurvival[, `:=`(OS = .factorToNumeric(OS), OS_Status = .factorToNumeric(OS_Status))]
+
+oldSeqSurvival <- rbind(data.table(trainingCohorts$icgc_seq_cohort, keep.rownames=TRUE)[, .(rn, OS, OS_Status)],
+                  data.table(validationCohorts$ICGC_seq, keep.rownames=TRUE)[, .(rn, OS, OS_Status)])
+oldSeqSurvival[, `:=`(OS = .factorToNumeric(OS), OS_Status = .factorToNumeric(OS_Status))]
+
+# Rename columns
+colnames(ICGCmicro_survival) <- c("sample_id", "OS", "OS_Status")
+colnames(ICGCseq_survival) <- c("sample_id", "OS", "OS_Status")
+
+# Fill missing values in OS survival data
+ICGCmicro_survival[is.na(OS),
+                   `:=`(OS = oldMicroSurvival[rn %in% sample_id][order(rn)]$OS,
+                        OS_Status = as.numeric(oldMicroSurvival[rn %in% sample_id][order(rn)]$OS_Status))]
+
+ICGCseq_survival[is.na(OS),
+                 `:=`(OS = oldSeqSurvival[rn %in% sample_id][order(rn)]$OS,
+                      OS_Status = as.numeric(oldSeqSurvival[rn %in% sample_id][order(rn)]$OS_Status))]
+
+# Update original SEs
+colData(ICGCmicro_SE)$days_to_death <- ICGCmicro_survival$OS
+colData(ICGCmicro_SE)$vital_status <- ICGCmicro_survival$OS_Status
+colData(ICGCseq_SE)$days_to_death <- ICGCseq_survival$OS
+colData(ICGCseq_SE)$vital_status <- ICGCseq_survival$OS_Status
+
+## TODO:: Heewon - save these as the new version of ICGCSEQ and ICGCMICRO
+
+# Attach expr and survival data as a data.frame
+ICGCmicro <- merge(ICGCmicro_exprs, ICGCmicro_survival, by='sample_id')
+ICGCmicro <- data.frame(ICGCmicro[, -'sample_id'], row.names=ICGCmicro$sample_id)
+ICGCseq <- merge(ICGCseq_exprs, ICGCseq_survival, by='sample_id')
+ICGCseq <- data.frame(ICGCseq[, -'sample_id'], row.names=ICGCseq$sample_id)
+
+# Remove extraneous data to save RAM
+rm(ICGCmicro_survival, ICGCseq_survival, ICGCseq_SE, ICGCmicro_SE, ICGCseq_exprs, ICGCmicro_exprs); gc()
+
+# Split the data
+ICGCmicro_train <- ICGCmicro[ICGCmicroTrain, ]
+ICGCmicro_validation <- ICGCmicro[ICGCmicroValidation, ]
+ICGCseq_train <- ICGCseq[ICGCmicroTrain, ]
+ICGCseq_validation <- ICGCseq[ICGCmicroValidation, ]
+
+#
+trainingCohorts <- list("icgc_array_cohort"=ICGCmicro_train, 'icgc_seq_cohort'=ICGCseq_train)
+
+`%notin%` <- Negate(`%in%`)
+valCohorts <- cohortSEs[names(cohortSEs) %notin% c("ICGCMICRO_SumExp", "ICGCSEQ_SumExp")]
+cohortsWithSurvival <- paste0(c("TCGA", "PCSI", "KIRBY", "OUH", "UNC", "CHEN", "ZHANG", "COLLISSON"), '_SumExp')
+valCohorts <- valCohorts[names(valCohorts) %in% cohortsWithSurvival]
+validationCohorts <- lapply(calCohorts, )
 
 ## ----train_model---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Initialize a directory for result data
 resultsDir <- file.path("..", "results")
-
-# Set seed for calculation (using old R < 3.6 RNG)
-set.seed(1987, sample.kind="Rounding")
 
 # Build the models using the selected random seed
 system.time({
@@ -35,15 +273,9 @@ selectedModels <- buildPCOSPmodels(trainingCohorts, numModels=1000, nthread=15)
 saveRDS(selectedModels, file=file.path(resultsDir, "1_selectedModels.rds"))
 
 
-
 # -------------------------------------------------------------------------
 # 2. Calculate and Validate Meta-Estimate Statistics ----------------------
 # -------------------------------------------------------------------------
-
-
-
-## ----calculate_stats-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-load(file.path("..", "data", "validationCohorts.rda"))
 
 # Keep a copy of all the cohorts for later
 allValidationCohorts <- validationCohorts
