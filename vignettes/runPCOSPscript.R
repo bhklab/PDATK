@@ -8,6 +8,7 @@
 ## ----build_and_select_models---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 library(PCOSP)
 library(MetaGxPancreas)
+library(BiocParallel)
 
 # -------------------------------------------------------------------------
 # 1. PCOSP Model Building -------------------------------------------------
@@ -122,129 +123,77 @@ print(ICGCmicroTrainTestSplit)
 load(file.path('..', 'data', 'PCOSP_trainingCohorts.rda'), verbose=TRUE)
 load(file.path('..', 'data', 'PCOSP_validationCohorts.rda'), verbose=TRUE)
 
+pancreasData <- loadPancreasDatasets()
+cohortSEs <- pancreasData$SummarizedExperiments
 
 oldICGCdata <- mapply(rbind, trainingCohorts, validationCohorts[c('ICGC_arr', 'ICGC_seq')], SIMPLIFY=FALSE)
 oldData <- c(oldICGCdata, validationCohorts[!(names(validationCohorts) %in% c("ICGC_arr", "ICGC_seq", "ICGC_array_all"))])
 names(oldData)[1:2] <- c('icgcmicro', 'icgcseq')
-names(oldData)[8] <- c("collison")
+names(oldData)[8] <- c('collison')
 
 .multiGrepL <- function(patterns, x, ...) vapply(patterns, grepl, x=x, ..., FUN.VALUE=logical(length(x)))
+
 nameIdxs <- unlist(apply(.multiGrepL(names(oldData), x=names(cohortSEs), ignore.case=TRUE), 2, which))
 names(oldData) <- names(cohortSEs)[nameIdxs]
 
-oldSurivalData <- lapply(oldData, function(cohort)
+oldSurvivalData <- lapply(oldData, function(cohort)
     data.table(cohort, keep.rownames="sample_id")[, .(sample_id, OS, OS_Status)])
 
-pancreasData <- loadPancreasDatasets()
-cohortSEs <- pancreasData$SummarizedExperiments
 
-oldSurvivalData <- lapply(oldData, function(cohort) data.table(cohort, keep.rownames='sample_id'))
-cohortSEs <- cohortSEs[names(oldSurivalData)]
+oldSurvivalData <- lapply(oldSurvivalData,
+                          function(DT) {
+                              if (is.factor(DT$OS))
+                                  DT[, `:=`(OS=levels(OS)[OS])]
+                              if (is.factor(DT$OS_Status))
+                                  DT[, `:=`(OS_Status=levels(OS_Status)[OS_Status])]
+                              return(DT)
+                          })
+
+cohortSEs <- cohortSEs[names(oldSurvivalData)]
+
 
 updateSumExpSurvival <- function(SE, survivalDT) {
-    colDataDT <- data.table(colData(SE), keep.rownames='sample_id')
+    print(metadata(SE)$experimentData@name)
+    colDataDT <- data.table(as.data.frame(colData(SE)), keep.rownames='rn')
+    colDataDT <- colDataDT[, lapply(.SD, function(col) { if (is.factor(col)) levels(col)[col] else col})]
 
-    colDataDT[is.na(days_to_death)]
+    colDataDT[rn %in% survivalDT$sample_id,
+              `:=`(days_to_death=as.numeric(survivalDT[sample_id %in% rn][order(sample_id)]$OS),
+                   vital_status=ifelse(survivalDT[sample_id %in% rn][order(sample_id)]$OS_Status == '1',
+                                       'deceased', 'living'))]
+    colData(SE)$days_to_death <- colDataDT$days_to_death
+    colData(SE)$vital_status <- colDataDT$vital_status
+    return(SE)
 }
 
+SEs <- mapply(updateSumExpSurvival, SE=cohortSEs, survivalDT=oldSurvivalData, SIMPLIFY=FALSE)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## TODO:: HEEWON - save these updated SEs
 
 
 # ----split_data-------------------------------------------------------------------------------------------------------------------
+cohortSEs <- SEs
+rm(oldSurvivalData, oldData, oldICGCdata); gc()
 
+setGeneric('toPCOSP', function(object, ...) standardGeneric('toPCOSP'))
+setMethod('toPCOSP',
+          signature(object='SummarizedExperiment'),
+          function(object){
+              print(metadata(object)$experimentData@name)
+              data <- assays(object)[[1]]
+              DF <- data.frame(t(data), row.names=colnames(data))
+              DF$OS <- colData(object)$days_to_death
+              DF$OS_Status <- colData(object)$vital_status
+              return(DF)
+          })
+
+cohortData <- lapply(cohortSEs, toPCOSP)
 
 # Find common genes
 commonGenes <- Reduce(intersect, lapply(cohortSEs, rownames))
 cohortSEs <- lapply(cohortSEs, `[`, i=commonGenes, j=TRUE)
 
-# -- Extract ICGC sequencing and microarray
-ICGCmicro_SE <- cohortSEs$ICGCMICRO_SumExp
-ICGCseq_SE <- cohortSEs$ICGCSEQ_SumExp
 
-ICGCmicro_exprs <- data.table(t(assay(ICGCmicro_SE, 'exprs')), keep.rownames='sample_id')
-ICGCseq_exprs <- data.table(t(assay(ICGCseq_SE, 'exprs')), keep.rownames='sample_id')
-
-ICGCmicro_survival <- as.data.table(as.data.frame(colData(ICGCmicro_SE)[, c("unique_patient_ID", "days_to_death", "vital_status")]))
-ICGCseq_survival <- as.data.table(as.data.frame(colData(ICGCseq_SE)[, c("unique_patient_ID", "days_to_death", "vital_status")]))
-
-# Death to 1, Living to 0
-ICGCmicro_survival[vital_status == 'deceased', vital_status := 1]
-ICGCmicro_survival[vital_status == 'living', vital_status := 0]
-ICGCseq_survival[vital_status == 'deceased', vital_status := 1]
-ICGCseq_survival[vital_status == 'living', vital_status := 0]
-
-# -- Updating missing survival data from Vandanas old data
-
-# Read in old data and make into data.table
-load(file.path('..', 'data', 'PCOSP_trainingCohorts.rda'), verbose=TRUE)
-load(file.path('..', 'data', 'PCOSP_validationCohorts.rda'), verbose=TRUE)
-
-oldMicroSurvival <- rbind(data.table(trainingCohorts$icgc_array_cohort, keep.rownames=sample_id)[, .(rn, OS, OS_Status)],
-                  data.table(validationCohorts$ICGC_arr, keep.rownames=sample_id)[, .(rn, OS, OS_Status)])
-
-.factorToNumeric <- function(col) as.numeric(levels(col)[col])
-
-oldMicroSurvival[, `:=`(OS = .factorToNumeric(OS), OS_Status = .factorToNumeric(OS_Status))]
-
-oldSeqSurvival <- rbind(data.table(trainingCohorts$icgc_seq_cohort, keep.rownames=TRUE)[, .(rn, OS, OS_Status)],
-                  data.table(validationCohorts$ICGC_seq, keep.rownames=TRUE)[, .(rn, OS, OS_Status)])
-oldSeqSurvival[, `:=`(OS = .factorToNumeric(OS), OS_Status = .factorToNumeric(OS_Status))]
-
-# Rename columns
-colnames(ICGCmicro_survival) <- c("sample_id", "OS", "OS_Status")
-colnames(ICGCseq_survival) <- c("sample_id", "OS", "OS_Status")
-
-# Fill missing values in OS survival data
-ICGCmicro_survival[is.na(OS),
-                   `:=`(OS = oldMicroSurvival[rn %in% sample_id][order(rn)]$OS,
-                        OS_Status = as.numeric(oldMicroSurvival[rn %in% sample_id][order(rn)]$OS_Status))]
-
-ICGCseq_survival[is.na(OS),
-                 `:=`(OS = oldSeqSurvival[rn %in% sample_id][order(rn)]$OS,
-                      OS_Status = as.numeric(oldSeqSurvival[rn %in% sample_id][order(rn)]$OS_Status))]
-
-# Update original SEs
-colData(ICGCmicro_SE)$days_to_death <- ICGCmicro_survival$OS
-colData(ICGCmicro_SE)$vital_status <- ICGCmicro_survival$OS_Status
-colData(ICGCseq_SE)$days_to_death <- ICGCseq_survival$OS
-colData(ICGCseq_SE)$vital_status <- ICGCseq_survival$OS_Status
-
-## TODO:: Heewon - save these as the new version of ICGCSEQ and ICGCMICRO
-
-# Attach expr and survival data as a data.frame
-ICGCmicro <- merge(ICGCmicro_exprs, ICGCmicro_survival, by='sample_id')
-ICGCmicro <- data.frame(ICGCmicro[, -'sample_id'], row.names=ICGCmicro$sample_id)
-ICGCseq <- merge(ICGCseq_exprs, ICGCseq_survival, by='sample_id')
-ICGCseq <- data.frame(ICGCseq[, -'sample_id'], row.names=ICGCseq$sample_id)
-
-# Remove extraneous data to save RAM
-rm(ICGCmicro_survival, ICGCseq_survival, ICGCseq_SE, ICGCmicro_SE, ICGCseq_exprs, ICGCmicro_exprs); gc()
 
 # Split the data
 ICGCmicro_train <- ICGCmicro[ICGCmicroTrain, ]
