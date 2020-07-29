@@ -6,6 +6,7 @@
 \usage{
 buildRandomGeneAssignmentModels(
   trainingCohorts,
+  seqCohort,
   numModels,
   nthread,
   saveDir,

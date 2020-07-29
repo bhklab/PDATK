@@ -4,11 +4,19 @@
 \alias{buildRandomLabelShufflingModel}
 \title{Build PCOSP models with the group labels randomly shuffled}
 \usage{
-buildRandomLabelShufflingModel(trainingCohorts, numModels, nthread, saveDir)
+buildRandomLabelShufflingModel(
+  trainingCohorts,
+  seqCohort,
+  numModels,
+  nthread,
+  saveDir
+)
 }
 \arguments{
 \item{trainingCohorts}{A named \code{list} of training cohorts for which
 to fit and select PCOSP models.}
+
+\item{seqCohort}{[`character`] The name of the sequencing cohort.}
 
 \item{numModels}{A \code{numeric} vector containing an integer number of
 models to fit}

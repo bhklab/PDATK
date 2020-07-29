@@ -243,7 +243,7 @@ metaEstimateStats <- function(DindexList, concordanceIndexList, hetero) {
     concordance.index(x=PCOSPscore,
             surv.time=as.numeric.factor(cohort[, 'OS']),
             surv.event=as.numeric.factor(cohort[, 'OS_Status']),
-            method="noether")
+            method="noether", na.rm=TRUE)
   }), .Names=names(probList))
 }
 

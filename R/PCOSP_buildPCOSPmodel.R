@@ -18,22 +18,23 @@
 #' # OR Save the object to disk
 #' buildPCOSPmodel(traingCohort, numModels=10, saveDir=tempdir())
 #'
-##TODO:: Determine where this dataset came from? Is it the ouput of another
-#   package? From a publication?
-#' @param trainingCohorts A named \code{list} of training cohorts for which
+#' @param trainingCohorts A named [`list`] of training cohorts for which
 #'   to fit and select PCOSP models.
-#' @param saveDir \code{character} A path to a directory to save the model. If you
+#' @param seqCohort [`character`] The names of the cohorts containing sequencing data in trainingCohorts. All other
+#'     cohorts are assumped to contain microarray data.
+#' @param numModels [`integer`] The number of models to fit
+#' @param saveDir [`character`] A path to a directory to save the model. If you
 #'   exclude this the function will return the model object instead.
-#' @param nthread \code{integer} The number of threads to parallelize across
+#' @param nthread [`integer`] The number of threads to parallelize across
 #'
-#' @return \code{list} Either returns the model object or, is \code{saveDir} is
-#'   specified it saves to disk instead and return the path
+#' @return [`list`] Either returns the model object or, if \code{saveDir} is
+#'   specified it saves to disk instead and returns the path.
 #'
 #' @section Warning: This function uses random numbers; remember to
 #'   \code{set.seed()} before running to ensure reproducible results
 #'
 #' @export
-buildPCOSPmodels <- function(trainingCohorts, numModels, nthread, saveDir) {
+buildPCOSPmodels <- function(trainingCohorts, seqCohort, numModels, nthread, saveDir) {
 
     # Set number of threads to parallelize over
     if (!missing(nthread)) {
@@ -43,11 +44,11 @@ buildPCOSPmodels <- function(trainingCohorts, numModels, nthread, saveDir) {
     }
 
     # Extract cohorts from trainingCohorts
-    seqCohort <- trainingCohorts$icgc_seq_cohort
-    arrayCohort <- trainingCohorts$icgc_array_cohort
+    sequenceCohort <- trainingCohorts[[seqCohort]]
+    arrayCohort <- trainingCohorts[[which(!(names(trainingCohorts) %in% seqCohort))]]
 
     # Merged common ICGC seq and array trainingCohorts
-    commonData <- mergeCommonData(seqCohort, arrayCohort)
+    commonData <- mergeCommonData(sequenceCohort, arrayCohort)
 
     # Training the model on ICGC seq/array common samples cohort
     cohortMatrix <- convertCohortToMatrix(commonData)

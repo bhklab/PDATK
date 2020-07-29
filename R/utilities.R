@@ -1,15 +1,5 @@
 ##FIXME:: Make sure all the data is either a factor, or not a factor?
 ##FIXME:: This breaks when written with levels because not all of them are factors
-#' Convert the levels of a factor to number
-#'
-#' A convenience function for converting factor levels into numeric
-#'
-#' @param factor A \code{factor} vector to convert to numeric.
-#'
-#' @return A \code{numeric} vector of the factor levels.
-#'
-#' @export
-as.numeric.factor <- function(factor) { as.numeric(as.character(factor)) }
 
 #' Exclude samples censored before year 1
 #'
@@ -180,7 +170,7 @@ subsetSharedCohortsAndSamples <- function(metaestimateData) {
         # Subset and reorder all data
         metaestimateData <- lapply(metaestimateData, function(data, cohorts) data[cohorts], cohorts=cohortNames)
 
-    classiferSampleNames <- c(lapply(metaestimateData[seq_along(which(names(meta)))], function(data) lapply(data, names)),
+    classiferSampleNames <- c(lapply(metaestimateData[seq_len(4)], function(data) lapply(data, names)),
                               lapply(metaestimateData[5], function(data) lapply(data, rownames)))
 
     sharedSampleNames <- lapply(cohortNames,

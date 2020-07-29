@@ -1,5 +1,6 @@
 ##FIXME:: Make sure all the data is either a factor, or not a factor?
 ##FIXME:: This breaks when written with levels because not all of them are factors
+
 #' Convert the levels of a factor to number
 #'
 #' A convenience function for converting factor levels into numeric
@@ -9,7 +10,9 @@
 #' @return A \code{numeric} vector of the factor levels.
 #'
 #' @export
-as.numeric.factor <- function(factor) { as.numeric(as.character(factor)) }
+as.numeric.factor <- function(factor) {
+    if (is.factor(factor)) as.numeric(levels(factor)[factor]) else as.numeric(factor)
+}
 
 #' Exclude samples censored before year 1
 #'
@@ -223,7 +226,6 @@ calculateMedAbsDev <- function(dataset){
         rownames=rownames(dataset)
     )
 }
-
 
 
 

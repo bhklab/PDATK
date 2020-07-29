@@ -221,8 +221,9 @@ forestPlotModelComparison <- function(clinicalModelStats, stat, isSummary, fileP
             rbind(
                 plotData,
                 spacing,
+                spacing,
                 indexClinical[i, 1:4],
-                indexPCOSP[i, 1:4],
+                indexPCOSP[i, 1:4]
             )
     }
 
@@ -245,10 +246,10 @@ forestPlotModelComparison <- function(clinicalModelStats, stat, isSummary, fileP
     # Construct the forest plot table
     labelText <- data.frame(
         "cohort"=c("Cohorts", labels),
-        "pvalue"=c("P value", NA, c(scales::scientific(plotData[-1,][, "pval"], 2)))
+        "pvalue"=c("P value", c(scales::scientific(plotData[-1, "pval"], 2)), NA)
     )
 
-    plotData <- rbind(rep(NA, 4), plotData)
+    plotData <- rbind(plotData, rep(NA, 4))
 
     # Extract box sizes
     lengthSeq <- length(unlist(clinicalModelStats$clinical$probabilities[isSeq]))

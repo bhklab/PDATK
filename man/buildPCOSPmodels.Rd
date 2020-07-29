@@ -4,20 +4,25 @@
 \alias{buildPCOSPmodels}
 \title{Build PCOSP Model from input data}
 \usage{
-buildPCOSPmodels(trainingCohorts, numModels, nthread, saveDir)
+buildPCOSPmodels(trainingCohorts, seqCohort, numModels, nthread, saveDir)
 }
 \arguments{
-\item{trainingCohorts}{A named \code{list} of training cohorts for which
+\item{trainingCohorts}{A named [`list`] of training cohorts for which
 to fit and select PCOSP models.}
 
-\item{nthread}{\code{integer} The number of threads to parallelize across}
+\item{seqCohort}{[`character`] The names of the cohorts containing sequencing data in trainingCohorts. All other
+cohorts are assumped to contain microarray data.}
 
-\item{saveDir}{\code{character} A path to a directory to save the model. If you
+\item{numModels}{[`integer`] The number of models to fit}
+
+\item{nthread}{[`integer`] The number of threads to parallelize across}
+
+\item{saveDir}{[`character`] A path to a directory to save the model. If you
 exclude this the function will return the model object instead.}
 }
 \value{
-\code{list} Either returns the model object or, is \code{saveDir} is
-  specified it saves to disk instead and return the path
+[`list`] Either returns the model object or, if \code{saveDir} is
+  specified it saves to disk instead and returns the path.
 }
 \description{
 The script is used for building Pancreatic cancer overall survival predictor

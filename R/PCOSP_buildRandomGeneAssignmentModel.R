@@ -20,8 +20,8 @@
 #'   \code{set.seed()} before running to ensure reproducible results
 #'
 #' @export
-buildRandomGeneAssignmentModels <- function(trainingCohorts, numModels, nthread,
-                                           saveDir, original) {
+buildRandomGeneAssignmentModels <- function(trainingCohorts, seqCohort, numModels,
+                                            nthread, saveDir, original) {
 
   # Set number of threads to parallelize over
   if (!missing(nthread)) {
@@ -31,11 +31,11 @@ buildRandomGeneAssignmentModels <- function(trainingCohorts, numModels, nthread,
   }
 
   # Extract cohorts from trainingCohorts
-  seqCohort <- trainingCohorts$icgc_seq_cohort
-  arrayCohort <- trainingCohorts$icgc_array_cohort
+  sequenceCohort <- trainingCohorts[[seqCohort]]
+  arrayCohort <- trainingCohorts[[which(!(names(trainingCohorts) %in% seqCohort))]]
 
   # Merged common ICGC seq and array trainingCohorts
-  commonData <- mergeCommonData(seqCohort, arrayCohort)
+  commonData <- mergeCommonData(sequenceCohort, arrayCohort)
 
   # Training the model on ICGC seq/array common samples cohort
   cohortMatrix <- convertCohortToMatrix(commonData)
