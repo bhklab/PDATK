@@ -58,10 +58,10 @@ seqCohorts <- c("PCSI", "TCGA", "Kirby")
 
 
 ```{r calculate_validation_stats}
-validationStats <- calculateValidationStats(validationCohorts,
-                                            selectedModels,
-                                            seqCohorts=seqCohorts,
-                                            nthread=15)
+validationStats <- calcValidationStats(validationCohorts,
+                                       selectedModels,
+                                       seqCohorts=seqCohorts,
+                                       nthread=15)
 
 saveRDS(validationStats, file=file.path(resultsDir, "2a_validationStats.rds"))
 ```

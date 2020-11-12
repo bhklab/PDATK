@@ -8,6 +8,7 @@
 #'     sequencing cohorts, microarray cohorts as well as an overall summary.
 #'     The list is named the same as validationCohorts.
 #'
+#' @md
 #' @export
 aucMetaEstimates <- function(validationCohorts, validationStats,
                                  seqCohorts) {

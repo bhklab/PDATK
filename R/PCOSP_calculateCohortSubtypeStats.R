@@ -12,7 +12,7 @@
 #'
 #' @import survival
 #' @export
-calculateCohortSubtypeStats <- function(probList, cohortData, cohortClasses, seqCohorts, hetero) {
+calcCohortSubtypeStats <- function(probList, cohortData, cohortClasses, seqCohorts, hetero) {
 
     isSeq= names(probList) %in% seqCohorts
 

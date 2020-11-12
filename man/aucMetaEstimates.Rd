@@ -13,9 +13,9 @@ aucMetaEstimates(validationCohorts, validationStats, seqCohorts)
 }
 \value{
 A named \code{list} of \code{list}s containing AUC, standard error of AUC,
-    and the assocaited p-value for each cohort as well as summaries for
-    sequencing cohorts, microarray cohorts as well as an overall summary.
-    The list is named the same as validationCohorts.
+and the assocaited p-value for each cohort as well as summaries for
+sequencing cohorts, microarray cohorts as well as an overall summary.
+The list is named the same as validationCohorts.
 }
 \description{
 Return

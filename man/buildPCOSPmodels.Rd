@@ -7,30 +7,31 @@
 buildPCOSPmodels(trainingCohorts, seqCohort, numModels, nthread, saveDir)
 }
 \arguments{
-\item{trainingCohorts}{A named [`list`] of training cohorts for which
-to fit and select PCOSP models.}
+\item{trainingCohorts}{A named \code{\link{list}} of training cohorts to fit and select
+PCOSP models for.}
 
-\item{seqCohort}{[`character`] The names of the cohorts containing sequencing data in trainingCohorts. All other
-cohorts are assumped to contain microarray data.}
+\item{seqCohort}{\code{\link{character}} The names of the cohorts containing sequencing
+data in trainingCohorts. All other cohorts are assumped to contain
+microarray data.}
 
-\item{numModels}{[`integer`] The number of models to fit}
+\item{numModels}{\code{\link{integer}} The number of models to fit}
 
-\item{nthread}{[`integer`] The number of threads to parallelize across}
+\item{nthread}{\code{\link{integer}} The number of threads to parallelize across}
 
-\item{saveDir}{[`character`] A path to a directory to save the model. If you
+\item{saveDir}{\code{\link{character}} A path to a directory to save the model. If you
 exclude this the function will return the model object instead.}
 }
 \value{
-[`list`] Either returns the model object or, if \code{saveDir} is
-  specified it saves to disk instead and returns the path.
+\code{\link{list}} Either returns the model object or, if \code{saveDir} is
+specified it saves to disk instead and returns the path.
 }
 \description{
-The script is used for building Pancreatic cancer overall survival predictor
-  using unique 89 samples profiled using microarray and sequencing platform.
+Building Pancreatic cancer overall survival predictor using unique 89
+samples profiled using microarray and sequencing platform.
 }
 \section{Warning}{
  This function uses random numbers; remember to
-  \code{set.seed()} before running to ensure reproducible results
+\code{set.seed()} before running to ensure reproducible results.
 }
 
 \examples{
@@ -44,6 +45,6 @@ data(trainingCohorts)
 selectedModels <- buildPCOSPmodels(trainingCohorts, numModels=10, nthread=1)
 
 # OR Save the object to disk
-buildPCOSPmodel(traingCohort, numModels=10, saveDir=tempdir())
+buildPCOSPmodel(trainingCohort, numModels=10, saveDir=tempdir())
 
 }

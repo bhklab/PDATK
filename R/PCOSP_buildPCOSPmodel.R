@@ -1,9 +1,7 @@
 #' Build PCOSP Model from input data
 #'
-##TODO:: HEEWON: What does this do? Write a description (two or three senetences max)
-#'
-#' The script is used for building Pancreatic cancer overall survival predictor
-#'   using unique 89 samples profiled using microarray and sequencing platform.
+#' Building Pancreatic cancer overall survival predictor using unique 89
+#'   samples profiled using microarray and sequencing platform.
 #'
 #' @examples
 #' # To ensure reproducible results
@@ -16,12 +14,13 @@
 #' selectedModels <- buildPCOSPmodels(trainingCohorts, numModels=10, nthread=1)
 #'
 #' # OR Save the object to disk
-#' buildPCOSPmodel(traingCohort, numModels=10, saveDir=tempdir())
+#' buildPCOSPmodel(trainingCohort, numModels=10, saveDir=tempdir())
 #'
-#' @param trainingCohorts A named [`list`] of training cohorts for which
-#'   to fit and select PCOSP models.
-#' @param seqCohort [`character`] The names of the cohorts containing sequencing data in trainingCohorts. All other
-#'     cohorts are assumped to contain microarray data.
+#' @param trainingCohorts A named [`list`] of training cohorts to fit and select
+#'   PCOSP models for.
+#' @param seqCohort [`character`] The names of the cohorts containing sequencing
+#'   data in trainingCohorts. All other cohorts are assumped to contain
+#'   microarray data.
 #' @param numModels [`integer`] The number of models to fit
 #' @param saveDir [`character`] A path to a directory to save the model. If you
 #'   exclude this the function will return the model object instead.
@@ -31,21 +30,24 @@
 #'   specified it saves to disk instead and returns the path.
 #'
 #' @section Warning: This function uses random numbers; remember to
-#'   \code{set.seed()} before running to ensure reproducible results
+#'   `set.seed()` before running to ensure reproducible results.
 #'
+#' @md
 #' @export
-buildPCOSPmodels <- function(trainingCohorts, seqCohort, numModels, nthread, saveDir) {
+buildPCOSPmodels <- function(trainingCohorts, seqCohort, numModels, nthread,
+    saveDir)
+{
 
     # Set number of threads to parallelize over
     if (!missing(nthread)) {
-      ops <- options()
-      options("mc.cores"=nthread)
-      on.exit(options(ops))
+        ops <- options()
+        options("mc.cores"=nthread)
+        on.exit(options(ops))
     }
 
     # Extract cohorts from trainingCohorts
     sequenceCohort <- trainingCohorts[[seqCohort]]
-    arrayCohort <- trainingCohorts[[which(!(names(trainingCohorts) %in% seqCohort))]]
+    arrayCohort <- trainingCohorts[[!(names(trainingCohorts) %in% seqCohort)]]
 
     # Merged common ICGC seq and array trainingCohorts
     commonData <- mergeCommonData(sequenceCohort, arrayCohort)

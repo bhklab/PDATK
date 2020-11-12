@@ -9,7 +9,7 @@ Description: A unique set of 89 pancreatic cancer samples profiled using both
   sequencing and microarray platform was used for training the PCOSP 
   (Pancreatic cancer overall survival predictor) to predict patients with 
   early death (within >1 yr) after surgery. Further, to validate the model we 
-  used genomicprofiles of 823 samples curated from public domain. The 
+  used genomic profiles of 823 samples curated from public domain. The
   simplistic k-top scoring pair approach was used to build the model, where we 
   looked at relative expression of gene pairs within the patient. Add
   description of CDAC and rePURIST.

@@ -210,7 +210,7 @@ computeConcIndOnSharedDrugs <- function(mergedDT, class, na.rm=TRUE, method="noe
 #'
 #' @importFrom survcomp combine.est
 #' @export
-calculateMetaStats <- function(concordanceInds) {
+calcMetaStats <- function(concordanceInds) {
     drugs <- colnames(concordanceInds[[1]])
 
     metaStats <- lapply(drugs, function(drg, ci)

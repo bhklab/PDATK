@@ -11,7 +11,7 @@
 #'
 #' @import survival
 #' @export
-calculateModelDandCindex <- function(modelProbabilities, clinicalFeatures,
+calcModelDandCindex <- function(modelProbabilities, clinicalFeatures,
                                      seqCohorts, model=1) {
 
   namesClinical <- lapply(modelProbabilities[[model]],

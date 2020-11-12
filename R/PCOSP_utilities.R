@@ -215,7 +215,7 @@ subsetSharedCohortsAndSamples <- function(metaestimateData) {
 #' @importFrom dplyr dense_rank
 #' @importFrom BiocParallel bplapply
 #' @export
-calculateMedAbsDev <- function(dataset){
+calcMedAbsDev <- function(dataset){
 
     dataset <- data.table(dataset, rown)
 

@@ -27,7 +27,7 @@ compareClinicalModels <- function(clinicalFeatures, cohortClasses, cohorts,
 
     cClasses <- cohortClasses[cohorts]
 
-    cohortProbs <- calculateCohortProbabilties(fitModels, cFeatures)
+    cohortProbs <- calcCohortProbabilties(fitModels, cFeatures)
 
     modelComparisonStats <- .estimateModelAUCs(cFeatures, cohortProbs)
 
@@ -163,7 +163,7 @@ summarizeClinicalModels <- function(clinicalFeatures, cohorts,
 #'
 #' @import survival
 #' @export
-calculateCohortProbabilties <- function(fitModels, clinicalCohorts) {
+calcCohortProbabilties <- function(fitModels, clinicalCohorts) {
     lapply(fitModels,
            function(model, clinicalCohorts)
                lapply(clinicalCohorts,
@@ -278,7 +278,7 @@ metaEstimateComparisonAUCs <- function(modelComparisonStats, model=1, seqCohorts
                                    prediction, na.rm, hetero) {
     structure(lapply(seq_along(subsets),
            function(i, subsets, comparisonStats, prediction, na.rm, hetero)
-               .calculateModelAUCs(comparisonStats[subsets[[i]]],
+               .calcModelAUCs(comparisonStats[subsets[[i]]],
                                    modelIdx=prediction, na.rm=na.rm[i],
                                    hetero=hetero[i]),
            comparisonStats=comparisonStats,
@@ -296,7 +296,7 @@ metaEstimateComparisonAUCs <- function(modelComparisonStats, model=1, seqCohorts
 #'
 #'
 #'
-.calculateModelAUCs <- function(comparisonStats, modelIdx, na.rm, hetero) {
+.calcModelAUCs <- function(comparisonStats, modelIdx, na.rm, hetero) {
         list(
             "prediction"=combine.est(
             vapply(comparisonStats,

@@ -1,4 +1,4 @@
 library(testthat)
-library(PanCuRx)
+library(PDATK)
 
-test_check("PanCuRx")
+test_check("PDATK")

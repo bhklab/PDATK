@@ -26,7 +26,7 @@ plotROCcurves <- function(formattedValidationCohorts, PCOSPscores,
             }
         }
 
-        ROCs <- .calculateROCs(formattedValCohorts, PCOSPscores)
+        ROCs <- .calcROCs(formattedValCohorts, PCOSPscores)
 
         isSeq <- validationStats$isSequencing
 
@@ -67,7 +67,7 @@ plotROCcurves <- function(formattedValidationCohorts, PCOSPscores,
         }
     }
 
-    ROCs <- .calculateROCs(formattedValCohorts, PCOSPscores)
+    ROCs <- .calcROCs(formattedValCohorts, PCOSPscores)
 
     isSeq <- validationStats$isSequencing
 
@@ -96,7 +96,7 @@ plotROCcurves <- function(formattedValidationCohorts, PCOSPscores,
 }
 
 #' @importFrom pROC roc
-.calculateROCs <- function(formattedValCohorts, PCOSPscores) {
+.calcROCs <- function(formattedValCohorts, PCOSPscores) {
     structure(lapply(seq_along(formattedValCohorts),
                      function(i, cohorts, scores)
                          roc(cohorts[[i]]$grp,
