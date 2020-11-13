@@ -20,10 +20,6 @@ cohortList <- qread('data/cohort_list.qs')
 commonGenes <- findCommonGenes(cohortList)
 cohortList <- subset(cohortList, i=commonGenes)
 
-# Convert to PCOSP format
-## TODO:: If this package is useful rewrite methods to take a SummarizedExperiment by default
-cohortData <- lapply(cohortSEs, toPCOSP)
-names(cohortData) <- gsub('_SumExp', '', names(cohortData))
 
 # Split the data
 ICGCmicro_train <- cohortData$ICGCMICRO[ICGCmicroTrain, ]

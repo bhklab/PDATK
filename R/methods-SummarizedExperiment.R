@@ -9,7 +9,8 @@
 #' @export
 setGeneric('toPCOSP', function(object, ...) standardGeneric('toPCOSP'))
 
-#' Method for converting SummarizedExperiment objects from MetaGxPancreas into the PCOSP cohort format
+#' Method for converting SummarizedExperiment objects from MetaGxPancreas into
+#'   the PCOSP cohort format
 #'
 #' @param object A [SummarizedExperiment] object from the MetaGxPancreas datasets; assumes the assay of interest
 #'     is the first assay in the SE and that the colData of the SE has columns `days_to_death` and `vital_status`

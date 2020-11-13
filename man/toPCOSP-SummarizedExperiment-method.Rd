@@ -2,7 +2,8 @@
 % Please edit documentation in R/methods-SummarizedExperiment.R
 \name{toPCOSP,SummarizedExperiment-method}
 \alias{toPCOSP,SummarizedExperiment-method}
-\title{Method for converting SummarizedExperiment objects from MetaGxPancreas into the PCOSP cohort format}
+\title{Method for converting SummarizedExperiment objects from MetaGxPancreas into
+  the PCOSP cohort format}
 \usage{
 \S4method{toPCOSP}{SummarizedExperiment}(object)
 }
@@ -15,5 +16,6 @@ Sample x feature [data.frame] where values are measurements for each feature in 
     columns, OS and OS_Status, store survival in days and survival status (1 is deceased), respectively.
 }
 \description{
-Method for converting SummarizedExperiment objects from MetaGxPancreas into the PCOSP cohort format
+Method for converting SummarizedExperiment objects from MetaGxPancreas into
+  the PCOSP cohort format
 }

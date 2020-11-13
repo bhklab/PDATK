@@ -44,6 +44,23 @@ SurvivalExperiment <- function(..., days_survived='days_to_death',
 
     colData(SE) <- rename(colData(SE), renameVector)
 
+    if (!is.integer(colData(SE)$is_deceased)) {
+        is_deceased <- colData(SE)$is_deceased
+        switch(typeof(is_deceased),
+            'logical'={ colData(SE)$is_deceased <- as.integer(is_deceased) },
+            'character'={ tryCatch({
+                colData(SE)$is_deceased <-
+                    ifelse(is_deceased == 'deceased', 1, 0)
+                },
+                error=function(e) stop(.errorMsg(.context(), 'Tried to coerce ',
+                    'is_deceased from character to integer, but failed.')))
+            },
+            stop(.errorMsg(.context(), 'The is_deceased column is not logical
+              or integer, please convert this column such that deceased is 1
+              or TRUE and alive is 0 or FALSE before retrying the conversion!'))
+        )
+    }
+
     return(.SurvivalExperiment(SE))
 }
 
