@@ -27,6 +27,16 @@ CohortList <- function(...) {
 #' @export
 setAs('list', 'CohortList', function(from) CohortList(from))
 
+#'
+#'
+#' @param from A `CohortList` to coerce to a `list`.
+#'
+#' @md
+#' @export
+setAs('CohortList', 'list', function(from)
+    structure(from@.Data, .Names=names(from)))
+#' @export
+as.list.CohortList <- function(object) return(as(object, 'list'))
 
 #' Class Validity Method for CohortList
 #'
