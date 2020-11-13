@@ -1,7 +1,7 @@
-#' Survival Experiment Class
+#' SurvivalExperiment Class
 #'
-#' A SummarizedExperiment with mandatory survival metadata in the `colData`
-#'   slot.
+#' A SummarizedExperiment with mandatory numeric survival metadata columns
+#'   `days_survived` and `is_deceased`.
 #'
 #' @inherit SummarizedExperiment::SummarizedExperiment
 #'
@@ -12,8 +12,8 @@
 #' Constructor for `SurvivalExperiment` Class
 #'
 #' Builds a `SurvivalExperiment` object, which is just a wrapper for a
-#'   `SummarizedExperiment` with mandatory survival metadata in the `colData`
-#'   slot.
+#'   `SummarizedExperiment` with mandatory survival metadata numeric columns
+#'   `days_survived` and `is_deceased`.
 #'
 #' @param ... `pairlist` Fall through arguments to the `SummarizedExperiment`
 #'   constructor. These are ignored if `sumExp` is specified
@@ -46,7 +46,7 @@ SurvivalExperiment <- function(..., days_survived='days_to_death',
 
     if (!is.integer(colData(SE)$is_deceased)) {
         is_deceased <- colData(SE)$is_deceased
-        switch(typeof(is_deceased),
+        switch(class(is_deceased),
             'logical'={ colData(SE)$is_deceased <- as.integer(is_deceased) },
             'character'={ tryCatch({
                 colData(SE)$is_deceased <-
@@ -58,6 +58,22 @@ SurvivalExperiment <- function(..., days_survived='days_to_death',
             stop(.errorMsg(.context(), 'The is_deceased column is not logical
               or integer, please convert this column such that deceased is 1
               or TRUE and alive is 0 or FALSE before retrying the conversion!'))
+        )
+    }
+    if (!is.integer(colData(SE)$days_survived)) {
+        days_survived <- colData(SE)$days_survived
+        switch(class(is_deceased),
+            'numeric'={ colData(SE)$days_survived <- as.integer(days_survived) },
+            'character'={ tryCatch({
+                colData(SE)$is_deceased <- as.integer(is_deceased)
+                },
+                warning=function(w) stop(.errorMsg(.context(), 'Tried to ',
+                    'coerce days_survived from character to integer, but ',
+                    'failed.')))
+            },
+            stop(.errorMsg(.context(), 'The days_survived column is not numeric
+              or integer, please convert this column before retrying the
+              conversion'))
         )
     }
 
@@ -94,5 +110,7 @@ setValidity('SurvivalExperiment', function(object) {
             ' are missing from colData. Please add them or double check
             the column names are spelled correctly.')
     else
-        isValidSummarizedExperiment
+        isValidSummarizedExperiment &&
+            is.numeric(colData(object)$is_deceased) &&
+            is.numeric(colData(object)$days_survived)
 })
