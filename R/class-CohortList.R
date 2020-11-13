@@ -18,7 +18,10 @@ CohortList <- function(...) {
 }
 
 
+#' Coerce a `list` to a `CohortList`
 #'
+#' @param from A `list` of `SurvivalExperiment` objects to coerce to a
+#'   `CohortList`.
 #'
 #' @md
 #' @export
@@ -28,7 +31,7 @@ setAs('list', 'CohortList', function(from) CohortList(from))
 #' Class Validity Method for CohortList
 #'
 #' Ensure the CohortList abides the proper structure. This requires that all
-#'   objects in it be of class `SurvivalExperiment.`
+#'   objects in it be of class `SurvivalExperiment`.
 #'
 #' @param object A `CohortList` to check the validity of.
 #'
@@ -39,10 +42,10 @@ setValidity('CohortList', function(object) {
         class2='SurvivalExperiment', FUN.VALUE=logical(1))
 
     if (all(isSurvivalExperiment))
-        return(TRUE)
+        TRUE
     else  ## TODO:: Ensure that this returns the correct execution context
-        return(.errorMsg(.context(3), 'The items at indexes ',
+        .errorMsg(.context(), 'The items at indexes ',
             paste0(which(!isSurvivalExperiment), collapse=', '),
             ' are not `SurvivalExperiment`s. A `CohortList` can only ',
-            'contain objects of that class!'))
+            'contain objects of that class!')
 })
