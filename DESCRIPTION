@@ -19,7 +19,8 @@ Suggests: xtable,
 Encoding: UTF-8
 Imports: 
     switchBox,
-    methods,
+    S4Vectors,
+    SummarizedExperiment,
     vcdExtra,
     caret,
     forestplot,

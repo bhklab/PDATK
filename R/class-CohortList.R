@@ -2,8 +2,10 @@
 #'
 #' A list containing only `SurvivalExperiment` objects.
 #'
+#' @importClassesFrom S4Vectors SimpleList
 #' @keywords internal
-.CohortList <- setClass('CohortList', contains='list')
+setClass('CohortList', contains='SimpleList',
+    prototype=prototype(elementType='SurvivalExperiment'))
 
 
 #' Constructor for the `CohortList` class, a specialized list for stored two or
@@ -12,9 +14,10 @@
 #' @param ... One or more `SurvivalExperiment` objects.
 #'
 #' @md
+#' @importFrom S4Vectors metadata metadata<- mcols mcols<-
 #' @export
 CohortList <- function(...) {
-    .CohortList(...)
+    new('CohortList', ...)
 }
 
 
@@ -27,16 +30,14 @@ CohortList <- function(...) {
 #' @export
 setAs('list', 'CohortList', function(from) CohortList(from))
 
+#' Coerce a `SimpleList` to a `CohortList`
 #'
-#'
-#' @param from A `CohortList` to coerce to a `list`.
+#' @param from A `SimpleList` object
 #'
 #' @md
+#' @importClassesFrom S4Vectors SimpleList
 #' @export
-setAs('CohortList', 'list', function(from)
-    structure(from@.Data, .Names=names(from)))
-#' @export
-as.list.CohortList <- function(object) return(as(object, 'list'))
+setAs('SimpleList', 'CohortList', function(from) CohortList(from))
 
 #' Class Validity Method for CohortList
 #'
@@ -51,11 +52,12 @@ setValidity('CohortList', function(object) {
     isSurvivalExperiment <- vapply(object, FUN=is,
         class2='SurvivalExperiment', FUN.VALUE=logical(1))
 
-    if (all(isSurvivalExperiment))
+    if (all(isSurvivalExperiment)) {
         TRUE
-    else  ## TODO:: Ensure that this returns the correct execution context
+    } else {
         .errorMsg(.context(), 'The items at indexes ',
             paste0(which(!isSurvivalExperiment), collapse=', '),
             ' are not `SurvivalExperiment`s. A `CohortList` can only ',
             'contain objects of that class!')
+    }
 })
