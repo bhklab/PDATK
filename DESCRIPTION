@@ -21,6 +21,7 @@ Imports:
     switchBox,
     S4Vectors,
     SummarizedExperiment,
+    settings,
     vcdExtra,
     caret,
     forestplot,

@@ -10,7 +10,6 @@
 setGeneric('splitTrainTest',
     function(object, ...) standardGeneric('splitTrainTest'))
 #'
-#'
 #' @param object A `SurvivalExperiment` object to split into training and
 #'   testing data. This function adds items `trainSamples` and `randomSeed`
 #'   to the `metadata` slot of the object.
@@ -50,6 +49,8 @@ setMethod('splitTrainTest', signature('SurvivalExperiment'),
 })
 #' @param object A `CohortList` object to split into training and testing data.
 #'
+#' @importFrom S4Vectors metadata metadata<-
+#' @importFrom S4Vectors mcols mcols<-
 #' @export
 setMethod('splitTrainTest', signature('CohortList'),
     function(object, proportionTrain=0.7, ..., randomSeed)
