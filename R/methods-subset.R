@@ -10,6 +10,7 @@
 #'   and j, respectively.
 #'
 #' @importMethodsFrom S4Vectors subset
+#' @md
 #' @export
 setMethod('subset', signature(x='CohortList'),
     function(x, i=TRUE, j=TRUE)

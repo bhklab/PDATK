@@ -4,7 +4,7 @@
 #'
 #' @importClassesFrom S4Vectors SimpleList
 #' @keywords internal
-setClass('CohortList', contains='SimpleList',
+.CohortList <- setClass('CohortList', contains='SimpleList',
     prototype=prototype(elementType='SurvivalExperiment'))
 
 
@@ -15,9 +15,10 @@ setClass('CohortList', contains='SimpleList',
 #'
 #' @md
 #' @importFrom S4Vectors metadata metadata<- mcols mcols<-
+#' @importClassesFrom S4Vectors SimpleList
 #' @export
 CohortList <- function(...) {
-    new('CohortList', ...)
+    .CohortList(...)
 }
 
 

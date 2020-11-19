@@ -27,7 +27,6 @@ Imports:
     forestplot,
     ggplot2,
     grid,
-    ktspair,
     pROC,
     survcomp,
     gplots,
@@ -68,7 +67,7 @@ Imports:
     effsize,
     RColorBrewer,
     lattice
-Depends: R (>= 3.6) 
+Depends: R (>= 3.6)
 RoxygenNote: 7.1.1
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software, Classification
 BugReports: https://github.com/bhklab/PanCuRx/issues

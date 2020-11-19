@@ -21,6 +21,8 @@ setGeneric('splitTrainTest',
 #'   at the end of function exectuion. If missing, no seed is set; use this
 #'   if you have a global random seed already set.
 #'
+#' @return
+#'
 #' @importFrom S4Vectors metadata metadata<-
 #' @export
 setMethod('splitTrainTest', signature('SurvivalExperiment'),
