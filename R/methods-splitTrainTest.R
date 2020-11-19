@@ -33,6 +33,9 @@ setMethod('splitTrainTest', signature('SurvivalExperiment'),
         oldSeed <- .Random.seed
         set.seed(randomSeed)
         on.exit({ .Random.seed <- oldSeed })
+    } else {
+        warning(.warnMsg(.context(), 'The randomSeed parameter was not ',
+            'specified. Capturing the current enviroments .Random.seed instead.'))
     }
 
     # get sample information
@@ -62,6 +65,9 @@ setMethod('splitTrainTest', signature('CohortList'),
         oldSeed <- .Random.seed
         set.seed(randomSeed)
         on.exit({ .Random.seed <- oldSeed })
+    } else {
+        warning(.warnMsg(.context(), 'The randomSeed parameter was not ',
+            'specified. Capturing the current enviroments .Random.seed instead.'))
     }
 
     # Do the train test split on each SurvivalExperiment

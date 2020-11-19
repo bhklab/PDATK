@@ -40,6 +40,16 @@ setAs('list', 'CohortList', function(from) CohortList(from))
 #' @export
 setAs('SimpleList', 'CohortList', function(from) CohortList(from))
 
+#'
+#' @param from A `CohortList` object.
+#'
+#' @md
+#' @export
+setAs('CohortList', 'list', function(from) from@listData)
+#' @export
+as.list.CohortList <- function(from) as(from, 'list')
+
+
 #' Class Validity Method for CohortList
 #'
 #' Ensure the CohortList abides the proper structure. This requires that all
