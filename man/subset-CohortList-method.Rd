@@ -4,7 +4,7 @@
 \alias{subset,CohortList-method}
 \title{Subset method for a \code{CohortList}}
 \usage{
-\S4method{subset}{CohortList}(x, i = TRUE, j = TRUE)
+\S4method{subset}{CohortList}(x, subset = TRUE, select = TRUE)
 }
 \arguments{
 \item{x}{A \code{CohortList} object}
@@ -18,5 +18,5 @@ A \code{CohortList} containing only the rows and columns selected in i
 and j, respectively.
 }
 \description{
-Works using lapply of \code{[} over the list \code{SurvivalExperiment}s
+Works using endoapply of \code{[} over the list \code{SurvivalExperiment}s
 }
