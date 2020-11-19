@@ -4,14 +4,17 @@
 \alias{subset,CohortList-method}
 \title{Subset method for a \code{CohortList}}
 \usage{
-\S4method{subset}{CohortList}(x, subset = TRUE, select = TRUE)
+\S4method{subset}{CohortList}(x, subset = TRUE, select = TRUE, invert = FALSE)
 }
 \arguments{
 \item{x}{A \code{CohortList} object}
 
-\item{i}{The row query. Defaults to TRUE, i.e., select all.}
+\item{subset}{The row query. Defaults to TRUE, i.e., select all.}
 
-\item{j}{The column query. Defaults to TRUE, i.e., select all.}
+\item{select}{The column query. Defaults to TRUE, i.e., select all.}
+
+\item{invert}{A \code{logical} vector indicating if the matches should be
+inverted. Default is FALSE.}
 }
 \value{
 A \code{CohortList} containing only the rows and columns selected in i
