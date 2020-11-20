@@ -30,8 +30,8 @@
 #'
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @export
-SurvivalExperiment <- function(..., days_survived='days_to_death',
-    is_deceased='vital_status', sumExp)
+SurvivalExperiment <- function(..., days_survived='days_survived',
+    is_deceased='is_deceased', sumExp)
 {
     SE <- if (missing(sumExp)) SummarizedExperiment(...) else sumExp
 
@@ -45,15 +45,16 @@ SurvivalExperiment <- function(..., days_survived='days_to_death',
     colData(SE) <- rename(colData(SE), renameVector)
 
     if (!is.integer(colData(SE)$is_deceased)) {
-        is_deceased <- colData(SE)$is_deceased
-        switch(class(is_deceased),
-            'logical'={ colData(SE)$is_deceased <- as.integer(is_deceased) },
-            'character'={ tryCatch({
+        is_deceased_col <- colData(SE)$is_deceased
+        switch(class(is_deceased_col),
+            'logical'={ colData(SE)$is_deceased <- as.integer(is_deceased_col) },
+            'character'={
+                if (!('deceased' %in% is_deceased_col))
+                    stop(.errorMsg(.context(), 'The string deceased is not in ',
+                        'the is_deceased column. Please convert this column to
+                        integer manually, where 1 is deceased and 0 is alive.'))
                 colData(SE)$is_deceased <-
-                    ifelse(is_deceased == 'deceased', 1, 0)
-                },
-                error=function(e) stop(.errorMsg(.context(), 'Tried to coerce ',
-                    'is_deceased from character to integer, but failed.')))
+                    as.integer(is_deceased_col == 'deceased')
             },
             stop(.errorMsg(.context(), 'The is_deceased column is not logical
               or integer, please convert this column such that deceased is 1

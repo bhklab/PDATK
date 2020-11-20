@@ -8,28 +8,54 @@
     prototype=prototype(elementType='SurvivalExperiment'))
 
 
-#' Constructor for the `CohortList` class, a specialized list for stored two or
-#'   more `SurvivalExperiment` objects.
+#' Constructor for the `CohortList` class, a specialized list for storing
+#'   `SurvivalExperiment` objects.
 #'
 #' @param ... One or more `SurvivalExperiment` objects.
+#' @param mDataTypes A `character` vector with the same length as ... which
+#'   indicates the molecular data type in each cohort. This will be assigned
+#'   to `mcols` for the `CohortList` as well as to the metadata of each
+#'   item in the list as `mDataType`.
 #'
 #' @md
-#' @importFrom S4Vectors metadata metadata<- mcols mcols<-
+#' @importFrom S4Vectors metadata metadata<- mcols mcols<- mendoapply
 #' @importClassesFrom S4Vectors SimpleList
 #' @export
-CohortList <- function(...) {
-    .CohortList(...)
+CohortList <- function(..., mDataTypes) {
+    cohortList <- .CohortList(...)
+
+    # Use existing mDataTypes if they exist
+    if (missing(mDataTypes) && !is.null(mcols(cohortList)$mDataType) &&
+            !any(is.na(mcols(cohortList)$mDataType)))
+    {
+        mDataTypes <- mcols(cohortList)$mDataType
+    }
+
+    # Try to get mDataTypes from the item metadata
+    tryCatch({
+        metadata <- lapply(cohortList, metadata)
+        mData <- unlist(lapply(metadata, `[[`, i='mDataType'))
+        if (!(is.null(mData) || length(mData) < 1 || any(is.na(mData)))) {
+            if (missing(mDataTypes)) mDataTypes <- mData
+        }
+    })
+
+    # warning if we couldn't get the mDataTypes
+    ## FIXME:: .context() doesn't find the correct execution context
+    if (missing(mDataTypes)) {
+        warning(.warnMsg(.context(), 'The mDataTypes for each cohort have ',
+            'not been set. Please set them manually using ',
+            'mcols(cohortList)$mDataType <- c("rna_seq", "rna_micro", etc.)'))
+    } else {
+        mcols(cohortList)$mDataType <- mDataTypes
+        if (!(all(mData == mDataTypes))) {
+            for (i in seq_along(cohortList))
+                metadata(cohortList[[i]]) <- mDataTypes[i]
+        }
+    }
+    return(cohortList)
 }
 
-
-#' Coerce a `list` to a `CohortList`
-#'
-#' @param from A `list` of `SurvivalExperiment` objects to coerce to a
-#'   `CohortList`.
-#'
-#' @md
-#' @export
-setAs('list', 'CohortList', function(from) CohortList(from))
 
 #' Coerce a `SimpleList` to a `CohortList`
 #'
@@ -39,6 +65,9 @@ setAs('list', 'CohortList', function(from) CohortList(from))
 #' @importClassesFrom S4Vectors SimpleList
 #' @export
 setAs('SimpleList', 'CohortList', function(from) CohortList(from))
+
+## TODO:: Add mcols and metadata as attributes to returned list so that it can
+## be coerce back to a  CohortList, then defined another as method
 
 #'
 #' @param from A `CohortList` object.
