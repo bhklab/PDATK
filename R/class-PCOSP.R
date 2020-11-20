@@ -9,6 +9,7 @@
 #'
 #' @md
 #' @export
+## TODO:: Can I subclass a BiocConductor object for this?
 setClass("PCOSP", slots=list(trainCohorts='CohortList', model='ANY', ##TODO:: What class is model?
     .intern='environment'))
 
@@ -40,7 +41,16 @@ PCOSP <- function(trainCohorts) {
             'common genes. Subsetting to common genes...'))
     }
 
-    # remove
+    # ensure the SurvivalExperiments have common samples
+    commonSamples <- findCommonSamples(trainCohorts)
+    actualSamples <- Reduce(intersect, lapply(trainCohorts, colnames))
+
+    # subset to common samples
+    if (!all(actualSamples %in% commonSamples)) {
+        trainCohorts <- subset(trainCohorts, select=commonSamples)
+        warning(.warnMsg(.context(), 'The training cohorts did not have only ',
+                         'common samples Subsetting to common samples...'))
+    }
 
     new('PCOSP', trainCohorts=trainCohorts)
 }
