@@ -5,11 +5,12 @@
 #' @param cohortNames An optional `character` vector specifying the a name for
 #'   each `SurvivalExperiment`.
 #'
+#' @md
 #' @export
 setMethod('merge', signature('SurvivalExperiment', 'SurvivalExperiment'),
     function(x, y, cohortNames)
 {
-    cohortL <- CohortList(x, y)
+    cohortL <- CohortList(list(x, y))
     names(cohortL) <- cohortNames
 
     # ensure the SurivalExperiments have common genes
@@ -25,7 +26,7 @@ setMethod('merge', signature('SurvivalExperiment', 'SurvivalExperiment'),
 
     # ensure the SurvivalExperiments have common samples
     commonSamples <- findCommonSamples(cohortL)
-    actualSamples <- Reduce(intersect, lapply(cohortL, colnames))
+    actualSamples <- unique(Reduce(c, lapply(cohortL, colnames)))
 
     # subset to common samples
     if (!all(actualSamples %in% commonSamples)) {

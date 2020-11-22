@@ -30,6 +30,7 @@ Imports:
     pROC,
     survcomp,
     gplots,
+    rlang,
     survival,
     data.table,
     reportROC,
