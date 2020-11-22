@@ -37,7 +37,6 @@
 buildPCOSPmodels <- function(trainingCohorts, seqCohort, numModels, nthread,
     saveDir)
 {
-
     # Set number of threads to parallelize over
     if (!missing(nthread)) {
         ops <- options()
@@ -47,7 +46,7 @@ buildPCOSPmodels <- function(trainingCohorts, seqCohort, numModels, nthread,
 
     # Extract cohorts from trainingCohorts
     sequenceCohort <- trainingCohorts[[seqCohort]]
-    arrayCohort <- trainingCohorts[[!(names(trainingCohorts) %in% seqCohort)]]
+    arrayCohort <- trainingCohorts[[which(!(names(trainingCohorts) %in% seqCohort))]]
 
     # Merged common ICGC seq and array trainingCohorts
     commonData <- mergeCommonData(sequenceCohort, arrayCohort)

@@ -11,7 +11,7 @@
 #' @export
 whichNotCensoredYearOne <- function(seqCohort) {
     idxNotCensored <- which(as.numeric.factor(seqCohort$OS) <= 365 &
-                                as.numeric.factor(seqCohort$OS_Status) == 1)
+                                as.numeric.factor(seqCohort$OS_Status) == 1) # died first year
     idxNotYearOne <- which(as.numeric.factor(seqCohort$OS) > 365)
     return(sort(c(idxNotCensored, idxNotYearOne)))
 }

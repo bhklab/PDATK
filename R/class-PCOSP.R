@@ -8,9 +8,11 @@
 #'   developer use.
 #'
 #' @md
+#' @include options.R
 #' @export
 ## TODO:: Can I subclass a BiocConductor object for this?
-setClass("PCOSP", slots=list(trainCohorts='CohortList', model='ANY', ##TODO:: What class is model?
+setClass("PCOSP", slots=list(trainCohorts='CohortList',
+    modelMatrix='matrix',  model='ANY', metadata='list',
     .intern='environment'))
 
 #' Pancreatic Cancer Overall Survival Predictor (PCOSP) Constructor
@@ -29,6 +31,8 @@ PCOSP <- function(trainCohorts) {
         stop(.errorMsg(.context(), 'The trainCohorts argument is not a ',
             'CohortList object. Please convert it before building a PCOSP ',
             'model!'))
+
+    ## TODO:: Ensure the SurvivalExperiments have different mDataTypes?
 
     # ensure the SurivalExperiments have common genes
     commonGenes <- findCommonGenes(trainCohorts)
@@ -51,9 +55,20 @@ PCOSP <- function(trainCohorts) {
         warning(.warnMsg(.context(), 'The training cohorts did not have only ',
                          'common samples Subsetting to common samples...'))
     }
-
     new('PCOSP', trainCohorts=trainCohorts)
 }
+
+#'
+#' @importFrom settings is_setting clone_and_merge
+#' @export
+setMethod('manageOptions', 'PCOSP', function(where=NULL, ...) {
+  if (settings::is_setting(...)) {
+    where@options <- settings::clone_and_merge(where@options(), ...)
+    where
+  } else {
+    where@options(...)
+  }
+})
 
 ## TODO:: Validity method?
 

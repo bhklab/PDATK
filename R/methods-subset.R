@@ -11,7 +11,8 @@
 #' @return A `CohortList` containing only the rows and columns selected in i
 #'   and j, respectively.
 #'
-#' @importMethodsFrom S4Vectors subset endoapply
+#' @importMethodsFrom S4Vectors subset
+#' @importFrom S4Vectors endoapply
 #' @md
 #' @export
 setMethod('subset', signature(x='CohortList'),
