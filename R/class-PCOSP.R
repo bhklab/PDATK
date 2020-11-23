@@ -40,8 +40,10 @@ PCOSP <- function(trainCohort) {
             sep='.')
     }
     modelMatrix <- do.call(rbind, assaysL)
+    colData(trainCohort)$survival_group <-  # split into high and low survival
+        ifelse(colData(trainCohort)$days_survived >= 365, 1, 0)
 
-    new('PCOSP', colData=colData(trainCohort),
+    new('PCOSP', colData=,
         rowData(rowData(trainCohort)), assays=modelMatrix,
         metadata=metadata(trainCohort))
 }
