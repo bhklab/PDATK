@@ -3,6 +3,7 @@
 \docType{class}
 \name{PCOSP-class}
 \alias{PCOSP-class}
+\alias{.PCOSP}
 \title{Pancreatic Cancer Overall Survival Predictor (PCOSP) Class}
 \description{
 Pancreatic Cancer Overall Survival Predictor (PCOSP) Class

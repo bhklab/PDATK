@@ -4,17 +4,26 @@
 \alias{PCOSP}
 \title{Pancreatic Cancer Overall Survival Predictor (PCOSP) Constructor}
 \usage{
-PCOSP(trainCohort)
+PCOSP(trainCohort, minDaysSurvived = 365, ..., randomSeed)
 }
 \arguments{
-\item{trainCohorts}{A \code{CohortList} of \code{SurvivalExperiment}s for training
-the PCOSP model, where each cohort has a unique molecular data type. It
-is recommended to remove early deaths using \code{dropNotCensored} function
-before starting to build your PCOSP model.}
+\item{minDaysSurvived}{An \code{integer} indicating the minimum number of day
+required to be in the 'high' survival group. Any patients below this
+cut-off will be considered low survival.}
+
+\item{...}{Force subsequent parameters to be named. This parameter is not
+used.}
+
+\item{randomSeed}{An \code{integer} random seed to use for training the model. If
+missing, this defaults to the current value of \code{.Random.seed}.}
+
+\item{trainCohorts}{A \code{SurvivalExperiment}s for training
+the PCOSP model, with}
 }
 \value{
-A \code{PCOSP} object with training data in the \code{trainCohorts} slot. The
-model slot will be empty until \code{trainModel} is called on the object.
+A \code{PCOSP} object with training data in the assays slot, concatenating
+together the molecular data types and labelling the genes with the data
+type to ensure the results are easily interpretable.
 }
 \description{
 Pancreatic Cancer Overall Survival Predictor (PCOSP) Constructor

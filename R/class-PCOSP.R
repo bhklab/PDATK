@@ -9,43 +9,58 @@
 #' @md
 #' @include class-SurvivalExperiment.R
 #' @export
-## TODO:: Can I subclass a BiocConductor object for this?
-setClass("PCOSP", contains='SurvivalExperiment',
+.PCOSP <- setClass("PCOSP", contains='SurvivalExperiment',
     slots=list(model='ANY'))
 
 #' Pancreatic Cancer Overall Survival Predictor (PCOSP) Constructor
 #'
 #' @details This function assumes there is only 1 assay per `SurvivalExperiment`.
 #'
-#' @param trainCohorts A `CohortList` of `SurvivalExperiment`s for training
-#'   the PCOSP model, where each cohort has a unique molecular data type. It
-#'   is recommended to remove early deaths using `dropNotCensored` function
-#'   before starting to build your PCOSP model.
+#' @param trainCohorts A `SurvivalExperiment`s for training
+#'   the PCOSP model, with
+#' @param minDaysSurvived An `integer` indicating the minimum number of day
+#'   required to be in the 'high' survival group. Any patients below this
+#'   cut-off will be considered low survival.
+#' @param ... Force subsequent parameters to be named. This parameter is not
+#'   used.
+#' @param randomSeed An `integer` random seed to use for training the model. If
+#'   missing, this defaults to the current value of `.Random.seed`.
 #'
-#' @return A `PCOSP` object with training data in the `trainCohorts` slot. The
-#'   model slot will be empty until `trainModel` is called on the object.
+#' @return A `PCOSP` object with training data in the assays slot, concatenating
+#'   together the molecular data types and labelling the genes with the data
+#'   type to ensure the results are easily interpretable.
 #'
 #' @md
 #' @export
-PCOSP <- function(trainCohort) {
+PCOSP <- function(trainCohort, minDaysSurvived=365, ..., randomSeed) {
 
-    if (!is(trainCohorts, 'SurvivalExperiment'))
+    if (!is(trainCohort, 'SurvivalExperiment'))
         stop(.errorMsg(.context(), 'The trainCohorts argument is not a ',
             'SurvivalExperiment object. Please convert it before building a ',
             'PCOSP model!'))
 
     assaysL <- assays(trainCohort)
     for (i in seq_along(assaysL)) {
-        rownames(assaysL[[i]]) <- paste0(names(assaysL)[i], rownames(assaysL),
-            sep='.')
+        rownames(assaysL[[i]]) <- paste0(names(assaysL)[i], '.',
+            rownames(assaysL[[i]]))
     }
-    modelMatrix <- do.call(rbind, assaysL)
-    colData(trainCohort)$survival_group <-  # split into high and low survival
-        ifelse(colData(trainCohort)$days_survived >= 365, 1, 0)
 
-    new('PCOSP', colData=,
-        rowData(rowData(trainCohort)), assays=modelMatrix,
+    modelMatrix <- do.call(rbind, as.list(assaysL))
+    colData(trainCohort)$survival_group <-  # split into high and low survival
+        ifelse(colData(trainCohort)$days_survived >= minDaysSurvived, 1, 0)
+
+    rowData <- rbind(rowData(trainCohort), rowData(trainCohort))
+    rownames(rowData) <- rownames(modelMatrix)
+
+    survExp <- SurvivalExperiment(colData=colData(trainCohort),
+        rowData=rowData, assays=SimpleList(trainMatrix=modelMatrix),
         metadata=metadata(trainCohort))
+
+    PCOSPmodel <- .PCOSP(survExp)
+    metadata(PCOSPmodel)$randomSeed <- if (!missing(randomSeed)) randomSeed else
+        .Random.seed
+    metadata(PCOSPmodel)$RNGkind <- RNGkind()
+    return(PCOSPmodel)
 }
 
 ##'
@@ -59,3 +74,14 @@ PCOSP <- function(trainCohort) {
 #    where@options(...)
 #  }
 #})
+
+#'
+#'
+#'
+setValidity('PCOSP', function(object) {
+    hasSurvivalGroup <- 'survival_group' %in% colnames(colData(object))
+    if (hasSurvivalGroup) hasSurvivalGroup else .errorMsg(.context(), 'The ',
+        '`survival_group` column is missing. Please use the PCOSP constructor',
+        ' to initialize your model and ensure the minDaysSurvived parmater ',
+        'is a valid integer!')
+})
