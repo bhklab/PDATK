@@ -10,7 +10,7 @@
 #' @include class-SurvivalExperiment.R
 #' @export
 .PCOSP <- setClass("PCOSP", contains='SurvivalExperiment',
-    slots=list(models='list'))
+    slots=list(models='SimpleList'))
 
 #' Pancreatic Cancer Overall Survival Predictor (PCOSP) Constructor
 #'
@@ -75,13 +75,43 @@ PCOSP <- function(trainCohort, minDaysSurvived=365, ..., randomSeed) {
 #  }
 #})
 
-#'
-#'
-#'
+#' @noRd
 setValidity('PCOSP', function(object) {
     hasSurvivalGroup <- 'survival_group' %in% colnames(colData(object))
     if (hasSurvivalGroup) hasSurvivalGroup else .errorMsg(.context(), 'The ',
         '`survival_group` column is missing. Please use the PCOSP constructor',
         ' to initialize your model and ensure the minDaysSurvived parmater ',
         'is a valid integer!')
+})
+
+
+#' Accessor for the @models slot of an `S4` object
+#'
+#' @param object An `S4` object to retrieve models from.
+#' @param ... Allow
+#'
+#' @export
+setGeneric('models', function(object, ...) standardGeneric('models'))
+#'
+#' Getter for the models slot of a `PCOSP` object
+#'
+#' @param object A `PCOSP` model object to retrieve the models slot from.
+#'
+#' @return A `SimpleList` of top scoring KTSPmodels
+#'
+#' @export
+setMethod('models', signature('PCOSP'), function(object) {
+    object@models
+})
+#' Setter for the models slot of a `PCOSP` object
+#'
+#' @param object A `PCOSP` object
+#'
+#' @return Updates the object.
+#'
+#' @export
+setReplaceMethod('models', signature(object='PCOSP', value='SimpleList'),
+    function(object, value)
+{
+    object@models <- value
 })

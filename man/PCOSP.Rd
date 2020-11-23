@@ -9,7 +9,7 @@ PCOSP(trainCohort, minDaysSurvived = 365, ..., randomSeed)
 \arguments{
 \item{minDaysSurvived}{An \code{integer} indicating the minimum number of day
 required to be in the 'high' survival group. Any patients below this
-cut-off will be considered low survival.}
+cut-off will be considered low survival. Default is 365 days.}
 
 \item{...}{Force subsequent parameters to be named. This parameter is not
 used.}

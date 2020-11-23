@@ -4,10 +4,17 @@
 \alias{trainModel,PCOSP-method}
 \title{Train a PCOSP Model Based on The Data the assay \code{trainMatrix}.}
 \usage{
-\S4method{trainModel}{PCOSP}(object, ...)
+\S4method{trainModel}{PCOSP}(object, numModels = 10, balancedAccuracy = 0.6, ...)
 }
 \arguments{
 \item{object}{A \code{PCOSP} object to train.}
+
+\item{numModels}{An \code{integer} specifying the number of models to train.
+Defaults to 10. We recommend using 1000+ for good results.}
+
+\item{balancedAccuracy}{A \code{float} specifying the balanced accurary required
+to consider a model 'top scoring'. Defaults to 0.6. Must be in the
+range \link{0, 1}}
 
 \item{...}{Fall through arguments to \code{BiocParallel::bplapply}}
 }
@@ -18,10 +25,10 @@ A \code{PCOSP} object with the trained model in the \code{model} slot.
 Train a PCOSP Model Based on The Data the assay \code{trainMatrix}.
 }
 \details{
-This function is parallelized using the nthread option from
-the \code{pdatk_options()} function. Please use \code{pdatk_options(nthread=n)} to
-change from the default value, which is inferred when the package
-is loaded. Alternatively, you can pass in your own parallel back-end
-using the BPARAM parameter, which will fall through to the bplapply
-call inside this function.
+This function is parallelized with BiocParallel, thus if you wish
+to change the back-end for parallelization, number of threads, or any
+other parallelization configuration please pass BPPARAM to bplapply.
+}
+\seealso{
+switchBox::SWAP.KTSP.Train BiocParallel::bplapply
 }
