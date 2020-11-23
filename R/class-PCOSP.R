@@ -10,7 +10,7 @@
 #' @include class-SurvivalExperiment.R
 #' @export
 .PCOSP <- setClass("PCOSP", contains='SurvivalExperiment',
-    slots=list(model='ANY'))
+    slots=list(models='list'))
 
 #' Pancreatic Cancer Overall Survival Predictor (PCOSP) Constructor
 #'
@@ -20,7 +20,7 @@
 #'   the PCOSP model, with
 #' @param minDaysSurvived An `integer` indicating the minimum number of day
 #'   required to be in the 'high' survival group. Any patients below this
-#'   cut-off will be considered low survival.
+#'   cut-off will be considered low survival. Default is 365 days.
 #' @param ... Force subsequent parameters to be named. This parameter is not
 #'   used.
 #' @param randomSeed An `integer` random seed to use for training the model. If
