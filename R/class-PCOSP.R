@@ -103,11 +103,24 @@ setGeneric('models', function(object, ...) standardGeneric('models'))
 setMethod('models', signature('PCOSP'), function(object) {
     object@models
 })
+
+#' Generic for Setting the Models Slot for an S4 Object
+#'
+#' @param object An `S4` object to set the models slot for
+#' @param ... Allow new parameters to be added
+#' @param value A model or list of models to assign to the object
+#'
+#' @return None, updates the object.
+#'
+#' @export
+setGeneric('models<-',
+    function(object, ..., value) standardGeneric('models<-'))
 #' Setter for the models slot of a `PCOSP` object
 #'
-#' @param object A `PCOSP` object
+#' @param object A `PCOSP` object to update
+#' @param value A `SimpleList` of trained KTSP models
 #'
-#' @return Updates the object.
+#' @return None, updates the object.
 #'
 #' @export
 setReplaceMethod('models', signature(object='PCOSP', value='SimpleList'),

@@ -12,6 +12,10 @@ setGeneric('trainModel', function(object, ...)
 #'
 #' Train a PCOSP Model Based on The Data the assay `trainMatrix`.
 #'
+#' Uses the switchBox SWAP.Train.KTSP function to fit a number of k top scoring
+#'   pair models to the data, filtering the results to the best models based
+#'   on the specified paramters.
+#'
 #' @details This function is parallelized with BiocParallel, thus if you wish
 #'   to change the back-end for parallelization, number of threads, or any
 #'   other parallelization configuration please pass BPPARAM to bplapply.
@@ -36,7 +40,7 @@ setMethod('trainModel', signature('PCOSP'),
 {
     # Configure local parameters
     opts <- options()
-    on.exit(options(opt))
+    on.exit(options(opts))
 
     # Set local seed for random sampling
     set.seed(metadata(object)$randomSeed)
@@ -47,13 +51,15 @@ setMethod('trainModel', signature('PCOSP'),
     topModels <- .generateTSPmodels(trainMatrix, survivalGroups, numModels,
         balancedAccuracy)
 
-
+    models(object) <- topModels
+    return(object)
 })
 
 ##TODO:: See if we can refactor part of this to be reused in reshuffleRandomModels
 #' @importFrom caret confusionMatrix
 #' @importFrom switchBox SWAP.KTSP.Train
 #' @importFrom BiocParallel bplapply
+#' @importFrom S4Vectors SimpleList
 .generateTSPmodels <- function(trainMatrix, survivalGroups, numModels,
     balancedAccurary, ...)
 {
@@ -62,18 +68,21 @@ setMethod('trainModel', signature('PCOSP'),
     sampleSize <- min(sum(survivalGroups == levels(survivalGroups)[1]),
         sum(survivalGroups == levels(survivalGroups[2]))) / 2
 
+    # random sample for each model
     trainingDataColIdxs <- lapply(rep(sampleSize, numModels),
                                 .randomSampleIndex,
                                 labels=survivalGroups,
                                 groups=sort(unique(survivalGroups)))
+
+    # train the model
     system.time({
     trainedModels <- bplapply(trainingDataColIdxs,
                               function(idx, data)
                                   SWAP.KTSP.Train(data[, idx], levels(idx)),
-                              data=trainMatrix,
-                              ...)
+                              data=trainMatrix, ...)
     })
 
+    # get the testing data
     testingDataColIdxs <- lapply(trainingDataColIdxs,
                                  function(idx, rowIdx, labels)
                                 structure(setdiff(rowIdx, idx),
@@ -82,7 +91,7 @@ setMethod('trainModel', signature('PCOSP'),
                                  rowIdx=seq_len(ncol(trainMatrix)),
                                  labels=survivalGroups)
 
-
+    # make predictions
     predictions <- bplapply(seq_along(testingDataColIdxs),
                             function(i, testIdxs, data, models)
                                 SWAP.KTSP.Classify(data[, testIdxs[[i]]],
@@ -90,29 +99,34 @@ setMethod('trainModel', signature('PCOSP'),
                             testIdxs=testingDataColIdxs,
                             data=trainMatrix,
                             models=trainedModels,
-                            ...
-                            )
-
-
-    confusionMatrices <- bplapply(seq_along(predictions),
-                                  function(i, predictions, labels)
-                                           confusionMatrix(predictions[[i]],
-                                                           levels(labels[[i]]),
-                                                           mode="prec_recall"),
-                                       predictions=predictions,
-                                       labels=testingDataColIdxs,
-                                       ...
-                            )
-
-    modelStats <- bplapply(confusionMatrices,
-                           function(confMat) confMat$byClass,
                             ...)
 
-    balancedAcc <- unlist(bplapply(modelStats,
-                              function(model) model[c('Balanced Accuracy')]),
-                              ...)
+    # assess the models
+    .calcualteConfMatrix <- function(i, predictions, labels) {
+        confusionMatrix(predictions[[i]], levels(labels[[i]]),
+            mode="prec_recall")
+    }
 
-    selectedModels <- trainedModels[which(balancedAcc > balancedAccuracy)]
+    confusionMatrices <- bplapply(seq_along(predictions), .calcualteConfMatrix,
+        predictions=predictions, labels=testingDataColIdxs, ...)
+
+    modelStats <- bplapply(confusionMatrices, `[[`, i='byClass', ...)
+    balancedAcc <- unlist(bplapply(modelStats, `[`, i='Balanced Accuracy', ...))
+
+    # sort the models by their accuracy
+    keepModels <- balancedAcc > balancedAccuracy
+    selectedModels <- SimpleList(trainedModels[keepModels])
+    modelBalancedAcc <- balancedAcc[keepModels]
+    selectedModels <- selectedModels[order(modelBalancedAcc, decreasing=TRUE)]
+    names(selectedModels) <- paste0('rank', seq_along(selectedModels))
+
+    # capture the accuracies
+    mcols(selectedModels)$balancedAcc <-
+        modelBalancedAcc[order(modelBalancedAcc, decreasing=TRUE)]
+    # capture the function parameters
+    metadata(selectedModels) <- list(numModels=numModels,
+        balancedAccurary=balancedAccurary)
+
     return(selectedModels)
 }
 
@@ -133,10 +147,10 @@ setMethod('trainModel', signature('PCOSP'),
 #'
 #' @keywords internal
 .randomSampleIndex <- function(n, labels, groups) {
-    rowIndices <- unlist(mapply(function(x, n, labels) sample(which(labels==x), n, replace=FALSE),
-                         x=groups,
-                         MoreArgs=list(n=n, labels=labels),
-                         SIMPLIFY=FALSE))
+    .sampleGrp <- function(x, n, labels)
+        sample(which(labels==x), n, replace=FALSE)
+    rowIndices <- unlist(mapply(.sampleGrp, x=groups,
+        MoreArgs=list(n=n, labels=labels), SIMPLIFY=FALSE))
     return(structure(rowIndices,
-                     .Label=as.factor(labels[rowIndices])))
+        .Label=as.factor(labels[rowIndices])))
 }
