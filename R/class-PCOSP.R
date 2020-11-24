@@ -50,7 +50,7 @@ PCOSP <- function(trainCohort, minDaysSurvived=365, ..., randomSeed) {
 
     modelMatrix <- do.call(rbind, as.list(assaysL))
     colData(trainCohort)$prognosis <-  # split into high and low survival
-        ifelse(colData(trainCohort)$prognosis >= minDaysSurvived,
+        ifelse(colData(trainCohort)$days_survived >= minDaysSurvived,
             'good', 'bad')
 
     rowData <- rbind(rowData(trainCohort), rowData(trainCohort))

@@ -78,7 +78,7 @@ setMethod('trainModel', signature('PCOSP'),
     system.time({
     trainedModels <- bplapply(trainingDataColIdxs,
                               function(idx, data)
-                                  SWAP.Train.KTSP(data[, idx], levels(idx)),
+                                  SWAP.KTSP.Train(data[, idx], levels(idx)),
                               data=trainMatrix, ...)
     })
 
@@ -148,7 +148,7 @@ setMethod('trainModel', signature('PCOSP'),
 #' @keywords internal
 .randomSampleIndex <- function(n, labels, groups) {
     .sampleGrp <- function(x, n, labels)
-        sample(which(labels==x), n, replace=FALSE)
+        sample(which(labels == x), n, replace=FALSE)
     rowIndices <- unlist(mapply(.sampleGrp, x=groups,
         MoreArgs=list(n=n, labels=labels), SIMPLIFY=FALSE))
     return(structure(rowIndices,

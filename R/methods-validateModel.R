@@ -29,36 +29,6 @@ setGeneric('validateModel', function(object, validationData, ...)
 setMethod('validateModel', signature(object='PCOSP',
     validationData='CohortList'), function(object, validationData, ...)
 {
-    # Extract the best KTSP models
-    modelList <- models(object)
-    if (length(modelList) < 1)
-        stop(.errorMsg(.context(), 'There are no models in the PCOSP model ',
-            'passed as the object argument. Please ensure you train your model',
-            ' before attempting to validate it.'))
-
-    # Extract the assay matrices from the validation data
-    testMatrixList <- lapply(validationData, assays)
-
-    # Get the first assay and warn if there are more than one assays
-    for (i in seq_along(testMatrixList)) {
-        if (length(testMatrixList[[i]]) > 1)
-            warning(.warnMsg(.context(), 'Please ensure your validation ',
-                'data only has one assay per SurvivalExperiment! Ignoring ',
-                'all but the first assay!'))
-
-        testMatrixList[[i]] <- testMatrixList[[i]][[1]]
-    }
-
-    # Classify the validation data using the models
-    .classifyWithModels <- function(modelList, inputMat,
-        FUN=SWAP.KTSP.Classify)
-    {
-        predictions <- lapply(modelList, FUN=FUN, inputMat=inputMat)
-        predictions <- lapply()
-    }
-
-    predictions <- lapply(testMatrixList, FUN=.classifyWithModels,
-        modelList=modelList)
 
 
 })
