@@ -4,7 +4,7 @@
 \alias{trainModel,PCOSP-method}
 \title{Train a PCOSP Model Based on The Data the assay \code{trainMatrix}.}
 \usage{
-\S4method{trainModel}{PCOSP}(object, numModels = 10, balancedAccuracy = 0.6, ...)
+\S4method{trainModel}{PCOSP}(object, numModels = 10, minAccuracy = 0.6, ...)
 }
 \arguments{
 \item{object}{A \code{PCOSP} object to train.}
@@ -12,9 +12,9 @@
 \item{numModels}{An \code{integer} specifying the number of models to train.
 Defaults to 10. We recommend using 1000+ for good results.}
 
-\item{balancedAccuracy}{A \code{float} specifying the balanced accurary required
+\item{minAccuracy}{A \code{float} specifying the balanced accurary required
 to consider a model 'top scoring'. Defaults to 0.6. Must be in the
-range \link{0, 1}}
+range \link{0, 1}.}
 
 \item{...}{Fall through arguments to \code{BiocParallel::bplapply}}
 }
@@ -22,7 +22,9 @@ range \link{0, 1}}
 A \code{PCOSP} object with the trained model in the \code{model} slot.
 }
 \description{
-Train a PCOSP Model Based on The Data the assay \code{trainMatrix}.
+Uses the switchBox SWAP.Train.KTSP function to fit a number of k top scoring
+pair models to the data, filtering the results to the best models based
+on the specified paramters.
 }
 \details{
 This function is parallelized with BiocParallel, thus if you wish

@@ -113,6 +113,7 @@ Collate:
     'methods-splitTrainTest.R'
     'methods-subset.R'
     'methods-trainModel.R'
+    'methods-validateModel.R'
     'networkCommunitySearch.R'
     'options.R'
     'pathwayAnalysis.R'

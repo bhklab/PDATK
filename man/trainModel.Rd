@@ -7,7 +7,7 @@
 trainModel(object, ...)
 }
 \arguments{
-\item{An}{\code{S4} object representing an untrained statistical or machine
+\item{object}{An \code{S4} object representing an untrained statistical or machine.
 learning model.}
 }
 \value{

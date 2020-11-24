@@ -40,14 +40,18 @@ PCOSP <- function(trainCohort, minDaysSurvived=365, ..., randomSeed) {
             'PCOSP model!'))
 
     assaysL <- assays(trainCohort)
-    for (i in seq_along(assaysL)) {
-        rownames(assaysL[[i]]) <- paste0(names(assaysL)[i], '.',
-            rownames(assaysL[[i]]))
-    }
+
+    ## TODO:: Should error if the gene names are not identifical?
+    ## No longer labelling by data type, should I be?
+    #for (i in seq_along(assaysL)) {
+    #    rownames(assaysL[[i]]) <- paste0(names(assaysL)[i], '.',
+    #        rownames(assaysL[[i]]))
+    #}
 
     modelMatrix <- do.call(rbind, as.list(assaysL))
-    colData(trainCohort)$survival_group <-  # split into high and low survival
-        ifelse(colData(trainCohort)$days_survived >= minDaysSurvived, 1, 0)
+    colData(trainCohort)$prognosis <-  # split into high and low survival
+        ifelse(colData(trainCohort)$prognosis >= minDaysSurvived,
+            'good', 'bad')
 
     rowData <- rbind(rowData(trainCohort), rowData(trainCohort))
     rownames(rowData) <- rownames(modelMatrix)
@@ -77,7 +81,7 @@ PCOSP <- function(trainCohort, minDaysSurvived=365, ..., randomSeed) {
 
 #' @noRd
 setValidity('PCOSP', function(object) {
-    hasSurvivalGroup <- 'survival_group' %in% colnames(colData(object))
+    hasSurvivalGroup <- 'prognosis' %in% colnames(colData(object))
     if (hasSurvivalGroup) hasSurvivalGroup else .errorMsg(.context(), 'The ',
         '`survival_group` column is missing. Please use the PCOSP constructor',
         ' to initialize your model and ensure the minDaysSurvived parmater ',
@@ -127,4 +131,5 @@ setReplaceMethod('models', signature(object='PCOSP', value='SimpleList'),
     function(object, value)
 {
     object@models <- value
+    return(object)
 })
