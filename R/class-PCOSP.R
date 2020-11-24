@@ -24,7 +24,7 @@
 #' @param ... Force subsequent parameters to be named. This parameter is not
 #'   used.
 #' @param randomSeed An `integer` random seed to use for training the model. If
-#'   missing, this defaults to the current value of `.Random.seed`.
+#'   missing, this defaults to the seed 1234.
 #'
 #' @return A `PCOSP` object with training data in the assays slot, concatenating
 #'   together the molecular data types and labelling the genes with the data
@@ -61,9 +61,9 @@ PCOSP <- function(trainCohort, minDaysSurvived=365, ..., randomSeed) {
         metadata=metadata(trainCohort))
 
     PCOSPmodel <- .PCOSP(survExp)
-    metadata(PCOSPmodel)$randomSeed <- if (!missing(randomSeed)) randomSeed else
-        .Random.seed
-    metadata(PCOSPmodel)$RNGkind <- RNGkind()
+    metadata(PCOSPmodel)$modelParams <-
+        list(randomSeed=if (!missing(randomSeed)) randomSeed else 1234,
+            RNGkind=RNGkind())
     return(PCOSPmodel)
 }
 

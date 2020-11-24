@@ -1,8 +1,9 @@
 #' Predict Classes for New Data Based on a Train Classifier Model
 #'
-#' @param object An `S4` object containing data
+#' @param object An `S4` object containing data to predict classes from.
 #' @param model An `S4` object containing one or more trained classification
-#'   model.
+#'   models.
+#' @param ... Allow further parameters to be defined on this generic.
 #'
 #' @md
 #' @export
@@ -39,17 +40,18 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 
     assayMatrix <- assayData[[1]]
 
-    predictionList <- bplapply(modelList, SWAP.KTSP.Classify,
+    predictionList <- bplapply(modelList, FUN=SWAP.KTSP.Classify,
         inputMat=assayMatrix)
     # convert factor to character
     predictionListChar <- lapply(predictionList, as.character)
     predictions <- do.call(rbind, predictionListChar)
     colnames(predictions) <- colnames(assayData)
 
-    metadata(object)$PCOSP_predictions <- predictions
+    metadata(object)$PCOSPpredictions <- predictions
+    metadata(object)$PCOSPparams <- metadata(model)$modelParams
 
-    colData(object)$proportion_good_prognosis <-
-        colSums(predictions == 'good') / nrow(prediction)
+    colData(object)$PCOSP_prob_good <-
+        colSums(predictions == 'good') / nrow(predictions)
 
     return(object)
 })
@@ -66,11 +68,14 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #'
 #' @seealso BiocParallel::bplapply switchBox::SWAP.KTSP.Classify
 #'
+#' @importFrom S4Vectors endoapply
 #' @md
 #' @export
 setMethod('predictClasses', signature(object='CohortList',
-    model='PCOSP'), function(object, model)
+    model='PCOSP'), function(object, model, ...)
 {
     predictionResults <- endoapply(object, predictClasses, model=model, ...)
+    mcols(predictionResults)$hasPredictions <- TRUE
+    metadata(predictionResults)$predictionModel <- model
     return(predictionResults)
 })

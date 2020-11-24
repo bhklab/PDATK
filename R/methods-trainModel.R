@@ -39,17 +39,17 @@ setMethod('trainModel', signature('PCOSP'),
     function(object, numModels=10, minAccuracy=0.6, ...)
 {
     # Configure local parameters
-    opts <- options()
-    on.exit(options(opts))
+    oldSeed <- .Random.seed
+    on.exit( .Random.seed <- oldSeed )
 
     # Set local seed for random sampling
-    set.seed(metadata(object)$randomSeed)
+    set.seed(metadata(object)$modelParams$randomSeed)
 
     trainMatrix <- assay(object, 'trainMatrix')
     survivalGroups <- as.factor(colData(object)$prognosis)
 
     topModels <- .generateTSPmodels(trainMatrix, survivalGroups, numModels,
-        minAccuracy)
+        minAccuracy, ...)
 
     models(object) <- topModels
     return(object)
@@ -133,7 +133,8 @@ setMethod('trainModel', signature('PCOSP'),
 ##TODO:: Generalize this to n dimensions
 #' Generate a random sample from each group
 #'
-#' Returns a list of
+#' Returns a list of equally size random samples from two or more sample
+#'   groupings.
 #'
 #' @param n The sample size
 #' @param labels A \code{vector} of the group labels for all rows of the

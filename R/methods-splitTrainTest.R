@@ -35,7 +35,7 @@ setMethod('splitTrainTest', signature('SurvivalExperiment'),
         on.exit({ .Random.seed <- oldSeed })
     } else {
         warning(.warnMsg(.context(), 'The randomSeed parameter was not ',
-            'specified. Capturing the current enviroments .Random.seed instead.'))
+            'specified. Defaulting to 1234.'))
     }
 
     # get sample information
@@ -48,7 +48,8 @@ setMethod('splitTrainTest', signature('SurvivalExperiment'),
 
     # set object metadata
     metadata(object)$trainSamples <- trainSamples
-    metadata(object)$randomSeed <- .Random.seed
+    metadata(object)$modelParams$randomSeed <-
+        if (!missing(randomSeed)) randomSeed else 1234
 
     return(object)
 })
