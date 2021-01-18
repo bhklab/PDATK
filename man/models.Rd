@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-PCOSP.R
 \name{models}
 \alias{models}
-\title{Accessor for the @models slot of an `S4` object}
+\title{Accessor for the models slot of an `S4` object}
 \usage{
 models(object, ...)
 }
@@ -12,5 +12,5 @@ models(object, ...)
 \item{...}{Allow}
 }
 \description{
-Accessor for the @models slot of an `S4` object
+Accessor for the models slot of an `S4` object
 }

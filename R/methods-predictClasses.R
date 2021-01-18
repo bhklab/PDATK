@@ -15,7 +15,7 @@ setGeneric('predictClasses',
 #' @param ... Fall through arguments to `BiocParallel::bplapply` for configuring
 #'   parallelization settings.
 #'
-#' @seealso BiocParallel::bplapply switchBox::SWAP.KTSP.Classify
+#' @seealso [`BiocParallel::bplapply`], [`switchBox::SWAP.KTSP.Classify`]
 #'
 #' @return A `SurvivalExperiment` with the predictions in its metadata and
 #'   a column in colData, `prob_good_survival`, which contains the proportion

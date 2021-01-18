@@ -77,7 +77,6 @@ Collate:
     'PCOSP_aucMetaEstimates.R'
     'PCOSP_buildRandomGeneAssignmentModel.R'
     'PCOSP_buildRandomLabelShufflingModel.R'
-    'PCOSP_calcValidationStats.R'
     'PCOSP_calcualteClinicalModelDandCindex.R'
     'PCOSP_calculateCohortSubtypeStats.R'
     'PCOSP_compareClinicalModels.R'

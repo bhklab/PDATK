@@ -10,14 +10,15 @@
 #' @include class-SurvivalExperiment.R
 #' @export
 .PCOSP <- setClass("PCOSP", contains='SurvivalExperiment',
-    slots=list(models='SimpleList'))
+    slots=list(models='SimpleList', validationStats='data.frame',
+        validationData='CohortList'))
 
 #' Pancreatic Cancer Overall Survival Predictor (PCOSP) Constructor
 #'
 #' @details This function assumes there is only 1 assay per `SurvivalExperiment`.
 #'
-#' @param trainCohorts A `SurvivalExperiment`s for training
-#'   the PCOSP model, with
+#' @param trainCohorts A `CohortList`s for training
+#'   the PCOSP model, with.
 #' @param minDaysSurvived An `integer` indicating the minimum number of day
 #'   required to be in the 'high' survival group. Any patients below this
 #'   cut-off will be considered low survival. Default is 365 days.
@@ -40,13 +41,6 @@ PCOSP <- function(trainCohort, minDaysSurvived=365, ..., randomSeed) {
             'PCOSP model!'))
 
     assaysL <- assays(trainCohort)
-
-    ## TODO:: Should error if the gene names are not identifical?
-    ## No longer labelling by data type, should I be?
-    #for (i in seq_along(assaysL)) {
-    #    rownames(assaysL[[i]]) <- paste0(names(assaysL)[i], '.',
-    #        rownames(assaysL[[i]]))
-    #}
 
     modelMatrix <- do.call(rbind, as.list(assaysL))
     colData(trainCohort)$prognosis <-  # split into high and low survival
@@ -89,7 +83,7 @@ setValidity('PCOSP', function(object) {
 })
 
 
-#' Accessor for the @models slot of an `S4` object
+#' Accessor for the models slot of an `S4` object
 #'
 #' @param object An `S4` object to retrieve models from.
 #' @param ... Allow
@@ -131,5 +125,90 @@ setReplaceMethod('models', signature(object='PCOSP', value='SimpleList'),
     function(object, value)
 {
     object@models <- value
+    return(object)
+})
+
+#' Accessor for the `validationStats` slot of an `S4` object
+#'
+#' @param object An `S4` object
+#' @param ... Allow definition of new arguments to this generic.
+#'
+#' @return A `data.frame` of validation statistics for the validation cohorts
+#'   provided to `validateModel` function for a given `PCOSP` object.
+#'
+#' @export
+setGeneric('validationStats', function(object, ...)
+    standardGeneric('validationStats'))
+#'
+#' @param object A `PCOSP` object.
+#'
+#' @export
+setMethod('validationStats', signature(object='PCOSP'), function(object) {
+    object@validationStats
+})
+
+#' Generic for setting the `validationStats` slot on an `S4` object
+#'
+#' @param object An `S4` object.
+#' @param ... Allow definition of additional parameters to this generic.
+#' @param value A `data.frame` of validation statistics.
+#'
+#' @return None, updates the object
+#'
+#' @export
+setGeneric('validationStats<-', function(object, ..., value)
+    standardGeneric('validationStats<-'))
+#'
+#' @param object A `PCOSP` model.
+#' @param value A `data.frame` of
+#'
+#' @export
+setReplaceMethod('validationStats', signature(object='PCOSP', value='data.frame'),
+    function(object, value)
+{
+    object@validationStats <- value
+    return(object)
+})
+
+#' Accessor for the `validationData` slot of an `S4` object
+#'
+#' @param object An `S4` object
+#' @param ... Allow definition of new arguments to this generic.
+#'
+#' @return A `CohortList` with the validation data used for the `PCOSP` model,
+#'   or nothing if the model has not be validated.
+#'
+#' @export
+setGeneric('validationData', function(object, ...)
+    standardGeneric('validationData'))
+#'
+#' @param object A `PCOSP` object.
+#'
+#' @export
+setMethod('validationData', signature(object='PCOSP'), function(object) {
+    object@validationData
+})
+
+#' Generic for setting the `validationData` slot on an `S4` object
+#'
+#' @param object An `S4` object.
+#' @param ... Allow definition of additional parameters to this generic.
+#' @param value A `data.frame` of validation statistics.
+#'
+#' @return None, updates the object
+#'
+#' @export
+setGeneric('validationData<-', function(object, ..., value)
+    standardGeneric('validationData<-'))
+#'
+#' @param object A `PCOSP` model.
+#' @param value A `CohortList` of validation cohorts for the `PCOSP` model.
+#'
+#'
+#' @export
+setReplaceMethod('validationData', signature(object='PCOSP', value='CohortList'),
+    function(object, value)
+{
+    object@validationData <- value
     return(object)
 })

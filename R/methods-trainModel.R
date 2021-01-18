@@ -102,12 +102,12 @@ setMethod('trainModel', signature('PCOSP'),
                             ...)
 
     # assess the models
-    .calcualteConfMatrix <- function(i, predictions, labels) {
+    .calculateConfMatrix <- function(i, predictions, labels) {
         confusionMatrix(predictions[[i]], levels(labels[[i]]),
             mode="prec_recall")
     }
 
-    confusionMatrices <- bplapply(seq_along(predictions), .calcualteConfMatrix,
+    confusionMatrices <- bplapply(seq_along(predictions), .calculateConfMatrix,
         predictions=predictions, labels=testingDataColIdxs, ...)
 
     modelStats <- bplapply(confusionMatrices, `[[`, i='byClass', ...)

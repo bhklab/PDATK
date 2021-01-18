@@ -14,11 +14,11 @@ setGeneric('validateModel', function(model, validationData, ...)
 #' @param validationData A `CohortList` containing one or more
 #'   `SurvivalExperiment`s. The first assay in each `SurvivalExperiment` will
 #'   be classified using all top scoring KTSP models in `models(model)`.
-#' @param ... Fallthrough arguments to `BiocParallel::bplapply`, use this to
+#' @param ... Fallthrough arguments to `BiocParallel::bpvectorize`, use this to
 #'   configure the parallelization settings for this function. For example
 #'   to specify BPARAM.
 #'
-#' @seealso BiocParallel::bplapply switchBox::SWAP.KTSP.Classify
+#' @seealso [`BiocParallel::bpvectorize`], [`switchBox::SWAP.KTSP.Classify`]
 #'
 #' @return
 #'
@@ -29,7 +29,6 @@ setGeneric('validateModel', function(model, validationData, ...)
 setMethod('validateModel', signature(model='PCOSP',
     validationData='CohortList'), function(model, validationData, ...)
 {
-
     # determine if the validation data already has predictions and if
     #   if the predictions were made using the same model
     if ('hasPredictions' %in% colnames(mcols(validationData))) {
@@ -39,41 +38,83 @@ setMethod('validateModel', signature(model='PCOSP',
             } else {
                 warning(.warnMsg(.context(), 'The validationData argument ',
                     'has predictions, but the prediction model does not match',
-                    'the model argument. Recalculation classes...'))
+                    'the model argument. Recalculating classes...'))
+                predCohortList <- predictClasses(validationData, model=model)
             }
+        } else {
+
+          warning(.warnMsg(.context(), 'One or more of the
+                SurvivalExperiments on validationData does not have model
+                model predictions, recalculating...'))
+            predCohortList <- predictClasses(validationData, model=model)
         }
     } else {
         predCohortList <- predictClasses(validationData, model=model)
     }
 
-    validationCohortList <- endoapply(predCohortList, validateModel, model=model)
+    # validate the model against the validation data
+    valPCOSPmodelList <-
+        bplapply(predCohortList, validateModel, model=model) #,...)
+    validatedPCOSPmodel <- valPCOSPmodelList[[1]]
+    validationDT <- rbindlist(lapply(valPCOSPmodelList, validationStats))
+    validationDT[, `:=`(cohort=rep(names(predCohortList), each=2),
+        mDataType=rep(mcols(predCohortList)$mDataType, each=2))]
+    validationStats(validatedPCOSPmodel) <- copy(validationDT)
 
-    .getValidationStats <- function(x) metadata(x)$validationStats
+    valDataList <- Reduce(c, lapply(valPCOSPmodelList, validationData))
+    names(valDataList) <- names(predCohortList)
+    validationData(validatedPCOSPmodel) <- valDataList
 
-    validationStats <- lapply(validationCohortList, .getValidationStats)
+    # calculate the per molecular data type statistics
+    byMolecDT <- validationDT[,
+        j=c(combine.est(estimate, se, hetero=FALSE, na.rm=TRUE), n=sum(n)),
+        by=.(mDataType, statistic)]
+    byMolecDT[, cohort := toupper(mDataType)]
 
-    for (i in seq_along(validationStats)) {
-        validationStats[[i]]$cohort <- names(validationCohortList)[i]
-        validationStats[[i]]$mDataType <- mcols(validationCohortList)[i]
-    }
+    overallDT <- validationDT[,
+        j=c(combine.est(estimate, se, hetero=TRUE, na.rm=TRUE), n=sum(n)),
+        by=statistic]
 
-    validationDT <- rbindlist(validationStats)
+    # calculate the overall statistics
+    overallDT[, `:=`(mDataType='combined', cohort='ALL')]
+    setcolorder(overallDT, colnames(byMolecDT))
 
+    # get lower, upper, p-value and n for the aggregate statistics
+    combinedDT <- rbindlist(list(byMolecDT, overallDT))
+    combinedDT[, lower := estimate + qnorm(0.025, lower.tail=TRUE) * se,
+        by=.(statistic, mDataType)]
+    combinedDT[, upper := estimate + qnorm(0.025, lower.tail=FALSE) * se,
+        by=.(statistic, mDataType)]
+
+    .dIndexMetaPValue <- function(estimate, se)
+        2 * pnorm(-abs(log(estimate) / se))
+    .conIndexMetaPValue <- function(estimate, se)
+        2 * pnorm((estimate - 0.5) / se, lower.tail=estimate < 0.5)
+
+    combinedDT[,
+        p_value := fifelse(statistic == 'D_index',
+            .dIndexMetaPValue(estimate, se),
+            .conIndexMetaPValue(estimate, se)),
+        by=.(statistic, mDataType)]
+
+    allValStatsDT <- rbindlist(list(validationDT, combinedDT), fill=TRUE)
+
+    validationStats(validatedPCOSPmodel) <- allValStatsDT
+    validationData(validatedPCOSPmodel) <- validationCohortList
+    return(validatedPCOSPmodel)
 })
 #'
 #' @param model A `PCOSP` model which has been trained using `trainModel`.
 #' @param validationData A `SurvivalExperiment` to validate the model with.
 #'
-#' @return A `SurvivalExperiment` with the predicted classes and validation
-#'   stats in the metadata slot.
-#'
-#' @seealso BiocParallel::bplapply switchBox::SWAP.KTSP.Classify
+#' @return The `PCOSPmodel` with the validation statistics in the `validationStats`
+#'   slot and the validation data in the `validationData` slot.
 #'
 #' @md
 #' @importFrom survcomp D.index concordance.index combine.est
 #' @export
 setMethod('validateModel', signature(model='PCOSP',
-    validationData='SurvivalExperiment'), function(model, validationData, ...)
+    validationData='SurvivalExperiment'), function(model, validationData)
 {
     # determine if we need to rerun the classification model
     if (identical(metadata(model)$modelParams, metadata(validationData)$PCOSPparams))
@@ -101,7 +142,7 @@ setMethod('validateModel', signature(model='PCOSP',
     # assemble into a data.frame
     valStatsDF <- data.frame(
         statistic=c('D_index', 'concordance_index'),
-        value=c(validationStats$dIndex$d.index, validationStats$cIndex$c.index),
+        estimate=c(validationStats$dIndex$d.index, validationStats$cIndex$c.index),
         se=vapply(validationStats, `[[`, i='se', FUN.VALUE=numeric(1)),
         lower=vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1)),
         upper=vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1)),
@@ -109,6 +150,8 @@ setMethod('validateModel', signature(model='PCOSP',
         n=vapply(validationStats, `[[`, i='n', FUN.VALUE=numeric(1))
     )
 
-    metadata(predSurvExp)$validationStats <- valStatsDF
-    return(predSurvExp)
+    validationStats(PCOSPmodel) <- valStatsDF
+    validationData(PCOSPmodel) <- CohortList(list(validationData),
+        mDataTypes=metadata(validationData)$mDataType)
+    return(PCOSPmodel)
 })

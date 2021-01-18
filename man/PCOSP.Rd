@@ -17,8 +17,8 @@ used.}
 \item{randomSeed}{An \code{integer} random seed to use for training the model. If
 missing, this defaults to the seed 1234.}
 
-\item{trainCohorts}{A \code{SurvivalExperiment}s for training
-the PCOSP model, with}
+\item{trainCohorts}{A \code{CohortList}s for training
+the PCOSP model, with.}
 }
 \value{
 A \code{PCOSP} object with training data in the assays slot, concatenating

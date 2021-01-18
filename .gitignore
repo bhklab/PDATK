@@ -5,5 +5,5 @@
 .DS_Store
 results/*
 data/*
-deprecated
-deprecated/*
+.deprecated
+.deprecated/*
