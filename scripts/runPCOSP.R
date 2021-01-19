@@ -61,19 +61,7 @@ predictionCohortList <- predictClasses(validationCohortList, model=PCOSPmodel)
 
 validatedPCOSPmodel <- validateModel(PCOSPmodel, predictionCohortList)
 
-
-
-
-
-
-
-## ----calculate_validation_stats------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-validationStats <- calculateValidationStats(validationCohorts,
-                                            selectedModels,
-                                            seqCohorts=seqCohorts,
-                                            nthread=14)
-
-saveRDS(validationStats, file=file.path(resultsDir, "2a_validationStats.rds"))
+validationStats <- validationStats(validatedPCOSPmodel)
 
 ### forestPlotMetaEstimates
 # -------------------------------------------------------------------------

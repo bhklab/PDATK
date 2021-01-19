@@ -14,7 +14,7 @@ Model}
 \code{SurvivalExperiment}s. The first assay in each \code{SurvivalExperiment} will
 be classified using all top scoring KTSP models in \code{models(model)}.}
 
-\item{...}{Fallthrough arguments to \code{BiocParallel::bpvectorize}, use this to
+\item{...}{Fallthrough arguments to \code{BiocParallel::bplapply}, use this to
 configure the parallelization settings for this function. For example
 to specify BPARAM.}
 }
@@ -26,5 +26,5 @@ Evaluate the Performance of a List of Trained KTSP Models from a PCOSP
 Model
 }
 \seealso{
-\code{\link[BiocParallel:bpvectorize]{BiocParallel::bpvectorize}}, \code{\link[switchBox:SWAP.KTSP.Classify]{switchBox::SWAP.KTSP.Classify}}
+\code{\link[BiocParallel:bplapply]{BiocParallel::bplapply}}, \code{\link[switchBox:SWAP.KTSP.Classify]{switchBox::SWAP.KTSP.Classify}}
 }

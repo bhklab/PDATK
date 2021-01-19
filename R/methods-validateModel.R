@@ -14,16 +14,17 @@ setGeneric('validateModel', function(model, validationData, ...)
 #' @param validationData A `CohortList` containing one or more
 #'   `SurvivalExperiment`s. The first assay in each `SurvivalExperiment` will
 #'   be classified using all top scoring KTSP models in `models(model)`.
-#' @param ... Fallthrough arguments to `BiocParallel::bpvectorize`, use this to
+#' @param ... Fallthrough arguments to `BiocParallel::bplapply`, use this to
 #'   configure the parallelization settings for this function. For example
 #'   to specify BPARAM.
 #'
-#' @seealso [`BiocParallel::bpvectorize`], [`switchBox::SWAP.KTSP.Classify`]
+#' @seealso [`BiocParallel::bplapply`], [`switchBox::SWAP.KTSP.Classify`]
 #'
 #' @return
 #'
 #' @importFrom BiocParallel bplapply
 #' @importFrom switchBox SWAP.KTSP.Classify
+#' @import data.table
 #' @md
 #' @export
 setMethod('validateModel', signature(model='PCOSP',
@@ -54,7 +55,7 @@ setMethod('validateModel', signature(model='PCOSP',
 
     # validate the model against the validation data
     valPCOSPmodelList <-
-        bplapply(predCohortList, validateModel, model=model) #,...)
+        bplapply(predCohortList, validateModel, model=model,...)
     validatedPCOSPmodel <- valPCOSPmodelList[[1]]
     validationDT <- rbindlist(lapply(valPCOSPmodelList, validationStats))
     validationDT[, `:=`(cohort=rep(names(predCohortList), each=2),
@@ -103,6 +104,8 @@ setMethod('validateModel', signature(model='PCOSP',
     validationData(validatedPCOSPmodel) <- validationCohortList
     return(validatedPCOSPmodel)
 })
+
+#' Validate a PCOSP model with a single SurvivalExperiment object.
 #'
 #' @param model A `PCOSP` model which has been trained using `trainModel`.
 #' @param validationData A `SurvivalExperiment` to validate the model with.
@@ -112,6 +115,7 @@ setMethod('validateModel', signature(model='PCOSP',
 #'
 #' @md
 #' @importFrom survcomp D.index concordance.index combine.est
+#' @import S4Vectors
 #' @export
 setMethod('validateModel', signature(model='PCOSP',
     validationData='SurvivalExperiment'), function(model, validationData)
