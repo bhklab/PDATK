@@ -45,7 +45,7 @@ ICGCtrain <- merge(ICGCtrainCohorts[[1]], ICGCtrainCohorts[[2]],
 # construct a PCOSP model object
 PCOSPmodel <- PCOSP(ICGCtrain, randomSeed=1987)
 
-PCOSPmodel <- trainModel(PCOSPmodel, numModels=10, minAccuracy=0.6)
+PCOSPmodel <- trainModel(PCOSPmodel, numModels=1000, minAccuracy=0.6)
 
 saveRDS(PCOSPmodel, file=file.path(resultsDir, "1_PCOSPmodel.rds"))
 
@@ -60,6 +60,11 @@ validationCohortList <- c(ICGCtestCohorts, validationCohortList)
 predictionCohortList <- predictClasses(validationCohortList, model=PCOSPmodel)
 
 validatedPCOSPmodel <- validateModel(PCOSPmodel, predictionCohortList)
+
+hazardRatioForestPlot <- forestplot(validatedPCOSPmodel, stat='D_index',
+    transform='log2')
+concIndexForestPlot <- forestplot(validatedPCOSPmodel, stat='concordance_index')
+
 
 ### forestPlotMetaEstimates
 # -------------------------------------------------------------------------
