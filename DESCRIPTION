@@ -107,6 +107,7 @@ Collate:
     'methods-extractTrainTest.R'
     'methods-findCommonGenes.R'
     'methods-findCommonSamples.R'
+    'methods-forestplot.R'
     'methods-merge.R'
     'methods-predictClasses.R'
     'methods-splitTrainTest.R'

@@ -61,8 +61,6 @@ predictionCohortList <- predictClasses(validationCohortList, model=PCOSPmodel)
 
 validatedPCOSPmodel <- validateModel(PCOSPmodel, predictionCohortList)
 
-validationStats <- validationStats(validatedPCOSPmodel)
-
 ### forestPlotMetaEstimates
 # -------------------------------------------------------------------------
 

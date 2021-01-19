@@ -55,7 +55,7 @@ setMethod('validateModel', signature(model='PCOSP',
 
     # validate the model against the validation data
     valPCOSPmodelList <-
-        bplapply(predCohortList, validateModel, model=model,...)
+        bplapply(predCohortList, validateModel, model=model)#, ...)
     validatedPCOSPmodel <- valPCOSPmodelList[[1]]
     validationDT <- rbindlist(lapply(valPCOSPmodelList, validationStats))
     validationDT[, `:=`(cohort=rep(names(predCohortList), each=2),
@@ -68,16 +68,18 @@ setMethod('validateModel', signature(model='PCOSP',
 
     # calculate the per molecular data type statistics
     byMolecDT <- validationDT[,
-        j=c(combine.est(estimate, se, hetero=FALSE, na.rm=TRUE), n=sum(n)),
+        j=c(combine.est(estimate, se, hetero=FALSE, na.rm=TRUE), n=sum(n),
+            isSummary=TRUE),
         by=.(mDataType, statistic)]
     byMolecDT[, cohort := toupper(mDataType)]
 
     overallDT <- validationDT[,
-        j=c(combine.est(estimate, se, hetero=TRUE, na.rm=TRUE), n=sum(n)),
+        j=c(combine.est(estimate, se, hetero=TRUE, na.rm=TRUE), n=sum(n),
+            isSummary=TRUE),
         by=statistic]
 
     # calculate the overall statistics
-    overallDT[, `:=`(mDataType='combined', cohort='ALL')]
+    overallDT[, `:=`(mDataType='combined', cohort='OVERALL')]
     setcolorder(overallDT, colnames(byMolecDT))
 
     # get lower, upper, p-value and n for the aggregate statistics
@@ -116,6 +118,7 @@ setMethod('validateModel', signature(model='PCOSP',
 #' @md
 #' @importFrom survcomp D.index concordance.index combine.est
 #' @import S4Vectors
+#' @import data.table
 #' @export
 setMethod('validateModel', signature(model='PCOSP',
     validationData='SurvivalExperiment'), function(model, validationData)
@@ -151,7 +154,8 @@ setMethod('validateModel', signature(model='PCOSP',
         lower=vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1)),
         upper=vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1)),
         p_value=vapply(validationStats, `[[`, i='p.value', FUN.VALUE=numeric(1)),
-        n=vapply(validationStats, `[[`, i='n', FUN.VALUE=numeric(1))
+        n=vapply(validationStats, `[[`, i='n', FUN.VALUE=numeric(1)),
+        isSummary=FALSE
     )
 
     validationStats(PCOSPmodel) <- valStatsDF
