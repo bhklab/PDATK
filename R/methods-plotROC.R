@@ -43,7 +43,9 @@ setMethod('plotROC', signature(object='PCOSP'),
 
     # -- calcualte the ROC sensitivities and specificities
     .calcROC <- function(df) {
-        rocRes <- roc(df$is_deceased, 1 - df$PCOSP_prob_good)
+        rocRes <- with(df,
+            roc(ifelse(prognosis =='good', 1, 0),
+                PCOSP_prob_good))
         DT <- as.data.table(coords(rocRes, 'all', transpose=FALSE))
         DT[rev(seq_len(.N))]
     }

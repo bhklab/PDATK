@@ -19,6 +19,9 @@ setGeneric('dropNotCensored',
 setMethod('dropNotCensored', signature('SurvivalExperiment'),
     function(object, minDaysSurvived=365)
 {
+    # drop NA rows
+    object <- object[, rownames(na.omit(colData(object)))]
+
     days_survived <- colData(object)$days_survived
     is_deceased <- colData(object)$is_deceased
 

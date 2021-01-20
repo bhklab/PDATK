@@ -100,6 +100,7 @@ setMethod('validateModel', signature(model='PCOSP',
     allValStatsDT <- rbindlist(list(validationDT, combinedDT), fill=TRUE)
 
     validationStats(validatedPCOSPmodel) <- allValStatsDT
+    mcols(predCohortList)$isValidated <- TRUE
     validationData(validatedPCOSPmodel) <- predCohortList
     return(validatedPCOSPmodel)
 })
@@ -126,19 +127,24 @@ setMethod('validateModel', signature(model='PCOSP',
     if (identical(metadata(model)$modelParams, metadata(valData)$PCOSPparams))
     {
         survivalDF <- colData(valData)[, c('sample_name', 'days_survived',
-            'is_deceased', 'PCOSP_prob_good')]
+            'is_deceased', 'PCOSP_prob_good', 'prognosis')]
         predSurvExp <- valData
     } else {
         predSurvExp <- predictClasses(model, valData)
         survivalDF <- colData(predSurvExp)[, c('sample_name', 'days_survived',
-            'is_deceased', 'PCOSP_prob_good')]
+            'is_deceased', 'PCOSP_prob_good', 'prognosis')]
     }
+
+    # convert prognosis to numeric for the ROC stats
+    survivalDF <- within(survivalDF,
+        prognosis <- ifelse(prognosis == 'good', 1, 0)
+    )
 
     # calculate AUROC statistics
     aucStats <- with(survivalDF,
-        c(as.numeric(reportROC(is_deceased, 1 - PCOSP_prob_good,
+        c(as.numeric(reportROC(prognosis, PCOSP_prob_good,
                 plot=FALSE)[c('AUC', 'AUC.SE', 'AUC.low', 'AUC.up')]),
-            roc.area(is_deceased, 1 - PCOSP_prob_good)$p.value, nrow(survivalDF)))
+            roc.area(prognosis, PCOSP_prob_good)$p.value, nrow(survivalDF)))
     names(aucStats) <- c('estimate', 'se', 'lower', 'upper', 'p.value', 'n')
 
     # calculate the validation statistcs

@@ -26,6 +26,13 @@ setGeneric('predictClasses',
 setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='PCOSP'), function(object, model, ...)
 {
+    # drop NA samples, they mess with calculating statistics
+    keepSamples <- rownames(na.omit(colData(object)))
+    if (keepSamples != colnames(object)) {
+        warning(.warnMsg(.context(), 'Dropped sampels with NA survival data!'))
+    }
+    object <- object[, ]
+
     modelList <- models(model)
     if (length(modelList) < 1)
         stop(.errorMsg(.context(), 'There are no models in the PCOSP model ',
@@ -52,6 +59,8 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 
     colData(object)$PCOSP_prob_good <-
         colSums(predictions == 'good') / nrow(predictions)
+    colData(object)$prognosis <-
+        ifelse(colData(object)$days_survived > 365,'good', 'bad')
 
     return(object)
 })

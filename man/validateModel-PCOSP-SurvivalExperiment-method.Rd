@@ -4,7 +4,7 @@
 \alias{validateModel,PCOSP,SurvivalExperiment-method}
 \title{Validate a PCOSP model with a single SurvivalExperiment object.}
 \usage{
-\S4method{validateModel}{PCOSP,SurvivalExperiment}(model, validationData)
+\S4method{validateModel}{PCOSP,SurvivalExperiment}(model, valData)
 }
 \arguments{
 \item{model}{A \code{PCOSP} model which has been trained using \code{trainModel}.}

@@ -5,12 +5,12 @@
 \title{Evaluate the Performance of a List of Trained KTSP Models from a PCOSP
 Model}
 \usage{
-\S4method{validateModel}{PCOSP,CohortList}(model, validationData, ...)
+\S4method{validateModel}{PCOSP,CohortList}(model, valData, ...)
 }
 \arguments{
 \item{model}{A \code{PCOSP} model which has been trained using \code{trainModel}.}
 
-\item{validationData}{A \code{CohortList} containing one or more
+\item{valData}{A \code{CohortList} containing one or more
 \code{SurvivalExperiment}s. The first assay in each \code{SurvivalExperiment} will
 be classified using all top scoring KTSP models in \code{models(model)}.}
 

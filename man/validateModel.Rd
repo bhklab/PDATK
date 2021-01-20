@@ -4,10 +4,12 @@
 \alias{validateModel}
 \title{Perform Validation on an \code{S4} Object Respresenting a Trained Model}
 \usage{
-validateModel(model, validationData, ...)
+validateModel(model, valData, ...)
 }
 \arguments{
 \item{model}{An \code{S4} object}
+
+\item{valData}{\code{Any} Data to verify the model with.}
 }
 \description{
 Perform Validation on an \code{S4} Object Respresenting a Trained Model
