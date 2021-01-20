@@ -9,12 +9,19 @@
 setGeneric('plotROC', function(object, ...)
     standardGeneric('plotROC'))
 #'
+#' @param object A `PCOSP` model which has been validated with with the
+#'  `validateModel` method.
+#' @param alpha A `float` specifying the significance level for the plot. Non-
+#'   signficiant cohorts will have dotted lines.
+#' @param ... Catch unnamed parameters. Not used.
+#' @param xlabel A `character` vector specifying the x label.
+#' @param ylabel A `character` vector specifying the y label.
+#' @param title A `character` vector speciyfing the plot tile.
 #'
-#'
-#'
-#'
+#' @importFrom pROC roc
+#' @export
 setMethod('plotROC', signature(object='PCOSP'),
-    function(object, )
+    function(object, alpha=0.05, ..., xlabel, ylabel, title)
 {
     # -- check for the correct columns
     ##TODO:: use mcols to specify if validation data has predictions
@@ -37,8 +44,8 @@ setMethod('plotROC', signature(object='PCOSP'),
     # -- calcualte the ROC sensitivities and specificities
     .calcROC <- function(df) {
         rocRes <- roc(df$is_deceased, 1 - df$PCOSP_prob_good)
-        data.table(sensitivity=rocRes$sensitivities,
-            specificity=rocRes$specificities)
+        DT <- as.data.table(coords(rocRes, 'all', transpose=FALSE))
+        DT[rev(seq_len(.N))]
     }
 
     rocDtList <- lapply(survivalDfList, .calcROC)
@@ -47,4 +54,36 @@ setMethod('plotROC', signature(object='PCOSP'),
     }
 
     rocDT <- rbindlist(rocDtList)
+    aucStatsDT <- validationStats(object)[statistic=='AUC'][cohort %in% names(valData)]
+
+    rocDT <- merge.data.table(rocDT, aucStatsDT[, .(cohort, estimate, p_value)],
+        by='cohort')
+
+    rocDT[, cohort := paste0(cohort, ': ', estimate, ' (', scientific(p_value, 2), ')')]
+
+    plot <- ggplot(rocDT, aes(x=specificity, y=sensitivity,
+                    color=cohort,
+                    linetype=p_value < 0.05)) +
+                geom_segment(aes(x=max(specificity), xend=min(specificity),
+                    y=min(sensitivity), yend=max(sensitivity)), colour='grey',
+                    size=0.1) +
+                geom_step(size=0.75) +
+                scale_x_reverse() +
+                theme_classic() +
+                scale_linetype_manual(breaks=c(TRUE, FALSE), values=c(1, 2)) +
+                labs(linetype=paste0('Significant (p<', alpha, ')'),
+                    colour='Cohort: AUC (P-value)') +
+                guides(linetype=FALSE) +
+                theme(legend.justification=c(1,0), legend.position=c(1,0.005)) +
+                xlab('Specificity') +
+                ylab('Sensitivity')
+
+    if (!missing(xlabel))
+        plot + xlab(xlabel)
+    if (!missing(ylabel))
+        plot + ylab(ylabel)
+    if (!missing(title))
+        plot + ggtitle(title)
+
+    return(plot)
 })

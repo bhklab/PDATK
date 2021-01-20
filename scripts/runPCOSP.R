@@ -45,7 +45,7 @@ ICGCtrain <- merge(ICGCtrainCohorts[[1]], ICGCtrainCohorts[[2]],
 # construct a PCOSP model object
 PCOSPmodel <- PCOSP(ICGCtrain, randomSeed=1987)
 
-PCOSPmodel <- trainModel(PCOSPmodel, numModels=100, minAccuracy=0.6)
+PCOSPmodel <- trainModel(PCOSPmodel, numModels=1000, minAccuracy=0.6)
 
 saveRDS(PCOSPmodel, file=file.path(resultsDir, "1_PCOSPmodel.rds"))
 
@@ -72,12 +72,8 @@ hazardRatioForestPlot <- forestplot(validatedPCOSPmodel, stat='D_index',
 concIndexForestPlot <- forestplot(validatedPCOSPmodel, stat='concordance_index')
 
 
-## FIXME:: Find out where warnings/messages are coming from and suppress them
-plotROCcurves(formattedValCohorts,
-              PCOSPscores,
-              colours,
-              filePath=file.path(resultsDir, "figures"),
-              fileName="2f_PCOSProcCurvesPlot")
+### plot ROC curves
+plotROC(validatedPCOSPmodel)
 
 
 # -------------------------------------------------------------------------
