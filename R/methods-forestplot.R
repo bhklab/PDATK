@@ -32,7 +32,8 @@ setGeneric('forestplot', function(object, ...)
 #' @md
 #' @import data.table
 #' @importFrom ggplot2 ggplot geom_pointrange theme_bw facet_grid theme
-#'   geom_vline vars reformulate xlab ylab scale_fill_manual ggtitle
+#'   geom_vline vars xlab ylab scale_colour_manual ggtitle
+#' @importFrom stats reformulate
 #' @importFrom scales scientific
 #' @export
 setMethod('forestplot', signature('PCOSP'),
@@ -74,7 +75,7 @@ setMethod('forestplot', signature('PCOSP'),
     }
 
     plot <- ggplot(stats, aes(y=reorder(cohort, -isSummary), x=estimate,
-        xmin=lower, xmax=upper, shape=isSummary)) +
+                xmin=lower, xmax=upper, shape=isSummary)) +
         geom_pointrange(aes_string(colour=colourBy, group=groupBy)) +
         theme_bw() +
         facet_grid(reformulate('.', groupBy), scales='free_y',
@@ -85,7 +86,7 @@ setMethod('forestplot', signature('PCOSP'),
         ylab(ylab)
 
     if (!missing(colours))
-        plot <- plot + scale_fill_manual(colours)
+        plot <- plot + scale_colour_manual(values=colours)
 
     if (!missing(title))
         plot <- plot + ggtitle(title)

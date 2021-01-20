@@ -1,17 +1,18 @@
 #' Perform Validation on an `S4` Object Respresenting a Trained Model
 #'
 #' @param model An `S4` object
+#' @param valData `Any` Data to verify the model with.
 #'
 #' @md
 #' @export
-setGeneric('validateModel', function(model, validationData, ...)
+setGeneric('validateModel', function(model, valData, ...)
     standardGeneric('validateModel'))
 #'
 #' Evaluate the Performance of a List of Trained KTSP Models from a PCOSP
 #'   Model
 #'
 #' @param model A `PCOSP` model which has been trained using `trainModel`.
-#' @param validationData A `CohortList` containing one or more
+#' @param valData A `CohortList` containing one or more
 #'   `SurvivalExperiment`s. The first assay in each `SurvivalExperiment` will
 #'   be classified using all top scoring KTSP models in `models(model)`.
 #' @param ... Fallthrough arguments to `BiocParallel::bplapply`, use this to
@@ -28,29 +29,29 @@ setGeneric('validateModel', function(model, validationData, ...)
 #' @md
 #' @export
 setMethod('validateModel', signature(model='PCOSP',
-    validationData='CohortList'), function(model, validationData, ...)
+    valData='CohortList'), function(model, valData, ...)
 {
     # determine if the validation data already has predictions and if
     #   if the predictions were made using the same model
-    if ('hasPredictions' %in% colnames(mcols(validationData))) {
-        if (all(mcols(validationData)$hasPredictions)) {
-            if (all.equal(model, metadata(validationData)$predictionModel)) {
-                predCohortList <- validationData
+    if ('hasPredictions' %in% colnames(mcols(valData))) {
+        if (all(mcols(valData)$hasPredictions)) {
+            if (all.equal(model, metadata(valData)$predictionModel)) {
+                predCohortList <- valData
             } else {
                 warning(.warnMsg(.context(), 'The validationData argument ',
                     'has predictions, but the prediction model does not match',
                     'the model argument. Recalculating classes...'))
-                predCohortList <- predictClasses(validationData, model=model)
+                predCohortList <- predictClasses(valData, model=model)
             }
         } else {
 
           warning(.warnMsg(.context(), 'One or more of the
                 SurvivalExperiments on validationData does not have model
                 model predictions, recalculating...'))
-            predCohortList <- predictClasses(validationData, model=model)
+            predCohortList <- predictClasses(valData, model=model)
         }
     } else {
-        predCohortList <- predictClasses(validationData, model=model)
+        predCohortList <- predictClasses(valData, model=model)
     }
 
     # validate the model against the validation data
@@ -58,13 +59,9 @@ setMethod('validateModel', signature(model='PCOSP',
         bplapply(predCohortList, validateModel, model=model)#, ...)
     validatedPCOSPmodel <- valPCOSPmodelList[[1]]
     validationDT <- rbindlist(lapply(valPCOSPmodelList, validationStats))
-    validationDT[, `:=`(cohort=rep(names(predCohortList), each=2),
-        mDataType=rep(mcols(predCohortList)$mDataType, each=2))]
+    validationDT[, `:=`(cohort=rep(names(predCohortList), each=3),
+        mDataType=rep(mcols(predCohortList)$mDataType, each=3))]
     validationStats(validatedPCOSPmodel) <- copy(validationDT)
-
-    valDataList <- Reduce(c, lapply(valPCOSPmodelList, validationData))
-    names(valDataList) <- names(predCohortList)
-    validationData(validatedPCOSPmodel) <- valDataList
 
     # calculate the per molecular data type statistics
     byMolecDT <- validationDT[,
@@ -103,7 +100,7 @@ setMethod('validateModel', signature(model='PCOSP',
     allValStatsDT <- rbindlist(list(validationDT, combinedDT), fill=TRUE)
 
     validationStats(validatedPCOSPmodel) <- allValStatsDT
-    validationData(validatedPCOSPmodel) <- validationCohortList
+    validationData(validatedPCOSPmodel) <- predCohortList
     return(validatedPCOSPmodel)
 })
 
@@ -116,24 +113,33 @@ setMethod('validateModel', signature(model='PCOSP',
 #'   slot and the validation data in the `validationData` slot.
 #'
 #' @md
-#' @importFrom survcomp D.index concordance.index combine.est
 #' @import S4Vectors
 #' @import data.table
+#' @importFrom survcomp D.index concordance.index combine.est
+#' @importFrom reportROC reportROC
+#' @importFrom verification roc.area
 #' @export
 setMethod('validateModel', signature(model='PCOSP',
-    validationData='SurvivalExperiment'), function(model, validationData)
+    valData='SurvivalExperiment'), function(model, valData)
 {
     # determine if we need to rerun the classification model
-    if (identical(metadata(model)$modelParams, metadata(validationData)$PCOSPparams))
+    if (identical(metadata(model)$modelParams, metadata(valData)$PCOSPparams))
     {
-        survivalDF <- colData(validationData)[, c('sample_name', 'days_survived',
+        survivalDF <- colData(valData)[, c('sample_name', 'days_survived',
             'is_deceased', 'PCOSP_prob_good')]
-        predSurvExp <- validationData
+        predSurvExp <- valData
     } else {
-        predSurvExp <- predictClasses(model, validationData)
+        predSurvExp <- predictClasses(model, valData)
         survivalDF <- colData(predSurvExp)[, c('sample_name', 'days_survived',
             'is_deceased', 'PCOSP_prob_good')]
     }
+
+    # calculate AUROC statistics
+    aucStats <- with(survivalDF,
+        c(as.numeric(reportROC(is_deceased, 1 - PCOSP_prob_good,
+                plot=FALSE)[c('AUC', 'AUC.SE', 'AUC.low', 'AUC.up')]),
+            roc.area(is_deceased, 1 - PCOSP_prob_good)$p.value, nrow(survivalDF)))
+    names(aucStats) <- c('estimate', 'se', 'lower', 'upper', 'p.value', 'n')
 
     # calculate the validation statistcs
     validationStats <- with(survivalDF,
@@ -142,14 +148,16 @@ setMethod('validateModel', signature(model='PCOSP',
                 surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
                 method.test='logrank'),
             cIndex=concordance.index(x=1 - PCOSP_prob_good, surv.time=days_survived,
-                surv.event=is_deceased, method='noether', na.rm=TRUE)
+                surv.event=is_deceased, method='noether', na.rm=TRUE),
+            AUC=as.list(aucStats)
         )
     )
 
     # assemble into a data.frame
     valStatsDF <- data.frame(
-        statistic=c('D_index', 'concordance_index'),
-        estimate=c(validationStats$dIndex$d.index, validationStats$cIndex$c.index),
+        statistic=c('D_index', 'concordance_index', 'AUC'),
+        estimate=c(validationStats$dIndex$d.index,
+            validationStats$cIndex$c.index, validationStats$AUC$estimate),
         se=vapply(validationStats, `[[`, i='se', FUN.VALUE=numeric(1)),
         lower=vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1)),
         upper=vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1)),
@@ -159,7 +167,7 @@ setMethod('validateModel', signature(model='PCOSP',
     )
 
     validationStats(PCOSPmodel) <- valStatsDF
-    validationData(PCOSPmodel) <- CohortList(list(validationData),
-        mDataTypes=metadata(validationData)$mDataType)
+    validationData(PCOSPmodel) <- CohortList(list(predSurvExp),
+        mDataTypes=metadata(predSurvExp)$mDataType)
     return(PCOSPmodel)
 })

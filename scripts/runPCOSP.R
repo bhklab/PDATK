@@ -45,7 +45,7 @@ ICGCtrain <- merge(ICGCtrainCohorts[[1]], ICGCtrainCohorts[[2]],
 # construct a PCOSP model object
 PCOSPmodel <- PCOSP(ICGCtrain, randomSeed=1987)
 
-PCOSPmodel <- trainModel(PCOSPmodel, numModels=1000, minAccuracy=0.6)
+PCOSPmodel <- trainModel(PCOSPmodel, numModels=100, minAccuracy=0.6)
 
 saveRDS(PCOSPmodel, file=file.path(resultsDir, "1_PCOSPmodel.rds"))
 
@@ -57,57 +57,20 @@ saveRDS(PCOSPmodel, file=file.path(resultsDir, "1_PCOSPmodel.rds"))
 # add the ICGC testing data to the model
 validationCohortList <- c(ICGCtestCohorts, validationCohortList)
 
+# drop ICGC sequencing becuase it only has deceased pateints
+validationCohortList <- validationCohortList[-2]
+
 predictionCohortList <- predictClasses(validationCohortList, model=PCOSPmodel)
 
 validatedPCOSPmodel <- validateModel(PCOSPmodel, predictionCohortList)
+
+### forestPlotMetaEstimates
+# -------------------------------------------------------------------------
 
 hazardRatioForestPlot <- forestplot(validatedPCOSPmodel, stat='D_index',
     transform='log2')
 concIndexForestPlot <- forestplot(validatedPCOSPmodel, stat='concordance_index')
 
-
-### forestPlotMetaEstimates
-# -------------------------------------------------------------------------
-
-
-## ----forest_plots--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-forestPlotMetaEstimate(validationStats,
-                       stat="dIndex",
-                       isSummary=c(rep(FALSE, 10), rep(TRUE, 3)),
-                       filePath=file.path(resultsDir, "figures"),
-                       fileName="2b_forestPlotDindexPCOSP.pdf")
-
-
-## ----forest_plot_cIndex--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-forestPlotMetaEstimate(validationStats,
-                       stat="cIndex",
-                       isSummary=c(rep(FALSE, 10), rep(TRUE, 3)),
-                       filePath=file.path(resultsDir, "figures"),
-                       fileName="2c_forestPlotCindexPCOSP.pdf")
-
-### Calculate AUC Distribution and Plot ROC Curves
-# -------------------------------------------------------------------------
-
-
-## ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-aucStats <- aucMetaEstimates(validationCohorts, validationStats,
-                            seqCohorts=seqCohorts)
-saveRDS(aucStats, file=file.path(resultsDir, "2c_aucStatsPCOSP.rds"))
-
-
-## ----format_val_cohorts--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-formattedValCohorts <- formatValidationCohorts(validationCohorts)
-
-saveRDS(formattedValCohorts, file=file.path(resultsDir, "2e_formattedValiCohorts.rds"))
-
-
-## ----get_PCOSP_scores----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PCOSPscores <- validationStats$probabilities
-
-
-## ----plot_PCOSP_roc_curve------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-colours <- c("chartreuse3", "magenta", "#fb9a99", "turquoise3", "darkgoldenrod1",
-             "wheat4", "green", "red", "cornflowerblue", "mediumorchid2")
 
 ## FIXME:: Find out where warnings/messages are coming from and suppress them
 plotROCcurves(formattedValCohorts,

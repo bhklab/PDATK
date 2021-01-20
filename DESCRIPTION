@@ -83,7 +83,6 @@ Collate:
     'PCOSP_densityPlot.R'
     'PCOSP_estimatePCOSPscore.R'
     'PCOSP_fitGSAtoGeneSetCollection.R'
-    'PCOSP_forestPlotMetaEstimate.R'
     'PCOSP_formatValidationCohorts.R'
     'PCOSP_plotROCcurves.R'
     'PCOSP_readGenefuFilesToSigScores.R'
