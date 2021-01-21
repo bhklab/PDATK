@@ -9,7 +9,7 @@
 #'
 #'
 #'
-#' @alias RGAmodel
+#' @alias RGAModel
 #' @export
 RandomGeneAssignmentModel <- function(trainCohorts, minDaysSurvived=365, ...,
     randomSeed)

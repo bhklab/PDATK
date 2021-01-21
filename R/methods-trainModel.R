@@ -52,7 +52,7 @@ setMethod('trainModel', signature('PCOSP'),
     survivalGroups <- factor(colData(object)$prognosis, levels=c('good', 'bad'))
 
     topModels <- .generateTSPmodels(trainMatrix, survivalGroups, numModels,
-        minAccuracy, ...)
+        minAccuracy, sampleFUN=.randomSampleIndex, ...)
 
     models(object) <- topModels
     # Add additiona model paramters to metadta
@@ -66,7 +66,7 @@ setMethod('trainModel', signature('PCOSP'),
 #' @importFrom BiocParallel bplapply
 #' @importFrom S4Vectors SimpleList
 .generateTSPmodels <- function(trainMatrix, survivalGroups, numModels,
-    minAccuracy, ...)
+    minAccuracy, sampleFUN, ...)
 {
 
     # determine the largest sample size we can take
@@ -75,7 +75,7 @@ setMethod('trainModel', signature('PCOSP'),
 
     # random sample for each model
     trainingDataColIdxs <- lapply(rep(sampleSize, numModels),
-                                .randomSampleIndex,
+                                sampleFUN,
                                 labels=survivalGroups,
                                 groups=sort(unique(survivalGroups)))
 
@@ -129,8 +129,7 @@ setMethod('trainModel', signature('PCOSP'),
     mcols(selectedModels)$balancedAcc <-
         modelBalancedAcc[order(modelBalancedAcc, decreasing=TRUE)]
     # capture the function parameters
-    metadata(selectedModels) <- list(numModels=numModels,
-        minAccuracy=minAccuracy)
+    metadata(selectedModels) <- list(numModels=numModels)
 
     return(selectedModels)
 }
@@ -160,3 +159,61 @@ setMethod('trainModel', signature('PCOSP'),
     return(structure(rowIndices,
         .Label=as.factor(labels[rowIndices])))
 }
+
+#'
+#'
+#'
+#'
+#' @md
+#' @export
+setMethod('trainModel', signature('RLSModel'),
+    function(object, numModels=10, ...)
+{
+    # Configure local parameters
+    oldSeed <- .Random.seed
+    on.exit( .Random.seed <- oldSeed )
+
+    # Set local seed for random sampling
+    set.seed(metadata(object)$modelParams$randomSeed)
+
+    assays <- assays(object)
+
+    # Lose uniqueness of datatypes here
+    trainMatrix <- do.call(rbind, assays)
+    survivalGroups <- factor(colData(object)$prognosis, levels=c('good', 'bad'))
+
+    RLSmodels <- .generateTSPmodels(trainMatrix, survivalGroups, numModels,
+        sampleFUN=.randomSampleIndexShuffle, minAccuracy=0, ...)
+
+    models(object) <- RLSmodels
+    # Add additiona model paramters to metadta
+    metadata(object)$modelParams <- c(metadata(object)$modelParams,
+        list(numModels=numModels))
+    return(object)
+})
+
+##TODO:: Generalize this to n dimensions
+#' Generate a random sample from each group and randomly shuffle the labels
+#'
+#' Returns a list of
+#'
+#' @param n The sample size
+#' @param labels A \code{vector} of the group labels for all rows of the
+#'
+#' @param groups A vector of group labels for the data to sample from
+#' @param numSamples The number of samples to take
+#'
+#' @return A subset of your object with n random samples from each group in
+#'   groups. The number of rows returned will equal the number of groups times
+#'   the sample size.
+#' @keywords internal
+.randomSampleIndexShuffle <- function(n, labels, groups) {
+  rowIndices <- unlist(mapply(
+    function(x, n, labels) sample(which(labels==x), n, replace=FALSE),
+                              x=groups,
+                              MoreArgs=list(n=n, labels=labels),
+                              SIMPLIFY=FALSE))
+  return(structure(rowIndices,
+                   .Label=as.factor(sample(labels)[rowIndices])))
+}
+

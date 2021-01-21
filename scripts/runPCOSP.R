@@ -50,9 +50,7 @@ PCOSPmodel <- trainModel(PCOSPmodel, numModels=100, minAccuracy=0.6)
 saveRDS(PCOSPmodel, file=file.path(resultsDir, "1_PCOSPmodel.rds"))
 
 
-# -------------------------------------------------------------------------
-# 2. Calculate and Validate Meta-Estimate Statistics ----------------------
-# -------------------------------------------------------------------------
+
 
 # add the ICGC testing data to the model
 validationCohortList <- c(ICGCtestCohorts, validationCohortList)
@@ -74,10 +72,19 @@ concIndexForestPlot <- forestplot(validatedPCOSPmodel, stat='concordance_index')
 
 ### plot ROC curves
 # ------------------------------------------------------------------------
-plotROC(validatedPCOSPmodel, alpha=0.05)
+cohortROCplots <- plotROC(validatedPCOSPmodel, alpha=0.05)
 
+# -------------------------------------------------------------------------
+# 3. Random Label Shuffling Model -----------------------------------------
+# -------------------------------------------------------------------------
 
+RLSmodel <- RLSModel(ICGCtrainCohorts, randomSeed=1987)
 
+trainedRLSmodel <- trainModel(RLSmodel, numModels=100)
+
+predictionCohortList <- predictClasses(validationCohortList, model=trainedRLSmodel)
+
+validatedRLSmodel <- validateModel(trainedRLSmodel, predictionCohortList)
 
 
 
@@ -124,6 +131,7 @@ plotROC(validatedPCOSPmodel, alpha=0.05)
 
 ## ----build_and_select_models---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 library(PDATK)
+
 library(MetaGxPancreas)
 library(BiocParallel)
 

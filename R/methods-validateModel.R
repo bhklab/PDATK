@@ -28,7 +28,7 @@ setGeneric('validateModel', function(model, valData, ...)
 #' @import data.table
 #' @md
 #' @export
-setMethod('validateModel', signature(model='PCOSP',
+setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     valData='CohortList'), function(model, valData, ...)
 {
     # determine if the validation data already has predictions and if
@@ -120,7 +120,7 @@ setMethod('validateModel', signature(model='PCOSP',
 #' @importFrom reportROC reportROC
 #' @importFrom verification roc.area
 #' @export
-setMethod('validateModel', signature(model='PCOSP',
+setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     valData='SurvivalExperiment'), function(model, valData)
 {
     # determine if we need to rerun the classification model

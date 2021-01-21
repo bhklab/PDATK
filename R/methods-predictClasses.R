@@ -1,3 +1,6 @@
+#' @export
+setClassUnion('PCOSP_or_RLS_or_RGA', c('PCOSP', 'RLSModel', 'RGAModel'))
+
 #' Predict Classes for New Data Based on a Train Classifier Model
 #'
 #' @param object An `S4` object containing data to predict classes from.
@@ -22,9 +25,10 @@ setGeneric('predictClasses',
 #'   of models which predicted good prognosis for each sample.
 #'
 #' @md
+#' @include
 #' @export
 setMethod('predictClasses', signature(object='SurvivalExperiment',
-    model='PCOSP'), function(object, model, ...)
+    model='PCOSP_or_RLS_or_RGA'), function(object, model, ...)
 {
     # drop NA samples, they mess with calculating statistics
     keepSamples <- rownames(na.omit(colData(object)))
@@ -36,7 +40,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     modelList <- models(model)
     if (length(modelList) < 1)
         stop(.errorMsg(.context(), 'There are no models in the PCOSP model ',
-            'passed as the object argument. Please ensure you train your model',
+            'passed as the model argument. Please ensure you train your model',
             ' with `trainModel` before attempting to predict classes with it.'))
 
     assayData <- assays(object)
@@ -64,7 +68,9 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 
     return(object)
 })
-#'
+
+
+
 #' @param object A `CohortList` with `SurvivalExperiment`s to predict classes
 #'   for.
 #' @param model A trained `PCOSP` model to use for predicting classes.
@@ -81,7 +87,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #' @md
 #' @export
 setMethod('predictClasses', signature(object='CohortList',
-    model='PCOSP'), function(object, model, ...)
+    model='PCOSP_or_RLS_or_RGA'), function(object, model, ...)
 {
     predictionResults <- endoapply(object, predictClasses, model=model, ...)
     mcols(predictionResults)$hasPredictions <- TRUE

@@ -78,6 +78,7 @@ Collate:
     'class-SurvivalModel.R'
     'class-PCOSP.R'
     'class-RandomGeneAssignmentModel.R'
+    'class-RandomLabelShufflingModel.R'
     'generics.R'
     'getGeneSymbols-methods.R'
     'methods-dropNotCensored.R'
