@@ -12,12 +12,13 @@
 
 #' Pancreatic Cancer Overall Survival Predictor (PCOSP) Constructor
 #'
-#' @details This function assumes there is only 1 assay per `SurvivalExperiment`.
+#' @details This function assumes there is only 1 assay per
+#'  `SurvivalExperiment`.
 #'
-#' @param trainCohorts A `CohortList`s for training
-#'   the PCOSP model, with.
+#' @param trainCohorts A `CohortList` or `SurivalExperiment` containing the
+#'   training data for the `PCOSP` model.
 #' @param minDaysSurvived An `integer` indicating the minimum number of day
-#'   required to be in the 'high' survival group. Any patients below this
+#'   required to be in the 'good' survival group. Any patients below this
 #'   cut-off will be considered low survival. Default is 365 days.
 #' @param ... Force subsequent parameters to be named. This parameter is not
 #'   used.
@@ -32,12 +33,18 @@
 #' @export
 PCOSP <- function(trainCohorts, minDaysSurvived=365, ..., randomSeed) {
 
-    if (!is(trainCohort, 'SurvivalExperiment'))
-        stop(.errorMsg(.context(), 'The trainCohorts argument is not a ',
-            'SurvivalExperiment object. Please convert it before building a ',
-            'PCOSP model!'))
+    if (!is(trainCohorts, 'SurvivalExperient')) {
+        if (is(trainCohorts, 'CohortList'))
+            trainCohorts <- Reduce(merge, trainCohorts)
+            message()
+        else
+            stop(.errorMsg(.context(),
+                'The trainCohorts argument is not a CohortList or ',
+                'SurvivalExperiment object. Please convert it before building',
+                ' a PCOSP model!'))
+    }
 
-    assaysL <- assays(trainCohort)
+    assaysL <- assays(trainCohorts)
 
     modelMatrix <- do.call(rbind, as.list(assaysL))
     colData(trainCohort)$prognosis <-  # split into high and low survival

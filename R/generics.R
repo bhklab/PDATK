@@ -5,4 +5,5 @@
 #' @return A \code{character} vector with
 #'
 #' @export
-setGeneric('getGeneSymbols', function(dataset, ...) standardGeneric('getGeneSymbols'))
+setGeneric('getGeneSymbols', function(dataset, ...)
+    standardGeneric('getGeneSymbols'))

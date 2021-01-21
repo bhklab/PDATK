@@ -5,9 +5,13 @@
 #'   accessing slots relavant to a surival model. More specific model types
 #'   will inherit from this class for their accessor methods.
 #'
+#' @slot colData A `DataFrame` with merge column-level metadata for the model
+#'   training data in the `assays` slot.
+#' @slot rowData A `DataFrame` with merge row-level metadata for the model
+#'   training data in the `assays` slot.
+#' @slot assays A `SimpleList` of matrices, one for each cohort in the training
+#'   data for a `SurivalModel`.
 #' @slot models A `SimpleList` containing one or more model object.
-#' @slot trainingData A `CohortList` containing one or more `SurvivalExperiment`
-#'   objects used to train the models in the `models` slot.
 #' @slot validationData A `CohortList` containing one or more `SurvivalExperiment`
 #'   objects used to validate the model. This slot is populated by the when the
 #'   `validateModel` method is called on a `SurvivalModel` object.
@@ -15,14 +19,17 @@
 #'   calculated by the `validateModel` method.
 #' @slot modelParams A `list` containing configurable parameters related to
 #'   training the `SurvivalModel`
+#' @slot metadata A `SimpleList` of metadata related to the PCOSP model. This
+#'   slot will contain a modelParams item, which has the relevant parameters
+#'   used when training the model.
 #'
+#' @describeIn SurivalExperiment.Rd
 #' @md
 #' @include class-SurvivalExperiment.R
 #' @export
 setClass("SurvivalModel", contains=c('SurvivalExperiment', 'VIRTUAL'),
-    slots=list(models='SimpleList', trainingData='CohortList',
-        validationData='CohortList', validationStats='data.frame',
-        modelParams='list'
+    slots=list(models='SimpleList', validationData='CohortList',
+        validationStats='data.frame'
         ))
 
 #' Accessor for the models slot of an `S4` object
@@ -161,4 +168,9 @@ setValidity('SurvivalModel', function(object) {
     if (hasSurvivalGroup) hasSurvivalGroup else .errorMsg(.context(), 'The ',
         '`prognosis` column is missing. Object inheriting from the ',
         '`SurvivalModel` virtual class must contain this column!')
+    hasModelParams <- 'modelParams' %in% colnames(metadata(object))
+    if (hasModelParams) hasModelParams else .errorMsg(.context(), 'The ',
+        '`modelParams` item is missing from the from the `SurvivalModel`',
+        'metadata slot. Please ensure you are using the constructor to build ',
+        'your `SurvivalModel` object!')
 })
