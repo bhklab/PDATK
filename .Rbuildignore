@@ -8,3 +8,4 @@ results
 .idea
 scripts
 deprecated
+R/CSPC/*

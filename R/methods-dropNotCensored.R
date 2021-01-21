@@ -15,6 +15,13 @@ setGeneric('dropNotCensored',
 #' @param minDaysSurvived An `integer` specifying the minimum number of days
 #'   a patient needs to have survived to be included in the cohort.
 #'
+#' @details
+#' Censored means no event before end of measurement. Since we want not
+#'   censored, we keep patients who had an event before minDaysSurvived.
+#'   Therefore we keep individuals surviving > `minDaysSurvived`, or who had an
+#'   event (died) before minDaysSurvived.
+#'
+#' @md
 #' @export
 setMethod('dropNotCensored', signature('SurvivalExperiment'),
     function(object, minDaysSurvived=365)
@@ -29,7 +36,10 @@ setMethod('dropNotCensored', signature('SurvivalExperiment'),
     notYearOne <- days_survived > minDaysSurvived
 
     keepPatients <- notCensoredBefore | notYearOne
-    return(object[, keepPatients])
+    object <- object[, keepPatients]
+    colData(object)$prognosis <-
+        ifelse(days_survived[keepPatients] > 365, 'good', 'bad')
+    return(object)
 })
 #'
 #' @param object A `CohortList` for which to drop patients who died before

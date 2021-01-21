@@ -14,9 +14,6 @@ Pancreatic Cancer Overall Survival Predictor (PCOSP) Class
 \item{\code{trainCohorts}}{A \code{CohortList} of \code{SurvivalExperiment}s for training the
 PCOSP model.}
 
-\item{\code{model}}{`` The trained PCOSP model.}
-
-\item{\code{.intern}}{An \code{environment} storing internal object metadata. For
-developer use.}
+\item{\code{models}}{\code{SimpleList}}
 }}
 

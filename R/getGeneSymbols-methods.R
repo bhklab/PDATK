@@ -4,6 +4,7 @@
 #' @return A \code{character} vector containing the gene symbol from the SummarizedExperiment
 #'
 #' @importMethodsFrom SummarizedExperiment rowData
+#' @include generics.R
 #' @export
 setMethod("getGeneSymbols",
           signature('SummarizedExperiment'),

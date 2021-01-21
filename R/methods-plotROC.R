@@ -3,7 +3,7 @@
 #' @param object An `S4` object with a defined plotROC method.
 #' @param ... Allow new parameters to be added to this generic.
 #'
-#' @return A `ggplot2` object containing the ROC curves.
+#' @return A `ggplot` object containing the ROC curves.
 #'
 #' @export
 setGeneric('plotROC', function(object, ...)
@@ -35,8 +35,8 @@ setMethod('plotROC', signature(object='PCOSP'),
     .hasPCOSPcol <- function(colData) 'PCOSP_prob_good' %in% colnames(colData)
     if (!all(unlist(lapply(survivalDfList, .hasPCOSPcol)))) {
         stop(.errorMsg(.context(), 'One or more of the SurvivalExperiment ',
-            'objects in the validationSlot of the PCOSP object are missing ',
-            'PCOSP_prob_good column. Please rerun predictClasses on your ',
+            'objects in the validationData slot of the PCOSP object are missing ',
+            'the PCOSP_prob_good column. Please rerun predictClasses on your ',
             'validation data, then rerun validateModel with the updated ',
             'validation data for your model.'))
     }
@@ -65,7 +65,7 @@ setMethod('plotROC', signature(object='PCOSP'),
 
     plot <- ggplot(rocDT, aes(x=specificity, y=sensitivity,
                     color=cohort,
-                    linetype=p_value < 0.05)) +
+                    linetype=p_value < alpha)) +
                 geom_segment(aes(x=max(specificity), xend=min(specificity),
                     y=min(sensitivity), yend=max(sensitivity)), colour='grey',
                     size=0.1) +

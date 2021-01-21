@@ -4,9 +4,12 @@
 \alias{PCOSP}
 \title{Pancreatic Cancer Overall Survival Predictor (PCOSP) Constructor}
 \usage{
-PCOSP(trainCohort, minDaysSurvived = 365, ..., randomSeed)
+PCOSP(trainCohorts, minDaysSurvived = 365, ..., randomSeed)
 }
 \arguments{
+\item{trainCohorts}{A \code{CohortList}s for training
+the PCOSP model, with.}
+
 \item{minDaysSurvived}{An \code{integer} indicating the minimum number of day
 required to be in the 'high' survival group. Any patients below this
 cut-off will be considered low survival. Default is 365 days.}
@@ -16,9 +19,6 @@ used.}
 
 \item{randomSeed}{An \code{integer} random seed to use for training the model. If
 missing, this defaults to the seed 1234.}
-
-\item{trainCohorts}{A \code{CohortList}s for training
-the PCOSP model, with.}
 }
 \value{
 A \code{PCOSP} object with training data in the assays slot, concatenating

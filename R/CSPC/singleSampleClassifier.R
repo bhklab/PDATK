@@ -18,7 +18,7 @@ computeCohortCommMat <- function(cohortsDataL, metaGenes) {
   cohortsMetaGenesML <- lapply(cohortsMetaGenesL, as.matrix)
   # Impute missing values; Suppress cat/print output
   invisible(capture.output(cohortsImputeL <- lapply(cohortsMetaGenesML, impute.knn)))
-  cohortsMetaGenesL <- lapply(cohortsImputeL, `[[`, 'data')
+  cohortsMetaGenesL <- lapply(cohortsImputeL, `[[`, '../../data')
   # Merge matrixes colwise
   cohortCommunityMatrix <- do.call(cbind, cohortsMetaGenesL)
   return(cohortCommunityMatrix)

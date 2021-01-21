@@ -12,7 +12,7 @@ plotROC(object, ...)
 \item{...}{Allow new parameters to be added to this generic.}
 }
 \value{
-A `ggplot2` object containing the ROC curves.
+A `ggplot` object containing the ROC curves.
 }
 \description{
 Plot ROC curves for an `S4` object
