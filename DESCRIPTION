@@ -92,4 +92,4 @@ Collate:
     'methods-subset.R'
     'methods-trainModel.R'
     'methods-validateModel.R'
-    'networkCommunitySearch.R'
+    'utilities.R'

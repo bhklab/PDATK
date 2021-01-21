@@ -74,7 +74,7 @@ concIndexForestPlot <- forestplot(validatedPCOSPmodel, stat='concordance_index')
 
 ### plot ROC curves
 # ------------------------------------------------------------------------
-plotROC(validatedPCOSPmodel, alpha=0.01)
+plotROC(validatedPCOSPmodel, alpha=0.05)
 
 
 

@@ -1,36 +1,70 @@
-#' A Virtual Generic Container for Storing Mathematical Models of
+#' A Generic Container for Storing Mathematical Models of
 #'   SurvivalExperiments
 #'
-#' @description A virtual S4 class with a number of predefined methods for
+#' @description An S4 class with a number of predefined methods for
 #'   accessing slots relavant to a surival model. More specific model types
-#'   will inherit from this class for their accessor methods.
+#'   will inherit from this class for their accessor methods and constructor.
 #'
-#' @slot colData A `DataFrame` with merge column-level metadata for the model
+#' @slot colData A `DataFrame` with merged column-level metadata for the model
 #'   training data in the `assays` slot.
-#' @slot rowData A `DataFrame` with merge row-level metadata for the model
+#' @slot rowData A `DataFrame` with merged row-level metadata for the model
 #'   training data in the `assays` slot.
-#' @slot assays A `SimpleList` of matrices, one for each cohort in the training
-#'   data for a `SurivalModel`.
+#' @slot assays A `SimpleList` with a matrix containing the merged data from
+#'   the training data.
 #' @slot models A `SimpleList` containing one or more model object.
 #' @slot validationData A `CohortList` containing one or more `SurvivalExperiment`
 #'   objects used to validate the model. This slot is populated by the when the
 #'   `validateModel` method is called on a `SurvivalModel` object.
 #' @slot validationStats A `data.frame` object containing validation statistics
 #'   calculated by the `validateModel` method.
-#' @slot modelParams A `list` containing configurable parameters related to
-#'   training the `SurvivalModel`
 #' @slot metadata A `SimpleList` of metadata related to the PCOSP model. This
 #'   slot will contain a modelParams item, which has the relevant parameters
 #'   used when training the model.
 #'
-#' @describeIn SurivalExperiment.Rd
 #' @md
+#' @describeIn class-SurvivalModel.Rd
 #' @include class-SurvivalExperiment.R
 #' @export
-setClass("SurvivalModel", contains=c('SurvivalExperiment', 'VIRTUAL'),
-    slots=list(models='SimpleList', validationData='CohortList',
-        validationStats='data.frame'
-        ))
+.SurvivalModel <- setClass("SurvivalModel",
+    contains='SurvivalExperiment', slots=list(models='SimpleList',
+    validationData='CohortList', validationStats='data.frame'
+    ))
+#'
+#'
+#'
+#' @export
+SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
+    randomSeed)
+{
+    if (!is(trainCohorts, 'SurvivalExperiment')) {
+        if (is(trainCohorts, 'CohortList')) {
+            .mergeWithNames <- function(...) merge(...,
+                cohortNames=names(trainCohorts))
+            trainCohorts <- Reduce(.mergeWithNames, trainCohorts)
+            trainCohorts <- dropNotCensored(trainCohorts, minDaysSurvived)
+            message(.context(), 'Merging trainCohorts `CohortList` into a',
+                '`SurvivalExperiment` with shared genes and samples...')
+        } else {
+            stop(.errorMsg(.context(),
+                'The trainCohorts argument is not a CohortList or ',
+                'SurvivalExperiment object. Please convert it before building',
+                ' a RGA model!'))
+        }
+    }
+
+    if (!('prognosis' %in% colnames(colData(trainCohorts)))) {
+        colData(trainCohorts)$prognosis <-  # split into high and low survival
+        ifelse(colData(trainCohorts)$days_survived >= minDaysSurvived,
+            'good', 'bad')
+    }
+
+    metadata(trainCohorts)$modelParams <-
+        list(randomSeed=if (!missing(randomSeed)) randomSeed else 1234,
+            RNGkind=RNGkind())
+
+    SurvModel <- .SurvivalModel(trainCohorts)
+    return(SurvModel)
+}
 
 #' Accessor for the models slot of an `S4` object
 #'
@@ -165,12 +199,14 @@ setReplaceMethod('validationData', signature(object='SurvivalModel',
 #' @noRd
 setValidity('SurvivalModel', function(object) {
     hasSurvivalGroup <- 'prognosis' %in% colnames(colData(object))
-    if (hasSurvivalGroup) hasSurvivalGroup else .errorMsg(.context(), 'The ',
+    if (!hasSurvivalGroup) .errorMsg(.context(), 'The ',
         '`prognosis` column is missing. Object inheriting from the ',
-        '`SurvivalModel` virtual class must contain this column!')
-    hasModelParams <- 'modelParams' %in% colnames(metadata(object))
-    if (hasModelParams) hasModelParams else .errorMsg(.context(), 'The ',
+        '`SurvivalModel` class must contain this column!')
+    hasModelParams <- 'modelParams' %in% names(metadata(object))
+    if (!hasModelParams) .errorMsg(.context(), 'The ',
         '`modelParams` item is missing from the from the `SurvivalModel`',
         'metadata slot. Please ensure you are using the constructor to build ',
         'your `SurvivalModel` object!')
+
+    return(hasSurvivalGroup && hasModelParams)
 })

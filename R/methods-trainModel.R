@@ -45,17 +45,22 @@ setMethod('trainModel', signature('PCOSP'),
     # Set local seed for random sampling
     set.seed(metadata(object)$modelParams$randomSeed)
 
-    trainMatrix <- assay(object, 'trainMatrix')
-    survivalGroups <- as.factor(colData(object)$prognosis)
+    assays <- assays(object)
+
+    # Lose uniqueness of datatypes here
+    trainMatrix <- do.call(rbind, assays)
+    survivalGroups <- factor(colData(object)$prognosis, levels=c('good', 'bad'))
 
     topModels <- .generateTSPmodels(trainMatrix, survivalGroups, numModels,
         minAccuracy, ...)
 
     models(object) <- topModels
+    # Add additiona model paramters to metadta
+    metadata(object)$modelParams <- c(metadata(object)$modelParams,
+        list(numModels=numModels, minAccurary=minAccuracy))
     return(object)
 })
 
-##TODO:: See if we can refactor part of this to be reused in reshuffleRandomModels
 #' @importFrom caret confusionMatrix
 #' @importFrom switchBox SWAP.Train.KTSP
 #' @importFrom BiocParallel bplapply

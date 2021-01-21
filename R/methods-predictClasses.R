@@ -28,10 +28,10 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 {
     # drop NA samples, they mess with calculating statistics
     keepSamples <- rownames(na.omit(colData(object)))
-    if (keepSamples != colnames(object)) {
+    if (!all(colnames(object) %in% keepSamples)) {
         warning(.warnMsg(.context(), 'Dropped sampels with NA survival data!'))
     }
-    object <- object[, ]
+    object <- object[, keepSamples]
 
     modelList <- models(model)
     if (length(modelList) < 1)
