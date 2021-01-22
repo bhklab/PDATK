@@ -61,9 +61,7 @@ predictionCohortList <- predictClasses(validationCohortList, model=PCOSPmodel)
 
 validatedPCOSPmodel <- validateModel(PCOSPmodel, predictionCohortList)
 
-### forestPlotMetaEstimates
-# -------------------------------------------------------------------------
-
+# make forest plots
 hazardRatioForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index',
     transform='log2')
 concIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='concordance_index')
@@ -78,22 +76,32 @@ cohortROCplots <- plotROC(validatedPCOSPmodel, alpha=0.05)
 # -------------------------------------------------------------------------
 
 RLSmodel <- RLSModel(ICGCtrainCohorts, randomSeed=1987)
-
 trainedRLSmodel <- trainModel(RLSmodel, numModels=100)
-
-predictionCohortList <- predictClasses(validationCohortList, model=trainedRLSmodel)
-
-validatedRLSmodel <- validateModel(trainedRLSmodel, predictionCohortList)
-
+RLSpredCohortList <- predictClasses(validationCohortList, model=trainedRLSmodel)
+validatedRLSmodel <- validateModel(trainedRLSmodel, RLSpredCohortList)
 RLSmodelComparisonPlot <- densityPlotModelComparison(validatedRLSmodel,
     validatedPCOSPmodel, title='Random Label Shuffling vs PCOSP',
     mDataTypeLabels=c(rna_seq='Sequencing-based', rna_micro='Array-based',
         combined='Overall'))
 
+# -------------------------------------------------------------------------
+# 4. Random Gene Assignment Model -----------------------------------------
+# -------------------------------------------------------------------------
+
+RGAmodel <- RGAModel(ICGCtrainCohorts, randomSeed=1987)
+trainedRGAmodel <- trainModel(RGAmodel, numModels=100)
+RGApredCohortList <- predictClasses(validationCohortList,
+    model=trainedRGAmodel)
+validatedRGAmodel <- validateModel(trainedRGAmodel, RGApredCohortList)
+RGAmodelComparisonPlot <-  densityPlotModelComparison(validatedRGAmodel,
+    validatedPCOSPmodel, title='Random Gene Assignment vs PCOSP',
+    mDataTypeLabels=c(rna_seq='Sequencing-based', rna_micro='Array-based',
+        combined='Overall'))
 
 
-
-
+# -------------------------------------------------------------------------
+# 5. HyperGSA Pathway Analysis --------------------------------------------
+# -------------------------------------------------------------------------
 
 
 

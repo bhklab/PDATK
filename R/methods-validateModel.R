@@ -172,8 +172,8 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
         isSummary=FALSE
     )
 
-    validationStats(PCOSPmodel) <- valStatsDF
-    validationData(PCOSPmodel) <- CohortList(list(predSurvExp),
+    validationStats(model) <- valStatsDF
+    validationData(model) <- CohortList(list(predSurvExp),
         mDataTypes=metadata(predSurvExp)$mDataType)
-    return(PCOSPmodel)
+    return(model)
 })

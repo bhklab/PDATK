@@ -52,7 +52,7 @@ setMethod('trainModel', signature('PCOSP'),
     survivalGroups <- factor(colData(object)$prognosis, levels=c('good', 'bad'))
 
     topModels <- .generateTSPmodels(trainMatrix, survivalGroups, numModels,
-        minAccuracy, sampleFUN=.randomSampleIndex, ...)
+        minAccuracy, ...)
 
     models(object) <- topModels
     # Add additiona model paramters to metadta
@@ -66,7 +66,7 @@ setMethod('trainModel', signature('PCOSP'),
 #' @importFrom BiocParallel bplapply
 #' @importFrom S4Vectors SimpleList
 .generateTSPmodels <- function(trainMatrix, survivalGroups, numModels,
-    minAccuracy, sampleFUN, ...)
+    minAccuracy, sampleFUN=.randomSampleIndex, ...)
 {
 
     # determine the largest sample size we can take
@@ -98,9 +98,10 @@ setMethod('trainModel', signature('PCOSP'),
 
     # make predictions
     predictions <- bplapply(seq_along(testingDataColIdxs),
-                            function(i, testIdxs, data, models)
-                                SWAP.KTSP.Classify(data[, testIdxs[[i]]],
-                                                   models[[i]]),
+                            function(i, testIdxs, data, models) {
+                                        SWAP.KTSP.Classify(data[, testIdxs[[i]]],
+                                                   models[[i]])
+                            },
                             testIdxs=testingDataColIdxs,
                             data=trainMatrix,
                             models=trainedModels,
@@ -217,3 +218,59 @@ setMethod('trainModel', signature('RLSModel'),
                    .Label=as.factor(sample(labels)[rowIndices])))
 }
 
+#' Train a RGAModel Based on the Data in the assays slot.
+#'
+#' Uses the switchBox SWAP.Train.KTSP function to fit a number of k top scoring
+#'   pair models to the data, filtering the results to the best models based
+#'   on the specified paramters.
+#'
+#' @details This function is parallelized with BiocParallel, thus if you wish
+#'   to change the back-end for parallelization, number of threads, or any
+#'   other parallelization configuration please pass BPPARAM to bplapply.
+#'
+#' @param object A `RGAmodel` object to train.
+#' @param numModels An `integer` specifying the number of models to train.
+#'   Defaults to 10. We recommend using 1000+ for good results.
+#' @param minAccuracy A `float` specifying the balanced accurary required
+#'   to consider a model 'top scoring'. Defaults to 0. Must be in the
+#'   range [0, 1].
+#' @param ... Fall through arguments to `BiocParallel::bplapply`
+#'
+#' @return A `RGAModel` object with the trained model in the `model` slot.
+#'
+#' @seealso switchBox::SWAP.KTSP.Train BiocParallel::bplapply
+#'
+#' @importFrom BiocParallel bplapply
+#' @md
+#' @export
+setMethod('trainModel', signature('RGAModel'),
+    function(object, numModels=10, minAccuracy=0.0, ...)
+{
+    # Configure local parameters
+    oldSeed <- .Random.seed
+    on.exit( .Random.seed <- oldSeed )
+
+    # Set local seed for random sampling
+    set.seed(metadata(object)$modelParams$randomSeed)
+
+    assays <- assays(object)
+
+    # Lose uniqueness of datatypes here
+    trainMatrix <- do.call(rbind, assays)
+    survivalGroups <- factor(colData(object)$prognosis, levels=c('good', 'bad'))
+
+    RGAmodels <- .generateTSPmodels(trainMatrix, survivalGroups, numModels,
+        minAccuracy, ...)
+
+    geneNames <- rownames(trainMatrix)
+    for (i in seq_along(RGAmodels)) {
+        RGAmodels[[i]]$TSPs[, 1] <- sample(geneNames, nrow(RGAmodels[[i]]$TSPs))
+        RGAmodels[[i]]$TSPs[, 2] <- sample(geneNames, nrow(RGAmodels[[i]]$TSPs))
+    }
+
+    models(object) <- RGAmodels
+    # Add additiona model paramters to metadata
+    metadata(object)$modelParams <- c(metadata(object)$modelParams,
+        list(numModels=numModels, minAccurary=minAccuracy))
+    return(object)
+})
