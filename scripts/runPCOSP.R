@@ -26,6 +26,8 @@ ICGCcohortList <- cohortList[grepl('icgc', names(cohortList),
 validationCohortList <- cohortList[!grepl('icgc', names(cohortList),
     ignore.case=TRUE)]
 
+validationCohortList <- dropNotCensored(validationCohortList)
+
 # find samples with both types of molecular data
 ## TODO:: Is it confusing to use subset to subset list items? Maybe make
 ##   generic subsetItems or subsubset?
@@ -33,8 +35,7 @@ commonSamples <- findCommonSamples(ICGCcohortList)
 ICGCtrainCohorts <- subset(ICGCcohortList, select=commonSamples)
 ICGCtestCohorts <- subset(ICGCcohortList, select=commonSamples, invert=TRUE)
 
-# Drop early deaths, which we attribute to disease severity and thus aren't
-#   usefulf or classifying survival
+# Drop observations with no event in the first year
 ICGCtrainCohorts <- dropNotCensored(ICGCtrainCohorts)
 
 # Merge the training cohorts into a single SurvivalExperiment, with each
@@ -50,12 +51,10 @@ PCOSPmodel <- trainModel(PCOSPmodel, numModels=100, minAccuracy=0.6)
 saveRDS(PCOSPmodel, file=file.path(resultsDir, "1_PCOSPmodel.rds"))
 
 
-
-
 # add the ICGC testing data to the model
 validationCohortList <- c(ICGCtestCohorts, validationCohortList)
 
-# drop ICGC sequencing becuase it only has deceased pateints
+# drop ICGC sequencing becuase it only has deceased patients in the testing data
 validationCohortList <- validationCohortList[-2]
 
 predictionCohortList <- predictClasses(validationCohortList, model=PCOSPmodel)
@@ -65,9 +64,9 @@ validatedPCOSPmodel <- validateModel(PCOSPmodel, predictionCohortList)
 ### forestPlotMetaEstimates
 # -------------------------------------------------------------------------
 
-hazardRatioForestPlot <- forestplot(validatedPCOSPmodel, stat='D_index',
+hazardRatioForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index',
     transform='log2')
-concIndexForestPlot <- forestplot(validatedPCOSPmodel, stat='concordance_index')
+concIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='concordance_index')
 
 
 ### plot ROC curves
@@ -86,7 +85,10 @@ predictionCohortList <- predictClasses(validationCohortList, model=trainedRLSmod
 
 validatedRLSmodel <- validateModel(trainedRLSmodel, predictionCohortList)
 
-
+RLSmodelComparisonPlot <- densityPlotModelComparison(validatedRLSmodel,
+    validatedPCOSPmodel, title='Random Label Shuffling vs PCOSP',
+    mDataTypeLabels=c(rna_seq='Sequencing-based', rna_micro='Array-based',
+        combined='Overall'))
 
 
 

@@ -11,7 +11,7 @@
 #'
 #' @alias RLSModel
 #' @export
-RandomLabelShuffingModel <- function(trainCohorts, minDaysSurvived=365, ...,
+RandomLabelShufflingModel <- function(trainCohorts, minDaysSurvived=365, ...,
     randomSeed)
 {
     RLSModel <- .RLSModel(SurvivalModel(trainCohorts, minDaysSurvived,
@@ -19,4 +19,4 @@ RandomLabelShuffingModel <- function(trainCohorts, minDaysSurvived=365, ...,
     return(RLSModel)
 }
 #' @export
-RLSModel <- RandomLabelShuffingModel
+RLSModel <- RandomLabelShufflingModel

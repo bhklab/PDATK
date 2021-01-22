@@ -6,8 +6,8 @@
 #' @return None, draws a forest plot.
 #'
 #' @export
-setGeneric('forestplot', function(object, ...)
-    standardGeneric('forestplot'))
+setGeneric('forestPlot', function(object, ...)
+    standardGeneric('forestPlot'))
 #'
 #' Render a forest plot from the `validationStats` slot of a `PCOSP` model object.
 #'
@@ -36,7 +36,7 @@ setGeneric('forestplot', function(object, ...)
 #' @importFrom stats reformulate
 #' @importFrom scales scientific
 #' @export
-setMethod('forestplot', signature('PCOSP'),
+setMethod('forestPlot', signature('PCOSP'),
     function(object, stat, groupBy='mDataType', colourBy='isSummary',
         vline, ..., xlab, ylab, transform, colours, title)
 {
@@ -80,7 +80,11 @@ setMethod('forestplot', signature('PCOSP'),
         theme_bw() +
         facet_grid(reformulate('.', groupBy), scales='free_y',
             space='free', switch='x') +
-        theme(strip.text.y = element_text(angle = 0)) +
+        theme(strip.text.y = element_text(angle = 0),
+            plot.title=element_text(hjust = 0.5),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.background = element_blank()) +
         geom_vline(xintercept=vline, linetype=3) +
         xlab(xlab) +
         ylab(ylab)

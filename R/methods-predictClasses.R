@@ -56,7 +56,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     # convert factor to character
     predictionListChar <- lapply(predictionList, as.character)
     predictions <- do.call(rbind, predictionListChar)
-    colnames(predictions) <- colnames(assayData)
+    colnames(predictions) <- colnames(assayMatrix)
 
     metadata(object)$PCOSPpredictions <- predictions
     metadata(object)$PCOSPparams <- metadata(model)$modelParams
