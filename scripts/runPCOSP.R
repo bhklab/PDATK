@@ -1,4 +1,5 @@
 library(PDATK)
+library(msigdbr)
 library(qs)
 
 # Initialize a directory for result data
@@ -103,10 +104,14 @@ RGAmodelComparisonPlot <-  densityPlotModelComparison(validatedRGAmodel,
 # 5. HyperGSA Pathway Analysis --------------------------------------------
 # -------------------------------------------------------------------------
 
+# Get genes sets to conduct GSEA analysis with
+allHumanGeneSets <- msigdbr()
+allGeneSets <- as.data.table(allHumanGeneSets)
+geneSets <- allGeneSets[grepl('^GO.*|.*CANONICAL.*|^HALLMARK.*', gs_name),
+    .(gene_symbol, gs_name)]
 
-
-
-
+# Conduct GSEA
+GSEAresultDT <- runGSEA(validatedPCOSPmodel, geneSets)
 
 
 
