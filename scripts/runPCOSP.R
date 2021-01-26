@@ -114,7 +114,12 @@ geneSets <- allGeneSets[grepl('^GO.*|.*CANONICAL.*|^HALLMARK.*', gs_name),
 GSEAresultDT <- runGSEA(validatedPCOSPmodel, geneSets)
 
 
+# -------------------------------------------------------------------------
+# 6. Clinical Model Comparison --------------------------------------------
+# -------------------------------------------------------------------------
 
+
+clinModel <- ClinicalModel(ICGCtrain, formula='prognosis ~ sex + age')
 
 
 

@@ -73,9 +73,10 @@ biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software, Classif
 BugReports: https://github.com/bhklab/PanCuRx/issues
 Collate: 
     'class-CSPC.R'
-    'class-CohortList.R'
     'class-SurvivalExperiment.R'
     'class-SurvivalModel.R'
+    'class-ClinicalModel.R'
+    'class-CohortList.R'
     'class-PCOSP.R'
     'class-RandomGeneAssignmentModel.R'
     'class-RandomLabelShufflingModel.R'

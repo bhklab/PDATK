@@ -30,8 +30,6 @@
     validationData='CohortList', validationStats='data.frame'
     ))
 #'
-#'
-#'
 #' @export
 SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
     randomSeed)
@@ -48,21 +46,22 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
             stop(.errorMsg(.context(),
                 'The trainCohorts argument is not a CohortList or ',
                 'SurvivalExperiment object. Please convert it before building',
-                ' a RGA model!'))
+                ' a SurvivalModel object!'))
         }
     }
 
     if (!('prognosis' %in% colnames(colData(trainCohorts)))) {
         colData(trainCohorts)$prognosis <-  # split into high and low survival
-        ifelse(colData(trainCohorts)$days_survived >= minDaysSurvived,
-            'good', 'bad')
+            ifelse(colData(trainCohorts)$days_survived >= minDaysSurvived,
+                'good', 'bad')
     }
 
     metadata(trainCohorts)$modelParams <-
         list(randomSeed=if (!missing(randomSeed)) randomSeed else 1234,
             RNGkind=RNGkind())
 
-    SurvModel <- .SurvivalModel(trainCohorts)
+    SurvModel <- .SurvivalModel(trainCohorts, models=SimpleList(),
+        validationData=CohortList(mDataTypes=""), validationStats=data.frame())
     return(SurvModel)
 }
 
@@ -198,6 +197,7 @@ setReplaceMethod('validationData', signature(object='SurvivalModel',
 
 #' @noRd
 setValidity('SurvivalModel', function(object) {
+
     hasSurvivalGroup <- 'prognosis' %in% colnames(colData(object))
     if (!hasSurvivalGroup) .errorMsg(.context(), 'The ',
         '`prognosis` column is missing. Object inheriting from the ',
