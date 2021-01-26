@@ -274,3 +274,41 @@ setMethod('trainModel', signature('RGAModel'),
         list(numModels=numModels, minAccurary=minAccuracy))
     return(object)
 })
+
+#'
+#' @param object A `ClinicalModel` object, with survival data for the model
+#'   in the colData slot.
+#' @param ... Fall through parameters to the [`stats::glm`] function.
+#' @param family Argument to the family parameter of [`stats::glm`]. Defaults
+#'   to `binomial(link='logit')`. This parameter must be named.
+#'@param na.action Argument to the na.action paramater of [`stats::glm`].
+#'   Deafults to 'na.omit', dropping rows with NA values in one or more of the
+#'   formula variables.
+#'
+#' @return A `ClinicalModel` object with a `glm` object in the models slot.
+#'
+#' @md
+#' @export
+setMethod('trainModel', signature(object='ClinicalModel'),
+    function(object, ..., family=binomial(link='logit'), na.action=na.exclude)
+{
+    # Configure local parameters
+    oldSeed <- .Random.seed
+    on.exit( .Random.seed <- oldSeed )
+
+    # Set local seed for random sampling
+    set.seed(metadata(object)$modelParams$randomSeed)
+
+    survivalData <- colData(object)
+    survivalData$prognosis <- factor(survivalData$prognosis,
+        levels=c('good', 'bad'))
+    formula <- as.formula(metadata(object)$modelParams$formula)
+
+    # use eval substitute to ensure the formula is captured in the glm call
+    model <- eval(substitute(glm(formula, data=survivalData,
+        family=family, na.action=na.action, ...)))
+
+    models(clinicalModel) <- SimpleList(glm=model)
+    return(clinicalModel)
+
+})

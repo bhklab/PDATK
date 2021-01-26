@@ -43,7 +43,7 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
             message(.context(), 'Merging trainCohorts `CohortList` into a',
                 '`SurvivalExperiment` with shared genes and samples...')
         } else {
-            stop(.errorMsg(.context(),
+            stop(.errorMsg(.context(3),
                 'The trainCohorts argument is not a CohortList or ',
                 'SurvivalExperiment object. Please convert it before building',
                 ' a SurvivalModel object!'))

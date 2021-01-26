@@ -94,3 +94,48 @@ setMethod('predictClasses', signature(object='CohortList',
     metadata(predictionResults)$predictionModel <- model
     return(predictionResults)
 })
+
+
+#'
+#' @param object A `SurvivalExperiment` object with the correct columns in
+#'   `colData` to match the formula for the `ClinicalModel` object.
+#' @param model A trained `ClinicalModel` object, as return by `trainModel`.
+#' @param ... Fall through parameters to [`stats::predict`].
+#' @param na.action The `na.action` paramter passed to [`stats::predict.glm`].
+#' @param type The `type` parameter passed to [`stats::predict.glm`]
+#'
+#' @return A `CohortList` with the model predictions in the
+#'
+#' @md
+#' @importFrom stats predict glm
+#' @export
+setMethod('predictClasses', signature(object='SurvivalExperiment',
+    model='ClinicalModel'), function(object, model, ..., na.action='na.exclude',
+        type='response')
+{
+
+    formula <- as.formula(metadata(object)$modelParams$formula)
+    formulaCols <- as.character(formula[seq(2, 3)])
+    # split the formula into a vector where each variable is an item
+    formulaCols <- unlist(strsplit(formulaCols,
+        split='[\\s]*[\\+\\-\\~\\=\\*][\\s]*', perl=TRUE))
+
+    hasFormulaCols <- formulaCols %in% colnames(colData(object))
+    if (!all(hasFormulaCols))
+        stop(.errorMsg(.context(), 'The columns ', formulaCols[!hasFormulaCols],
+            ' are missing from the colData slot of the training data',
+            'Please only specify valid column names in colData to the formula!'))
+
+    predictions <- predict(model, colData(object), ..., na.action=na.action,
+        type=type)
+
+})
+#'
+#' @param
+#'
+#' @export
+setMethod('predictClasses', signature(object='SurvivalExperiment',
+    model='ClinicalModel'), function(object, model)
+{
+
+})

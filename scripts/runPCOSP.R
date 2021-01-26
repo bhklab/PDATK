@@ -118,9 +118,9 @@ GSEAresultDT <- runGSEA(validatedPCOSPmodel, geneSets)
 # 6. Clinical Model Comparison --------------------------------------------
 # -------------------------------------------------------------------------
 
-
-clinModel <- ClinicalModel(ICGCtrain, formula='prognosis ~ sex + age')
-
+clinicalModel <- ClinicalModel(ICGCtrain,
+    formula='prognosis ~ sex + age + T + N + M + grade')
+trainedClinicalModel <- trainModel(clinicalModel)
 
 
 
@@ -542,8 +542,8 @@ saveRDS(GSAmodels, file=file.path(resultsDir, "5_GSAmodels.rds"))
 
 
 ## ----clinical_model_comparison-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-load(file.path(dataDir, "PCOSP_clinicalFeatures.rda"))
-load(file.path(dataDir, "PCOSP_cohortClasses.rda"))
+load(file.path(dataDir, "PCOSP_clinicalFeatures.rda"), verbose=TRUE)
+load(file.path(dataDir, "PCOSP_cohortClasses.rda"), verbose=TRUE)
 
 # Rename clinical features for plots and reorder them
 names(clinicalFeatures) <- c("PCSI", "ICGCclinical", "TCGA", "ICGCMICRO", "OUH")
