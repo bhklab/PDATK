@@ -121,7 +121,10 @@ GSEAresultDT <- runGSEA(validatedPCOSPmodel, geneSets)
 clinicalModel <- ClinicalModel(ICGCtrain,
     formula='prognosis ~ sex + age + T + N + M + grade')
 trainedClinicalModel <- trainModel(clinicalModel)
-
+# subset to only those SurvivalExperiments with appropriate clinical metadata
+hasModelParamsCohortList <- predictionCohortList[c('ICGCMICRO', 'PCSI', 'OUH')]
+clinicalPredCohortList <- predictClasses(hasModelParamsCohortList,
+    model=trainedClinicalModel)
 
 
 

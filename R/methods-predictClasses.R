@@ -95,7 +95,6 @@ setMethod('predictClasses', signature(object='CohortList',
     return(predictionResults)
 })
 
-
 #'
 #' @param object A `SurvivalExperiment` object with the correct columns in
 #'   `colData` to match the formula for the `ClinicalModel` object.
@@ -104,7 +103,8 @@ setMethod('predictClasses', signature(object='CohortList',
 #' @param na.action The `na.action` paramter passed to [`stats::predict.glm`].
 #' @param type The `type` parameter passed to [`stats::predict.glm`]
 #'
-#' @return A `CohortList` with the model predictions in the
+#' @return A `SurvivalExperiment` with the model predictions in the colData
+#'   slot as clinical_prob_good.
 #'
 #' @md
 #' @importFrom stats predict glm
@@ -114,9 +114,11 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
         type='response')
 {
 
-    formula <- as.formula(metadata(object)$modelParams$formula)
+    # validate the
+    formula <- as.formula(metadata(model)$modelParams$formula)
     formulaCols <- as.character(formula[seq(2, 3)])
     # split the formula into a vector where each variable is an item
+    ## FIXME:: You can just access the variable names in xlevels of the model
     formulaCols <- unlist(strsplit(formulaCols,
         split='[\\s]*[\\+\\-\\~\\=\\*][\\s]*', perl=TRUE))
 
@@ -126,16 +128,54 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
             ' are missing from the colData slot of the training data',
             'Please only specify valid column names in colData to the formula!'))
 
-    predictions <- predict(model, colData(object), ..., na.action=na.action,
-        type=type)
+    if (length(models(model)) > 1) warning(.warnMsg(.context(), 'There is more
+        than one model in your ClinicalModel. Only using the first one...'))
+
+    # Don't use rows with levels that aren't in the model
+    xlevels <- models(mode)$glm$xlevels
+    keepRows <- rep(TRUE, nrow(colData(object)))
+    for (name in names(xlevels)) {
+        keep <- colData(object)[[name]] %in% xlevels[name]
+        keepRows <- keepRows & keep
+    }
+    if (!all(keepRows)) {
+        warning(.warnMsg(.context(), 'Rows ', which(!keepRows), ' have levels
+            that are not in the model, skipping these rows...'))
+    }
+
+    predictions <- predict(models(model)[[1]],colData(object)[keepRows], ...,
+        na.action=na.action,type=type)
+
+    colData(object)$clinical_prob_good <- NA
+    colData(object)$clinical_prob_good[keepRows] <- predictions
+    return(object)
 
 })
 #'
-#' @param
+#' Use a Clinical GLM to Predict Classes for a `CohortList` of
+#'   `SurvivalExperment` Objects.
 #'
+#' @param object A `CohortList` with `SurvivalExperiment`s to predict classes
+#'   for. The colData slot in ALL `SurvivalExperiment`s must have column names
+#'   which match the formula in the model object.
+#' @param model A trained `ClinicalModel` object, as return by `trainModel`.
+#' @param ... Fall through parameters to [`stats::predict`].
+#' @param na.action The `na.action` paramter passed to [`stats::predict.glm`].
+#' @param type The `type` parameter passed to [`stats::predict.glm`]
+#'
+#' @return A `CohortList` with the model predictions in the colData
+#'   slot as clinical_prob_good for each `SurvivalExperiment`, and the
+#'   model in the metadata as predictionModel.
+#'
+#' @md
 #' @export
-setMethod('predictClasses', signature(object='SurvivalExperiment',
-    model='ClinicalModel'), function(object, model)
+setMethod('predictClasses', signature(object='CohortList',
+    model='ClinicalModel'), function(object, model, ..., na.action='na.exclude',
+        type='response')
 {
-
+    predictionResults <- endoapply(object, predictClasses, model=model, ...,
+        na.action=na.action, type=type)
+    mcols(predictionResults)$hasPredictions <- TRUE
+    metadata(predictionResults)$predictionModel <- model
+    return(predictionResults)
 })
