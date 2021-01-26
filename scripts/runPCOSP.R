@@ -62,6 +62,9 @@ predictionCohortList <- predictClasses(validationCohortList, model=PCOSPmodel)
 
 validatedPCOSPmodel <- validateModel(PCOSPmodel, predictionCohortList)
 
+
+
+
 # make forest plots
 hazardRatioForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index',
     transform='log2')
@@ -125,12 +128,8 @@ trainedClinicalModel <- trainModel(clinicalModel)
 hasModelParamsCohortList <- predictionCohortList[c('ICGCMICRO', 'PCSI', 'OUH')]
 clinicalPredCohortList <- predictClasses(hasModelParamsCohortList,
     model=trainedClinicalModel)
-
-
-
-
-
-
+validatedClinicalModel <- validateModel(trainedClinicalModel,
+    clinicalPredCohortList)
 
 
 

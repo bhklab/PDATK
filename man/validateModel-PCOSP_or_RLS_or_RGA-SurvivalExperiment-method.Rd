@@ -9,7 +9,7 @@
 \arguments{
 \item{model}{A \code{PCOSP} model which has been trained using \code{trainModel}.}
 
-\item{validationData}{A \code{SurvivalExperiment} to validate the model with.}
+\item{valData}{A \code{SurvivalExperiment} to validate the model with.}
 }
 \value{
 The \code{PCOSPmodel} with the validation statistics in the \code{validationStats}

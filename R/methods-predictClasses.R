@@ -114,42 +114,43 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
         type='response')
 {
 
-    # validate the
+    # check that the formula is valid and the variables are in the training data
     formula <- as.formula(metadata(model)$modelParams$formula)
     formulaCols <- as.character(formula[seq(2, 3)])
     # split the formula into a vector where each variable is an item
-    ## FIXME:: You can just access the variable names in xlevels of the model
     formulaCols <- unlist(strsplit(formulaCols,
         split='[\\s]*[\\+\\-\\~\\=\\*][\\s]*', perl=TRUE))
-
     hasFormulaCols <- formulaCols %in% colnames(colData(object))
     if (!all(hasFormulaCols))
         stop(.errorMsg(.context(), 'The columns ', formulaCols[!hasFormulaCols],
             ' are missing from the colData slot of the training data',
             'Please only specify valid column names in colData to the formula!'))
-
     if (length(models(model)) > 1) warning(.warnMsg(.context(), 'There is more
         than one model in your ClinicalModel. Only using the first one...'))
 
-    # Don't use rows with levels that aren't in the model
-    xlevels <- models(mode)$glm$xlevels
+    # Skip rows with levels that aren't in the model; prevents predict.glm for
+    #   breaking if there are new levels prediction data
+    modelFactorLevels <- models(model)$glm$xlevels
     keepRows <- rep(TRUE, nrow(colData(object)))
-    for (name in names(xlevels)) {
-        keep <- colData(object)[[name]] %in% xlevels[name]
+    for (name in names(modelFactorLevels)) {
+        keep <- colData(object)[[name]] %in% modelFactorLevels[[name]]
         keepRows <- keepRows & keep
     }
-    if (!all(keepRows)) {
-        warning(.warnMsg(.context(), 'Rows ', which(!keepRows), ' have levels
-            that are not in the model, skipping these rows...'))
-    }
+    if (!all(keepRows))
+        warning(.warnMsg(.context(1), 'Rows ', paste0(which(!keepRows), collapse=', '),
+            ' have levels that are not in the model, skipping these rows...'))
 
-    predictions <- predict(models(model)[[1]],colData(object)[keepRows], ...,
+    # Calculate survival probabiltiies
+    predictions <- predict(models(model)[[1]],colData(object)[keepRows, ], ...,
         na.action=na.action,type=type)
 
+    metadata(object)$GLMpredictions <- predictions
+    metadata(object)$GLMparams <- metadata(model)$modelParams
+
+    # Update the `SurvivalExperiment` object with the predicted probabilities
     colData(object)$clinical_prob_good <- NA
     colData(object)$clinical_prob_good[keepRows] <- predictions
     return(object)
-
 })
 #'
 #' Use a Clinical GLM to Predict Classes for a `CohortList` of
