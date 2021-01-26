@@ -139,7 +139,6 @@ validatedClinicalModel <- validateModel(trainedClinicalModel,
 
 
 
-
 ############################ DEPRECATED ###################################
 
 

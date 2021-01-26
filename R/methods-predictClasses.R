@@ -142,14 +142,17 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 
     # Calculate survival probabiltiies
     predictions <- predict(models(model)[[1]],colData(object)[keepRows, ], ...,
-        na.action=na.action,type=type)
-
-    metadata(object)$GLMpredictions <- predictions
-    metadata(object)$GLMparams <- metadata(model)$modelParams
+        na.action=na.action, type=type)
 
     # Update the `SurvivalExperiment` object with the predicted probabilities
     colData(object)$clinical_prob_good <- NA
     colData(object)$clinical_prob_good[keepRows] <- predictions
+
+    metadata(object)$GLMpredictions <- matrix(
+        ifelse(colData(object)$clinical_prob_good > 0.5, 'good', 'bad'),
+        byrow=TRUE, nrow=1, dimnames=list('glm', rownames(colData(object))))
+    metadata(object)$GLMparams <- metadata(model)$modelParams
+
     return(object)
 })
 #'
