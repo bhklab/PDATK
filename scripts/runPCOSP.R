@@ -144,7 +144,10 @@ clinCindexForestPlot <- forestPlot(validatedClinicalModel,
 
 #
 clinicalVsPCOSP <- compareModels(validatedClinicalModel, validatedPCOSPmodel)
-
+clinVsPCOSPdIndexForestPlot <- forestPlot(clinicalVsPCOSP, stat='D_index',
+    transform='log2')
+clinVsPCOSPconcIndexForestPlot <- forestPlot(clinicalVsPCOSP,
+    stat='concordance_index')
 
 
 ############################ DEPRECATED ###################################

@@ -115,7 +115,7 @@ setMethod('forestPlot', signature(object='ModelComparison'),
 
     statsDT <- as.data.table(object)[statistic == stat, ]
     statsDT[, model_pvalue :=
-        paste0(cohort, ' (', scientific(p_value,  2), ')')]
+        paste0(model, ' (', scientific(p_value,  2), ')')]
 
     if (missing(vline)) {
         vline <- switch(stat,
@@ -133,7 +133,7 @@ setMethod('forestPlot', signature(object='ModelComparison'),
                 'manually set the x label with the xlab argument!')))
     }
 
-    if (missing(ylab)) ylab <- 'Cohort (P-value)'
+    if (missing(ylab)) ylab <- 'Model (P-value)'
 
     if (!missing(transform)) {
         statsDT[, `:=`(estimate=get(transform)(estimate),
@@ -142,13 +142,15 @@ setMethod('forestPlot', signature(object='ModelComparison'),
         vline <- get(transform)(vline)
     }
 
-    plot <- ggplot(statsDT,
-                aes(y=reorder(model_pvalue, -isSummary),
-                x=estimate, xmin=lower, xmax=upper, shape=isSummary)) +
-        geom_pointrange(aes_string(colour=colourBy, group=groupBy)) +
+    plot <-
+        ggplot(statsDT[order(-isSummary)],
+            aes(y=reorder(model_pvalue, -isSummary), x=estimate,
+            xmin=lower, xmax=upper, shape=isSummary)) +
+        geom_pointrange(aes_string(colour=colourBy,
+            group=paste0('reorder(', groupBy, ', -isSummary)'))) +
         theme_bw() +
-        facet_grid(reformulate('.', groupBy), scales='free_y',
-            space='free', switch='y') +
+        facet_grid(reformulate('.', groupBy),
+            scales='free_y', space='free', switch='y') +
         theme(strip.text.y = element_text(angle = 0),
             plot.title=element_text(hjust = 0.5),
             panel.grid.major = element_blank(),

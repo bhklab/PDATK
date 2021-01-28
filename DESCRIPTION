@@ -2,7 +2,7 @@ Package: PDATK
 Type: Package
 Title: Analysis of Large-Scale Pharmacogenomic Data
 Version: 0.0.1
-Date: 2020-11-19
+Date: 2021-01-28
 Author: Vandana Sandhu, Heewon Seo, Christopher Eeles, Benjamin Haibe-Kains
 Maintainer: Benjamin Haibe-Kains <benjamin.haibe.kains@utoronto.ca>
 Description: A unique set of 89 pancreatic cancer samples profiled using both 
@@ -78,6 +78,7 @@ Collate:
     'class-SurvivalModel.R'
     'class-ClinicalModel.R'
     'class-CohortList.R'
+    'class-GeneFuModel.R'
     'class-ModelComparison.R'
     'class-PCOSP.R'
     'class-RandomGeneAssignmentModel.R'

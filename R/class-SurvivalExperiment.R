@@ -44,6 +44,14 @@ SurvivalExperiment <- function(..., days_survived='days_survived',
 
     colData(SE) <- rename(colData(SE), renameVector)
 
+    # allow empty SurivalExperiments to exist
+    if (nrow(colData(SE)) == 0) {
+        if (!all(renameVector %in% colnames(colData(SE)))) {
+            colData(SE) <- cbind(colData(SE),
+                DataFrame(days_survived=NA_integer_, is_deceased=NA_integer_))
+        }
+    }
+
     if (!is.integer(colData(SE)$is_deceased)) {
         is_deceased_col <- colData(SE)$is_deceased
         switch(class(is_deceased_col),
