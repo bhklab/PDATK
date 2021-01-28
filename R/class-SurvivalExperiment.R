@@ -33,6 +33,7 @@
 SurvivalExperiment <- function(..., days_survived='days_survived',
     is_deceased='is_deceased', sumExp)
 {
+    ## TODO:: Clean up constructor logic
     SE <- if (missing(sumExp)) SummarizedExperiment(...) else sumExp
 
     if (!is(SE, 'SummarizedExperiment'))
@@ -42,13 +43,14 @@ SurvivalExperiment <- function(..., days_survived='days_survived',
     renameVector <- c('days_survived', 'is_deceased')
     names(renameVector) <- c(days_survived, is_deceased)
 
-    colData(SE) <- rename(colData(SE), renameVector)
+    if (all(names(renameVector) %in% colnames(colData(SE))))
+        colData(SE) <- rename(colData(SE), renameVector)
 
     # allow empty SurivalExperiments to exist
     if (nrow(colData(SE)) == 0) {
         if (!all(renameVector %in% colnames(colData(SE)))) {
             colData(SE) <- cbind(colData(SE),
-                DataFrame(days_survived=NA_integer_, is_deceased=NA_integer_))
+                DataFrame(days_survived=integer(), is_deceased=integer()))
         }
     }
 
