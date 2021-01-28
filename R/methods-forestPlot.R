@@ -1,3 +1,4 @@
+setClassUnion("PCOSP_or_ClinicalModel", c('PCOSP', 'ClinicalModel'))
 #' Generate a forest plot from an `S4` object
 #'
 #' @param object An `S4` object to create a forest plot of.
@@ -36,7 +37,7 @@ setGeneric('forestPlot', function(object, ...)
 #' @importFrom stats reformulate
 #' @importFrom scales scientific
 #' @export
-setMethod('forestPlot', signature('PCOSP'),
+setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
     function(object, stat, groupBy='mDataType', colourBy='isSummary',
         vline, ..., xlab, ylab, transform, colours, title)
 {
@@ -96,4 +97,73 @@ setMethod('forestPlot', signature('PCOSP'),
         plot <- plot + ggtitle(title)
 
     return(plot)
+})
+
+## TODO:: Refactor to use hook for minimal difference in behavoir
+#' @inherit forestPlot,PCOSP_or_ClinicalModel-method
+#' @param object A `ModelComparison` object
+#'
+#' @md
+#' @export
+setMethod('forestPlot', signature(object='ModelComparison'),
+    function(object, stat, groupBy='cohort', colourBy='model',
+        vline, ..., xlab, ylab, transform, colours, title)
+{
+    if (!is.character(stat)) stop(.erroMsg(.context(), 'The stat parameter',
+        'must be a character vector present in the statistics column of the ',
+        'PCOSP models validationStats slot!'))
+
+    statsDT <- as.data.table(object)[statistic == stat, ]
+    statsDT[, model_pvalue :=
+        paste0(cohort, ' (', scientific(p_value,  2), ')')]
+
+    if (missing(vline)) {
+        vline <- switch(stat,
+            'D_index' = 1,
+            'concordance_index' = 0.5,
+            stop(.errorMsg(.context(), 'Unkown statistic specified, please ',
+                'manually set the vline location with the vline argument!')))
+    }
+
+    if (missing(xlab)) {
+        xlab <- switch(stat,
+            'D_index' = 'Hazard Ratio',
+            'concordance_index' = 'Concordance Index',
+            stop(.errorMsg(.context(), 'Unknown statistic specified, please ',
+                'manually set the x label with the xlab argument!')))
+    }
+
+    if (missing(ylab)) ylab <- 'Cohort (P-value)'
+
+    if (!missing(transform)) {
+        statsDT[, `:=`(estimate=get(transform)(estimate),
+            lower=get(transform)(lower), upper=get(transform)(upper))]
+        xlab <- paste(transform, xlab)
+        vline <- get(transform)(vline)
+    }
+
+    plot <- ggplot(statsDT,
+                aes(y=reorder(model_pvalue, -isSummary),
+                x=estimate, xmin=lower, xmax=upper, shape=isSummary)) +
+        geom_pointrange(aes_string(colour=colourBy, group=groupBy)) +
+        theme_bw() +
+        facet_grid(reformulate('.', groupBy), scales='free_y',
+            space='free', switch='y') +
+        theme(strip.text.y = element_text(angle = 0),
+            plot.title=element_text(hjust = 0.5),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.background = element_blank()) +
+        geom_vline(xintercept=vline, linetype=3) +
+        xlab(xlab) +
+        ylab(ylab)
+
+    if (!missing(colours))
+        plot <- plot + scale_colour_manual(values=colours)
+
+    if (!missing(title))
+        plot <- plot + ggtitle(title)
+
+    plot
+
 })

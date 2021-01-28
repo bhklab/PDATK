@@ -125,17 +125,25 @@ clinicalModel <- ClinicalModel(ICGCtrain,
     formula='prognosis ~ sex + age + T + N + M + grade')
 trainedClinicalModel <- trainModel(clinicalModel)
 # subset to only those SurvivalExperiments with appropriate clinical metadata
-hasModelParamsCohortList <- predictionCohortList[c('ICGCMICRO', 'PCSI', 'OUH')]
+hasModelParamsCohortList <-
+    predictionCohortList[c('ICGCMICRO', 'TCGA', 'PCSI', 'OUH')]
 clinicalPredCohortList <- predictClasses(hasModelParamsCohortList,
     model=trainedClinicalModel)
 validatedClinicalModel <- validateModel(trainedClinicalModel,
     clinicalPredCohortList)
 
 
+# Plots
+clinicalVsPCOSPbarPlot <- barPlotModelComparison(validatedClinicalModel,
+    validatedPCOSPmodel, stat='AUC')
+clinDindexForestPlot <- forestPlot(validatedClinicalModel, stat='D_index',
+    transform='log2')
+clinCindexForestPlot <- forestPlot(validatedClinicalModel,
+    stat='concordance_index')
 
 
-
-
+#
+clinicalVsPCOSP <- compareModels(validatedClinicalModel, validatedPCOSPmodel)
 
 
 

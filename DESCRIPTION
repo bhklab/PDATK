@@ -72,16 +72,19 @@ RoxygenNote: 7.1.1
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software, Classification
 BugReports: https://github.com/bhklab/PanCuRx/issues
 Collate: 
+    'barPlotModelComparison.R'
     'class-CSPC.R'
     'class-SurvivalExperiment.R'
     'class-SurvivalModel.R'
     'class-ClinicalModel.R'
     'class-CohortList.R'
+    'class-ModelComparison.R'
     'class-PCOSP.R'
     'class-RandomGeneAssignmentModel.R'
     'class-RandomLabelShufflingModel.R'
     'generics.R'
     'getGeneSymbols-methods.R'
+    'methods-compareModels.R'
     'methods-densityPlotModelComparison.R'
     'methods-dropNotCensored.R'
     'methods-extractTrainTest.R'
