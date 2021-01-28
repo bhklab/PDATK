@@ -155,16 +155,28 @@ clinVsPCOSPconcIndexForestPlot <- forestPlot(clinicalVsPCOSP,
 # 8. Existing Classifier Score Calculations -------------------------------
 # -------------------------------------------------------------------------
 
-genefuModel <- GeneFuModel(randomSeed=1987)
+chenGeneFuModel <- GeneFuModel(randomSeed=1987)
+birnbaumGeneFuModel <- GeneFuModel(randomSeed=1987)
 # read in our genes and coefficients
 
 chen <- fread('data/PCOSP_Classifier_Comparison/Chen/chen_genes.txt')
 birnbaum <- fread('data/PCOSP_Classifier_Comparison/Birnbaum/bmc_genes.txt')
 
 # assign model since it is already trained
-models(genefuModel) <- SimpleList(chen=chen, birnbaum=birnbaum)
+models(chenGeneFuModel) <- SimpleList(list(chen=chen))
+models(birnbaumGeneFuModel) <- SimpleList(list(birnbaum=birnbaum))
 
-sig.score(x=models(model)[[1]], data=t(assay(object, 1)), do.mapping=FALSE)
+# predict the prognosis and genefu scores
+chenClassPredictions <- predictClasses(predictionCohortList,
+    model=chenGeneFuModel)
+birnClassPredictions <- predictClasses(predictionCohortList,
+    model=birnbaumGeneFuModel)
+
+# calculate validation statistics for model performance
+validatedChenModel <- validateModel(chenGeneFuModel,
+    chenClassPredictions)
+validatedBirnbaumModel <- validateModel(birnbaumGeneFuModel,
+    birnClassPredictions)
 
 
 # add additional classifier scores as needed

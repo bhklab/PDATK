@@ -95,6 +95,8 @@ setMethod('predictClasses', signature(object='CohortList',
     return(predictionResults)
 })
 
+# ---- ClinicalModel methods
+
 #'
 #' @param object A `SurvivalExperiment` object with the correct columns in
 #'   `colData` to match the formula for the `ClinicalModel` object.
@@ -184,6 +186,10 @@ setMethod('predictClasses', signature(object='CohortList',
     return(predictionResults)
 })
 
+
+# ---- GeneFuModel methods
+
+#'
 #'
 #'
 #'
@@ -193,28 +199,29 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='GeneFuModel'), function(object, model, ..., annot=NA)
 {
 
+    if (length(models(model)) > 1)
+        warning(.warnMsg(.context(), 'There is more than one model in the
+            models slot of the GeneFuModel. Currently only single model
+            predictions are supported, ignoring other models.'))
+
     # Calculate survival releative risks (not probabiltiies)
-    predictions <- lapply(models(model), FUN=genefu::sig.score,
-        data=t(assay(object, 1)), annot=annot, ...)
+    predictions <- genefu::sig.score(x=models(model)[[1]],
+        t(assay(object, 1)), annot=annot, ...)
 
     # Add a column to colData for each model in the GeneFuModel
-    for (name in names(models(model))) {
-        colData(object)[[paste('genefu', name, 'score', sep='_')]] <-
-            predictions[[name]]$score
-    }
+    colData(object)$genefu_score <- predictions$score
 
-    .ifElseScoreLt <- function(item, cutoff) ifelse(item$score < cutoff,
+    metadata(object)$genefuPredictions <- ifelse(predictions$score < 1,
         'good', 'bad')
-    metadata(object)$genefuPredictions <- lapply(predictions, .ifElseScoreLt,
-        cutoff=2)
-    metadata(object)$genefuParams <- lapply(predictions, `[`, -1)
+    metadata(object)$genefuParams <- c(metadata(model)$modelParams,
+        predictions[-1])
 
     return(object)
 })
 
 
 #' Use a Gene Signature Based Prediciton Model from the `genefu` Package
-#'   to Predict Signature Scores
+#'   to Predict Signature Scores for Each Sample
 #'
 #' @param object A `CohortList` with `SurvivalExperiment`s to predict classes
 #'   for.
@@ -225,7 +232,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #'   in the model.
 #'
 #' @return A `CohortList` with the model predictions in the colData
-#'   slot as genefu_<model_name>_score for each `SurvivalExperiment`, and the
+#'   slot as genefu_score for each `SurvivalExperiment`, and the
 #'   model in the metadata as predictionModel.
 #'
 #' @md

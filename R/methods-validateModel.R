@@ -353,37 +353,32 @@ setMethod('validateModel', signature(model='ClinicalModel',
 setMethod('validateModel', signature(model='GeneFuModel',
     valData='SurvivalExperiment'), function(model, valData)
 {
-    # determine if we need to rerun the classification model
-    if (identical(metadata(model)$modelParams, metadata(valData)$GLMparams))
-    {
-        survivalDF <- colData(valData)[, c('sample_name', 'days_survived',
-            'is_deceased', 'clinical_prob_good', 'prognosis')]
-        predSurvExp <- valData
-    } else {
-        predSurvExp <- predictClasses(model, valData)
-        survivalDF <- colData(predSurvExp)[, c('sample_name', 'days_survived',
-            'is_deceased', 'clinical_prob_good', 'prognosis')]
-    }
+
+    survivalDF <- colData(valData)
+    predSurvExp <- valData
+
 
     # convert prognosis to numeric for the ROC stats
-    survivalDF <- within(survivalDF,
+    survivalDF <- within(survivalDF, {
         prognosis <- ifelse(prognosis == 'good', 1, 0)
-    )
+        genefuPredictions <- ifelse(metadata(valData)$genefuPredictions == 'good',
+            1, 0)
+    })
 
     # calculate AUROC statistics
     aucStats <- with(survivalDF,
-        c(as.numeric(reportROC(prognosis, clinical_prob_good,
+        c(as.numeric(reportROC(prognosis, genefuPredictions,
                 plot=FALSE)[c('AUC', 'AUC.SE', 'AUC.low', 'AUC.up')]),
-            roc.area(prognosis, clinical_prob_good)$p.value, nrow(survivalDF)))
+            roc.area(prognosis, genefuPredictions)$p.value, nrow(survivalDF)))
     names(aucStats) <- c('estimate', 'se', 'lower', 'upper', 'p.value', 'n')
 
     # calculate the validation statistcs
     validationStats <- with(survivalDF,
         list(
-            dIndex=D.index(x=1 - clinical_prob_good, surv.time=days_survived,
+            dIndex=D.index(x=genefu_score, surv.time=days_survived,
                 surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
                 method.test='logrank'),
-            cIndex=concordance.index(x=1 - clinical_prob_good, surv.time=days_survived,
+            cIndex=concordance.index(x=genefu_score, surv.time=days_survived,
                 surv.event=is_deceased, method='noether', na.rm=TRUE),
             AUC=as.list(aucStats)
         )
