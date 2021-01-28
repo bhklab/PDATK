@@ -69,7 +69,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     return(object)
 })
 
-
+## TODO:: refactor to use a hook for the prediction method
 
 #' @param object A `CohortList` with `SurvivalExperiment`s to predict classes
 #'   for.
@@ -179,6 +179,62 @@ setMethod('predictClasses', signature(object='CohortList',
 {
     predictionResults <- endoapply(object, predictClasses, model=model, ...,
         na.action=na.action, type=type)
+    mcols(predictionResults)$hasPredictions <- TRUE
+    metadata(predictionResults)$predictionModel <- model
+    return(predictionResults)
+})
+
+#'
+#'
+#'
+#' @importFrom genefu sig.score
+#' @export
+setMethod('predictClasses', signature(object='SurvivalExperiment',
+    model='GeneFuModel'), function(object, model, ..., annot=NA)
+{
+
+    # Calculate survival releative risks (not probabiltiies)
+    predictions <- lapply(models(model), FUN=genefu::sig.score,
+        data=t(assay(object, 1)), annot=annot, ...)
+
+    # Add a column to colData for each model in the GeneFuModel
+    for (name in names(models(model))) {
+        colData(object)[[paste('genefu', name, 'score', sep='_')]] <-
+            predictions[[name]]$score
+    }
+
+    .ifElseScoreLt <- function(item, cutoff) ifelse(item$score < cutoff,
+        'good', 'bad')
+    metadata(object)$genefuPredictions <- lapply(predictions, .ifElseScoreLt,
+        cutoff=2)
+    metadata(object)$genefuParams <- lapply(predictions, `[`, -1)
+
+    return(object)
+})
+
+
+#' Use a Gene Signature Based Prediciton Model from the `genefu` Package
+#'   to Predict Signature Scores
+#'
+#' @param object A `CohortList` with `SurvivalExperiment`s to predict classes
+#'   for.
+#' @param model A trained `GeneFuModel` object.
+#' @param ... Fall through parameters to [`genefu::sig.score`].
+#' @param  annot The `annot` parameter passed to [`genefu::sig.score`].
+#'   Defaults to NA, which assumes your assay rowname match the gene labels
+#'   in the model.
+#'
+#' @return A `CohortList` with the model predictions in the colData
+#'   slot as genefu_<model_name>_score for each `SurvivalExperiment`, and the
+#'   model in the metadata as predictionModel.
+#'
+#' @md
+#' @export
+setMethod('predictClasses', signature(object='CohortList',
+    model='GeneFuModel'), function(object, model, ..., annot=NA)
+{
+    predictionResults <- endoapply(object, predictClasses, model=model, ...,
+        annot=annot)
     mcols(predictionResults)$hasPredictions <- TRUE
     metadata(predictionResults)$predictionModel <- model
     return(predictionResults)

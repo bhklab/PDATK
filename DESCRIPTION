@@ -72,7 +72,6 @@ RoxygenNote: 7.1.1
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software, Classification
 BugReports: https://github.com/bhklab/PanCuRx/issues
 Collate: 
-    'barPlotModelComparison.R'
     'class-CSPC.R'
     'class-SurvivalExperiment.R'
     'class-SurvivalModel.R'
@@ -85,6 +84,7 @@ Collate:
     'class-RandomLabelShufflingModel.R'
     'generics.R'
     'getGeneSymbols-methods.R'
+    'methods-barPlotModelComparison.R'
     'methods-compareModels.R'
     'methods-densityPlotModelComparison.R'
     'methods-dropNotCensored.R'

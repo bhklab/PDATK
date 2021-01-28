@@ -2,6 +2,7 @@ library(PDATK)
 library(msigdbr)
 library(qs)
 
+
 # Initialize a directory for result data
 resultsDir <- file.path("results", "PCOSP")
 
@@ -148,6 +149,25 @@ clinVsPCOSPdIndexForestPlot <- forestPlot(clinicalVsPCOSP, stat='D_index',
     transform='log2')
 clinVsPCOSPconcIndexForestPlot <- forestPlot(clinicalVsPCOSP,
     stat='concordance_index')
+
+
+# -------------------------------------------------------------------------
+# 8. Existing Classifier Score Calculations -------------------------------
+# -------------------------------------------------------------------------
+
+genefuModel <- GeneFuModel(randomSeed=1987)
+# read in our genes and coefficients
+
+chen <- fread('data/PCOSP_Classifier_Comparison/Chen/chen_genes.txt')
+birnbaum <- fread('data/PCOSP_Classifier_Comparison/Birnbaum/bmc_genes.txt')
+
+# assign model since it is already trained
+models(genefuModel) <- SimpleList(chen=chen, birnbaum=birnbaum)
+
+sig.score(x=models(model)[[1]], data=t(assay(object, 1)), do.mapping=FALSE)
+
+
+# add additional classifier scores as needed
 
 
 ############################ DEPRECATED ###################################
