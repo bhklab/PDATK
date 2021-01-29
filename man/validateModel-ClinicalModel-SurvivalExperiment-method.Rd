@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods-validateModel.R
 \name{validateModel,ClinicalModel,SurvivalExperiment-method}
 \alias{validateModel,ClinicalModel,SurvivalExperiment-method}
-\title{Validate a PCOSP model with a single SurvivalExperiment object.}
+\title{Validate a ClinicalModel object with a single SurvivalExperiment object.}
 \usage{
 \S4method{validateModel}{ClinicalModel,SurvivalExperiment}(model, valData)
 }
@@ -18,5 +18,5 @@ The \code{ClinicalModel} with the validation statistics in the
 \code{validationData} slot.
 }
 \description{
-Validate a PCOSP model with a single SurvivalExperiment object.
+Validate a ClinicalModel object with a single SurvivalExperiment object.
 }

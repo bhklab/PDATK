@@ -174,12 +174,38 @@ birnClassPredictions <- predictClasses(predictionCohortList,
 
 # calculate validation statistics for model performance
 validatedChenModel <- validateModel(chenGeneFuModel,
-    chenClassPredictions)
+    valData=chenClassPredictions)
 validatedBirnbaumModel <- validateModel(birnbaumGeneFuModel,
-    birnClassPredictions)
+    valData=birnClassPredictions)
+
+# make a dummy model to hold the scores for haider
+# this allows us to use the built-in statistical calculations from this package
+haiderGeneFuModel <- GeneFuModel(randomSeed=1987)
+models(haiderGeneFuModel) <- SimpleList(list(haider=NA))
+
+.assignColDataCol <- function(object, colname, value) {
+    # make an NA column to deal with missing samples
+    columnData <- colData(object)
+    columnData[, colname] <- NA_real_
+    rownameInValue <- rownames(columnData) %in% names(value)
+    columnData[rownameInValue, colname] <- value[rownameInValue]
+    colData(object) <- columnData
+    return(object)
+}
+
+haiderClassPredictions <- cohortList[names(haiderGeneFuScores)]
+for (i in seq_along(haiderClassPredictions)) {
+    haiderClassPredictions[[i]] <-
+        .assignColDataCol(haiderClassPredictions[[i]], 'genefu_score',
+            haiderGeneFuScores[[i]])
+}
 
 
-# add additional classifier scores as needed
+mcols(haiderClassPredictions)$hasPredictions <- TRUE
+metadata(haiderClassPredictions)$predictionModel <- haiderGeneFuModel
+
+validatedHaiderModel <- validateModel(haiderGeneFuModel, haiderClassPredictions)
+
 
 
 ############################ DEPRECATED ###################################
@@ -720,7 +746,8 @@ saveRDS(PCOSPscores, file=file.path(resultsDir, "8c_PCOSPscores.rds"))
 # 9. Existing Classifier Forestplots --------------------------------------
 # -------------------------------------------------------------------------
 
-
+z <- -3:2
+z <- z[z<-1]
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 validationCohorts <- lapply(validationCohorts,

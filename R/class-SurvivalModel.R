@@ -58,7 +58,7 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
 
     metadata(trainCohorts)$modelParams <-
         list(randomSeed=if (!missing(randomSeed)) randomSeed else 1234,
-            RNGkind=RNGkind())
+            RNGkind=RNGkind(), minDaysSurvived=minDaysSurvived)
 
     SurvModel <- .SurvivalModel(trainCohorts, models=SimpleList(),
         validationData=CohortList(mDataTypes=""), validationStats=data.frame())

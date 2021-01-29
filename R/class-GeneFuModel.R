@@ -7,7 +7,6 @@
 #' @export
 .GeneFuModel <- setClass('GeneFuModel', contains='SurvivalModel')
 
-
 #' `GeneFuModel` Constructor Method
 #'
 #' @param trainCohorts A `CohortList` or `SurvivalExperiment` containing

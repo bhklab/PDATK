@@ -191,7 +191,8 @@ setMethod('predictClasses', signature(object='CohortList',
 
 #'
 #'
-#'
+#' @param object
+#' @param model
 #'
 #' @importFrom genefu sig.score
 #' @export
@@ -211,14 +212,15 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     # Add a column to colData for each model in the GeneFuModel
     colData(object)$genefu_score <- predictions$score
 
-    metadata(object)$genefuPredictions <- ifelse(predictions$score < 1,
-        'good', 'bad')
+    metadata(object)$genefuPredictions <- 'GeneFu models do not make explicit
+        category predictions, instead they return a signature score which should
+        be treated as a unitless continuous risk predictor. To make a class
+        prediction, the user must select a cut-off, which is highly subjective.'
     metadata(object)$genefuParams <- c(metadata(model)$modelParams,
         predictions[-1])
 
     return(object)
 })
-
 
 #' Use a Gene Signature Based Prediciton Model from the `genefu` Package
 #'   to Predict Signature Scores for Each Sample

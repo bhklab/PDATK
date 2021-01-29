@@ -339,7 +339,7 @@ setMethod('validateModel', signature(model='ClinicalModel',
 #'  `trainModel`.
 #' @param valData A `SurvivalExperiment` to validate the model with.
 #'
-#' @return The `ClinicalModel` with the validation statistics in the
+#' @return The `GeneModel` with the validation statistics in the
 #'   `validationStats` slot and the validation data in the
 #'   `validationData` slot.
 #'
@@ -353,24 +353,23 @@ setMethod('validateModel', signature(model='ClinicalModel',
 setMethod('validateModel', signature(model='GeneFuModel',
     valData='SurvivalExperiment'), function(model, valData)
 {
-
     survivalDF <- colData(valData)
     predSurvExp <- valData
 
+    # deal with missing prognosis column
+    if (!('prognosis' %in% colnames(survivalDF))) {
+        warning(.warnMsg(.context(), 'The prognosis column is missing from',
+            'the validation SurvivalExperiment, calculating based on ',
+            'minDaysSurvived value in modelParams...'))
+        survivalDF <- within(survivalDF,
+            prognosis <- ifelse(days_survived >
+                metadata(model)$modelParams$minDaysSurvived,'good', 'bad'))
+    }
 
     # convert prognosis to numeric for the ROC stats
     survivalDF <- within(survivalDF, {
         prognosis <- ifelse(prognosis == 'good', 1, 0)
-        genefuPredictions <- ifelse(metadata(valData)$genefuPredictions == 'good',
-            1, 0)
     })
-
-    # calculate AUROC statistics
-    aucStats <- with(survivalDF,
-        c(as.numeric(reportROC(prognosis, genefuPredictions,
-                plot=FALSE)[c('AUC', 'AUC.SE', 'AUC.low', 'AUC.up')]),
-            roc.area(prognosis, genefuPredictions)$p.value, nrow(survivalDF)))
-    names(aucStats) <- c('estimate', 'se', 'lower', 'upper', 'p.value', 'n')
 
     # calculate the validation statistcs
     validationStats <- with(survivalDF,
@@ -379,16 +378,15 @@ setMethod('validateModel', signature(model='GeneFuModel',
                 surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
                 method.test='logrank'),
             cIndex=concordance.index(x=genefu_score, surv.time=days_survived,
-                surv.event=is_deceased, method='noether', na.rm=TRUE),
-            AUC=as.list(aucStats)
+                surv.event=is_deceased, method='noether', na.rm=TRUE)
         )
     )
 
     # assemble into a data.frame
     valStatsDF <- data.frame(
-        statistic=c('D_index', 'concordance_index', 'AUC'),
+        statistic=c('D_index', 'concordance_index'),
         estimate=c(validationStats$dIndex$d.index,
-            validationStats$cIndex$c.index, validationStats$AUC$estimate),
+            validationStats$cIndex$c.index),
         se=vapply(validationStats, `[[`, i='se', FUN.VALUE=numeric(1)),
         lower=vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1)),
         upper=vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1)),
@@ -402,7 +400,15 @@ setMethod('validateModel', signature(model='GeneFuModel',
         mDataTypes=metadata(predSurvExp)$mDataType)
     return(model)
 })
+
+
 ## TODO:: Refactor this into a helper method or extend the class union to include ClinicalModel
+#'
+#' @inherit validateModel,PCOSP_or_RLS_or_RGA,CohortList-method
+#' @param model A `GeneFuModel` with a `DataFrame` of gene coefficients in
+#'   the models slot.
+#'
+#' @md
 #' @export
 setMethod('validateModel', signature(model='GeneFuModel',
     valData='CohortList'), function(model, valData, ...)
@@ -435,8 +441,11 @@ setMethod('validateModel', signature(model='GeneFuModel',
         bplapply(predCohortList, validateModel, model=model)#, ...)
     validatedModel <- validatedModelList[[1]]
     validationDT <- rbindlist(lapply(validatedModelList, validationStats))
-    validationDT[, `:=`(cohort=rep(names(predCohortList), each=3),
-        mDataType=rep(mcols(predCohortList)$mDataType, each=3))]
+    validationDT[, `:=`(
+        cohort=rep(names(predCohortList), each=length(unique(statistic))),
+        mDataType=rep(mcols(predCohortList)$mDataType,
+            each=length(unique(statistic)))
+    )]
     validationStats(validatedModel) <- copy(validationDT)
 
     # calculate the per molecular data type statistics
