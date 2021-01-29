@@ -115,7 +115,11 @@ setMethod('forestPlot', signature(object='ModelComparison'),
 
     statsDT <- as.data.table(object)[statistic == stat, ]
     statsDT[, model_pvalue :=
-        paste0(model, ' (', scientific(p_value,  2), ')')]
+        paste0(model_name, ' (', scientific(p_value,  2), ')')]
+    statsDT[, model_pvalue := factor(model_pvalue,
+        levels=model_pvalue)]
+
+    print(statsDT$model_pvalue)
 
     if (missing(vline)) {
         vline <- switch(stat,
@@ -143,11 +147,11 @@ setMethod('forestPlot', signature(object='ModelComparison'),
     }
 
     plot <-
-        ggplot(statsDT[order(-isSummary)],
-            aes(y=reorder(model_pvalue, -isSummary), x=estimate,
+        ggplot(statsDT[order(model)],
+            aes(y=model_pvalue, x=estimate,
             xmin=lower, xmax=upper, shape=isSummary)) +
         geom_pointrange(aes_string(colour=colourBy,
-            group=paste0('reorder(', groupBy, ', -isSummary)'))) +
+            group=groupBy)) +
         theme_bw() +
         facet_grid(reformulate('.', groupBy),
             scales='free_y', space='free', switch='y') +

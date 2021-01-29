@@ -27,8 +27,14 @@ setMethod('compareModels', signature(model1='SurvivalModel',
 {
     # deal with making model names unique when comparing two models of the
     # same type
-    if (missing(modelNames))
-        modelNames <- c(paste0(class(model1), 1), '_', paste0(class(model2), 2))
+    if (missing(modelNames)) {
+        if (class(model1) == class(model2)) {
+            modelNames <- c(class(model1), class(model2))
+        } else {
+            modelNames <- c(paste0(class(model1), '_', 1),
+                paste0(class(model2), '_', 2))
+        }
+    }
 
     validationStats(model1)$model_name <- modelNames[1]
     validationStats(model2)$model_name <- modelNames[2]
@@ -39,15 +45,22 @@ setMethod('compareModels', signature(model1='SurvivalModel',
 #'
 #'
 #'
-#'
+#' @md
+#' @export
 setMethod('compareModels', signature(model1='ModelComparison',
     model2='SurvivalModel'), function(model1, model2, model2Name)
 {
-    if (missing(model2Name)) model2Name <- paste0(class(model2), '_', 2)
+    if (missing(model2Name)) {
+        model2Name <- class(model2)
+        modelCompDT <- as.data.table(model1)
+        # count the number of existing model name to ensure
+        # the class + number combination is unique
+        if (model2Name %in% modelCompDT$models)
+            model2Name <- paste0(model2Name, '_',
+                DT[model == model2Name, length(unique(model_name))])
+    }
 
     validationStats(model2)$model_name <- model2Name
 
-
-
-
+    ModelComparison(model1, model2)
 })

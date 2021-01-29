@@ -206,7 +206,20 @@ metadata(haiderClassPredictions)$predictionModel <- haiderGeneFuModel
 
 validatedHaiderModel <- validateModel(haiderGeneFuModel, haiderClassPredictions)
 
+genefuModelComparisons <- compareModels(validatedChenModel,
+    validatedBirnbaumModel, modelNames=c('Chen', 'Birnbaum'))
+genefuModelComparisons <- compareModels(genefuModelComparisons,
+    validatedHaiderModel, model2Name='Haider')
 
+
+allModelComparisons <- compareModels(genefuModelComparisons,
+    validatedPCOSPmodel, model2Name='PCOSP')
+
+# We are only interested in the combined datatypes
+allModelComparisons <- subset(allModelComparisons, isSummary == TRUE)
+
+allDindexComparisonForestPlot <- forestPlot(allModelComparisons,
+    stat='D_index', transform='log2', colourBy='model', groupBy='mDataType')
 
 ############################ DEPRECATED ###################################
 
