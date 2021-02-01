@@ -25,7 +25,7 @@ setGeneric('trainModel', function(object, ...)
 #'   Defaults to 10. We recommend using 1000+ for good results.
 #' @param minAccuracy A `float` specifying the balanced accurary required
 #'   to consider a model 'top scoring'. Defaults to 0.6. Must be in the
-#'   range [0, 1].
+#'   range \[0, 1\].
 #' @param ... Fall through arguments to `BiocParallel::bplapply`
 #'
 #' @return A `PCOSP` object with the trained model in the `model` slot.
@@ -232,7 +232,7 @@ setMethod('trainModel', signature('RLSModel'),
 #'   Defaults to 10. We recommend using 1000+ for good results.
 #' @param minAccuracy A `float` specifying the balanced accurary required
 #'   to consider a model 'top scoring'. Defaults to 0. Must be in the
-#'   range [0, 1].
+#'   range \[0, 1\].
 #' @param ... Fall through arguments to `BiocParallel::bplapply`
 #'
 #' @return A `RGAModel` object with the trained model in the `model` slot.

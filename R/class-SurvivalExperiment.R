@@ -1,10 +1,13 @@
-#' @title SurvivalExperiment Class
+#' @inherit SummarizedExperiment::SummarizedExperiment
 #'
+#' @title SurvivalExperiment-class
+#'
+#' @description
 #' A SummarizedExperiment with mandatory numeric survival metadata columns
 #'   `days_survived` and `is_deceased`.
 #'
-#' @inherit SummarizedExperiment::SummarizedExperiment
-#'
+#' @md
+#' @name SurvivalExperiment-class
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
 #' @export
 .SurvivalExperiment <- setClass('SurvivalExperiment',

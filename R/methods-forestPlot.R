@@ -32,7 +32,8 @@ setGeneric('forestPlot', function(object, ...)
 #' @md
 #' @import data.table
 #' @importFrom ggplot2 ggplot geom_pointrange theme_bw facet_grid theme
-#'   geom_vline vars xlab ylab scale_colour_manual ggtitle
+#'   geom_vline vars xlab ylab scale_colour_manual ggtitle element_text
+#'   element_blank
 #' @importFrom stats reformulate
 #' @importFrom scales scientific
 #' @export
@@ -100,10 +101,14 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 
 ## TODO:: Refactor to use hook for minimal difference in behavoir
 #' @inherit forestPlot,PCOSP_or_ClinicalModel-method
-#' @param object A `ModelComparison` object
+#'
+#' @param object A `ModelComparison` object to forest plot.
 #'
 #' @md
 #' @importFrom CoreGx .errorMsg .warnMsg
+#' @importFrom ggplot2 ggplot geom_pointrange theme_bw facet_grid theme
+#'   geom_vline vars xlab ylab scale_colour_manual ggtitle element_text
+#'   element_blank
 #' @export
 setMethod('forestPlot', signature(object='ModelComparison'),
     function(object, stat, groupBy='cohort', colourBy='model',

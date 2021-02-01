@@ -10,7 +10,7 @@
     prototype=prototype(elementType='SurvivalExperiment'))
 
 
-#' Constructor for the `CohortList` class, a specialized list for storing
+#' @title Constructor for the `CohortList` class, a specialized list for storing
 #'   `SurvivalExperiment` objects.
 #'
 #' @param ... One or more `SurvivalExperiment` objects.
@@ -63,6 +63,8 @@ CohortList <- function(..., mDataTypes) {
 #'
 #' @param from A `SimpleList` object
 #'
+#' @return A `CohortList`.
+#'
 #' @md
 #' @importClassesFrom S4Vectors SimpleList
 #' @export
@@ -71,19 +73,24 @@ setAs('SimpleList', 'CohortList', function(from) CohortList(from))
 ## TODO:: Add mcols and metadata as attributes to returned list so that it can
 ## be coerce back to a  CohortList, then defined another as method
 
+#' Coerce a `CohortList` to a `list`
 #'
 #' @param from A `CohortList` object.
+#'
+#' @return A `list` containing the contents of `from`.
 #'
 #' @md
 #' @export
 setAs('CohortList', 'list', function(from) from@listData)
 
-#' Class Validity Method for CohortList
+#' Class Validity Method for `CohortList`
 #'
 #' Ensure the CohortList abides the proper structure. This requires that all
 #'   objects in it be of class `SurvivalExperiment`.
 #'
 #' @param object A `CohortList` to check the validity of.
+#'
+#' @return TRUE if the class if valid, otherwise errors with a message.
 #'
 #' @md
 #' @export

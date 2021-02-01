@@ -19,7 +19,7 @@
 )
 }
 \arguments{
-\item{object}{A \code{ModelComparison} object}
+\item{object}{A \code{ModelComparison} object to forest plot.}
 
 \item{stat}{A \code{character} vector specifying a statistic to plot.}
 

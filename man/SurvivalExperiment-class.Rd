@@ -4,22 +4,10 @@
 \name{SurvivalExperiment-class}
 \alias{SurvivalExperiment-class}
 \alias{.SurvivalExperiment}
-\title{SurvivalExperiment Class
-
-A SummarizedExperiment with mandatory numeric survival metadata columns
-  `days_survived` and `is_deceased`.}
+\title{SurvivalExperiment-class}
 \description{
-The RangedSummarizedExperiment class is a matrix-like container where rows
-  represent ranges of interest (as a \link{GRanges} or \link{GRangesList}
-  object) and columns represent samples (with sample data summarized as a
-  \link{DataFrame}). A RangedSummarizedExperiment contains one or more
-  assays, each represented by a matrix-like object of numeric or other mode.
-
-  RangedSummarizedExperiment is a subclass of \link[SummarizedExperiment]{SummarizedExperiment} and,
-  as such, all the methods documented in \code{class?SummarizedExperiment}
-  also work on a RangedSummarizedExperiment object. The methods documented
-  below are additional methods that are specific to RangedSummarizedExperiment
-  objects.
+A SummarizedExperiment with mandatory numeric survival metadata columns
+\code{days_survived} and \code{is_deceased}.
 }
 \details{
 The rows of a RangedSummarizedExperiment object represent ranges

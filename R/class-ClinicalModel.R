@@ -4,7 +4,9 @@
 #' @include class-SurvivalModel.R
 #' @export
 .ClinicalModel <- setClass('ClinicalModel', contains='SurvivalModel')
-#'
+
+
+#' Constructor for the ClinicalModel Class
 #'
 #' @param trainData A `SurvivalExperiment` or `CohortList` object to construct
 #'   a clinical model using
@@ -44,10 +46,8 @@ ClinicalModel <- function(trainData, formula, minDaysSurvived=365, ...,
     return(clinicalModel)
 }
 
-#'
-#'
-#'
-#'
+#' @importFrom CoreGx .warnMsg
+#' @export
 setValidity('ClinicalModel', function(object) {
 
     formula <- as.formula(metadata(object)$modelParams$formula)
