@@ -24,7 +24,7 @@ setGeneric('predictClasses',
 #' @md
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom CoreGx .warnMsg .errorMsg
-#' @importFrom BiocParllel bplapply
+#' @importFrom BiocParallel bplapply
 #' @importFrom S4Vectors metadata
 #' @export
 setMethod('predictClasses', signature(object='SurvivalExperiment',
@@ -177,7 +177,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #'   model in the metadata as predictionModel.
 #'
 #' @md
-#' @importFrom S4Vectors endoapply mocls metadata
+#' @importFrom S4Vectors endoapply mcols metadata
 #' @export
 setMethod('predictClasses', signature(object='CohortList',
     model='ClinicalModel'), function(object, model, ..., na.action='na.exclude',

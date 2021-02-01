@@ -7,7 +7,7 @@
 #'
 #' @md
 #' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
-#' @importFrom CoreGx .warnMsg .errorMSg
+#' @importFrom CoreGx .warnMsg .errorMsg
 #' @import data.table
 #' @export
 setMethod('merge', signature('SurvivalExperiment', 'SurvivalExperiment'),
