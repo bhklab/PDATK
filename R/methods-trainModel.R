@@ -161,9 +161,7 @@ setMethod('trainModel', signature('PCOSP'),
         .Label=as.factor(labels[rowIndices])))
 }
 
-#'
-#'
-#'
+#' @inherit trainModel,PCOSP-method
 #'
 #' @md
 #' @export
@@ -200,14 +198,15 @@ setMethod('trainModel', signature('RLSModel'),
 #'
 #' @param n The sample size
 #' @param labels A \code{vector} of the group labels for all rows of the
-#'
 #' @param groups A vector of group labels for the data to sample from
-#' @param numSamples The number of samples to take
 #'
 #' @return A subset of your object with n random samples from each group in
 #'   groups. The number of rows returned will equal the number of groups times
 #'   the sample size.
+#'
+#' @md
 #' @keywords internal
+#' @noRd
 .randomSampleIndexShuffle <- function(n, labels, groups) {
   rowIndices <- unlist(mapply(
     function(x, n, labels) sample(which(labels==x), n, replace=FALSE),
@@ -241,6 +240,7 @@ setMethod('trainModel', signature('RLSModel'),
 #' @seealso switchBox::SWAP.KTSP.Train BiocParallel::bplapply
 #'
 #' @importFrom BiocParallel bplapply
+#'
 #' @md
 #' @export
 setMethod('trainModel', signature('RGAModel'),

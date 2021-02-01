@@ -8,7 +8,7 @@
   object,
   subtypes,
   ...,
-  sampleCol = "sample",
+  sampleCol = "sample_name",
   subtypeCol = "subtype"
 )
 }
@@ -23,7 +23,7 @@ will be added to the \code{colData} slot as the \code{subtype} column.}
 \item{sampleCol}{A \code{character} vector specifying the name of the column
 containing the sample names. These must match the colnames of the
 \code{SurvivalExperiment}. If the sample names are the rownames of the \code{subtypes}
-\code{data.frame} then set this parameter to 'rownames'. Defaults to 'sample'.}
+\code{data.frame} then set this parameter to 'rownames'. Defaults to 'sample_name'.}
 
 \item{subtypeCol}{A \code{character} vector specifying the name of the subtype
 column in the \code{subtypes} \code{data.frame} object. Defaults to 'subtype'.}

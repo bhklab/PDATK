@@ -25,7 +25,6 @@ setGeneric('predictClasses',
 #'   of models which predicted good prognosis for each sample.
 #'
 #' @md
-#' @include
 #' @export
 setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='PCOSP_or_RLS_or_RGA'), function(object, model, ...)

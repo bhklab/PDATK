@@ -11,94 +11,54 @@ Description: A unique set of 89 pancreatic cancer samples profiled using both
   early death (within >1 yr) after surgery. Further, to validate the model we 
   used genomic profiles of 823 samples curated from public domain. The
   simplistic k-top scoring pair approach was used to build the model, where we 
-  looked at relative expression of gene pairs within the patient. Add
-  description of CDAC and rePURIST.
+  looked at relative expression of gene pairs within the patient.
 License: MIT
+Depends: R (>= 4.1), S4Vectors, SummarizedExperiment
 Suggests: xtable,
-    testthat
+    testthat,
+    msigdbr
 Encoding: UTF-8
-Imports: 
-    switchBox,
-    settings,
-    vcdExtra,
-    caret,
-    forestplot,
-    ggplot2,
-    grid,
-    S4Vectors,
-    SummarizedExperiment,
-    pROC,
-    survcomp,
-    gplots,
-    rlang,
-    survival,
+Imports:
     data.table,
-    reportROC,
-    verification,
-    genefu,
     BiocParallel,
-    doParallel,
-    BBmisc,
-    scales,
-    IDPmisc,
-    dplyr,  
-    factoextra,
-    NbClust,
-    cluster,
-    clusterRepro,
-    ggplotify,
-    ConsensusClusterPlus,
-    base2grob,
-    cowplot,
-    ggdendro,
-    gridExtra,
-    impute,
-    matrixStats,
-    randomForest,
-    vcd,
-    igraph,
-    gtools,
-    plyr,
-    KMsurv,
-    survminer,
-    limma,
+    rlang,
     piano,
-    ggpubr,
-    effsize,
-    RColorBrewer,
-    lattice
-Depends: R (>= 3.6), S4Vectors, SummarizedExperiment
+    scales,
+    survcomp,
+    genefu,
+    IRanges,
+    ggplot2,
+    switchBox,
+    caret,
+    reportROC,
+    pROC,
+    verification
 RoxygenNote: 7.1.1
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software, Classification
 BugReports: https://github.com/bhklab/PanCuRx/issues
 Collate: 
-    'class-CSPC.R'
+    'class-CohortList.R'
     'class-SurvivalExperiment.R'
     'class-SurvivalModel.R'
     'class-ClinicalModel.R'
-    'class-CohortList.R'
     'class-GeneFuModel.R'
     'class-ModelComparison.R'
     'class-PCOSP.R'
     'class-RandomGeneAssignmentModel.R'
     'class-RandomLabelShufflingModel.R'
-    'generics.R'
-    'getGeneSymbols-methods.R'
     'methods-assignSubtypes.R'
+    'methods-predictClasses.R'
     'methods-barPlotModelComparison.R'
     'methods-compareModels.R'
     'methods-densityPlotModelComparison.R'
     'methods-dropNotCensored.R'
-    'methods-extractTrainTest.R'
     'methods-findCommonGenes.R'
     'methods-findCommonSamples.R'
     'methods-forestPlot.R'
     'methods-getTopFeatures.R'
     'methods-merge.R'
     'methods-plotROC.R'
-    'methods-predictClasses.R'
     'methods-runGSEA.R'
-    'methods-splitTrainTest.R'
     'methods-subset.R'
     'methods-trainModel.R'
     'methods-validateModel.R'

@@ -16,15 +16,14 @@
 \item{object}{A \code{CohortList}}
 
 \item{subtypes}{A \code{list} of \code{data.frame} objects, one per cohort, with
-to subtypes to assign to the colData slot of cohorts with a matching name.
-This list must be coercible to a \code{\link[IRanges:DataFrameList-class]{IRanges::DataFrameList}} object.}
+to subtypes to assign to the colData slot of cohorts with a matching name.}
 
 \item{...}{Force subsequent arguments to be named. Not used.}
 
 \item{sampleCol}{A \code{character} vector specifying the name of the column
 containing the sample names. These must match the colnames of the
 \code{SurvivalExperiment}. If the sample names are the rownames of the \code{subtypes}
-\code{data.frame} then set this parameter to 'rownames'. Defaults to 'sample'.}
+\code{data.frame} then set this parameter to 'rownames'. Defaults to 'sample_name'.}
 
 \item{subtypeCol}{A \code{character} vector specifying the name of the subtype
 column in the \code{subtypes} \code{data.frame} object. Defaults to 'subtype'.}

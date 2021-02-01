@@ -24,11 +24,17 @@
 #' @md
 #' @describeIn class-SurvivalModel.Rd
 #' @include class-SurvivalExperiment.R
+#' @include class-CohortList.R
 #' @export
 .SurvivalModel <- setClass("SurvivalModel",
     contains='SurvivalExperiment', slots=list(models='SimpleList',
     validationData='CohortList', validationStats='data.frame'
     ))
+#'
+#' @param trainCohorts
+#' @param minDaysSurvived
+#' @param ...
+#' @param
 #'
 #' @export
 SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
