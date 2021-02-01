@@ -22,6 +22,7 @@
 #' @return A `ClinicalModel` object.
 #'
 #' @md
+#' @importFrom plyr is.formula
 #' @export
 ClinicalModel <- function(trainData, formula, minDaysSurvived=365, ...,
     randomSeed)

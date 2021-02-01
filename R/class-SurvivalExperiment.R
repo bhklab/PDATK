@@ -1,4 +1,4 @@
-#' SurvivalExperiment Class
+#' @title SurvivalExperiment Class
 #'
 #' A SummarizedExperiment with mandatory numeric survival metadata columns
 #'   `days_survived` and `is_deceased`.
@@ -6,10 +6,11 @@
 #' @inherit SummarizedExperiment::SummarizedExperiment
 #'
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
+#' @export
 .SurvivalExperiment <- setClass('SurvivalExperiment',
     contains='SummarizedExperiment')
 
-#' Constructor for `SurvivalExperiment` Class
+#' @title Constructor for `SurvivalExperiment` Class
 #'
 #' Builds a `SurvivalExperiment` object, which is just a wrapper for a
 #'   `SummarizedExperiment` with mandatory survival metadata numeric columns
@@ -27,6 +28,8 @@
 #' @param sumExp An optional `SummarizedExperiment` object to coerce to a
 #'   `SurvivalExperiment`. If this parameter is included, all arguments to `...`
 #'   are ignored.
+#'
+#' @return A `SurvivalExperiment` object.
 #'
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @export
@@ -93,7 +96,7 @@ SurvivalExperiment <- function(..., days_survived='days_survived',
 
 #' Coerce Method from SummarizedExperiment to SurvivalExperiment
 #'
-#' @param from A ` SummarizedExperiment` to coerce to a `SurvivalExperiment`.
+#' @param from A `SummarizedExperiment` to coerce to a `SurvivalExperiment`.
 #'
 #' @md
 #' @export
@@ -104,6 +107,8 @@ setAs('RangedSummarizedExperiment', 'SurvivalExperiment',
     function(from) SurvivalExperiment(sumExp=from))
 
 #' Check that a SurvivalExperiment object is valid
+#'
+#' @param object A `SurvivalExperiment` object to verify class validity of.
 #'
 #' @md
 #' @export

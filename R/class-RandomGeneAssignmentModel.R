@@ -1,20 +1,17 @@
-#'
-#'
-#'
-#' @inherit .SurvivalModel
+#' @inherit SurvivalModel
 #'
 #' @export
-.RGAmodel <- setClass('RGAModel', contains='SurvivalModel')
+.RGAModel <- setClass('RGAModel', contains='SurvivalModel')
 #'
 #'
+#' @inherit SurvivalModel
 #'
-#'
-#' @alias RGAModel
+#' @aliases RGAModel
 #' @export
 RandomGeneAssignmentModel <- function(trainCohorts, minDaysSurvived=365, ...,
     randomSeed)
 {
-    RGAmodel <- .RGAmodel(SurvivalModel(trainCohorts, minDaysSurvived,
+    RGAmodel <- .RGAModel(SurvivalModel(trainCohorts, minDaysSurvived,
         randomSeed=randomSeed))
     return(RGAmodel)
 }

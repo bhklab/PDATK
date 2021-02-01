@@ -77,7 +77,7 @@ setAs('SimpleList', 'CohortList', function(from) CohortList(from))
 setAs('CohortList', 'list', function(from) from@listData)
 #' @export
 as.list.CohortList <- function(from) as(from, 'list')
-
+.S3method('as.list', 'CohortList')
 
 #' Class Validity Method for CohortList
 #'
@@ -101,8 +101,3 @@ setValidity('CohortList', function(object) {
             'contain objects of that class!')
     }
 })
-
-#'
-#'
-#'
-#'

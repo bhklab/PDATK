@@ -1,6 +1,8 @@
 #' A Generic Container for Storing Mathematical Models of
 #'   SurvivalExperiments
 #'
+#' @name .SurvivalModel
+#'
 #' @description An S4 class with a number of predefined methods for
 #'   accessing slots relavant to a surival model. More specific model types
 #'   will inherit from this class for their accessor methods and constructor.
@@ -22,7 +24,6 @@
 #'   used when training the model.
 #'
 #' @md
-#' @describeIn class-SurvivalModel.Rd
 #' @include class-SurvivalExperiment.R
 #' @include class-CohortList.R
 #' @export
@@ -31,10 +32,17 @@
     validationData='CohortList', validationStats='data.frame'
     ))
 #'
-#' @param trainCohorts
-#' @param minDaysSurvived
-#' @param ...
-#' @param
+#' @inherit .SurvivalModel
+#'
+#' @param trainCohorts A 'SurvivelExperiment' containing training data for
+#'   the `SurvivalModel` object.
+#' @param minDaysSurvived An `integer` minimum number of days survived to be
+#'   classified as a 'good' prognosis.
+#' @param ... Force subsequent paramters to be named. Not used.
+#' @param randomSeed An `integer` random seed to use when sampling for the
+#'   this `SurvialModel` object. If excluded defaults to 1234.
+#'
+#' @return A `SurvivalModel` object.
 #'
 #' @export
 SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,

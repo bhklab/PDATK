@@ -9,7 +9,7 @@
 #'
 #'
 #'
-#' @alias RLSModel
+#' @aliases RLSModel
 #' @export
 RandomLabelShufflingModel <- function(trainCohorts, minDaysSurvived=365, ...,
     randomSeed)

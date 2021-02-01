@@ -112,8 +112,9 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'   slot and the validation data in the `validationData` slot.
 #'
 #' @md
-#' @import S4Vectors
 #' @import data.table
+#' @importFrom S4Vectors metadata
+#' @importFrom SummarizedExperiment colData
 #' @importFrom survcomp D.index concordance.index combine.est
 #' @importFrom reportROC reportROC
 #' @importFrom verification roc.area
@@ -189,8 +190,9 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'   `validationData` slot.
 #'
 #' @md
-#' @import S4Vectors
 #' @import data.table
+#' @importFrom S4Vectors metadata
+#' @importFrom SummarizedExperiment colData
 #' @importFrom survcomp D.index concordance.index combine.est
 #' @importFrom reportROC reportROC
 #' @importFrom verification roc.area
@@ -333,7 +335,7 @@ setMethod('validateModel', signature(model='ClinicalModel',
 
 # ---- GeneFuModel Methods
 
-#' Validate a GenefuModel object with a single SurvivalExperiment object.
+#' Validate a `GenefuModel` object with a single `SurvivalExperiment` object.
 #'
 #' @param model A `GenefuModel` object which has been trained using
 #'  `trainModel`.
@@ -344,8 +346,9 @@ setMethod('validateModel', signature(model='ClinicalModel',
 #'   `validationData` slot.
 #'
 #' @md
-#' @import S4Vectors
 #' @import data.table
+#' @importFrom S4Vectors metadata
+#' @importFrom SummarizedExperiment colData
 #' @importFrom survcomp D.index concordance.index combine.est
 #' @importFrom reportROC reportROC
 #' @importFrom verification roc.area

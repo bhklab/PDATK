@@ -2,7 +2,11 @@
 % Please edit documentation in R/class-SurvivalExperiment.R
 \name{SurvivalExperiment}
 \alias{SurvivalExperiment}
-\title{Constructor for `SurvivalExperiment` Class}
+\title{Constructor for `SurvivalExperiment` Class
+
+Builds a `SurvivalExperiment` object, which is just a wrapper for a
+  `SummarizedExperiment` with mandatory survival metadata numeric columns
+  `days_survived` and `is_deceased`.}
 \usage{
 SurvivalExperiment(
   ...,
@@ -28,7 +32,12 @@ a patient is alive and 1/TRUE means a patient is deceased.}
 `SurvivalExperiment`. If this parameter is included, all arguments to `...`
 are ignored.}
 }
+\value{
+A `SurvivalExperiment` object.
+}
 \description{
+Constructor for `SurvivalExperiment` Class
+
 Builds a `SurvivalExperiment` object, which is just a wrapper for a
   `SummarizedExperiment` with mandatory survival metadata numeric columns
   `days_survived` and `is_deceased`.

@@ -25,7 +25,7 @@ setGeneric('forestPlot', function(object, ...)
 #' @param ylab A `character` vector specifyuing the desired y label.
 #'   Defaults to 'Cohort (P-value)'.
 #' @param colours A `character` vector of colours to pass into
-#'   ``ggplot2::scale_fill_manual``, which modify the colourBy argument.
+#'   `ggplot2::scale_fill_manual`, which modify the colourBy argument.
 #' @param title A `characer` vector with a title to add to the plot.
 #'
 #' @return A `ggplot2` object
@@ -41,7 +41,7 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
     function(object, stat, groupBy='mDataType', colourBy='isSummary',
         vline, ..., xlab, ylab, transform, colours, title)
 {
-    if (!is.character(stat)) stop(.erroMsg(.context(), 'The stat parameter',
+    if (!is.character(stat)) stop(.errorMsg(.context(), 'The stat parameter',
         'must be a character vector present in the statistics column of the ',
         'PCOSP models validationStats slot!'))
 
@@ -104,12 +104,13 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 #' @param object A `ModelComparison` object
 #'
 #' @md
+#' @importFrom CoreGx .errorMsg .warnMsg
 #' @export
 setMethod('forestPlot', signature(object='ModelComparison'),
     function(object, stat, groupBy='cohort', colourBy='model',
         vline, ..., xlab, ylab, transform, colours, title)
 {
-    if (!is.character(stat)) stop(.erroMsg(.context(), 'The stat parameter',
+    if (!is.character(stat)) stop(.errorMsg(.context(), 'The stat parameter',
         'must be a character vector present in the statistics column of the ',
         'PCOSP models validationStats slot!'))
 

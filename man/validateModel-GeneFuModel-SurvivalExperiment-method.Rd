@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods-validateModel.R
 \name{validateModel,GeneFuModel,SurvivalExperiment-method}
 \alias{validateModel,GeneFuModel,SurvivalExperiment-method}
-\title{Validate a GenefuModel object with a single SurvivalExperiment object.}
+\title{Validate a \code{GenefuModel} object with a single \code{SurvivalExperiment} object.}
 \usage{
 \S4method{validateModel}{GeneFuModel,SurvivalExperiment}(model, valData)
 }
@@ -18,5 +18,5 @@ The \code{GeneModel} with the validation statistics in the
 \code{validationData} slot.
 }
 \description{
-Validate a GenefuModel object with a single SurvivalExperiment object.
+Validate a \code{GenefuModel} object with a single \code{SurvivalExperiment} object.
 }

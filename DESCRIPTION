@@ -13,13 +13,18 @@ Description: A unique set of 89 pancreatic cancer samples profiled using both
   simplistic k-top scoring pair approach was used to build the model, where we 
   looked at relative expression of gene pairs within the patient.
 License: MIT
-Depends: R (>= 4.1), S4Vectors, SummarizedExperiment
+Depends: R (>= 4.1), SummarizedExperiment
 Suggests: xtable,
     testthat,
     msigdbr
 Encoding: UTF-8
 Imports:
+    S4Vectors,
     data.table,
+    CoreGx,
+    methods,
+    stats,
+    plyr,
     BiocParallel,
     rlang,
     piano,
@@ -46,6 +51,7 @@ Collate:
     'class-PCOSP.R'
     'class-RandomGeneAssignmentModel.R'
     'class-RandomLabelShufflingModel.R'
+    'globals.R'
     'methods-assignSubtypes.R'
     'methods-predictClasses.R'
     'methods-barPlotModelComparison.R'

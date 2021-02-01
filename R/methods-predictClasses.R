@@ -190,10 +190,11 @@ setMethod('predictClasses', signature(object='CohortList',
 
 #'
 #'
-#' @param object
-#' @param model
+#' @param object A `SurvivalExperiment` to predict classes for.
+#' @param model A `GeneFuModel` object to predict classes with.
 #'
 #' @importFrom genefu sig.score
+#' @importFrom CoreGx .warnMsg
 #' @export
 setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='GeneFuModel'), function(object, model, ..., annot=NA)
@@ -237,6 +238,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #'   model in the metadata as predictionModel.
 #'
 #' @md
+#' @importFrom S4Vectors endoapply mcols metadata
 #' @export
 setMethod('predictClasses', signature(object='CohortList',
     model='GeneFuModel'), function(object, model, ..., annot=NA)

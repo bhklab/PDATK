@@ -1,11 +1,11 @@
-#' @inherit DataFrame
+#' @inherit S4Vectors::DataFrame
 #'
 #' @md
 #' @export
 .ModelComparison <- setClass('ModelComparison', contains='DataFrame')
 
 
-#' @inherit DataFrame
+#' @inherit S4Vectors::DataFrame
 #'
 #' @param model1 An object with a `validationStats` method which returns a
 #'   `data.table`. Probably this object should inherit from `SurvivalModel`.
@@ -16,6 +16,7 @@
 #'   which is used for method dispatch.
 #'
 #' @md
+#' @importFrom methods is
 #' @export
 ModelComparison <- function(model1, model2, ...) {
 

@@ -62,7 +62,7 @@ setMethod('trainModel', signature('PCOSP'),
 })
 
 #' @importFrom caret confusionMatrix
-#' @importFrom switchBox SWAP.Train.KTSP
+#' @importFrom switchBox SWAP.KTSP.Train
 #' @importFrom BiocParallel bplapply
 #' @importFrom S4Vectors SimpleList
 .generateTSPmodels <- function(trainMatrix, survivalGroups, numModels,
