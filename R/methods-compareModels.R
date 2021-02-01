@@ -28,7 +28,7 @@ setMethod('compareModels', signature(model1='SurvivalModel',
     # deal with making model names unique when comparing two models of the
     # same type
     if (missing(modelNames)) {
-        if (class(model1) == class(model2)) {
+        if (class(model1) != class(model2)) {
             modelNames <- c(class(model1), class(model2))
         } else {
             modelNames <- c(paste0(class(model1), '_', 1),

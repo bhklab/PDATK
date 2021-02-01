@@ -152,7 +152,7 @@ clinVsPCOSPconcIndexForestPlot <- forestPlot(clinicalVsPCOSP,
 
 
 # -------------------------------------------------------------------------
-# 8. Existing Classifier Score Calculations -------------------------------
+# 7. Existing Classifier Score Calculations -------------------------------
 # -------------------------------------------------------------------------
 
 chenGeneFuModel <- GeneFuModel(randomSeed=1987)
@@ -220,6 +220,19 @@ allModelComparisons <- subset(allModelComparisons, isSummary == TRUE)
 
 allDindexComparisonForestPlot <- forestPlot(allModelComparisons,
     stat='D_index', transform='log2', colourBy='model', groupBy='mDataType')
+
+
+# -------------------------------------------------------------------------
+# 8. Model Comparison By Subypes  -----------------------------------------
+# -------------------------------------------------------------------------
+
+load('data/cohortSubtypeDFs.rda')
+
+subtypedPredCohortList <- assignSubtypes(predictionCohortList,
+    subtypes=cohortSubtypeDFs)
+
+
+
 
 ############################ DEPRECATED ###################################
 
@@ -758,9 +771,6 @@ saveRDS(PCOSPscores, file=file.path(resultsDir, "8c_PCOSPscores.rds"))
 # -------------------------------------------------------------------------
 # 9. Existing Classifier Forestplots --------------------------------------
 # -------------------------------------------------------------------------
-
-z <- -3:2
-z <- z[z<-1]
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 validationCohorts <- lapply(validationCohorts,

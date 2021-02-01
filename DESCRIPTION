@@ -84,6 +84,7 @@ Collate:
     'class-RandomLabelShufflingModel.R'
     'generics.R'
     'getGeneSymbols-methods.R'
+    'methods-assignSubtypes.R'
     'methods-barPlotModelComparison.R'
     'methods-compareModels.R'
     'methods-densityPlotModelComparison.R'
