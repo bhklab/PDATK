@@ -35,7 +35,9 @@
 #' @return A `SurvivalExperiment` object.
 #'
 #' @md
-#' @importFrom SummarizedExperiment SummarizedExperiment colData
+#' @importFrom SummarizedExperiment SummarizedExperiment colData colData<-
+#' @importFrom S4Vectors rename
+#' @importFrom CoreGx .errorMsg .warnMsg
 #' @export
 SurvivalExperiment <- function(..., days_survived='days_survived',
     is_deceased='is_deceased', sumExp)

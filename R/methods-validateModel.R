@@ -24,10 +24,14 @@ setGeneric('validateModel', function(model, valData, ...)
 #' @return The `model` object with the validationStats and validationData
 #'   slots occupied.
 #'
+#' @md
+#' @import data.table
 #' @importFrom BiocParallel bplapply
 #' @importFrom switchBox SWAP.KTSP.Classify
-#' @import data.table
-#' @md
+#' @importFrom SummarizedExperiment colData colData<-
+#' @importFrom survcomp combine.est
+#' @importFrom stats pnorm qnorm
+#' @importFrom S4Vectors metadata mcols
 #' @export
 setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     valData='CohortList'), function(model, valData, ...)
@@ -256,6 +260,9 @@ setMethod('validateModel', signature(model='ClinicalModel',
     return(model)
 })
 ## TODO:: Refactor this into a helper method or extend the class union to include ClinicalModel
+#' @inherit validateModel,PCOSP_or_RLS_or_RGA,CohortList-method
+#'
+#' @md
 #' @export
 setMethod('validateModel', signature(model='ClinicalModel',
     valData='CohortList'), function(model, valData, ...)

@@ -29,6 +29,10 @@ setGeneric('assignSubtypes',
 #'   of the colData slot and a metadata item, `hasSubtypes`, set to TRUE.
 #'
 #' @md
+#' @importFrom SummarizedExperiment colData colData<-
+#' @importFrom CoreGx .warnMsg .errorMsg
+#' @importFrom S4Vectors metadata
+#' @import data.table
 #' @export
 setMethod('assignSubtypes', signature(object='SurvivalExperiment',
     subtypes='data.frame'), function(object, subtypes, ...,
@@ -66,7 +70,7 @@ setMethod('assignSubtypes', signature(object='SurvivalExperiment',
 #'
 #' @inherit assignSubtypes,SurvivalExperiment,data.frame-method
 #'
-#' @param object A `CohortList`
+#' @param object A `CohortList`.
 #' @param subtypes A `list` of `data.frame` objects, one per cohort, with
 #'   to subtypes to assign to the colData slot of cohorts with a matching name.
 #'
@@ -76,7 +80,7 @@ setMethod('assignSubtypes', signature(object='SurvivalExperiment',
 #'
 #' @md
 #' @importFrom S4Vectors mendoapply
-#' @importFrom IRanges DataFrameList
+#' @importFrom CoreGx .errorMsg
 #' @export
 setMethod('assignSubtypes', signature(object='CohortList',
     subtypes='list'), function(object, subtypes, ..., sampleCol='sample',

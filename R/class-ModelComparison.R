@@ -1,6 +1,7 @@
 #' @inherit S4Vectors::DataFrame
 #'
 #' @md
+#' @importClassesFrom S4Vectors DataFrame
 #' @export
 .ModelComparison <- setClass('ModelComparison', contains='DataFrame')
 
@@ -17,6 +18,8 @@
 #'
 #' @md
 #' @importFrom methods is
+#' @importFrom S4Vectors DataFrame
+#' @import data.table
 #' @export
 ModelComparison <- function(model1, model2, ...) {
 

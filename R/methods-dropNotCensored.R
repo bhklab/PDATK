@@ -22,6 +22,8 @@ setGeneric('dropNotCensored',
 #'   event (died) before minDaysSurvived.
 #'
 #' @md
+#' @importFrom stats na.omit
+#' @importFrom SummarizedExperiment colData colData<-
 #' @export
 setMethod('dropNotCensored', signature('SurvivalExperiment'),
     function(object, minDaysSurvived=365)

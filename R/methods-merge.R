@@ -6,6 +6,9 @@
 #'   each `SurvivalExperiment`.
 #'
 #' @md
+#' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
+#' @importFrom CoreGx .warnMsg .errorMSg
+#' @import data.table
 #' @export
 setMethod('merge', signature('SurvivalExperiment', 'SurvivalExperiment'),
     function(x, y, cohortNames)

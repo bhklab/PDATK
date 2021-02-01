@@ -22,6 +22,10 @@ setGeneric('predictClasses',
 #'   of models which predicted good prognosis for each sample.
 #'
 #' @md
+#' @importFrom SummarizedExperiment assays assay
+#' @importFrom CoreGx .warnMsg .errorMsg
+#' @importFrom BiocParllel bplapply
+#' @importFrom S4Vectors metadata
 #' @export
 setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='PCOSP_or_RLS_or_RGA'), function(object, model, ...)
@@ -60,7 +64,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     colData(object)$PCOSP_prob_good <-
         colSums(predictions == 'good') / nrow(predictions)
     colData(object)$prognosis <-
-        ifelse(colData(object)$days_survived > 365,'good', 'bad')
+        ifelse(colData(object)$days_survived > 365, 'good', 'bad')
 
     return(object)
 })
@@ -79,7 +83,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #'
 #' @seealso BiocParallel::bplapply switchBox::SWAP.KTSP.Classify
 #'
-#' @importFrom S4Vectors endoapply
+#' @importFrom S4Vectors endoapply mcols metadata
 #' @md
 #' @export
 setMethod('predictClasses', signature(object='CohortList',
@@ -105,7 +109,10 @@ setMethod('predictClasses', signature(object='CohortList',
 #'   slot as clinical_prob_good.
 #'
 #' @md
-#' @importFrom stats predict glm
+#' @importFrom stats predict glm as.formula
+#' @importFrom SummarizedExperiment colData colData<-
+#' @importFrom CoreGx .errorMsg .warnMsg
+#' @importFrom S4Vectors metadata
 #' @export
 setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='ClinicalModel'), function(object, model, ..., na.action='na.exclude',
@@ -170,6 +177,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #'   model in the metadata as predictionModel.
 #'
 #' @md
+#' @importFrom S4Vectors endoapply mocls metadata
 #' @export
 setMethod('predictClasses', signature(object='CohortList',
     model='ClinicalModel'), function(object, model, ..., na.action='na.exclude',
@@ -192,6 +200,8 @@ setMethod('predictClasses', signature(object='CohortList',
 #'
 #' @importFrom genefu sig.score
 #' @importFrom CoreGx .warnMsg
+#' @importFrom SummarizedExperiment colData colData<-
+#' @importFrom S4Vectors metadata
 #' @export
 setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='GeneFuModel'), function(object, model, ..., annot=NA)

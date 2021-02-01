@@ -13,7 +13,7 @@
 )
 }
 \arguments{
-\item{object}{A \code{CohortList}}
+\item{object}{A \code{CohortList}.}
 
 \item{subtypes}{A \code{list} of \code{data.frame} objects, one per cohort, with
 to subtypes to assign to the colData slot of cohorts with a matching name.}

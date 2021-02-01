@@ -14,7 +14,7 @@ Defaults to 10. We recommend using 1000+ for good results.}
 
 \item{minAccuracy}{A \code{float} specifying the balanced accurary required
 to consider a model 'top scoring'. Defaults to 0. Must be in the
-range \link{0, 1}.}
+range [0, 1].}
 
 \item{...}{Fall through arguments to \code{BiocParallel::bplapply}}
 }

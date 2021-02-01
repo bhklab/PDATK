@@ -31,7 +31,7 @@ setGeneric('densityPlotModelComparison',
 #' @import data.table
 #' @importFrom pROC roc
 #' @importFrom ggplot2 ggplot geom_density geom_vline labs facet_wrap ggtitle
-#'   xlab ylab labeller
+#'   xlab ylab labeller element_line element_text element_blank
 #' @export
 setMethod('densityPlotModelComparison',
     signature(object='PCOSP_or_RLS_or_RGA', refModel='PCOSP_or_RLS_or_RGA'),

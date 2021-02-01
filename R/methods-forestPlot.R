@@ -105,10 +105,12 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 #' @param object A `ModelComparison` object to forest plot.
 #'
 #' @md
+#' @import data.table
 #' @importFrom CoreGx .errorMsg .warnMsg
 #' @importFrom ggplot2 ggplot geom_pointrange theme_bw facet_grid theme
 #'   geom_vline vars xlab ylab scale_colour_manual ggtitle element_text
-#'   element_blank
+#'   element_blank aes aes_string
+#' @importFrom SummarizedExperiment colData colData<-
 #' @export
 setMethod('forestPlot', signature(object='ModelComparison'),
     function(object, stat, groupBy='cohort', colourBy='model',

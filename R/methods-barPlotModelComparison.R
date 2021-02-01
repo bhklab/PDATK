@@ -23,6 +23,7 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #'
 #' @md
 #' @include classUnions.R
+#' @importFrom ggplot2 ggplot geom_col aes
 #' @export
 setMethod('barPlotModelComparison', signature(model1='ClinicalModel',
     model2='PCOSP_or_RLS_or_RGA'), function(model1, model2, stat, ...)

@@ -18,7 +18,12 @@ setGeneric('plotROC', function(object, ...)
 #' @param ylabel A `character` vector specifying the y label.
 #' @param title A `character` vector speciyfing the plot tile.
 #'
+#' @md
+#' @import data.table
 #' @importFrom pROC roc
+#' @importFrom ggplot2 ggplot geom_segment geom_step scale_x_reverse
+#'   theme_classic scale_linetype_manual guides theme xlab ylab aes
+#'   ggtitle labs
 #' @export
 setMethod('plotROC', signature(object='PCOSP'),
     function(object, alpha=0.05, ..., xlabel, ylabel, title)

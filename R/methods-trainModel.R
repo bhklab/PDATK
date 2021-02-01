@@ -239,9 +239,10 @@ setMethod('trainModel', signature('RLSModel'),
 #'
 #' @seealso switchBox::SWAP.KTSP.Train BiocParallel::bplapply
 #'
-#' @importFrom BiocParallel bplapply
-#'
 #' @md
+#' @importFrom BiocParallel bplapply
+#' @importFrom SummarizedExperiment assays assays<-
+#' @importFrom S4Vectors metadata
 #' @export
 setMethod('trainModel', signature('RGAModel'),
     function(object, numModels=10, minAccuracy=0.0, ...)
@@ -288,6 +289,8 @@ setMethod('trainModel', signature('RGAModel'),
 #' @return A `ClinicalModel` object with a `glm` object in the models slot.
 #'
 #' @md
+#' @importFrom stats na.omit glm as.formula binomial na.exclude
+#' @importFrom S4Vectors SimpleList
 #' @export
 setMethod('trainModel', signature(object='ClinicalModel'),
     function(object, ..., family=binomial(link='logit'), na.action=na.exclude)
