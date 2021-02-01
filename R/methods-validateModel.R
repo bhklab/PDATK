@@ -1,6 +1,6 @@
 #' Perform Validation on an `S4` Object Respresenting a Trained Model
 #'
-#' @param model An `S4` object
+#' @param model An `S4` object.
 #' @param valData `Any` Data to verify the model with.
 #'
 #' @md
@@ -21,7 +21,8 @@ setGeneric('validateModel', function(model, valData, ...)
 #'
 #' @seealso [`BiocParallel::bplapply`], [`switchBox::SWAP.KTSP.Classify`]
 #'
-#' @return
+#' @return The `model` object with the validationStats and validationData
+#'   slots occupied.
 #'
 #' @importFrom BiocParallel bplapply
 #' @importFrom switchBox SWAP.KTSP.Classify

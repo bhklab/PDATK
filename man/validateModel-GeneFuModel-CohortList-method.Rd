@@ -20,7 +20,8 @@ configure the parallelization settings for this function. For example
 to specify BPARAM.}
 }
 \value{
-
+The \code{model} object with the validationStats and validationData
+slots occupied.
 }
 \description{
 Evaluate the Performance of a List of Trained KTSP Models from a PCOSP

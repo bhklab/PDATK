@@ -1,4 +1,3 @@
-setClassUnion("PCOSP_or_ClinicalModel", c('PCOSP', 'ClinicalModel'))
 #' Generate a forest plot from an `S4` object
 #'
 #' @param object An `S4` object to create a forest plot of.

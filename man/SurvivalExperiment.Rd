@@ -2,11 +2,11 @@
 % Please edit documentation in R/class-SurvivalExperiment.R
 \name{SurvivalExperiment}
 \alias{SurvivalExperiment}
-\title{Constructor for `SurvivalExperiment` Class
+\title{Constructor for \code{SurvivalExperiment} Class
 
-Builds a `SurvivalExperiment` object, which is just a wrapper for a
-  `SummarizedExperiment` with mandatory survival metadata numeric columns
-  `days_survived` and `is_deceased`.}
+Builds a \code{SurvivalExperiment} object, which is just a wrapper for a
+\code{SummarizedExperiment} with mandatory survival metadata numeric columns
+\code{days_survived} and \code{is_deceased}.}
 \usage{
 SurvivalExperiment(
   ...,
@@ -16,29 +16,29 @@ SurvivalExperiment(
 )
 }
 \arguments{
-\item{...}{`pairlist` Fall through arguments to the `SummarizedExperiment`
-constructor. These are ignored if `sumExp` is specified}
+\item{...}{\code{pairlist} Fall through arguments to the \code{SummarizedExperiment}
+constructor. These are ignored if \code{sumExp} is specified}
 
-\item{days_survived}{A `character` vector indicating the column name in
-`colData` which contains the `integer` number of days a patient
+\item{days_survived}{A \code{character} vector indicating the column name in
+\code{colData} which contains the \code{integer} number of days a patient
 has survived since treatment at the time of data collection. If
-`is_deceased` is 1/TRUE, then this is the number of days the patient lived.}
+\code{is_deceased} is 1/TRUE, then this is the number of days the patient lived.}
 
-\item{is_deceased}{A `character` vector indicating the column name in
-`colData` which contains `logical` or `integer` values where 0/FALSE means
+\item{is_deceased}{A \code{character} vector indicating the column name in
+\code{colData} which contains \code{logical} or \code{integer} values where 0/FALSE means
 a patient is alive and 1/TRUE means a patient is deceased.}
 
-\item{sumExp}{An optional `SummarizedExperiment` object to coerce to a
-`SurvivalExperiment`. If this parameter is included, all arguments to `...`
+\item{sumExp}{An optional \code{SummarizedExperiment} object to coerce to a
+\code{SurvivalExperiment}. If this parameter is included, all arguments to \code{...}
 are ignored.}
 }
 \value{
-A `SurvivalExperiment` object.
+A \code{SurvivalExperiment} object.
 }
 \description{
-Constructor for `SurvivalExperiment` Class
+Constructor for \code{SurvivalExperiment} Class
 
-Builds a `SurvivalExperiment` object, which is just a wrapper for a
-  `SummarizedExperiment` with mandatory survival metadata numeric columns
-  `days_survived` and `is_deceased`.
+Builds a \code{SurvivalExperiment} object, which is just a wrapper for a
+\code{SummarizedExperiment} with mandatory survival metadata numeric columns
+\code{days_survived} and \code{is_deceased}.
 }

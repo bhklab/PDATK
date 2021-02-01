@@ -22,7 +22,7 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #'   with.
 #'
 #' @md
-#' @include methods-predictClasses.R
+#' @include classUnions.R
 #' @export
 setMethod('barPlotModelComparison', signature(model1='ClinicalModel',
     model2='PCOSP_or_RLS_or_RGA'), function(model1, model2, stat, ...)

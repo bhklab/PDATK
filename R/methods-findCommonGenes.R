@@ -1,8 +1,8 @@
 #' Intersect Gene Names for All `SurvivalExperiments` in a `CohortList`
 #'
-#' @examples
-#' data(sampleCohorts)
-#' commonGenes <- findCommonGenes()
+# @examples
+# data(sampleCohorts)
+# commonGenes <- findCommonGenes(sampleCohorts)
 #'
 #' @param object An `S4` object to find common genes for.
 #'

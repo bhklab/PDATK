@@ -4,8 +4,100 @@
 \name{CohortList-class}
 \alias{CohortList-class}
 \alias{.CohortList}
-\title{`CohortList` Class}
+\title{The`CohortList` Class}
 \description{
 A list containing only `SurvivalExperiment` objects.
+}
+\details{
+The SimpleList class is the simplest, most generic concrete implementation
+  of the \link[S4Vectors]{List} abstraction. It provides an implementation that
+  subclasses can easily extend.
+
+  In a SimpleList object the list elements are stored internally in an
+  ordinary list.
+}
+\section{Constructor}{
+
+  See the \link[S4Vectors]{List} man page for a quick overview of how to construct
+  \link[S4Vectors]{List} objects in general.
+
+  The following constructor is provided for SimpleList objects:
+  \describe{
+    \item{}{\code{SimpleList(...)}: Takes possibly named objects as elements
+      for the new SimpleList object.
+    }
+  }
+
+}
+
+\section{Accessors}{
+
+  Same as for \link[S4Vectors]{List} objects. See the \link[S4Vectors]{List} man page for more
+  information.
+
+}
+
+\section{Coercion}{
+
+  All the coercions documented in the \link[S4Vectors]{List} man page apply to
+  \link[S4Vectors]{SimpleList} objects.
+
+}
+
+\section{Subsetting}{
+
+  Same as for \link[S4Vectors]{List} objects. See the \link[S4Vectors]{List} man page for more
+  information.
+
+}
+
+\section{Looping and functional programming}{
+
+  Same as for \link[S4Vectors]{List} objects. See \code{?`\link[S4Vectors]{List-utils}`} for
+  more information.
+
+}
+
+\section{Displaying}{
+
+  When a SimpleList object is displayed, the "Simple" prefix is removed
+  from the real class name of the object.
+  See \code{\link[S4Vectors]{classNameForDisplay}} for more information about this.
+
+}
+
+\examples{
+## Displaying a SimpleList object:
+x1 <- SimpleList(a=letters, i=Rle(22:20, 4:2))
+class(x1)
+
+## The "Simple" prefix is removed from the real class name of the
+## object:
+x1
+
+library(IRanges)
+x2 <- IntegerList(11:12, integer(0), 3:-2, compress=FALSE)
+class(x2)
+
+## The "Simple" prefix is removed from the real class name of the
+## object:
+x2
+
+## This is controlled by internal helper classNameForDisplay():
+classNameForDisplay(x2)
+}
+\seealso{
+\itemize{
+    \item \link[S4Vectors]{List} objects for the parent class.
+
+    \item The \link[IRanges]{CompressedList} class defined in the
+          \pkg{IRanges} package for a more efficient alternative
+          to SimpleList.
+
+    \item The \link[IRanges]{SimpleIntegerList} class defined in the
+          \pkg{IRanges} package for a SimpleList subclass example.
+
+    \item The \link[S4Vectors]{DataFrame} class for another SimpleList subclass example.
+  }
 }
 \keyword{internal}

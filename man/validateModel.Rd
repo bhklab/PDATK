@@ -7,7 +7,7 @@
 validateModel(model, valData, ...)
 }
 \arguments{
-\item{model}{An \code{S4} object}
+\item{model}{An \code{S4} object.}
 
 \item{valData}{\code{Any} Data to verify the model with.}
 }

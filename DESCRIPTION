@@ -3,8 +3,12 @@ Type: Package
 Title: Analysis of Large-Scale Pharmacogenomic Data
 Version: 0.0.1
 Date: 2021-01-28
-Author: Vandana Sandhu, Heewon Seo, Christopher Eeles, Benjamin Haibe-Kains
-Maintainer: Benjamin Haibe-Kains <benjamin.haibe.kains@utoronto.ca>
+Authors@R: c(
+    person('Vandana', 'Sandhu', role=c('aut')),
+    person('Heewon', 'Seo', role=c('aut')),
+    person('Christopher', 'Eeles', role=c('aut')),
+    person('Benjamin', 'Haibe-Kains', role=c('aut', 'cre'),
+        email="benjamin.haibe.kains@utoronto.ca"))
 Description: A unique set of 89 pancreatic cancer samples profiled using both 
   sequencing and microarray platform was used for training the PCOSP 
   (Pancreatic cancer overall survival predictor) to predict patients with 
@@ -12,12 +16,9 @@ Description: A unique set of 89 pancreatic cancer samples profiled using both
   used genomic profiles of 823 samples curated from public domain. The
   simplistic k-top scoring pair approach was used to build the model, where we 
   looked at relative expression of gene pairs within the patient.
-License: MIT
-Depends: R (>= 4.1), SummarizedExperiment
-Suggests: xtable,
-    testthat,
-    msigdbr
+License: MIT + file LICENSE
 Encoding: UTF-8
+Depends: R (>= 4.1), SummarizedExperiment
 Imports:
     S4Vectors,
     data.table,
@@ -38,9 +39,15 @@ Imports:
     reportROC,
     pROC,
     verification
-RoxygenNote: 7.1.1
-biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software, Classification
-BugReports: https://github.com/bhklab/PanCuRx/issues
+Suggests: xtable,
+    testthat,
+    msigdbr,
+    BiocStyle,
+    rmarkdown,
+    knitr
+biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software,
+    Classification
+BugReports: https://github.com/bhklab/PDATK/issues
 Collate: 
     'class-CohortList.R'
     'class-SurvivalExperiment.R'
@@ -51,9 +58,9 @@ Collate:
     'class-PCOSP.R'
     'class-RandomGeneAssignmentModel.R'
     'class-RandomLabelShufflingModel.R'
+    'classUnions.R'
     'globals.R'
     'methods-assignSubtypes.R'
-    'methods-predictClasses.R'
     'methods-barPlotModelComparison.R'
     'methods-compareModels.R'
     'methods-densityPlotModelComparison.R'
@@ -64,8 +71,10 @@ Collate:
     'methods-getTopFeatures.R'
     'methods-merge.R'
     'methods-plotROC.R'
+    'methods-predictClasses.R'
     'methods-runGSEA.R'
     'methods-subset.R'
     'methods-trainModel.R'
     'methods-validateModel.R'
     'utilities.R'
+RoxygenNote: 7.1.1

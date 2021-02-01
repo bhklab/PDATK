@@ -31,7 +31,8 @@
 #'
 #' @return A `SurvivalExperiment` object.
 #'
-#' @importFrom SummarizedExperiment SummarizedExperiment
+#' @md
+#' @importFrom SummarizedExperiment SummarizedExperiment colData
 #' @export
 SurvivalExperiment <- function(..., days_survived='days_survived',
     is_deceased='is_deceased', sumExp)
@@ -111,6 +112,7 @@ setAs('RangedSummarizedExperiment', 'SurvivalExperiment',
 #' @param object A `SurvivalExperiment` object to verify class validity of.
 #'
 #' @md
+#' @importFrom CoreGx .errorMsg
 #' @export
 setValidity('SurvivalExperiment', function(object) {
 

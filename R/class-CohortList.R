@@ -1,6 +1,8 @@
-#' `CohortList` Class
+#' @title The`CohortList` Class
 #'
-#' A list containing only `SurvivalExperiment` objects.
+#' @description A list containing only `SurvivalExperiment` objects.
+#'
+#' @inherit S4Vectors::SimpleList
 #'
 #' @importClassesFrom S4Vectors SimpleList
 #' @keywords internal
@@ -75,9 +77,6 @@ setAs('SimpleList', 'CohortList', function(from) CohortList(from))
 #' @md
 #' @export
 setAs('CohortList', 'list', function(from) from@listData)
-#' @export
-as.list.CohortList <- function(from) as(from, 'list')
-.S3method('as.list', 'CohortList')
 
 #' Class Validity Method for CohortList
 #'

@@ -1,13 +1,12 @@
 #'
 #'
 #'
-#' @inherit .SurvivalModel
+#' @inherit SurvivalModel-class
 #'
 #' @export
 .RLSModel <- setClass('RLSModel', contains='SurvivalModel')
 #'
-#'
-#'
+#' @inherit SurvivalModel
 #'
 #' @aliases RLSModel
 #' @export

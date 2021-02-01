@@ -1,6 +1,4 @@
-#'
-#'
-#' @inherit .SurvivalModel
+#' @inherit SurvivalModel-class
 #'
 #' @md
 #' @include class-SurvivalModel.R

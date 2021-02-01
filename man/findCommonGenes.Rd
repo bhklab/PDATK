@@ -15,8 +15,3 @@ A \code{character} vector of common gene names.
 \description{
 Intersect Gene Names for All \code{SurvivalExperiments} in a \code{CohortList}
 }
-\examples{
-data(sampleCohorts)
-commonGenes <- findCommonGenes()
-
-}

@@ -1,8 +1,6 @@
 #' A Generic Container for Storing Mathematical Models of
 #'   SurvivalExperiments
 #'
-#' @name .SurvivalModel
-#'
 #' @description An S4 class with a number of predefined methods for
 #'   accessing slots relavant to a surival model. More specific model types
 #'   will inherit from this class for their accessor methods and constructor.
@@ -32,7 +30,7 @@
     validationData='CohortList', validationStats='data.frame'
     ))
 #'
-#' @inherit .SurvivalModel
+#' @inherit SurvivalModel-class
 #'
 #' @param trainCohorts A 'SurvivelExperiment' containing training data for
 #'   the `SurvivalModel` object.

@@ -1,7 +1,7 @@
-#' A `SurvivalModel` Sub-class Designed to Hold A Survival Model Generated
+#' @title A `SurvivalModel` Sub-class Designed to Hold A Survival Model Generated
 #'   Using the `genefu` R package.
 #'
-#' @inherit SurvivalModel
+#' @inherit SurvivalModel-class
 #'
 #' @md
 #' @export

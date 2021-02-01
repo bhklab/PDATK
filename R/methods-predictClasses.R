@@ -1,6 +1,3 @@
-#' @export
-setClassUnion('PCOSP_or_RLS_or_RGA', c('PCOSP', 'RLSModel', 'RGAModel'))
-
 #' Predict Classes for New Data Based on a Train Classifier Model
 #'
 #' @param object An `S4` object containing data to predict classes from.
