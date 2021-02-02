@@ -1,10 +1,17 @@
 ---
 title: "PCOSP: Pancreatic Cancer Overall Survival Predictor"
 author:
-    - 'Vandana Sandhu'
-    - 'Heewon Seo'
-    - 'Christopher Eeles'
-    - 'Benjamin Haibe-Kains'
+- name: Vandana Sandhu
+- name: Heewon Seo
+- name: Christopher Eeles
+  affiliation:
+  - &pm Bioinformatics and Computational Genomics Laboratory, Princess Margaret Cancer Center,University Health Network, Toronto, Ontario, Canada
+  email: christopher.eeles@uhnresearch.ca
+- name: Benjamin Haibe-Kains
+  affiliation:
+  - *pm
+  - &mbp Department of Medical Biophysics, University of Toronto, Toronto, Canada
+  email: benjamin.haibe.kains@utoronto.ca
 date: 2021-02-01
 output:
     BiocStyle::html_document
@@ -16,32 +23,75 @@ vignette: >
 
 # Introduction
 
-The PDATK R package provides a set of classes and methods for conducting
-survival analysis using biomolecular markers to compute risk scores for patients.
-This vignette focuses on implementing
+The PDATK R package provides a set of classes and methods for estimating
+patient risk using gene level biomarkers from a variety of published risk
+quantification models. Functions are included for assessing and visualizing
+individual model performance as well as conducting meta-analyses to compare
+performance differences between models used on novel patient molecular data.
 
 # Classes
 
 ## SurvivalExperiment
 
-A `SurvivalExperiment` is a soft wrapper around a `SummarizedExperiment` object
+A `SurvivalExperiment` is a wrapper around a `SummarizedExperiment` object
 which requires two mandatory metadata columns in the `colData` slot. The
 `days_survived` column specifies the integer number of days a patient has
-survived since surgery. This is often referred to as the Overall Survival (OS)
-of a patient in survival analysis. The `is_deceased` column indicates whether
-the patient passed away during the study measurement period and corresponds to
-the OS Status of a patient the survival literature. For patients with an
-`is_deceased` value of zero survived past the last measurement in the study.
+survived since treatment. The `is_deceased` column indicates whether the patient
+passed away during the study measurement period. Patients with an
+`is_deceased` value of zero (FALSE) survived past the date of last measurement
+in the study. For users familiar with survival analysis, these two columns
+correspond to overall survival (OS) and OS status, respectively.
 
 ### Constructor
 
-To create a `SurvivalExperiment` object.
+Creating a `SurvivalExperiment` is the same as creating a `SummarizedExperiment`
+object with two additional parameters. The `days_survived` parameter takes
+the name of the `colData` column containing overall survival (OS); it defaults to
+'days_survived' but can be changed if the survival information is in another
+column of `colData`. The `is_deceased` parameter is the same, except that it
+specifies the column containing OS status. If the names of the columns are
+different from the names of the parameters, the columns are renamed in `colData`
+to ensure compatibility with PDATK function.
 
-```{r SurvivalExperiment_constructor}
+
+```{r load_package}
 library(PDATK)
 ```
 
 
+```{r SurvivalExperiment_constructor}
+# -- Create some dummy data
+
+# an assay
+assay1 <- matrix(rnorm(100), nrow=10, ncol=10,
+    dimnames=list(paste0('gene_', seq_len(10)), paste0('sample_', seq_len(10))))
+
+# column and row metadata
+rowMData <- DataFrame(gene_name=rownames(assay1),
+    id=seq_len(10), row.names=rownames(assay1))
+colMData <- DataFrame(sample_name=colnames(assay1),
+    overall_survival=sample.int(1000, 10),
+    os_status=sample(c(0L, 1L), 10, replace=TRUE),
+    row.names=colnames(assay1))
+
+
+# -- Use it to build a SurvivalExperiment
+survExperiment <- SurvivalExperiment(assays=SimpleList(rna=assay1),
+    rowData=rowMData, colData=colMData, metadata=list(a='Some metadata'),
+    days_survived='overall_survival', is_deceased='os_status')
+```
+A `SurvivalExperiment` can also be created from an existing
+
+```{r}
+# -- Build A SummarizedExperiment
+sumExperiment <- SummarizedExperiment(assays=SimpleList(rna=assay1),
+    rowData=rowMData, colData=colMData, metadata=list(a='Some meta data'))
+
+# -- Convert it to a SurvivalExperiment
+# Use the sumExp parameter, which must be named
+survExperiment <- SurvivalExperiment(sumExp=sumExperiment,
+    days_survived='overall_survival', is_deceased='os_status')
+```
 
 ### Accessors
 
@@ -51,16 +101,13 @@ accessor methods are inherited. For more details please see the
 
 ## SurivivalModel
 
-A `SurvivalModel` object.
+A `SurvivalModel` object inherits from a `SurvivalExperiment`
 
 ### Constructor
 
 ```{r }`
 
 ### Accessors
-
-
-### Methods
 
 
 ### Sub-Classes
@@ -76,10 +123,16 @@ A `SurvivalModel` object.
 
 #### GeneFuModel
 
-# Pancreate Cancer Overall Survivor Predictor
+# Modelling Workflow
+
+##
+
+##
+
+# Pancreate Cancer Overall Survival Predictor
 
 As an example of the utility of the PDATK package, we will provide code
-replicating the analysis published in <inset PCSOP citation>. While the
+replicating the analysis published in <insert PCSOP citation>. While the
 code presented here is run on dummy data to ensure that PDATK is not too large,
 the full data from that study can be downloaded from <where to download it?>.
 
