@@ -158,7 +158,7 @@ column to the object `colData`. In the case of a `PCOSP` model, the new column
 is called `PCOSP_prob_good` and represents the proportion of models in the
 ensemble which predicted good survival for a given sample.
 
-```{r }
+```{r risk_column}
 knitr::kable(head(colData(PCOSPpredValCohorts[[1]])))
 ```
 
@@ -166,11 +166,54 @@ Additionally, binary predictions of good or bad survival can be found in the
 `PCOSPpredictions` item of each `SurvivalExperiment`s `metadata`. This contains
 the raw predictions from the model for each classifier in the ensembl, ordered
 by classifier accuracy. This data is not important for end users, but is used
-internally when calculating validation statistics for the model.
+internally when calculating validation statistics for the model. For users
+wishing to classify samples rather than estimate risks, we recommend a
+PCOSP cut-off of > 0.5 for good survival prognosis.
 
-```{r}
+```{r raw_predictions}
 knitr::kable(metadata(PCOSPpredValCohorts[[1]])$PCOSPpredictions[1:5, 1:5])
 ```
+
+## Validating A PCOSP Model
+
+The final step in the standard `SurvivalModel` workflow is to compute performance
+staistics for the model on the validation data. This can be accomplished using
+the `validateModel` method, which will add statistics to the `validationStats`
+slot of a `SurvivalModel` object and the data to the `validationData` slot.
+
+```{r validate_PCOSP_model}
+validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+    valData=PCOSPpredValCohorts[-2]) # drop ICGCSEQ from the validation data
+```
+```{r validationStats}
+knitr::kable(validationStats(validatedPCOSPmodel))
+```
+Examing the `data.table` from the `validationStats` slot we can see that three
+model performance statistics have been calculated for all of the validation
+cohorts. Additionally, aggregate statistics have been calculated by molecular
+data type and for all cohorts combined. This table can be used to generate
+model performance plots. We have included several functions for examining
+model performance.
+
+## Plotting Model Performance
+
+
+```{r PCOSP_D_index_forestplot}
+PCOSPdIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index',
+    transform='log2')
+PCOSPdIndexForestPlot
+```
+
+
+
+```{r PCOSP_D_index_forestplot}
+PCOSPcIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='concordance_index')
+PCOSPcIndexForestPlot
+```
+```{r PCOSP_ROC_curve}
+cohortROCplots <- plotROC(validatedPCOSPmodel, alpha=0.05)
+```
+
 
 
 
