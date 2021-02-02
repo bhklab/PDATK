@@ -29,12 +29,26 @@ code presented here is run on dummy data to ensure that PDATK is not too large,
 the full data from that study can be downloaded from <where to download it?>.
 
 ```{r load_dependencies, message=FALSE, warning=FALSE, include=FALSE}
+library(PDATK)
 library(msigdbr)
 ```
-```{r}
+```{r load_sample_data}
 data(sampleCohortList)
+sampleCohortList
 ```
 
-```{r}
+To get started using PDATK, we recommend you place your patient cohorts into
+`SurvivalExperiment` objects and then assemble those into a master `CohortList`,
+which holds the training and validatino data for use with the various
+`SurvivalModel`s in this package.
+
+
+```{r subset_and_split}
+commonGenes <- findCommonGenes(sampleCohortList)
+# Subsets all list items, with subset for specifying rows and select for
+# specifying columns
+cohortList <- subset(sampleCohortList, subset=commonGenes)
+
+ICGCcohortList <- cohortList[grepl('ICGC', names(cohortList), ignore.case=TRUE)]
 
 ```
