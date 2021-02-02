@@ -10,6 +10,8 @@ validateModel(model, valData, ...)
 \item{model}{An \code{S4} object.}
 
 \item{valData}{\code{Any} Data to verify the model with.}
+
+\item{...}{Allow new parameters to be defined for this generic.}
 }
 \description{
 Perform Validation on an \code{S4} Object Respresenting a Trained Model

@@ -202,6 +202,9 @@ setMethod('predictClasses', signature(object='CohortList',
 #'
 #' @param object A `SurvivalExperiment` to predict classes for.
 #' @param model A `GeneFuModel` object to predict classes with.
+#' @param ... Catch unnamed parameters. Not used.
+#' @param annot A named parameter with annotations mapping from the gene
+#'   identifiers in the genefu model.
 #'
 #' @details
 #' A signature score should be interpreted as unit-less continuous risk predictor.
@@ -246,7 +249,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #'   for.
 #' @param model A trained `GeneFuModel` object.
 #' @param ... Fall through parameters to [`genefu::sig.score`].
-#' @param  annot The `annot` parameter passed to [`genefu::sig.score`].
+#' @param annot The `annot` parameter passed to [`genefu::sig.score`].
 #'   Defaults to NA, which assumes your assay rowname match the gene labels
 #'   in the model.
 #'

@@ -12,6 +12,8 @@ barPlotModelComparison(model1, model2, ...)
 
 \item{model2}{An \code{S4} object containing results of a different mathematical
 model, but with the same or overalapping samples.}
+
+\item{...}{Allow new parameters to be defined for this generic.}
 }
 \value{
 A bar plot comparing some aspect of model1 and model2

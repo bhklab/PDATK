@@ -4,6 +4,7 @@
 #' @param model1 An`S4` object containing results of a mathematical model
 #' @param model2 An `S4` object containing results of a different mathematical
 #'   model, but with the same or overalapping samples.
+#' @param ... Allow new parameters to be defined for this generic.
 #'
 #' @return A bar plot comparing some aspect of model1 and model2
 #'
@@ -19,6 +20,7 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #' @param model2 A `PCOSP` or `RLSModel` or `RGAModel` object.
 #' @param stat A `character` vector specifying which statistic to compare the
 #'   models using. Options are 'AUC', 'D_index' or 'concordance_index'.
+#' @param ... Not used.
 #'
 #' @return A `ggplot2` object showing a barplot coloured by the model and
 #'   comparing the stat between all cohorts that both models were validated

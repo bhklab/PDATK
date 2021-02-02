@@ -10,6 +10,8 @@ compareModels(model1, model2, ...)
 \item{model1}{A \code{S4} object representing some kind of mathematical model.}
 
 \item{model2}{A \code{S4} object representing some kind of mathematical model.}
+
+\item{...}{Allow new parameters to be defined for this generic.}
 }
 \value{
 A \code{S4} object with statistics about the performance of each model.

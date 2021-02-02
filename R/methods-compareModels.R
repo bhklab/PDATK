@@ -2,6 +2,7 @@
 #'
 #' @param model1 A `S4` object representing some kind of mathematical model.
 #' @param model2 A `S4` object representing some kind of mathematical model.
+#' @param ... Allow new parameters to be defined for this generic.
 #'
 #' @return A `S4` object with statistics about the performance of each model.
 #'

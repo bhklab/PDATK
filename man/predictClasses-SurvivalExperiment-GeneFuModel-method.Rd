@@ -11,6 +11,11 @@ to Predict Signature Scores for Each Sample.}
 \item{object}{A \code{SurvivalExperiment} to predict classes for.}
 
 \item{model}{A \code{GeneFuModel} object to predict classes with.}
+
+\item{...}{Catch unnamed parameters. Not used.}
+
+\item{annot}{A named parameter with annotations mapping from the gene
+identifiers in the genefu model.}
 }
 \description{
 Use a Gene Signature Based Prediciton Model from the \code{genefu} Package

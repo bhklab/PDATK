@@ -8,6 +8,8 @@ findCommonGenes(object, ...)
 }
 \arguments{
 \item{object}{An \code{S4} object to find common genes for.}
+
+\item{...}{Allow new parameters to be defined for this generic.}
 }
 \value{
 A \code{character} vector of common gene names.

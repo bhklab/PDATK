@@ -1,7 +1,6 @@
 #' SurvivalExperiment Class
 #'
-#' @inherit SummarizedExperiment::SummarizedExperiment
-#'    details return
+#' @inherit SummarizedExperiment::SummarizedExperiment details return
 #'
 #' @description
 #' A SummarizedExperiment with mandatory numeric survival metadata columns

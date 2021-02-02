@@ -2,6 +2,7 @@
 #'
 #' @param object An `S4` object containing survival data which needs to have
 #'   patients who were not censored before some criteria.
+#' @param ... Allow new parmeters to be defined for this generic.
 #'
 #' @return `S4` The object subset to only those patients which pass the
 #'   censoring criteria.

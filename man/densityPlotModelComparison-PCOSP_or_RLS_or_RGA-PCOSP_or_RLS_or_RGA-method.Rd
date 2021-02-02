@@ -29,7 +29,7 @@ performance against.}
 
 \item{ylab}{Optional \code{character} vector with y-axis label.}
 
-\item{mDataTypeLabeller}{Optional \code{character} vector whos names are one
+\item{mDataTypeLabels}{Optional \code{character} vector whos names are one
 or more existing mDataTypes in \code{object} and \code{refModel} and whos values
 are the desired mDataType labels in the plot facets.}
 }

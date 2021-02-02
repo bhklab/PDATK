@@ -14,6 +14,8 @@ and a PCOSP, RLSModel or RGAModel object.}
 
 \item{stat}{A \code{character} vector specifying which statistic to compare the
 models using. Options are 'AUC', 'D_index' or 'concordance_index'.}
+
+\item{...}{Not used.}
 }
 \value{
 A \code{ggplot2} object showing a barplot coloured by the model and

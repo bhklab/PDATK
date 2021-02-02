@@ -26,6 +26,10 @@ setGeneric('forestPlot', function(object, ...)
 #' @param colours A `character` vector of colours to pass into
 #'   `ggplot2::scale_fill_manual`, which modify the colourBy argument.
 #' @param title A `characer` vector with a title to add to the plot.
+#' @param vline An `integer` value on the x-axis to place a dotted vertical
+#'   line.
+#' @param transform The name of a numeric function to transform the statistic
+#'   before making the forest plot.
 #'
 #' @return A `ggplot2` object
 #'

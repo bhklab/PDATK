@@ -5,23 +5,16 @@
 \title{Accessor for the \code{validationStats} slot of an \code{S4} object}
 \usage{
 validationStats(object, ...)
-
-\S4method{validationStats}{SurvivalModel}(object)
 }
 \arguments{
-\item{object}{A \code{SurvivalModel} object to get validation statistics from.}
+\item{object}{An \code{S4} object}
 
 \item{...}{Allow definition of new arguments to this generic.}
 }
 \value{
 A \code{data.frame} of validation statistics for the validation cohorts
 provided to \code{validateModel} function for a given \code{SurvivalModel} object.
-
-A \code{data.table} of validation statistics for the \code{SurvivalModel}
-object.
 }
 \description{
 Accessor for the \code{validationStats} slot of an \code{S4} object
-
-Accessor for the \code{validationStats} slot of a \code{SurvivalModel} object.
 }

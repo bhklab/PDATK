@@ -11,6 +11,8 @@ assignSubtypes(object, subtypes, ...)
 
 \item{subtypes}{A mapping to assign subtypes to the samples or patients in
 the object.}
+
+\item{...}{Allow new parameters to be defined for this generic.}
 }
 \value{
 object with subtypes assigned to the sample metadata and the

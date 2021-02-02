@@ -8,18 +8,18 @@ SurvivalModel(trainCohorts, minDaysSurvived = 365, ..., randomSeed)
 }
 \arguments{
 \item{trainCohorts}{A 'SurvivelExperiment' containing training data for
-the `SurvivalModel` object.}
+the \code{SurvivalModel} object.}
 
-\item{minDaysSurvived}{An `integer` minimum number of days survived to be
+\item{minDaysSurvived}{An \code{integer} minimum number of days survived to be
 classified as a 'good' prognosis.}
 
 \item{...}{Force subsequent paramters to be named. Not used.}
 
-\item{randomSeed}{An `integer` random seed to use when sampling for the
-this `SurvialModel` object. If excluded defaults to 1234.}
+\item{randomSeed}{An \code{integer} random seed to use when sampling for the
+this \code{SurvialModel} object. If excluded defaults to 1234.}
 }
 \value{
-A `SurvivalModel` object.
+A \code{SurvivalModel} object.
 }
 \description{
 Constructor for a SurvivalModel Object.

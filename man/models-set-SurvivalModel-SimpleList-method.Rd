@@ -2,18 +2,18 @@
 % Please edit documentation in R/class-SurvivalModel.R
 \name{models<-,SurvivalModel,SimpleList-method}
 \alias{models<-,SurvivalModel,SimpleList-method}
-\title{Setter for the models slot of a `SurvivalModel` object}
+\title{Setter for the models slot of a \code{SurvivalModel} object}
 \usage{
 \S4method{models}{SurvivalModel,SimpleList}(object) <- value
 }
 \arguments{
-\item{object}{A `SurvivalMdeol` object to update}
+\item{object}{A \code{SurvivalMdeol} object to update}
 
-\item{value}{A `SimpleList` of trained KTSP models}
+\item{value}{A \code{SimpleList} of trained KTSP models}
 }
 \value{
 None, updates the object.
 }
 \description{
-Setter for the models slot of a `SurvivalModel` object
+Setter for the models slot of a \code{SurvivalModel} object
 }

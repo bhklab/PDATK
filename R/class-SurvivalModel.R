@@ -33,6 +33,7 @@
 #'
 #' @return A `SurvivalModel` object.
 #'
+#' @md
 #' @export
 SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
     randomSeed)
@@ -73,6 +74,7 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
 #' @param object An `S4` object to retrieve models from.
 #' @param ... Allow new parameters to be defined for this generic.
 #'
+#' @md
 #' @export
 setGeneric('models', function(object, ...) standardGeneric('models'))
 #'
@@ -82,6 +84,7 @@ setGeneric('models', function(object, ...) standardGeneric('models'))
 #'
 #' @return A `SimpleList` of top scoring KTSPmodels
 #'
+#' @md
 #' @export
 setMethod('models', signature('SurvivalModel'), function(object) {
     object@models
@@ -96,6 +99,7 @@ setMethod('models', signature('SurvivalModel'), function(object) {
 #'
 #' @return None, updates the object.
 #'
+#' @md
 #' @export
 setGeneric('models<-',
     function(object, ..., value) standardGeneric('models<-'))
@@ -106,6 +110,7 @@ setGeneric('models<-',
 #'
 #' @return None, updates the object.
 #'
+#' @md
 #' @export
 setReplaceMethod('models', signature(object='SurvivalModel',
     value='SimpleList'), function(object, value)
@@ -123,7 +128,6 @@ setReplaceMethod('models', signature(object='SurvivalModel',
 #'   provided to `validateModel` function for a given `SurvivalModel` object.
 #'
 #' @md
-#' @name validationStats
 #' @export
 setGeneric('validationStats', function(object, ...)
     standardGeneric('validationStats'))
@@ -136,13 +140,13 @@ setGeneric('validationStats', function(object, ...)
 #'   object.
 #'
 #' @md
-#' @name validationStats
 #' @export
 setMethod('validationStats', signature(object='SurvivalModel'), function(object) {
     object@validationStats
 })
 
-#' Generic for setting the `validationStats` slot on an `S4` object
+
+#' Setter for the `validationStats` slot on an `S4` object
 #'
 #' @param object An `S4` object.
 #' @param ... Allow definition of additional parameters to this generic.
@@ -151,20 +155,19 @@ setMethod('validationStats', signature(object='SurvivalModel'), function(object)
 #' @return None, updates the object
 #'
 #' @md
-#' @name validationStats<-
 #' @export
-setGeneric('validationStats<-', function(object, ..., value)
-    standardGeneric('validationStats<-'))
+setGeneric('validationStats<-', function(object, ..., value) standardGeneric('validationStats<-'))
 #'
-#' Setter for the validationStats slot of a `SurvivalModel` object and a
+#' Setter for the validationStats slot of a `SurvivalModel` object with a
 #'   `data.frame`
 #'
 #' @param object A `SurvivalModel` model.
 #' @param value A `data.frame` of validation statistics for a `SurvivelModel`
 #'   object.
 #'
+#' @return None, updated the object.
+#'
 #' @md
-#' @name validationStats<-
 #' @export
 setReplaceMethod('validationStats', signature(object='SurvivalModel',
     value='data.frame'), function(object, value)
@@ -184,11 +187,11 @@ setReplaceMethod('validationStats', signature(object='SurvivalModel',
 #'   or nothing if the model has not be validated.
 #'
 #' @md
-#' @name validationData
 #' @export
-setGeneric('validationData', function(object, ...)
-    standardGeneric('validationData'))
-#'
+setGeneric('validationData', function(object, ...) standardGeneric('validationData'))
+
+
+
 #' Accessor for the `validationData` slot of a `SurvivalModel` object.
 #'
 #' @param object A `SurvivalModel` object.
@@ -214,11 +217,10 @@ setMethod('validationData', signature(object='SurvivalModel'), function(object)
 #' @return None, updates the object
 #'
 #' @md
-#' @name validationData<-
 #' @export
-setGeneric('validationData<-', function(object, ..., value)
-    standardGeneric('validationData<-'))
-#'
+setGeneric('validationData<-', function(object, ..., value) standardGeneric('validationData<-'))
+
+
 #' Setter for the `validationData` slot of a `SurvivalModel` object with a
 #'  `CohortList`.
 #'
@@ -229,8 +231,7 @@ setGeneric('validationData<-', function(object, ..., value)
 #'
 #' @md
 #' @export
-setReplaceMethod('validationData', signature(object='SurvivalModel',
-    value='CohortList'), function(object, value)
+setReplaceMethod('validationData', signature(object='SurvivalModel', value='CohortList'), function(object, value)
 {
     object@validationData <- value
     return(object)
@@ -241,6 +242,7 @@ setReplaceMethod('validationData', signature(object='SurvivalModel',
 #'
 #' @param object A `SurvivalModel` object to verify class validity of.
 #'
+#' @md
 #' @importFrom CoreGx .errorMsg
 #' @export
 setValidity('SurvivalModel', function(object) {

@@ -3,6 +3,7 @@
 #'
 #' @param object A `S4` object, where the columns of each element represent
 #'   samples.
+#' @param ... Allow new parameters to be defined for this generic.
 #'
 #' @md
 #' @export

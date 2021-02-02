@@ -10,6 +10,8 @@ findCommonSamples(object, ...)
 \arguments{
 \item{object}{A \code{S4} object, where the columns of each element represent
 samples.}
+
+\item{...}{Allow new parameters to be defined for this generic.}
 }
 \description{
 Find Common Samples in a List-like S4 Object where The Columns of Each Item

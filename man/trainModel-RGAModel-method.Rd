@@ -14,9 +14,9 @@ Defaults to 10. We recommend using 1000+ for good results.}
 
 \item{minAccuracy}{A \code{float} specifying the balanced accurary required
 to consider a model 'top scoring'. Defaults to 0. Must be in the
-range [0, 1].}
+range 0 to 1.}
 
-\item{...}{Fall through arguments to \code{BiocParallel::bplapply}}
+\item{...}{Fall through arguments to \code{BiocParallel::bplapply}.}
 }
 \value{
 A \code{RGAModel} object with the trained model in the \code{model} slot.

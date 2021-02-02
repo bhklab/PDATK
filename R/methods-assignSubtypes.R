@@ -3,6 +3,7 @@
 #' @param object An `S4` object containing a slot representing samples or patients.
 #' @param subtypes A mapping to assign subtypes to the samples or patients in
 #'   the object.
+#' @param ... Allow new parameters to be defined for this generic.
 #'
 #' @return object with subtypes assigned to the sample metadata and the
 #'   isSubtyped metadata item set to TRUE.
@@ -11,7 +12,8 @@
 #' @export
 setGeneric('assignSubtypes',
     function(object, subtypes, ...) standardGeneric('assignSubtypes'))
-#'
+
+
 #' Assign Subtype Annotations to a SurvivalExperiment Object
 #'
 #' @param object A `SurvivalExperiment` object where the subtype annotations
@@ -65,14 +67,19 @@ setMethod('assignSubtypes', signature(object='SurvivalExperiment',
 
     return(object)
 })
-#'
+
+
 #' Assign Subtype Annotations to a SurvivalExperiment Object
-#'
-#' @inherit assignSubtypes,SurvivalExperiment,data.frame-method
 #'
 #' @param object A `CohortList`.
 #' @param subtypes A `list` of `data.frame` objects, one per cohort, with
 #'   to subtypes to assign to the colData slot of cohorts with a matching name.
+#' @param ... Catch unnamed parameters. Not used.
+#' @param sampleCol A `character` vector indicating the name of the colum with
+#'   sample identifiers in the subtype column. Must match the name of the
+#'   sample identifier in colData.
+#' @param subtypeCol A `character` vectoring indicating the name of the column
+#'   with the subtype labels in the `subtypes` `data.frame`.
 #'
 #' @return The `CohortList` with the subtypes in the `subtypes` column
 #'   of the colData slot and a metadata item, `hasSubtypes`, set to TRUE for

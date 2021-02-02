@@ -18,15 +18,14 @@
 \item{subtypes}{A \code{list} of \code{data.frame} objects, one per cohort, with
 to subtypes to assign to the colData slot of cohorts with a matching name.}
 
-\item{...}{Force subsequent arguments to be named. Not used.}
+\item{...}{Catch unnamed parameters. Not used.}
 
-\item{sampleCol}{A \code{character} vector specifying the name of the column
-containing the sample names. These must match the colnames of the
-\code{SurvivalExperiment}. If the sample names are the rownames of the \code{subtypes}
-\code{data.frame} then set this parameter to 'rownames'. Defaults to 'sample_name'.}
+\item{sampleCol}{A \code{character} vector indicating the name of the colum with
+sample identifiers in the subtype column. Must match the name of the
+sample identifier in colData.}
 
-\item{subtypeCol}{A \code{character} vector specifying the name of the subtype
-column in the \code{subtypes} \code{data.frame} object. Defaults to 'subtype'.}
+\item{subtypeCol}{A \code{character} vectoring indicating the name of the column
+with the subtype labels in the \code{subtypes} \code{data.frame}.}
 }
 \value{
 The \code{CohortList} with the subtypes in the \code{subtypes} column

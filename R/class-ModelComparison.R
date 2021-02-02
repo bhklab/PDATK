@@ -6,12 +6,13 @@
 .ModelComparison <- setClass('ModelComparison', contains='DataFrame')
 
 
-#' @inherit S4Vectors::DataFrame
+#' ModelComparison Constructor
 #'
 #' @param model1 An object with a `validationStats` method which returns a
 #'   `data.table`. Probably this object should inherit from `SurvivalModel`.
 #' @param model2 An object with a `validationStats` method which returns a
 #'   `data.table`. Probably this object should inherit from `SurvivalModel`.
+#' @param ... Not used.
 #'
 #' @return A `ModelComparison` object, which is a soft wrapper for `DataFrame`
 #'   which is used for method dispatch.

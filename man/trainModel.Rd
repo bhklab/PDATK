@@ -9,6 +9,8 @@ trainModel(object, ...)
 \arguments{
 \item{object}{An \code{S4} object representing an untrained statistical or machine.
 learning model.}
+
+\item{...}{Allow new method to be defined for this generic.}
 }
 \value{
 The same object with the @model slot populated with the fit model

@@ -2,16 +2,16 @@
 % Please edit documentation in R/class-SurvivalModel.R
 \name{models,SurvivalModel-method}
 \alias{models,SurvivalModel-method}
-\title{Getter for the models slot of a `SurvivalModel` object}
+\title{Getter for the models slot of a \code{SurvivalModel} object}
 \usage{
 \S4method{models}{SurvivalModel}(object)
 }
 \arguments{
-\item{object}{A `SurvivalModel` model object to retrieve the models slot from.}
+\item{object}{A \code{SurvivalModel} model object to retrieve the models slot from.}
 }
 \value{
-A `SimpleList` of top scoring KTSPmodels
+A \code{SimpleList} of top scoring KTSPmodels
 }
 \description{
-Getter for the models slot of a `SurvivalModel` object
+Getter for the models slot of a \code{SurvivalModel} object
 }

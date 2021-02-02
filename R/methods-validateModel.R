@@ -2,6 +2,7 @@
 #'
 #' @param model An `S4` object.
 #' @param valData `Any` Data to verify the model with.
+#' @param ... Allow new parameters to be defined for this generic.
 #'
 #' @md
 #' @export

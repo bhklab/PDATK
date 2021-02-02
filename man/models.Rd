@@ -2,15 +2,15 @@
 % Please edit documentation in R/class-SurvivalModel.R
 \name{models}
 \alias{models}
-\title{Accessor for the models slot of an `S4` object}
+\title{Accessor for the models slot of an \code{S4} object}
 \usage{
 models(object, ...)
 }
 \arguments{
-\item{object}{An `S4` object to retrieve models from.}
+\item{object}{An \code{S4} object to retrieve models from.}
 
 \item{...}{Allow new parameters to be defined for this generic.}
 }
 \description{
-Accessor for the models slot of an `S4` object
+Accessor for the models slot of an \code{S4} object
 }

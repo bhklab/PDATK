@@ -1,6 +1,7 @@
 #' Find the common genes in an `S4` object.
 #'
 #' @param object An `S4` object to find common genes for.
+#' @param ... Allow new parameters to be defined for this generic.
 #'
 #' @return A `character` vector of common gene names.
 #'

@@ -29,6 +29,9 @@ to group by. These will be the facets in your}
 \item{colourBy}{A \code{character} vector specifying the columns in
 \code{validationStats} to colour by.}
 
+\item{vline}{An \code{integer} value on the x-axis to place a dotted vertical
+line.}
+
 \item{...}{Force subsequent parameters to be named, not used.}
 
 \item{xlab}{A \code{character} vector specifying the desired x label.
@@ -36,6 +39,9 @@ Automatically guesses based on the \code{stat} argument.}
 
 \item{ylab}{A \code{character} vector specifyuing the desired y label.
 Defaults to 'Cohort (P-value)'.}
+
+\item{transform}{The name of a numeric function to transform the statistic
+before making the forest plot.}
 
 \item{colours}{A \code{character} vector of colours to pass into
 \code{ggplot2::scale_fill_manual}, which modify the colourBy argument.}

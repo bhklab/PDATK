@@ -23,7 +23,7 @@ setGeneric('densityPlotModelComparison',
 #' @param title Optional `character` vector with plot title.
 #' @param xlab Optional `character` vector with x-axis label.
 #' @param ylab Optional `character` vector with y-axis label.
-#' @param mDataTypeLabeller Optional `character` vector whos names are one
+#' @param mDataTypeLabels Optional `character` vector whos names are one
 #'   or more existing mDataTypes in `object` and `refModel` and whos values
 #'   are the desired mDataType labels in the plot facets.
 #'
