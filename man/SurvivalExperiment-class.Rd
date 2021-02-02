@@ -9,15 +9,3 @@
 A SummarizedExperiment with mandatory numeric survival metadata columns
 \code{days_survived} and \code{is_deceased}.
 }
-\details{
-The rows of a RangedSummarizedExperiment object represent ranges
-  (in genomic coordinates) of interest. The ranges of interest are
-  described by a \link{GRanges} or a \link{GRangesList} object, accessible
-  using the \code{rowRanges} function, described below. The \link{GRanges}
-  and \link{GRangesList} classes contains sequence (e.g., chromosome) name,
-  genomic coordinates, and strand information. Each range can be
-  annotated with additional data; this data might be used to describe
-  the range or to summarize results (e.g., statistics of differential
-  abundance) relevant to the range. Rows may or may not have row names;
-  they often will not.
-}

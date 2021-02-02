@@ -21,6 +21,7 @@ setGeneric('runGSEA', function(object, geneSet, ...)
 #' @param numModels The number of models to use when selecting the top features
 #'   from the PCOSP model in `object`. If missing will default to the top 10%
 #'   of models.
+#' @param ... Force subsequent parameters to be named. Not used.
 #' @param adjMethod An optional parameter specifying the multiple testing
 #'   correction to use in [`piano::runGSAhyper`]. This paremeter must be named.
 #' @param allResults Return the full results from [`piano::runGSAhyper`] instead

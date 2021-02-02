@@ -43,8 +43,8 @@ setMethod('compareModels', signature(model1='SurvivalModel',
     ModelComparison(model1, model2)
 })
 
-#'
-#'
+#' @inherit compareModels,SurvivalModel,SurvivalModel-method
+#' @param model2Name A `character` vector with the name of the second model.
 #'
 #' @md
 #' @export

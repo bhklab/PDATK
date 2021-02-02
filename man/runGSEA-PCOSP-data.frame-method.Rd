@@ -17,6 +17,8 @@ rownames of \code{object}. Additional columns will be dropped.}
 from the PCOSP model in \code{object}. If missing will default to the top 10\%
 of models.}
 
+\item{...}{Force subsequent parameters to be named. Not used.}
+
 \item{adjMethod}{An optional parameter specifying the multiple testing
 correction to use in \code{\link[piano:runGSAhyper]{piano::runGSAhyper}}. This paremeter must be named.}
 
