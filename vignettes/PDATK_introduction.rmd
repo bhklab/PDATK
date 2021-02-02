@@ -118,7 +118,7 @@ to retrieve that information from the `metadata` slot each of the
 specifying the molecular data types, either directly or indirectly.
 
 ```{r CohortList_constructor}
-cohortList <- CohortList(cohort1=survExperiment, cohort2=survExperiment,
+cohortList <- CohortList(list(cohort1=survExperiment, cohort2=survExperiment),
     mDataTypes=c('rna_seq', 'rna_micro'))
 ```
 

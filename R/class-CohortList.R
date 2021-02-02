@@ -8,6 +8,8 @@
 .CohortList <- setClass('CohortList', contains='SimpleList',
     prototype=prototype(elementType='SurvivalExperiment'))
 
+##FIXME:: CohortList constructor doesn't work if passed named items
+## to dots... Review SimpleList class to see how they accomplish that.
 
 #' Constructor for the `CohortList` class, a specialized list for storing
 #'   `SurvivalExperiment` objects.
@@ -26,7 +28,8 @@
 #' @importClassesFrom S4Vectors SimpleList
 #' @export
 CohortList <- function(..., mDataTypes) {
-    cohortList <- SimpleList(...)
+
+    cohortList <- .CohortList(...)
 
     # Use existing mDataTypes if they exist
     if (missing(mDataTypes) && !is.null(mcols(cohortList)$mDataType) &&
@@ -57,7 +60,7 @@ CohortList <- function(..., mDataTypes) {
                 metadata(cohortList[[i]]) <- mDataTypes[i]
         }
     }
-    return(.CohortList(cohortList))
+    return(cohortList)
 }
 
 
@@ -97,8 +100,10 @@ setAs('CohortList', 'list', function(from) from@listData)
 #' @md
 #' @export
 setValidity('CohortList', function(object) {
+    print(object)
     isSurvivalExperiment <- vapply(object, FUN=is,
         class2='SurvivalExperiment', FUN.VALUE=logical(1))
+
     print(isSurvivalExperiment)
     if (all(isSurvivalExperiment)) {
         TRUE
