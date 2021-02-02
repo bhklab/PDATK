@@ -11,7 +11,7 @@
 #' @export
 setGeneric('assignSubtypes',
     function(object, subtypes, ...) standardGeneric('assignSubtypes'))
-
+#'
 #' Assign Subtype Annotations to a SurvivalExperiment Object
 #'
 #' @param object A `SurvivalExperiment` object where the subtype annotations
@@ -65,7 +65,7 @@ setMethod('assignSubtypes', signature(object='SurvivalExperiment',
 
     return(object)
 })
-
+#'
 #' Assign Subtype Annotations to a SurvivalExperiment Object
 #'
 #' @inherit assignSubtypes,SurvivalExperiment,data.frame-method

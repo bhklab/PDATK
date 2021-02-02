@@ -6,8 +6,10 @@
 \alias{.GeneFuModel}
 \title{A \code{SurvivalModel} Sub-class Designed to Hold A Survival Model Generated
 Using the \code{genefu} R package.}
+\value{
+A `SurvivalModel` object.
+}
 \description{
-An S4 class with a number of predefined methods for
-accessing slots relavant to a surival model. More specific model types
-will inherit from this class for their accessor methods and constructor.
+A \code{SurvivalModel} Sub-class Designed to Hold A Survival Model Generated
+Using the \code{genefu} R package.
 }

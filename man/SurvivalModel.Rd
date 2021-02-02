@@ -2,8 +2,7 @@
 % Please edit documentation in R/class-SurvivalModel.R
 \name{SurvivalModel}
 \alias{SurvivalModel}
-\title{A Generic Container for Storing Mathematical Models of
-SurvivalExperiments}
+\title{Constructor for a SurvivalModel Object.}
 \usage{
 SurvivalModel(trainCohorts, minDaysSurvived = 365, ..., randomSeed)
 }
@@ -23,7 +22,5 @@ this `SurvialModel` object. If excluded defaults to 1234.}
 A `SurvivalModel` object.
 }
 \description{
-An S4 class with a number of predefined methods for
-accessing slots relavant to a surival model. More specific model types
-will inherit from this class for their accessor methods and constructor.
+Constructor for a SurvivalModel Object.
 }

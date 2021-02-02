@@ -2,20 +2,18 @@
 % Please edit documentation in R/methods-dropNotCensored.R
 \name{dropNotCensored}
 \alias{dropNotCensored}
-\title{Remove Deaths Due to Disease Severity of Illness from An S4 Object Where
-  Columns Are Samples.}
+\title{Remove Censored Patient Samples from An \code{S4} Object.}
 \usage{
 dropNotCensored(object, ...)
 }
 \arguments{
-\item{object}{An `S4` object containing survival data which needs to have
+\item{object}{An \code{S4} object containing survival data which needs to have
 patients who were not censored before some criteria.}
 }
 \value{
-`S4` The object subset to only those patients which pass the
-  censoring criteria.
+\code{S4} The object subset to only those patients which pass the
+censoring criteria.
 }
 \description{
-Remove Deaths Due to Disease Severity of Illness from An S4 Object Where
-  Columns Are Samples.
+Remove Censored Patient Samples from An \code{S4} Object.
 }

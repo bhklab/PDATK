@@ -2,19 +2,26 @@
 % Please edit documentation in R/class-SurvivalModel.R
 \name{validationStats}
 \alias{validationStats}
-\title{Accessor for the `validationStats` slot of an `S4` object}
+\title{Accessor for the \code{validationStats} slot of an \code{S4} object}
 \usage{
 validationStats(object, ...)
+
+\S4method{validationStats}{SurvivalModel}(object)
 }
 \arguments{
-\item{object}{An `S4` object}
+\item{object}{A \code{SurvivalModel} object to get validation statistics from.}
 
 \item{...}{Allow definition of new arguments to this generic.}
 }
 \value{
-A `data.frame` of validation statistics for the validation cohorts
-  provided to `validateModel` function for a given `SurvivalModel` object.
+A \code{data.frame} of validation statistics for the validation cohorts
+provided to \code{validateModel} function for a given \code{SurvivalModel} object.
+
+A \code{data.table} of validation statistics for the \code{SurvivalModel}
+object.
 }
 \description{
-Accessor for the `validationStats` slot of an `S4` object
+Accessor for the \code{validationStats} slot of an \code{S4} object
+
+Accessor for the \code{validationStats} slot of a \code{SurvivalModel} object.
 }

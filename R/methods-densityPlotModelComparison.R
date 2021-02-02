@@ -13,6 +13,9 @@ setGeneric('densityPlotModelComparison',
     function(object, refModel, ...)
         standardGeneric('densityPlotModelComparison'))
 #'
+#' Render a Density Plot Comparing Model Performance Between Two `PCOSP`,
+#'   `RLSModel` or `RGAModel` object.
+#'
 #' @param object A `PCOSP`, `RLSModel` or `RGAModel` object.
 #' @param refModel A `PCOSP`, `RLSModel` or `RGAModel` object to compare
 #'   performance against.
@@ -27,6 +30,7 @@ setGeneric('densityPlotModelComparison',
 #' @return A `ggplot` object with a density plot of model AUCs for `object`
 #'   and a vertical line for the average AUC of `refModel`, faceted by
 #'   mDataType.
+#'
 #' @md
 #' @import data.table
 #' @importFrom pROC roc

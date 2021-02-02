@@ -276,6 +276,8 @@ setMethod('trainModel', signature('RGAModel'),
     return(object)
 })
 
+#' Fit a GLM Using Clinical Predictors Specified in a `ClinicalModel` Object.
+#'
 #'
 #' @param object A `ClinicalModel` object, with survival data for the model
 #'   in the colData slot.

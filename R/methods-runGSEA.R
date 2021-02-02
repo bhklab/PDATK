@@ -12,6 +12,8 @@
 setGeneric('runGSEA', function(object, geneSet, ...)
     standardGeneric('runGSEA'))
 #'
+#' Run Gene Set Enrichment Analysis On A `PCOSP` Model Object.
+#'
 #' @param object A `PCOSP` model which has been trained with `trainModel`.
 #' @param geneSet A `data.frame` with two columns, the first being the name
 #'   of the gene and the second the gene set. The gene names must match the

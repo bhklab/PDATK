@@ -5,9 +5,12 @@
 #'
 #' @return A `ggplot` object containing the ROC curves.
 #'
+#' @md
 #' @export
 setGeneric('plotROC', function(object, ...)
     standardGeneric('plotROC'))
+#'
+#' Plot ROC curves for a `PCOSP` model object.
 #'
 #' @param object A `PCOSP` model which has been validated with with the
 #'  `validateModel` method.
@@ -20,7 +23,7 @@ setGeneric('plotROC', function(object, ...)
 #'
 #' @md
 #' @import data.table
-#' @importFrom pROC roc
+#' @importFrom pROC roc coords
 #' @importFrom ggplot2 ggplot geom_segment geom_step scale_x_reverse
 #'   theme_classic scale_linetype_manual guides theme xlab ylab aes
 #'   ggtitle labs

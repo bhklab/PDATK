@@ -10,6 +10,9 @@
 setGeneric('predictClasses',
     function(object, model, ...) standardGeneric('predictClasses'))
 #'
+#' Predict Survival Prognosis Classes and Risk Scores for A `CohortList` Using
+#'   a `PCOSP`, `RLSModel` or `RGAModel` object.
+#'
 #' @param object A `SurvivalExperiment` object to predict classes for.
 #' @param model A trained `PCOSP` model to use for predicting classes.
 #' @param ... Fall through arguments to `BiocParallel::bplapply` for configuring
@@ -68,9 +71,10 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 
     return(object)
 })
-
-## TODO:: refactor to use a hook for the prediction method
-
+#'
+#' Predict Survival Prognosis Classes and Risk Scores for A `CohortList` Using
+#'   a `PCOSP`, `RLSModel` or `RGAModel` object.
+#'
 #' @param object A `CohortList` with `SurvivalExperiment`s to predict classes
 #'   for.
 #' @param model A trained `PCOSP` model to use for predicting classes.
@@ -81,10 +85,8 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #'   `SurvivalExperiment` in the metadata slot and the `prob_good_survival`
 #'   column added to the colData slot.
 #'
-#' @seealso BiocParallel::bplapply switchBox::SWAP.KTSP.Classify
-#'
-#' @importFrom S4Vectors endoapply mcols metadata
 #' @md
+#' @importFrom S4Vectors endoapply mcols metadata
 #' @export
 setMethod('predictClasses', signature(object='CohortList',
     model='PCOSP_or_RLS_or_RGA'), function(object, model, ...)
@@ -97,6 +99,8 @@ setMethod('predictClasses', signature(object='CohortList',
 
 # ---- ClinicalModel methods
 
+#' Predict Survival Prognosis Classes and Risk Scores for A `SurvivalModel` Using
+#'   a `ClinicalModel` Object.
 #'
 #' @param object A `SurvivalExperiment` object with the correct columns in
 #'   `colData` to match the formula for the `ClinicalModel` object.
@@ -193,11 +197,17 @@ setMethod('predictClasses', signature(object='CohortList',
 
 # ---- GeneFuModel methods
 
-#'
+#' Use a Gene Signature Based Prediciton Model from the `genefu` Package
+#'   to Predict Signature Scores for Each Sample.
 #'
 #' @param object A `SurvivalExperiment` to predict classes for.
 #' @param model A `GeneFuModel` object to predict classes with.
 #'
+#' @details
+#' A signature score should be interpreted as unit-less continuous risk predictor.
+#'
+#'
+#' @md
 #' @importFrom genefu sig.score
 #' @importFrom CoreGx .warnMsg
 #' @importFrom SummarizedExperiment colData colData<-
@@ -228,7 +238,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 
     return(object)
 })
-
+#'
 #' Use a Gene Signature Based Prediciton Model from the `genefu` Package
 #'   to Predict Signature Scores for Each Sample
 #'

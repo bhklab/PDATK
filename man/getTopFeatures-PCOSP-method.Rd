@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods-getTopFeatures.R
 \name{getTopFeatures,PCOSP-method}
 \alias{getTopFeatures,PCOSP-method}
-\title{Get the top features for classification using a}
+\title{Get the top features for classification using a PCOSP model object.}
 \usage{
 \S4method{getTopFeatures}{PCOSP}(object, numModels)
 }
@@ -17,5 +17,5 @@ A \code{character} vector of gene names representing the unique genes
 from the top \code{numModels} KTSPs models in the model \code{object}.
 }
 \description{
-Get the top features for classification using a
+Get the top features for classification using a PCOSP model object.
 }

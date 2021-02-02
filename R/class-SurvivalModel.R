@@ -5,21 +5,12 @@
 #'   accessing slots relavant to a surival model. More specific model types
 #'   will inherit from this class for their accessor methods and constructor.
 #'
-#' @slot colData A `DataFrame` with merged column-level metadata for the model
-#'   training data in the `assays` slot.
-#' @slot rowData A `DataFrame` with merged row-level metadata for the model
-#'   training data in the `assays` slot.
-#' @slot assays A `SimpleList` with a matrix containing the merged data from
-#'   the training data.
 #' @slot models A `SimpleList` containing one or more model object.
 #' @slot validationData A `CohortList` containing one or more `SurvivalExperiment`
 #'   objects used to validate the model. This slot is populated by the when the
 #'   `validateModel` method is called on a `SurvivalModel` object.
 #' @slot validationStats A `data.frame` object containing validation statistics
 #'   calculated by the `validateModel` method.
-#' @slot metadata A `SimpleList` of metadata related to the PCOSP model. This
-#'   slot will contain a modelParams item, which has the relevant parameters
-#'   used when training the model.
 #'
 #' @md
 #' @include class-SurvivalExperiment.R
@@ -29,8 +20,8 @@
     contains='SurvivalExperiment', slots=list(models='SimpleList',
     validationData='CohortList', validationStats='data.frame'
     ))
-#'
-#' @inherit SurvivalModel-class
+
+#' Constructor for a SurvivalModel Object.
 #'
 #' @param trainCohorts A 'SurvivelExperiment' containing training data for
 #'   the `SurvivalModel` object.
@@ -80,7 +71,7 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
 #' Accessor for the models slot of an `S4` object
 #'
 #' @param object An `S4` object to retrieve models from.
-#' @param ... Allow
+#' @param ... Allow new parameters to be defined for this generic.
 #'
 #' @export
 setGeneric('models', function(object, ...) standardGeneric('models'))
@@ -96,10 +87,11 @@ setMethod('models', signature('SurvivalModel'), function(object) {
     object@models
 })
 
+
 #' Generic for Setting the Models Slot for an S4 Object
 #'
 #' @param object An `S4` object to set the models slot for
-#' @param ... Allow new parameters to be added
+#' @param ... Allow new parameters to be added.
 #' @param value A model or list of models to assign to the object
 #'
 #' @return None, updates the object.
@@ -130,12 +122,21 @@ setReplaceMethod('models', signature(object='SurvivalModel',
 #' @return A `data.frame` of validation statistics for the validation cohorts
 #'   provided to `validateModel` function for a given `SurvivalModel` object.
 #'
+#' @md
+#' @name validationStats
 #' @export
 setGeneric('validationStats', function(object, ...)
     standardGeneric('validationStats'))
 #'
-#' @param object A `` object.
+#' Accessor for the `validationStats` slot of a `SurvivalModel` object.
 #'
+#' @param object A `SurvivalModel` object to get validation statistics from.
+#'
+#' @return A `data.table` of validation statistics for the `SurvivalModel`
+#'   object.
+#'
+#' @md
+#' @name validationStats
 #' @export
 setMethod('validationStats', signature(object='SurvivalModel'), function(object) {
     object@validationStats
@@ -149,13 +150,21 @@ setMethod('validationStats', signature(object='SurvivalModel'), function(object)
 #'
 #' @return None, updates the object
 #'
+#' @md
+#' @name validationStats<-
 #' @export
 setGeneric('validationStats<-', function(object, ..., value)
     standardGeneric('validationStats<-'))
 #'
-#' @param object A `SurvivalModel` model.
-#' @param value A `data.frame` of
+#' Setter for the validationStats slot of a `SurvivalModel` object and a
+#'   `data.frame`
 #'
+#' @param object A `SurvivalModel` model.
+#' @param value A `data.frame` of validation statistics for a `SurvivelModel`
+#'   object.
+#'
+#' @md
+#' @name validationStats<-
 #' @export
 setReplaceMethod('validationStats', signature(object='SurvivalModel',
     value='data.frame'), function(object, value)
@@ -163,6 +172,8 @@ setReplaceMethod('validationStats', signature(object='SurvivalModel',
     object@validationStats <- value
     return(object)
 })
+
+
 
 #' Accessor for the `validationData` slot of an `S4` object
 #'
@@ -172,16 +183,28 @@ setReplaceMethod('validationStats', signature(object='SurvivalModel',
 #' @return A `CohortList` with the validation data used for the `SurvivalModel` model,
 #'   or nothing if the model has not be validated.
 #'
+#' @md
+#' @name validationData
 #' @export
 setGeneric('validationData', function(object, ...)
     standardGeneric('validationData'))
 #'
+#' Accessor for the `validationData` slot of a `SurvivalModel` object.
+#'
 #' @param object A `SurvivalModel` object.
 #'
+#' @return A `CohortList` object containing the datasets used to compute
+#'   validation statistics for this model.
+#'
+#' @md
+#' @name validationData
 #' @export
-setMethod('validationData', signature(object='SurvivalModel'), function(object) {
+setMethod('validationData', signature(object='SurvivalModel'), function(object)
+{
     object@validationData
 })
+
+
 
 #' Generic for setting the `validationData` slot on an `S4` object
 #'
@@ -191,14 +214,22 @@ setMethod('validationData', signature(object='SurvivalModel'), function(object) 
 #'
 #' @return None, updates the object
 #'
+#' @md
+#' @name validationData<-
 #' @export
 setGeneric('validationData<-', function(object, ..., value)
     standardGeneric('validationData<-'))
 #'
+#' Setter for the `validationData` slot of a `SurvivalModel` object with a
+#'  `CohortList`.
+#'
 #' @param object A `SurvivalModel` model.
 #' @param value A `CohortList` of validation cohorts for the `SurvivalModel` model.
 #'
+#' @return None, updates the object.
 #'
+#' @md
+#' @name validationData<-
 #' @export
 setReplaceMethod('validationData', signature(object='SurvivalModel',
     value='CohortList'), function(object, value)
@@ -207,7 +238,13 @@ setReplaceMethod('validationData', signature(object='SurvivalModel',
     return(object)
 })
 
-#' @noRd
+
+#' Class Validity Method for the SurvivalModel Class
+#'
+#' @param object A `SurvivalModel` object to verify class validity of.
+#'
+#' @importFrom CoreGx .errorMsg
+#' @export
 setValidity('SurvivalModel', function(object) {
 
     hasSurvivalGroup <- 'prognosis' %in% colnames(colData(object))

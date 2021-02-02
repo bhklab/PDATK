@@ -2,20 +2,26 @@
 % Please edit documentation in R/class-SurvivalModel.R
 \name{validationStats<-}
 \alias{validationStats<-}
-\title{Generic for setting the `validationStats` slot on an `S4` object}
+\title{Generic for setting the \code{validationStats} slot on an \code{S4} object}
 \usage{
 validationStats(object, ...) <- value
+
+\S4method{validationStats}{SurvivalModel,data.frame}(object) <- value
 }
 \arguments{
-\item{object}{An `S4` object.}
+\item{object}{A \code{SurvivalModel} model.}
 
 \item{...}{Allow definition of additional parameters to this generic.}
 
-\item{value}{A `data.frame` of validation statistics.}
+\item{value}{A \code{data.frame} of validation statistics for a \code{SurvivelModel}
+object.}
 }
 \value{
 None, updates the object
 }
 \description{
-Generic for setting the `validationStats` slot on an `S4` object
+Generic for setting the \code{validationStats} slot on an \code{S4} object
+
+Setter for the validationStats slot of a \code{SurvivalModel} object and a
+\code{data.frame}
 }

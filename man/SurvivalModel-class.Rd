@@ -14,15 +14,6 @@ will inherit from this class for their accessor methods and constructor.
 \section{Slots}{
 
 \describe{
-\item{\code{colData}}{A \code{DataFrame} with merged column-level metadata for the model
-training data in the \code{assays} slot.}
-
-\item{\code{rowData}}{A \code{DataFrame} with merged row-level metadata for the model
-training data in the \code{assays} slot.}
-
-\item{\code{assays}}{A \code{SimpleList} with a matrix containing the merged data from
-the training data.}
-
 \item{\code{models}}{A \code{SimpleList} containing one or more model object.}
 
 \item{\code{validationData}}{A \code{CohortList} containing one or more \code{SurvivalExperiment}
@@ -31,9 +22,5 @@ objects used to validate the model. This slot is populated by the when the
 
 \item{\code{validationStats}}{A \code{data.frame} object containing validation statistics
 calculated by the \code{validateModel} method.}
-
-\item{\code{metadata}}{A \code{SimpleList} of metadata related to the PCOSP model. This
-slot will contain a modelParams item, which has the relevant parameters
-used when training the model.}
 }}
 

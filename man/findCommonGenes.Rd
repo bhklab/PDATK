@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods-findCommonGenes.R
 \name{findCommonGenes}
 \alias{findCommonGenes}
-\title{Intersect Gene Names for All \code{SurvivalExperiments} in a \code{CohortList}}
+\title{Find the common genes in an \code{S4} object.}
 \usage{
 findCommonGenes(object, ...)
 }
@@ -13,5 +13,5 @@ findCommonGenes(object, ...)
 A \code{character} vector of common gene names.
 }
 \description{
-Intersect Gene Names for All \code{SurvivalExperiments} in a \code{CohortList}
+Find the common genes in an \code{S4} object.
 }

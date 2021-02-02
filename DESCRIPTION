@@ -32,15 +32,15 @@ Imports:
     scales,
     survcomp,
     genefu,
-    IRanges,
     ggplot2,
     switchBox,
     caret,
     reportROC,
     pROC,
     verification
-Suggests: xtable,
-    testthat,
+Suggests: 
+    xtable,
+    testthat (>= 3.0.0),
     msigdbr,
     BiocStyle,
     rmarkdown,
@@ -78,3 +78,4 @@ Collate:
     'methods-validateModel.R'
     'utilities.R'
 RoxygenNote: 7.1.1
+Config/testthat/edition: 3

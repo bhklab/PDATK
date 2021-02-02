@@ -1,8 +1,4 @@
-#' Intersect Gene Names for All `SurvivalExperiments` in a `CohortList`
-#'
-# @examples
-# data(sampleCohorts)
-# commonGenes <- findCommonGenes(sampleCohorts)
+#' Find the common genes in an `S4` object.
 #'
 #' @param object An `S4` object to find common genes for.
 #'
@@ -12,6 +8,16 @@
 #' @export
 setGeneric('findCommonGenes', function(object, ...)
     standardGeneric('findCommonGenes'))
+#'
+#' Intersect Gene Names for All `SurvivalExperiments` in a `CohortList`
+#'
+#' @param object A `CohortList` of `SurvivalExperiment`s to find common genes
+#'   between.
+#'
+#' @return A `character` vector of genes common to all `SurvivalExperiment`s
+#'   in the `CohortList`.
+#'
+#' @md
 #' @export
 setMethod('findCommonGenes', signature='CohortList', function(object)
 {

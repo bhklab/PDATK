@@ -1,4 +1,4 @@
-#' @inherit SurvivalModel-class
+#' @inherit SurvivalModel
 #'
 #' @md
 #' @include class-SurvivalModel.R

@@ -1,7 +1,7 @@
 #'
 #'
 #'
-#' @inherit SurvivalModel-class
+#' @inherit SurvivalModel
 #'
 #' @export
 .RLSModel <- setClass('RLSModel', contains='SurvivalModel')

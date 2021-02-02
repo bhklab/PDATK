@@ -1,6 +1,6 @@
 #' Pancreatic Cancer Overall Survival Predictor (PCOSP) Class
 #'
-#' @inherit SurvivalModel-class
+#' @inherit SurvivalModel
 #'
 #' @md
 #' @include class-SurvivalModel.R

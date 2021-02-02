@@ -4,9 +4,9 @@
 \name{CohortList-class}
 \alias{CohortList-class}
 \alias{.CohortList}
-\title{The`CohortList` Class}
+\title{The\code{CohortList} Class}
 \description{
-A list containing only `SurvivalExperiment` objects.
+A list containing only \code{SurvivalExperiment} objects.
 }
 \details{
 The SimpleList class is the simplest, most generic concrete implementation
@@ -100,4 +100,3 @@ classNameForDisplay(x2)
     \item The \link[S4Vectors]{DataFrame} class for another SimpleList subclass example.
   }
 }
-\keyword{internal}

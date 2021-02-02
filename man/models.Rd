@@ -9,7 +9,7 @@ models(object, ...)
 \arguments{
 \item{object}{An `S4` object to retrieve models from.}
 
-\item{...}{Allow}
+\item{...}{Allow new parameters to be defined for this generic.}
 }
 \description{
 Accessor for the models slot of an `S4` object

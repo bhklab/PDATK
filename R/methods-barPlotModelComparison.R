@@ -1,5 +1,5 @@
-## TODO:: Make a model comaprison plot and dispatch these methods on that.
-#' Compare two S4 Objects Representing Mathetmatical Models
+#' Make A Bar Plot Comparing Perforamnce Between Two `S4` Obects Representing
+#'   Mathematical Models.
 #'
 #' @param model1 An`S4` object containing results of a mathematical model
 #' @param model2 An `S4` object containing results of a different mathematical
@@ -11,6 +11,9 @@
 #' @export
 setGeneric("barPlotModelComparison", function(model1, model2, ...)
     standardGeneric('barPlotModelComparison'))
+#'
+#' Make a Bar Plot Comparison Model Performance Between a ClinicalMode
+#'   and a PCOSP, RLSModel or RGAModel object.
 #'
 #' @param model1 A `ClinicalModel` object.
 #' @param model2 A `PCOSP` or `RLSModel` or `RGAModel` object.

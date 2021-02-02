@@ -34,7 +34,7 @@ setGeneric('forestPlot', function(object, ...)
 #' @importFrom ggplot2 ggplot geom_pointrange theme_bw facet_grid theme
 #'   geom_vline vars xlab ylab scale_colour_manual ggtitle element_text
 #'   element_blank
-#' @importFrom stats reformulate
+#' @importFrom stats reformulate reorder
 #' @importFrom scales scientific
 #' @export
 setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),

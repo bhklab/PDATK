@@ -4,10 +4,10 @@
 \name{RLSModel-class}
 \alias{RLSModel-class}
 \alias{.RLSModel}
-\title{A Generic Container for Storing Mathematical Models of
-SurvivalExperiments}
+\title{Constructor for a SurvivalModel Object.}
+\value{
+A `SurvivalModel` object.
+}
 \description{
-An S4 class with a number of predefined methods for
-accessing slots relavant to a surival model. More specific model types
-will inherit from this class for their accessor methods and constructor.
+Constructor for a SurvivalModel Object.
 }

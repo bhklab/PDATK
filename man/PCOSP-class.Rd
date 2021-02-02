@@ -5,8 +5,9 @@
 \alias{PCOSP-class}
 \alias{.PCOSP}
 \title{Pancreatic Cancer Overall Survival Predictor (PCOSP) Class}
+\value{
+A `SurvivalModel` object.
+}
 \description{
-An S4 class with a number of predefined methods for
-accessing slots relavant to a surival model. More specific model types
-will inherit from this class for their accessor methods and constructor.
+Pancreatic Cancer Overall Survival Predictor (PCOSP) Class
 }

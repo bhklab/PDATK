@@ -7,8 +7,6 @@
 #'   `days_survived` and `is_deceased`.
 #'
 #' @md
-#' @name SurvivalExperiment-class
-#' @importClassesFrom SummarizedExperiment SummarizedExperiment
 #' @export
 .SurvivalExperiment <- setClass('SurvivalExperiment',
     contains='SummarizedExperiment')

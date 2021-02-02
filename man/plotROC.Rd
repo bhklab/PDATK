@@ -2,18 +2,18 @@
 % Please edit documentation in R/methods-plotROC.R
 \name{plotROC}
 \alias{plotROC}
-\title{Plot ROC curves for an `S4` object}
+\title{Plot ROC curves for an \code{S4} object}
 \usage{
 plotROC(object, ...)
 }
 \arguments{
-\item{object}{An `S4` object with a defined plotROC method.}
+\item{object}{An \code{S4} object with a defined plotROC method.}
 
 \item{...}{Allow new parameters to be added to this generic.}
 }
 \value{
-A `ggplot` object containing the ROC curves.
+A \code{ggplot} object containing the ROC curves.
 }
 \description{
-Plot ROC curves for an `S4` object
+Plot ROC curves for an \code{S4} object
 }

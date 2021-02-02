@@ -4,8 +4,9 @@
 #'
 #' @inherit S4Vectors::SimpleList
 #'
+#' @md
 #' @importClassesFrom S4Vectors SimpleList
-#' @keywords internal
+#' @export
 .CohortList <- setClass('CohortList', contains='SimpleList',
     prototype=prototype(elementType='SurvivalExperiment'))
 

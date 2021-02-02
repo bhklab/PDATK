@@ -9,7 +9,7 @@ models(object, ...) <- value
 \arguments{
 \item{object}{An `S4` object to set the models slot for}
 
-\item{...}{Allow new parameters to be added}
+\item{...}{Allow new parameters to be added.}
 
 \item{value}{A model or list of models to assign to the object}
 }

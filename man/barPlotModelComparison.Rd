@@ -2,7 +2,8 @@
 % Please edit documentation in R/methods-barPlotModelComparison.R
 \name{barPlotModelComparison}
 \alias{barPlotModelComparison}
-\title{Compare two S4 Objects Representing Mathetmatical Models}
+\title{Make A Bar Plot Comparing Perforamnce Between Two \code{S4} Obects Representing
+Mathematical Models.}
 \usage{
 barPlotModelComparison(model1, model2, ...)
 }
@@ -16,5 +17,6 @@ model, but with the same or overalapping samples.}
 A bar plot comparing some aspect of model1 and model2
 }
 \description{
-Compare two S4 Objects Representing Mathetmatical Models
+Make A Bar Plot Comparing Perforamnce Between Two \code{S4} Obects Representing
+Mathematical Models.
 }
