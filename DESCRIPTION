@@ -48,6 +48,7 @@ Suggests:
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software,
     Classification
 BugReports: https://github.com/bhklab/PDATK/issues
+RoxygenNote: 7.1.1
 Collate: 
     'class-CohortList.R'
     'class-SurvivalExperiment.R'
@@ -77,5 +78,3 @@ Collate:
     'methods-trainModel.R'
     'methods-validateModel.R'
     'utilities.R'
-RoxygenNote: 7.1.1
-Config/testthat/edition: 3

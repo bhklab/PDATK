@@ -177,7 +177,6 @@ setReplaceMethod('validationStats', signature(object='SurvivalModel',
 })
 
 
-
 #' Accessor for the `validationData` slot of an `S4` object
 #'
 #' @param object An `S4` object
