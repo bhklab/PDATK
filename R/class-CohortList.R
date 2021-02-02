@@ -26,7 +26,7 @@
 #' @importClassesFrom S4Vectors SimpleList
 #' @export
 CohortList <- function(..., mDataTypes) {
-    cohortList <- .CohortList(...)
+    cohortList <- SimpleList(...)
 
     # Use existing mDataTypes if they exist
     if (missing(mDataTypes) && !is.null(mcols(cohortList)$mDataType) &&
@@ -57,7 +57,7 @@ CohortList <- function(..., mDataTypes) {
                 metadata(cohortList[[i]]) <- mDataTypes[i]
         }
     }
-    return(cohortList)
+    return(.CohortList(cohortList))
 }
 
 

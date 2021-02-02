@@ -1,0 +1,40 @@
+---
+title: "PCOSP: Pancreatic Cancer Overall Survival Predictor"
+author:
+- name: Vandana Sandhu
+- name: Heewon Seo
+- name: Christopher Eeles
+  affiliation:
+  - &pm Bioinformatics and Computational Genomics Laboratory, Princess Margaret Cancer Center,University Health Network, Toronto, Ontario, Canada
+  email: christopher.eeles@uhnresearch.ca
+- name: Benjamin Haibe-Kains
+  affiliation:
+  - *pm
+  - &mbp Department of Medical Biophysics, University of Toronto, Toronto, Canada
+  email: benjamin.haibe.kains@utoronto.ca
+date: 2021-02-01
+output:
+    BiocStyle::html_document
+vignette: >
+    %\VignetteIndexEntry{PCOSP: Pancreatic Cancer Overall Survival Predictor}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+# Pancreate Cancer Overall Survival Predictor
+
+As an example of the utility of the PDATK package, we will provide code
+replicating the analysis published in <insert PCSOP citation>. While the
+code presented here is run on dummy data to ensure that PDATK is not too large,
+the full data from that study can be downloaded from <where to download it?>.
+
+```{r load_dependencies, message=FALSE, warning=FALSE, include=FALSE}
+library(msigdbr)
+```
+```{r}
+data(sampleCohortList)
+```
+
+```{r}
+
+```

@@ -60,6 +60,7 @@ Collate:
     'class-RandomGeneAssignmentModel.R'
     'class-RandomLabelShufflingModel.R'
     'classUnions.R'
+    'data.R'
     'globals.R'
     'methods-assignSubtypes.R'
     'methods-barPlotModelComparison.R'

@@ -1,5 +1,5 @@
 ---
-title: "PCOSP: Pancreatic Cancer Overall Survival Predictor"
+title: PDATK: Pacreatic Ductal Adenocarinoma Tool-Kit
 author:
 - name: Vandana Sandhu
 - name: Heewon Seo
@@ -16,7 +16,7 @@ date: 2021-02-01
 output:
     BiocStyle::html_document
 vignette: >
-    %\VignetteIndexEntry{PCOSP: Pancreatic Cancer Overall Survival Predictor}
+    %\VignetteIndexEntry{PDATK: Pacreatic Ductal Adenocarinoma Tool-Kit}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---
@@ -52,7 +52,6 @@ column of `colData`. The `is_deceased` parameter is the same, except that it
 specifies the column containing OS status. If the names of the columns are
 different from the names of the parameters, the columns are renamed in `colData`
 to ensure compatibility with PDATK function.
-
 
 ```{r load_package}
 library(PDATK)
@@ -99,6 +98,31 @@ Since a `SurvivalExperiment` contains a `SummarizedExperiment`, all of the
 accessor methods are inherited. For more details please see the
 `SummarizedExperiment` vignette.
 
+## CohortList
+
+A `CohortList` is `SimpleList` containing only `SurvivalExperiment` objects.
+It is intended to be a general purpose container for storing patient cohorts
+for either training or validating a `SurvivalModel`.
+
+### Constructor
+
+Creating a `CohortList` is the same as creating a `SimpleList`, with the
+additional `mDataType` parameter. This parameter takes the molecular data
+type of each `SurvivalExperiment` in the cohort list. It is useful for making
+comparisons between models using different molecular quantification technologies,
+for example to see if a model performs better on RNA sequencing vs
+RNA microarray data. If `mDataType` is not specfied, the constructor will try
+to retrieve that information from the `metadata` slot each of the
+`SurvivalExperiment`s passed to it. You cannot make a `CohortList` without
+specifying the molecular data types, either directly or indirectly.
+
+```{r CohortList_constructor}
+cohortList <- CohortList(cohort1=survExperiment, cohort2=survExperiment,
+    mDataTypes=c('rna_seq', 'rna_micro'))
+```
+
+
+
 ## SurivivalModel
 
 A `SurvivalModel` object inherits from a `SurvivalExperiment`
@@ -128,21 +152,3 @@ A `SurvivalModel` object inherits from a `SurvivalExperiment`
 ##
 
 ##
-
-# Pancreate Cancer Overall Survival Predictor
-
-As an example of the utility of the PDATK package, we will provide code
-replicating the analysis published in <insert PCSOP citation>. While the
-code presented here is run on dummy data to ensure that PDATK is not too large,
-the full data from that study can be downloaded from <where to download it?>.
-
-```{r load_dependencies, message=FALSE, warning=FALSE, include=FALSE}
-library(msigdbr)
-```
-```{r}
-data(sampleCohortList)
-```
-
-```{r}
-
-```
