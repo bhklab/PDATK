@@ -1,0 +1,95 @@
+---
+title: "PCOSP: Pancreatic Cancer Overall Survival Predictor"
+author:
+    - 'Vandana Sandhu'
+    - 'Heewon Seo'
+    - 'Christopher Eeles'
+    - 'Benjamin Haibe-Kains'
+date: 2021-02-01
+output:
+    BiocStyle::html_document
+vignette: >
+    %\VignetteIndexEntry{PCOSP: Pancreatic Cancer Overall Survival Predictor}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+The PDATK R package provides a set of classes and methods for conducting
+survival analysis using biomolecular markers to compute risk scores for patients.
+This vignette focuses on implementing
+
+# Classes
+
+## SurvivalExperiment
+
+A `SurvivalExperiment` is a soft wrapper around a `SummarizedExperiment` object
+which requires two mandatory metadata columns in the `colData` slot. The
+`days_survived` column specifies the integer number of days a patient has
+survived since surgery. This is often referred to as the Overall Survival (OS)
+of a patient in survival analysis. The `is_deceased` column indicates whether
+the patient passed away during the study measurement period and corresponds to
+the OS Status of a patient the survival literature. For patients with an
+`is_deceased` value of zero survived past the last measurement in the study.
+
+### Constructor
+
+To create a `SurvivalExperiment` object.
+
+```{r SurvivalExperiment_constructor}
+library(PDATK)
+```
+
+
+
+### Accessors
+
+Since a `SurvivalExperiment` contains a `SummarizedExperiment`, all of the
+accessor methods are inherited. For more details please see the
+`SummarizedExperiment` vignette.
+
+## SurivivalModel
+
+A `SurvivalModel` object.
+
+### Constructor
+
+```{r }`
+
+### Accessors
+
+
+### Methods
+
+
+### Sub-Classes
+
+#### PCOSP
+
+
+#### RandomLabelShufflingModel and RandomGeneAssignmentModel
+
+
+#### ClinicalModel
+
+
+#### GeneFuModel
+
+# Pancreate Cancer Overall Survivor Predictor
+
+As an example of the utility of the PDATK package, we will provide code
+replicating the analysis published in <inset PCSOP citation>. While the
+code presented here is run on dummy data to ensure that PDATK is not too large,
+the full data from that study can be downloaded from <where to download it?>.
+
+```{r load_dependencies, message=FALSE, warning=FALSE, include=FALSE}
+library(msigdbr)
+```
+```{r}
+data(sampleCohortList)
+```
+
+```{r}
+
+```
