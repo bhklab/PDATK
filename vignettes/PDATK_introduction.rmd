@@ -1,5 +1,5 @@
 ---
-title: PDATK: Pacreatic Ductal Adenocarinoma Tool-Kit
+title: An Introduction to PDATK Classes and Methods
 author:
 - name: Vandana Sandhu
 - name: Heewon Seo
@@ -16,12 +16,12 @@ date: 2021-02-01
 output:
     BiocStyle::html_document
 vignette: >
-    %\VignetteIndexEntry{PDATK: Pacreatic Ductal Adenocarinoma Tool-Kit}
+    %\VignetteIndexEntry{An Introduction to PDATK Classes and Methods}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---
 
-# Introduction
+# Overview
 
 The PDATK R package provides a set of classes and methods for estimating
 patient risk using gene level biomarkers from a variety of published risk
@@ -79,6 +79,7 @@ survExperiment <- SurvivalExperiment(assays=SimpleList(rna=assay1),
     rowData=rowMData, colData=colMData, metadata=list(a='Some metadata'),
     days_survived='overall_survival', is_deceased='os_status')
 ```
+
 A `SurvivalExperiment` can also be created from an existing
 
 ```{r}
@@ -107,10 +108,10 @@ for either training or validating a `SurvivalModel`.
 ### Constructor
 
 Creating a `CohortList` is the same as creating a `SimpleList`, with the
-additional `mDataType` parameter. This parameter takes the molecular data
-type of each `SurvivalExperiment` in the cohort list. It is useful for making
-comparisons between models using different molecular quantification technologies,
-for example to see if a model performs better on RNA sequencing vs
+addition of the `mDataType` parameter. This parameter takes the molecular data
+type of each `SurvivalExperiment` in the cohort list. It is used for making
+comparisons between models using different molecular assays,
+for example to see if model perforance is concordant between RNA sequencing vs
 RNA microarray data. If `mDataType` is not specfied, the constructor will try
 to retrieve that information from the `metadata` slot each of the
 `SurvivalExperiment`s passed to it. You cannot make a `CohortList` without
@@ -121,34 +122,65 @@ cohortList <- CohortList(cohort1=survExperiment, cohort2=survExperiment,
     mDataTypes=c('rna_seq', 'rna_micro'))
 ```
 
-
-
 ## SurivivalModel
 
-A `SurvivalModel` object inherits from a `SurvivalExperiment`
+A `SurvivalModel` object inherits from a `SurvivalExperiment`, with the addition
+of the `models`, `validationStats` and `validationData` slots. On initial
+creation, as `SurvivalModel` is simply a container for your training data and
+model parameters. However, using the `trainModel` method on
+a `SurvivalModel` object will train your model using the training data in
+the `assays` slot of the `SurvivalModel` and assign the trained model to the
+`models` slot.
+
+Once trained, a model can be used to make risk predictions for new cohorts of
+data, assuming they have the same molecular features. The `predictClasses`
+method uses a trained `SurvivalModel` to make predictions for a
+`SurvivalExperiment` or `CohortList`, assigning the risk scores to the `colData`
+of each `SurvivalExperiment` and adding class predictions, if applicable, to the
+`predictions` item in the `SurvivalExperiment` metadata. The method returns
+the originial data with addeded metadata.
+
+A `SurvivalModel` can then be validated using external data with the
+`validateModel` method. This will compute performance statistics for the model
+on a set of validation data, assigning those statistics to the `validationStats`
+slot as a `data.table`. The validation data will be attached to the model in the
+`validationData` slot, to make it clear that what data the validation statistics
+apply to.
+
+Additional methods are included in this package to conduct model comparions
+meta-analyses. These will be discuessed in the detail in the `PCOSP` vignette.
 
 ### Constructor
 
-```{r }`
+The `SurvivalModel` constructor takes as its first argument a `SurvivalExperiment`
+or `CohortList`. In the case of a `CohortList`, each `SurvivalExperiment` is
+subset to include only common samples and genes before being converted to
+a `SurvivalModel`. The molecular data for the models are stored in the `assays`
+slot of the `SurvivalModel`. Additionally, model parmeters must be specified
+depending on the model subclass. For pure `SurvivalModel` objects, the only
+model paramter is `randomSeed`, which is used to set a seed for reproducible
+sampling in model training, prediction and validation methods.
+
+```{r SurvivalModel_constructor}
+survModel <- SurvivalModel(survExperiment, randomSeed=1987)
+```
 
 ### Accessors
 
+In addition to the standard `SurvivalExperiment` accessors, a `SurivalModel`
+also uses `models`, `validationStats` and `validationData` to access slots
+with the same respective names. Example usage of these accessors can be found
+in the `PCOSP` vignette. For more information please see the documentation
+with `??<method_name>`, e.g., `??models`. This will return a list of
+documentation for that S4 method defined on different classes.
 
 ### Sub-Classes
 
-#### PCOSP
+In order to implement model specific behaviours for training, prediciton and
+validation, a number of `SurvivalModel` sub-classes are included in this package.
+Each one represents a distinct risk prediction model and has model specific
+configuration. See the `PCOSP` vignette for an explanation of each.
 
+# References
 
-#### RandomLabelShufflingModel and RandomGeneAssignmentModel
-
-
-#### ClinicalModel
-
-
-#### GeneFuModel
-
-# Modelling Workflow
-
-##
-
-##
+TODO: Add references.
