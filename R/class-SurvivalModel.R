@@ -34,13 +34,15 @@
 #' @return A `SurvivalModel` object.
 #'
 #' @md
+#' @import BiocGenerics
+#' @import S4Vectors
 #' @export
 SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
     randomSeed)
 {
     if (!is(trainCohorts, 'SurvivalExperiment')) {
         if (is(trainCohorts, 'CohortList')) {
-            .mergeWithNames <- function(...) merge(...,
+            .mergeWithNames <- function(x, y) merge(x, y,
                 cohortNames=names(trainCohorts))
             trainCohorts <- Reduce(.mergeWithNames, trainCohorts)
             trainCohorts <- dropNotCensored(trainCohorts, minDaysSurvived)

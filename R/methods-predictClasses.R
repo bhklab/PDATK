@@ -58,7 +58,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
         inputMat=assayMatrix)
     # convert factor to character
     predictionListChar <- lapply(predictionList, as.character)
-    predictions <- do.call(rbind, predictionListChar)
+    predictions <- BiocGenerics::do.call(rbind, predictionListChar)
     colnames(predictions) <- colnames(assayMatrix)
 
     metadata(object)$PCOSPpredictions <- predictions

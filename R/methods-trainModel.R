@@ -33,8 +33,9 @@ setGeneric('trainModel', function(object, ...)
 #'
 #' @seealso switchBox::SWAP.KTSP.Train BiocParallel::bplapply
 #'
-#' @importFrom BiocParallel bplapply
 #' @md
+#' @importFrom BiocParallel bplapply
+#' @import BiocGenerics
 #' @export
 setMethod('trainModel', signature('PCOSP'),
     function(object, numModels=10, minAccuracy=0.6, ...)

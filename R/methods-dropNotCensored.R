@@ -27,14 +27,14 @@ setGeneric('dropNotCensored',
 #' @return The `SurvivalExperiment` with censored samples removed.
 #'
 #' @md
-#' @importFrom stats na.omit
+#' @import S4Vectors
 #' @importFrom SummarizedExperiment colData colData<-
 #' @export
 setMethod('dropNotCensored', signature('SurvivalExperiment'),
     function(object, minDaysSurvived=365)
 {
     # drop NA rows
-    object <- object[, rownames(na.omit(colData(object)))]
+    object <- object[, !is.na(colData(object)$days_survived)]
 
     days_survived <- colData(object)$days_survived
     is_deceased <- colData(object)$is_deceased

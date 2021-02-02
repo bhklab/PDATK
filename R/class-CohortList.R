@@ -100,11 +100,9 @@ setAs('CohortList', 'list', function(from) from@listData)
 #' @md
 #' @export
 setValidity('CohortList', function(object) {
-    print(object)
     isSurvivalExperiment <- vapply(object, FUN=is,
         class2='SurvivalExperiment', FUN.VALUE=logical(1))
 
-    print(isSurvivalExperiment)
     if (all(isSurvivalExperiment)) {
         TRUE
     } else {
