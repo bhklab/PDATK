@@ -15,6 +15,10 @@ indicates the molecular data type in each cohort. This will be assigned
 to \code{mcols} for the \code{CohortList} as well as to the metadata of each
 item in the list as \code{mDataType}.}
 }
+\value{
+A \code{CohortList} object containing one or more \code{SurvivalExperiment}
+objects.
+}
 \description{
 Constructor for the \code{CohortList} class, a specialized list for storing
 \code{SurvivalExperiment} objects.

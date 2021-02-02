@@ -5,9 +5,6 @@
 \alias{PCOSP-class}
 \alias{.PCOSP}
 \title{Pancreatic Cancer Overall Survival Predictor (PCOSP) Class}
-\value{
-A `SurvivalModel` object.
-}
 \description{
 Pancreatic Cancer Overall Survival Predictor (PCOSP) Class
 }

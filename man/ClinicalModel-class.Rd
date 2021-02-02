@@ -4,10 +4,7 @@
 \name{ClinicalModel-class}
 \alias{ClinicalModel-class}
 \alias{.ClinicalModel}
-\title{Constructor for a SurvivalModel Object.}
-\value{
-A `SurvivalModel` object.
-}
+\title{ClinicalModel Class Definition}
 \description{
-Constructor for a SurvivalModel Object.
+ClinicalModel Class Definition
 }

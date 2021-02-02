@@ -1,8 +1,6 @@
-#' @title The`CohortList` Class
+#' `CohortList` Class Definition
 #'
 #' @description A list containing only `SurvivalExperiment` objects.
-#'
-#' @inherit S4Vectors::SimpleList
 #'
 #' @md
 #' @importClassesFrom S4Vectors SimpleList
@@ -11,7 +9,7 @@
     prototype=prototype(elementType='SurvivalExperiment'))
 
 
-#' @title Constructor for the `CohortList` class, a specialized list for storing
+#' Constructor for the `CohortList` class, a specialized list for storing
 #'   `SurvivalExperiment` objects.
 #'
 #' @param ... One or more `SurvivalExperiment` objects.
@@ -19,6 +17,9 @@
 #'   indicates the molecular data type in each cohort. This will be assigned
 #'   to `mcols` for the `CohortList` as well as to the metadata of each
 #'   item in the list as `mDataType`.
+#'
+#' @return A `CohortList` object containing one or more `SurvivalExperiment`
+#'   objects.
 #'
 #' @md
 #' @importFrom S4Vectors metadata metadata<- mcols mcols<- mendoapply

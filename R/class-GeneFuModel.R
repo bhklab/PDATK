@@ -1,8 +1,6 @@
 #' @title A `SurvivalModel` Sub-class Designed to Hold A Survival Model Generated
 #'   Using the `genefu` R package.
 #'
-#' @inherit SurvivalModel
-#'
 #' @md
 #' @export
 .GeneFuModel <- setClass('GeneFuModel', contains='SurvivalModel')

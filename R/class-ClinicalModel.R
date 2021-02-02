@@ -1,4 +1,4 @@
-#' @inherit SurvivalModel
+#' ClinicalModel Class Definition
 #'
 #' @md
 #' @include class-SurvivalModel.R

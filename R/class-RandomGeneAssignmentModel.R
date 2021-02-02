@@ -1,8 +1,9 @@
-#' @inherit SurvivalModel
+#' RGAModel Class Definition
 #'
 #' @export
 .RGAModel <- setClass('RGAModel', contains='SurvivalModel')
 #'
+#' RandomGeneAssignmentModel Constructor
 #'
 #' @inherit SurvivalModel
 #'

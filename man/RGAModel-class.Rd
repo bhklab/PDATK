@@ -4,10 +4,7 @@
 \name{RGAModel-class}
 \alias{RGAModel-class}
 \alias{.RGAModel}
-\title{Constructor for a SurvivalModel Object.}
-\value{
-A `SurvivalModel` object.
-}
+\title{RGAModel Class Definition}
 \description{
-Constructor for a SurvivalModel Object.
+RGAModel Class Definition
 }

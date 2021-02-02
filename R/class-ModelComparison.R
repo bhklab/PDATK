@@ -1,4 +1,4 @@
-#' @inherit S4Vectors::DataFrame
+#' ModelComparison Class Definition
 #'
 #' @md
 #' @importClassesFrom S4Vectors DataFrame

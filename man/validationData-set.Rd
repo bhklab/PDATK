@@ -5,24 +5,17 @@
 \title{Generic for setting the \code{validationData} slot on an \code{S4} object}
 \usage{
 validationData(object, ...) <- value
-
-\S4method{validationData}{SurvivalModel,CohortList}(object) <- value
 }
 \arguments{
-\item{object}{A \code{SurvivalModel} model.}
+\item{object}{An \code{S4} object.}
 
 \item{...}{Allow definition of additional parameters to this generic.}
 
-\item{value}{A \code{CohortList} of validation cohorts for the \code{SurvivalModel} model.}
+\item{value}{A \code{data.frame} of validation statistics.}
 }
 \value{
 None, updates the object
-
-None, updates the object.
 }
 \description{
 Generic for setting the \code{validationData} slot on an \code{S4} object
-
-Setter for the \code{validationData} slot of a \code{SurvivalModel} object with a
-\code{CohortList}.
 }

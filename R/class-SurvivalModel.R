@@ -197,7 +197,6 @@ setGeneric('validationData', function(object, ...)
 #'   validation statistics for this model.
 #'
 #' @md
-#' @name validationData
 #' @export
 setMethod('validationData', signature(object='SurvivalModel'), function(object)
 {
@@ -229,7 +228,6 @@ setGeneric('validationData<-', function(object, ..., value)
 #' @return None, updates the object.
 #'
 #' @md
-#' @name validationData<-
 #' @export
 setReplaceMethod('validationData', signature(object='SurvivalModel',
     value='CohortList'), function(object, value)

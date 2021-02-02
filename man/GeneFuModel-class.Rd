@@ -6,9 +6,6 @@
 \alias{.GeneFuModel}
 \title{A \code{SurvivalModel} Sub-class Designed to Hold A Survival Model Generated
 Using the \code{genefu} R package.}
-\value{
-A `SurvivalModel` object.
-}
 \description{
 A \code{SurvivalModel} Sub-class Designed to Hold A Survival Model Generated
 Using the \code{genefu} R package.

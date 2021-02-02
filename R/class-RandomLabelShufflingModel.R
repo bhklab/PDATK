@@ -1,10 +1,9 @@
-#'
-#'
-#'
-#' @inherit SurvivalModel
+#' RLSModel Class Definition
 #'
 #' @export
 .RLSModel <- setClass('RLSModel', contains='SurvivalModel')
+#'
+#' RandomLabelShufflingModel Constructor
 #'
 #' @inherit SurvivalModel
 #'

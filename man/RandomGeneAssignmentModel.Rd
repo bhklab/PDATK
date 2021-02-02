@@ -3,7 +3,7 @@
 \name{RandomGeneAssignmentModel}
 \alias{RandomGeneAssignmentModel}
 \alias{RGAModel}
-\title{Constructor for a SurvivalModel Object.}
+\title{RandomGeneAssignmentModel Constructor}
 \usage{
 RandomGeneAssignmentModel(trainCohorts, minDaysSurvived = 365, ..., randomSeed)
 }
@@ -23,5 +23,5 @@ this `SurvialModel` object. If excluded defaults to 1234.}
 A `SurvivalModel` object.
 }
 \description{
-Constructor for a SurvivalModel Object.
+RandomGeneAssignmentModel Constructor
 }

@@ -50,8 +50,6 @@ setMethod('dropNotCensored', signature('SurvivalExperiment'),
 #'
 #' Remove Censored Patients from Each `SurvivalExperiemnt` in a `CohortList`
 #'
-#' @inherit dropNotCensored,SurvivalExperiment-method
-#'
 #' @param object A `CohortList` for which to drop patients who died before
 #'   each `SurvivalExperiment` item a specified date.
 #' @param minDaysSurvived An `integer` specifying the minimum number of days

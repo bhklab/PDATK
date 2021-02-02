@@ -5,23 +5,16 @@
 \title{Accessor for the \code{validationData} slot of an \code{S4} object}
 \usage{
 validationData(object, ...)
-
-\S4method{validationData}{SurvivalModel}(object)
 }
 \arguments{
-\item{object}{A \code{SurvivalModel} object.}
+\item{object}{An \code{S4} object}
 
 \item{...}{Allow definition of new arguments to this generic.}
 }
 \value{
 A \code{CohortList} with the validation data used for the \code{SurvivalModel} model,
 or nothing if the model has not be validated.
-
-A \code{CohortList} object containing the datasets used to compute
-validation statistics for this model.
 }
 \description{
 Accessor for the \code{validationData} slot of an \code{S4} object
-
-Accessor for the \code{validationData} slot of a \code{SurvivalModel} object.
 }

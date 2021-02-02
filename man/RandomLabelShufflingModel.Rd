@@ -3,7 +3,7 @@
 \name{RandomLabelShufflingModel}
 \alias{RandomLabelShufflingModel}
 \alias{RLSModel}
-\title{Constructor for a SurvivalModel Object.}
+\title{RandomLabelShufflingModel Constructor}
 \usage{
 RandomLabelShufflingModel(trainCohorts, minDaysSurvived = 365, ..., randomSeed)
 }
@@ -23,5 +23,5 @@ this `SurvialModel` object. If excluded defaults to 1234.}
 A `SurvivalModel` object.
 }
 \description{
-Constructor for a SurvivalModel Object.
+RandomLabelShufflingModel Constructor
 }

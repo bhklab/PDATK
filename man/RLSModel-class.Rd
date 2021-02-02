@@ -4,10 +4,7 @@
 \name{RLSModel-class}
 \alias{RLSModel-class}
 \alias{.RLSModel}
-\title{Constructor for a SurvivalModel Object.}
-\value{
-A `SurvivalModel` object.
-}
+\title{RLSModel Class Definition}
 \description{
-Constructor for a SurvivalModel Object.
+RLSModel Class Definition
 }
