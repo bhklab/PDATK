@@ -4,7 +4,6 @@
 .Ruserdata
 .DS_Store
 results/*
-data/*
 .deprecated
 .deprecated/*
 .\.*

@@ -462,14 +462,31 @@ to get the Haider GeneFuModel to work with the package function.
 ```{r GeneFuModel_assign_models}
 data(existingClassifierData, verbose=TRUE)
 
-models(chenGeneFuModel) <- SimpleList(list(chen=))
-models(birnbaumGeneFuModel) <- SimpleList(list(birnbuam=))
+models(chenGeneFuModel) <- SimpleList(list(chen=chen))
+models(birnbaumGeneFuModel) <- SimpleList(list(birnbuam=birnbaum))
 models(haiderGeneFuModel) <- SimpleList(list(haider=NA)) 
 ```
+## Predict the Classes
 
-```{r }
+
+```{r GeneFuModel_predictions}
+chenClassPredictions <- predictClasses(PCOSPpredValCohorts,
+    model=chenGeneFuModel)
+birnClassPredictions <- predictClasses(PCOSPpredValCohorts,
+    model=birnbaumGeneFuModel)
+```
 
 
+```{r GeneFuModel_haider_fix}
+haiderClassPredictions <- PCOSPpredValCohorts[names(haiderSigScores)]
+# Manually assign the scores to the prediction cohorts
+for (i in seq_along(haiderSigScores)) {
+  colMData <- colData(haiderClassPredictions[[i]])
+  colMData$genefu_score <- NA_real_
+  colMData[names(haiderSigScores[[i]]), ] <- haiderSigScores[[i]]
+  colData(hairderClassPredictions[[i]]) <- colMData
+}
+```
 
 
 
