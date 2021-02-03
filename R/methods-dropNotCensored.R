@@ -27,7 +27,7 @@ setGeneric('dropNotCensored',
 #' @return The `SurvivalExperiment` with censored samples removed.
 #'
 #' @md
-#' @import S4Vectors
+#' @importFrom S4Vectors na.omit
 #' @importFrom SummarizedExperiment colData colData<-
 #' @export
 setMethod('dropNotCensored', signature('SurvivalExperiment'),

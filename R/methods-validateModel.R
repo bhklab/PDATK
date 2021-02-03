@@ -27,11 +27,12 @@ setGeneric('validateModel', function(model, valData, ...)
 #'
 #' @md
 #' @import data.table
+#' @import survcomp
 #' @importFrom BiocParallel bplapply
 #' @importFrom switchBox SWAP.KTSP.Classify
 #' @importFrom SummarizedExperiment colData colData<-
-#' @importFrom survcomp combine.est
 #' @importFrom stats pnorm qnorm
+#' @importFrom survival strata
 #' @importFrom S4Vectors metadata mcols
 #' @export
 setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
@@ -41,7 +42,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     #   if the predictions were made using the same model
     if ('hasPredictions' %in% colnames(mcols(valData))) {
         if (all(mcols(valData)$hasPredictions)) {
-            if (all.equal(model, metadata(valData)$predictionModel)) {
+            if (all.equal(model, metadata(valData)$predictionModel) == TRUE) {
                 predCohortList <- valData
             } else {
                 warning(.warnMsg(.context(), 'The validationData argument ',
@@ -119,15 +120,17 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'
 #' @md
 #' @import data.table
+#' @import survcomp
+#' @import reportROC
+#' @import survival
+#' @import verification
 #' @importFrom S4Vectors metadata
 #' @importFrom SummarizedExperiment colData
-#' @importFrom survcomp D.index concordance.index combine.est
-#' @importFrom reportROC reportROC
-#' @importFrom verification roc.area
 #' @export
 setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     valData='SurvivalExperiment'), function(model, valData)
 {
+
     # determine if we need to rerun the classification model
     if (identical(metadata(model)$modelParams, metadata(valData)$PCOSPparams))
     {
@@ -142,7 +145,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 
     # convert prognosis to numeric for the ROC stats
     survivalDF <- within(survivalDF,
-        prognosis <- ifelse(prognosis == 'good', 1, 0)
+        prognosis <- ifelse(prognosis == 'good', 1L, 0L)
     )
 
     # calculate AUROC statistics
@@ -197,10 +200,11 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'
 #' @md
 #' @import data.table
+#' @import survcomp
 #' @importFrom S4Vectors metadata
 #' @importFrom SummarizedExperiment colData
-#' @importFrom survcomp D.index concordance.index combine.est
 #' @importFrom reportROC reportROC
+#' @importFrom survival strata
 #' @importFrom verification roc.area
 #' @export
 setMethod('validateModel', signature(model='ClinicalModel',
@@ -220,7 +224,7 @@ setMethod('validateModel', signature(model='ClinicalModel',
 
     # convert prognosis to numeric for the ROC stats
     survivalDF <- within(survivalDF,
-        prognosis <- ifelse(prognosis == 'good', 1, 0)
+        prognosis <- ifelse(prognosis == 'good', 1L, 0L)
     )
 
     # calculate AUROC statistics
@@ -264,6 +268,7 @@ setMethod('validateModel', signature(model='ClinicalModel',
 #' @inherit validateModel,PCOSP_or_RLS_or_RGA,CohortList-method
 #'
 #' @md
+#' @importFrom survival strata
 #' @export
 setMethod('validateModel', signature(model='ClinicalModel',
     valData='CohortList'), function(model, valData, ...)
@@ -356,11 +361,12 @@ setMethod('validateModel', signature(model='ClinicalModel',
 #'
 #' @md
 #' @import data.table
+#' @import survcomp
 #' @importFrom S4Vectors metadata
 #' @importFrom SummarizedExperiment colData
-#' @importFrom survcomp D.index concordance.index combine.est
 #' @importFrom reportROC reportROC
 #' @importFrom verification roc.area
+#' @importFrom survival strata
 #' @export
 setMethod('validateModel', signature(model='GeneFuModel',
     valData='SurvivalExperiment'), function(model, valData)

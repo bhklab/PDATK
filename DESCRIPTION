@@ -18,11 +18,13 @@ Description: A unique set of 89 pancreatic cancer samples profiled using both
   looked at relative expression of gene pairs within the patient.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Depends: R (>= 4.1), SummarizedExperiment, S4Vectors, BiocGenerics
+Depends: R (>= 4.1), SummarizedExperiment
 Imports:
     data.table,
     CoreGx,
     methods,
+    S4Vectors, 
+    BiocGenerics,
     stats,
     plyr,
     BiocParallel,
