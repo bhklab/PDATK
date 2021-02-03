@@ -278,6 +278,9 @@ setMethod('trainModel', signature('RGAModel'),
     return(object)
 })
 
+
+# ---- ClinicalModel Methods
+
 #' Fit a GLM Using Clinical Predictors Specified in a `ClinicalModel` Object.
 #'
 #'

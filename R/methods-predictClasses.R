@@ -150,7 +150,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
             ' have levels that are not in the model, skipping these rows...'))
 
     # Calculate survival probabiltiies
-    predictions <- predict(models(model)[[1]],colData(object)[keepRows, ], ...,
+    predictions <- predict(models(model)[[1]], colData(object)[keepRows, ], ...,
         na.action=na.action, type=type)
 
     # Update the `SurvivalExperiment` object with the predicted probabilities

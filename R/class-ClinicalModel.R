@@ -10,7 +10,7 @@
 #'
 #' @param trainData A `SurvivalExperiment` or `CohortList` object to construct
 #'   a clinical model using
-#' @param formula A `formula` object or a `character` vector coercibel to one.
+#' @param formula A `formula` object or a `character` vector coercible to one.
 #'   All columns specified in the formula must be in the colData slot of the
 #'   all `SurvivalExperiment`s in trainData.
 #' @param minDaysSurvived An `integer` specifying the minimum number of days

@@ -31,6 +31,7 @@ the full data from that study can be downloaded from <where to download it?>.
 ```{r load_dependencies, message=FALSE, warning=FALSE, include=FALSE}
 library(PDATK)
 library(msigdbr)
+library(data.table)
 ```
 
 ```{r load_sample_data}
@@ -105,7 +106,7 @@ metadata(PCOSPmodel)$modelParams
 ## Training a PCOSP Model
 
 To simplify working with different `SurvivalModel`, we have implemented a
-standard workflow that is valid for all `SurvivalModel`s. This involves first
+standard work-flow that is valid for all `SurvivalModel`s. This involves first
 training the model, then using it to predict risk/risk-classes for a set
 of validation cohorts and finally assessing performance on the validation data.
 
@@ -222,10 +223,10 @@ cohortROCplots
 ```
 # Permutations Testing for a PCOSP Model
 
-To demonstrate the performance of a PCOSP model to random chance, we have
-included two models which permute the patient prognosis labels and the gene
-names. These models can be used to evaluate if you model does better than
-random chance.
+To compare the performance of a PCOSP model to random chance, we have
+included two model classes which permute either patient prognosis labels or 
+the feature names. These models can be used to evaluate if a model does better 
+than random chance.
 
 ## Random Label Shuffling Model
 
@@ -240,21 +241,236 @@ The work-flow for this model follows the standard `SurvivalModel` work-flow.
 ### Construct the Model Object
 
 ```{r RLSModeL_constructor}
+# Merge to a single SurvivalExperiment
+ICGCtrainCohorts <- merge(ICGCtrainCohorts[[1]], ICGCtrainCohorts[[2]], 
+    cohortNames=names(ICGCtrainCohorts))
+RLSmodel <- RLSModel(ICGCtrainCohorts, minDaysSurvived=365, randomSeed=1987)
+```
 
 ### Train the Model
 
 ```{r RLSModel_training}
+trainedRLSmodel <- trainModel(RLSmodel, numModels=100)
 ```
 
 ### Predict the Classes
 
-```{r }
+```{r RLSModel_predictions}
+RLSpredCohortList <- predictClasses(validationCohortList, model=trainedRLSmodel)
 ```
 
 ### Validate Model Performance
 
-```{r }
+```{r RLSModel_validation}
+validatedRLSmodel <- validateModel(trainedRLSmodel, RLSpredCohortList[-2])
 ```
+
+### Compare with a PCOSP Model
+
+```{r RLSModel_PCOSP_comparison_plot}
+RLSmodelComparisonPlot <- densityPlotModelComparison(validatedRLSmodel,
+    validatedPCOSPmodel, title='Random Label Shuffling vs PCOSP',
+    mDataTypeLabels=c(rna_seq='Sequencing-based', rna_micro='Array-based',
+        combined='Overall'))
+RLSmodelComparisonPlot
+```
+
+## Random Gene Assignment Model
+
+### Construct the Model Object
+
+```{r RGAModeL_constructor}
+RGAmodel <- RGAModel(ICGCtrainCohorts, randomSeed=1987)
+```
+
+### Train the Model
+
+```{r RGAModel_training}
+trainedRGAmodel <- trainModel(RGAmodel, numModels=100)
+```
+
+### Predict the Classes
+
+```{r RGAModel_predictions}
+RGApredCohortList <- predictClasses(validationCohortList,
+    model=trainedRGAmodel)
+```
+
+### Validate Model Performance
+
+```{r RGAModel_validation}
+validatedRGAmodel <- validateModel(trainedRGAmodel, RGApredCohortList[-2])
+```
+
+### Compare RGAModel to PCOSP
+
+```{r RGAModel_PCOSP_comparison_plot}
+RGAmodelComparisonPlot <-  densityPlotModelComparison(validatedRGAmodel,
+    validatedPCOSPmodel, title='Random Gene Assignment vs PCOSP',
+    mDataTypeLabels=c(rna_seq='Sequencing-based', rna_micro='Array-based',
+        combined='Overall'))
+RGAmodelComparisonPlot
+```
+
+# Pathway Analysis of a PCOSP Model
+
+Confident that the PCOSP model is performing better than random chance at
+prediction patient survival, we can now begin to look into the features that
+are most relevant to these predictions. Once we have extracted the features,
+we will use the `runGSEA` method to evaluate which pathways these genes are
+representative of.
+
+## Get the Top Predictive Features
+
+We can get the features which are most predictive from a `SurvivalModel`
+object using the `getTopFeatures` method. By default this retrieves the
+gene names from the top 10% of models in the `SurvivalModel`. Users can 
+customize the top N models to extract genes from using the `numModels` 
+parameter.
+
+```{r PCOSP_get_top_features}
+topFeatures <- getTopFeatures(validatedPCOSPmodel)
+topFeatures
+```
+
+## Querying Genesets for Enriched Pathways
+
+To perform pathway analysis, which is done internally using the 
+`piano::runGSAhyper` function we first to pathway data to query against.
+We recommend using the `msigdbr` R package to fetch pathways of interest.
+
+```{r msigdbr_get_pathways}
+allHumanGeneSets <- msigdbr()
+allGeneSets <- as.data.table(allHumanGeneSets)
+geneSets <- allGeneSets[grepl('^GO.*|.*CANONICAL.*|^HALLMARK.*', gs_name),
+    .(gene_symbol, gs_name)]
+```
+
+```{r PCOSP_runGSEA}
+GSEAresultDT <- runGSEA(validatedPCOSPmodel, geneSets)
+```
+
+
+# Clinical Model Comparison
+
+Equipped with a risk prediction model performing better than random chance,
+the next pertinent question is: does it out perform simpler models? To answer
+this question we have included the `ClinicalModel` class, which leverages the
+`glm` function from the `stats` package to fit a generalized model based on
+a set of clinical variables. To do this, we need to specify a model formula
+based on the column names available in the `colData` slot of our 
+`SurvivalExperiment` objects. 
+
+
+## Build the Model
+
+
+```{r training_data_patient_metadata}
+knitr::kable(head(colData(ICGCtrainCohorts)))
+```
+
+
+```{r ClinicalModel_constructor}
+clinicalModel <- ClinicalModel(ICGCtrainCohorts,
+    formula='prognosis ~ sex + age + T + N + M + grade')
+```
+
+
+## Train the Model
+
+
+```{r ClinicalModel_training}
+trainedClinicalModel <- trainModel(clinicalModel)
+```
+
+## Predict the Classes
+
+Clinical annotations are only available for a subset of our patient cohorts,
+thus we subset our cohort list to ensure the model works as expected.
+
+```{r ClinicalModel_prediction}
+hasModelParamsCohortList <-
+    PCOSPpredValCohorts[c('ICGCMICRO', 'TCGA', 'PCSI', 'OUH')]
+
+clinicalPredCohortList <- predictClasses(hasModelParamsCohortList,
+    model=trainedClinicalModel)
+```
+
+## Validate the Model
+
+```{r ClinicalModel_predictions}
+validatedClinicalModel <- validateModel(trainedClinicalModel,
+    clinicalPredCohortList)
+```
+
+## Visualize Comparison with PCOSP Model
+
+```{r ClinicalModel_vs_PCOSP_AUC_barplot}
+clinicalVsPCOSPbarPlot <- barPlotModelComparison(validatedClinicalModel,
+    validatedPCOSPmodel, stat='AUC')
+clinicalVsPCOSPbarPlot
+```
+To reduce the number of plotting functions and make meta-analysis of many models
+of different types, we have included the `ModelComparison` object. This object
+aggregates the validation statistics from two models. Plotting methods can then
+be dispatched on this class, greatly simplifying the process of comparison models
+of any type. You can also compare a model to an existing model comparison, and
+in this way built up a collection of model performance statistics which can 
+be visualized in a forest plot to enable complex comparisons between many models.
+
+```{r ModelComparison_object}
+clinicalVsPCOSP <- compareModels(validatedClinicalModel, validatedPCOSPmodel)
+```
+
+```{r ClinicalModel_vs_PCOSP_dIndex, fig.wide=TRUE, fig.height=8, fig.width=8}
+clinVsPCOSPdIndexForestPlot <- forestPlot(clinicalVsPCOSP, stat='D_index',
+    transform='log2')
+clinVsPCOSPdIndexForestPlot
+```
+
+```{r  ClinicalModel_vs_PCOSP_concIndex, fig.wide=TRUE, fig.height=8, fig.width=8}
+clinVsPCOSPconcIndexForestPlot <- forestPlot(clinicalVsPCOSP,
+    stat='concordance_index')
+clinVsPCOSPconcIndexForestPlot
+```
+
+# Comparing PCOSP Models to Existing Published Classifiers
+
+To get and idea of how our PCOSP model stacks up against other classifiers
+from the literature, we have included the `GeneFuModel` class. This 
+`SurvivalModel` performs risk prediction using a set of genes and corresponding
+coefficients using the `genefu::sig.score` function. We have included data
+for three published classifiers from <Haider et al citation>, 
+<Birnbuam et al citation>, <Chen et all citation>.
+
+## Make the Models
+
+Since there is no training data for the published classifiers, we create
+empty `GeneFuModel` objects, then assign the model predictors to the `models`
+slot of each respective object.
+
+```{r GeneFuModel_constructor}
+chenGeneFuModel <- GeneFuModel()
+birnbaumGeneFuModel <- GeneFuModel()
+haiderGeneFuModel <- GeneFuModel()
+```
+
+For the Haider model, we were unable to get the genes and coefficients. However,
+the author provided the risk scores. As a result we need to do a bit of work
+to get the Haider GeneFuModel to work with the package function.
+
+```{r GeneFuModel_assign_models}
+data(existingClassifierData, verbose=TRUE)
+
+models(chenGeneFuModel) <- SimpleList(list(chen=))
+models(birnbaumGeneFuModel) <- SimpleList(list(birnbuam=))
+models(haiderGeneFuModel) <- SimpleList(list(haider=NA)) 
+```
+
+```{r }
+
+
+
 
 
 

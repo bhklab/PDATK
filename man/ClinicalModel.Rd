@@ -10,7 +10,7 @@ ClinicalModel(trainData, formula, minDaysSurvived = 365, ..., randomSeed)
 \item{trainData}{A \code{SurvivalExperiment} or \code{CohortList} object to construct
 a clinical model using}
 
-\item{formula}{A \code{formula} object or a \code{character} vector coercibel to one.
+\item{formula}{A \code{formula} object or a \code{character} vector coercible to one.
 All columns specified in the formula must be in the colData slot of the
 all \code{SurvivalExperiment}s in trainData.}
 
