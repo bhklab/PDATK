@@ -33,7 +33,7 @@ setGeneric('densityPlotModelComparison',
 #'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
-#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
+#'   `:=` copy .N .SD fifelse melt.data.table transpose setcolorder
 #' @importFrom pROC roc
 #' @importFrom ggplot2 ggplot geom_density geom_vline labs facet_wrap ggtitle
 #'   xlab ylab labeller element_line element_text element_blank

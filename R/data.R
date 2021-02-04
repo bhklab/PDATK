@@ -48,7 +48,7 @@ NULL
 
 #' @title Classifier survival scores for Haider
 #'
-#' @name haiderSigScores`
+#' @name haiderSigScores
 #'
 #' @description
 #' The classifier risk scores from Haider *et al.* (2014)
