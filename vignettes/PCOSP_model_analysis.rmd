@@ -460,7 +460,7 @@ the author provided the risk scores. As a result we need to do a bit of work
 to get the Haider GeneFuModel to work with the package function.
 
 ```{r GeneFuModel_assign_models}
-data(existingClassifierData, verbose=TRUE)
+data(existingClassifierData)
 
 models(chenGeneFuModel) <- SimpleList(list(chen=chen))
 models(birnbaumGeneFuModel) <- SimpleList(list(birnbuam=birnbaum))
@@ -470,9 +470,9 @@ models(haiderGeneFuModel) <- SimpleList(list(haider=NA))
 
 
 ```{r GeneFuModel_predictions}
-chenClassPredictions <- predictClasses(PCOSPpredValCohorts,
+chenClassPredictions <- predictClasses(PCOSPpredValCohorts[names(haiderSigScores)],
     model=chenGeneFuModel)
-birnClassPredictions <- predictClasses(PCOSPpredValCohorts,
+birnClassPredictions <- predictClasses(PCOSPpredValCohorts[names(haiderSigScores)],
     model=birnbaumGeneFuModel)
 ```
 
@@ -480,14 +480,46 @@ birnClassPredictions <- predictClasses(PCOSPpredValCohorts,
 ```{r GeneFuModel_haider_fix}
 haiderClassPredictions <- PCOSPpredValCohorts[names(haiderSigScores)]
 # Manually assign the scores to the prediction cohorts
-for (i in seq_along(haiderSigScores)) {
+for (i in seq_along(haiderClassPredictions)) {
   colMData <- colData(haiderClassPredictions[[i]])
   colMData$genefu_score <- NA_real_
-  colMData[names(haiderSigScores[[i]]), ] <- haiderSigScores[[i]]
-  colData(hairderClassPredictions[[i]]) <- colMData
+  colMData[rownames(colMData) %in% names(haiderSigScores[[i]]), ]$genefu_score <- 
+      haiderSigScores[[i]][names(haiderSigScores[[i]]) %in% rownames(colMData)]
+  colData(haiderClassPredictions[[i]]) <- colMData
 }
+# Setup the correct model metadata
+mcols(hairderClassPredictions)$hasPredictions <- TRUE
+metadata(haiderClassPredictions)$predictionModel <- haiderGeneFuModel
+```
+
+## Validate the Models
+
+```{r}
+validatedChenModel <- validateModel(chenGeneFuModel, valData=chenClassPredictions)
+validatedBirnbaumModel <- validateModel(birnbaumGeneFuModel, 
+    valData=birnClassPredictions)
+validatedHaiderModel <- validateModel(haiderGeneFuModel, valData=haiderClassPredictions)
+```
+
+## Model Performance Meta-Analysis
+
+```{r comparing_GeneFuModels}
+genefuModelComparisons <- compareModels(validatedChenModel,
+    validatedBirnbaumModel, modelNames=c('Chen', 'Birnbaum'))
+genefuModelComparisons <- compareModels(genefuModelComparisons,
+    validatedHaiderModel, model2Name='Haider')
 ```
 
 
+```{r comparing_comparisons}
+allModelComparisons <- compareModels(genefuModelComparisons, validatedPCOSPmodel, 
+  model2Name='PCOSP')
+# We are only interested in comparing the summaries, so we subset our model comparison
+allModelComparisons <- subset(allModelComparisons, isSummary == TRUE)
+```
 
-
+```{r plotting Model Comparisons}
+allDindexComparisonForestPlot <- forestPlot(allModelComparisons,
+    stat='D_index', transform='log2', colourBy='model', groupBy='mDataType')
+allDindexComparisonForestPlot
+```

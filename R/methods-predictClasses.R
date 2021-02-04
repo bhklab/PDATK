@@ -36,7 +36,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     # drop NA samples, they mess with calculating statistics
     keepSamples <- rownames(na.omit(colData(object)))
     if (!all(colnames(object) %in% keepSamples)) {
-        warning(.warnMsg(.context(), 'Dropped sampels with NA survival data!'))
+        warning(.warnMsg(.context(4), 'Dropped sampels with NA survival data!'))
     }
     object <- object[, keepSamples]
 
@@ -202,7 +202,7 @@ setMethod('predictClasses', signature(object='CohortList',
 #'
 #' @param object A `SurvivalExperiment` to predict classes for.
 #' @param model A `GeneFuModel` object to predict classes with.
-#' @param ... Catch unnamed parameters. Not used.
+#' @param ... Fall through parameters to `genefu::sig.score`.
 #' @param annot A named parameter with annotations mapping from the gene
 #'   identifiers in the genefu model.
 #'

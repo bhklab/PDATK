@@ -12,7 +12,7 @@ to Predict Signature Scores for Each Sample.}
 
 \item{model}{A \code{GeneFuModel} object to predict classes with.}
 
-\item{...}{Catch unnamed parameters. Not used.}
+\item{...}{Fall through parameters to \code{genefu::sig.score}.}
 
 \item{annot}{A named parameter with annotations mapping from the gene
 identifiers in the genefu model.}
