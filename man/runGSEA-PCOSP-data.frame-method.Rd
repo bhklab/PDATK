@@ -23,7 +23,7 @@ of models.}
 correction to use in \code{\link[piano:runGSAhyper]{piano::runGSAhyper}}. This paremeter must be named.}
 
 \item{allResults}{Return the full results from \code{\link[piano:runGSAhyper]{piano::runGSAhyper}} instead
-of a \code{data.frame} of signficant results? Default is FALSE. This paramter
+of a \code{data.frame} of significant results? Default is FALSE. This parameter
 must be named.}
 }
 \description{

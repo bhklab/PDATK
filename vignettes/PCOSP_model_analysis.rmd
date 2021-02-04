@@ -5,7 +5,7 @@ author:
 - name: Heewon Seo
 - name: Christopher Eeles
   affiliation:
-  - &pm Bioinformatics and Computational Genomics Laboratory, Princess Margaret Cancer Center,University Health Network, Toronto, Ontario, Canada
+  - &pm Bioinformatics and Computational Genomics Laboratory, Princess Margaret Cancer Center, University Health Network, Toronto, Ontario, Canada
   email: christopher.eeles@uhnresearch.ca
 - name: Benjamin Haibe-Kains
   affiliation:
@@ -21,13 +21,13 @@ vignette: >
     %\VignetteEncoding{UTF-8}
 ---
 
-# Pancreate Cancer Overall Survival Predictor
+# Pancreatic Cancer Overall Survival Predictor
 
 As an example of the utility of the PDATK package, we provide code
-replicating the analysis published in <insert PCSOP citation>. While the
+replicating the analysis published in Sandhu *et al.* (2019). While the
 code presented here is run on a subset of the original data to ensure that 
 the PDATK installation size is not too large, the full data from that study can 
-be downloaded from <where to download it?>.
+is available via the `MetaGxPancreas` Bioconductor data package.
 
 ```{r load_dependencies, message=FALSE, warning=FALSE, include=FALSE}
 library(PDATK)
@@ -150,7 +150,7 @@ the parameters relevant to a specific model.
 
 ## Risk Prediction with a PCOSP Model
 
-After training, a model can now be used with new data to make risk predicitons
+After training, a model can now be used with new data to make risk predictions
 and classify samples into 'good' or 'bad' survival groups. To do this, the
 standard `predictClasses` method is used. Similar to `trainData`, we have
 abstracted away the implementation details to provide users with a simple,
@@ -221,7 +221,7 @@ model performance.
 
 
 
-```{r PCOSP_D_index_forestplot}
+```{r PCOSP_D_index_forestplot, fig.width=8, fig.height=8, fig.wide=TRUE}
 PCOSPdIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index',
     transform='log2')
 PCOSPdIndexForestPlot
@@ -239,22 +239,24 @@ PCOSPconcIndexForestPlot
 cohortROCplots <- plotROC(validatedPCOSPmodel, alpha=0.05)
 cohortROCplots
 ```
+
 # Permutations Testing for a PCOSP Model
 
 To compare the performance of a PCOSP model to random chance, we have
 included two model classes which permute either patient prognosis labels or 
-the feature names. These models can be used to evaluate if a model does better 
-than random chance.
+the feature names. These models can be used to evaluate if a PCOSP model 
+performs better than random chance.
 
 ## Random Label Shuffling Model
 
 The `RLSModel` class is a `SurvivalModel` using the same risk prediction
 algorithm as a `PCOSP` model, but randomizing the patient prognosis labels
 in each of the individual KTSP classifiers used in the classification ensemble.
-Given this random shuffling, we expect the classification results for this model
-to be no better than random chance.
+Given this random prognosis label shuffling, we expect the classification 
+results for this model to be no better than random chance.
 
-The work-flow for this model follows the standard `SurvivalModel` work-flow.
+The work-flow for this model follows the standard `SurvivalModel` sub-class 
+work-flow.
 
 ### Construct the Model Object
 
@@ -285,6 +287,13 @@ validatedRLSmodel <- validateModel(trainedRLSmodel, RLSpredCohortList)
 
 ### Compare with a PCOSP Model
 
+To compare the performance of a permuted model to that of a PCOSP model, we
+have included the `densitityPlotModelComparion` method, which plots a
+density plot of model AUCs per molecular data type and overall. The dotted
+line represents the mean AUC of the PCOSP model. From this plot we can 
+see that the PCOSP model performs significantly better than the random label
+shuffling model.
+
 ```{r RLSModel_PCOSP_comparison_plot}
 RLSmodelComparisonPlot <- densityPlotModelComparison(validatedRLSmodel,
     validatedPCOSPmodel, title='Random Label Shuffling vs PCOSP',
@@ -294,6 +303,11 @@ RLSmodelComparisonPlot
 ```
 
 ## Random Gene Assignment Model
+
+A `RandomGeneAssignmentModel` (aliased as `RGAModel` for user convenience)
+is similar to a `RLSModel` except that the gene labels are randomized for
+each KTSP classifier in the ensemble. In this case, we also expect this
+model to perform no better than random chance.
 
 ### Construct the Model Object
 
@@ -321,6 +335,9 @@ validatedRGAmodel <- validateModel(trainedRGAmodel, RGApredCohortList)
 ```
 
 ### Compare RGAModel to PCOSP
+
+The density plot for the `RGAModel` also shows that the `PCOSP` model does
+significantly better than random chance.
 
 ```{r RGAModel_PCOSP_comparison_plot}
 RGAmodelComparisonPlot <-  densityPlotModelComparison(validatedRGAmodel,
@@ -357,31 +374,40 @@ To perform pathway analysis, which is done internally using the
 `piano::runGSAhyper` function we first to pathway data to query against.
 We recommend using the `msigdbr` R package to fetch pathways of interest.
 
-```{r msigdbr_get_pathways}
+Because of the small number of genes included in the sample patient cohorts,
+this section will not find any enriched pathways and therefore this code is
+not run.
+
+```{r msigdbr_get_pathways, eval=FALSE}
 allHumanGeneSets <- msigdbr()
 allGeneSets <- as.data.table(allHumanGeneSets)
 geneSets <- allGeneSets[grepl('^GO.*|.*CANONICAL.*|^HALLMARK.*', gs_name),
     .(gene_symbol, gs_name)]
 ```
 
-```{r PCOSP_runGSEA}
+```{r PCOSP_runGSEA, eval=FALSE}
 GSEAresultDT <- runGSEA(validatedPCOSPmodel, geneSets)
 ```
-
 
 # Clinical Model Comparison
 
 Equipped with a risk prediction model performing better than random chance,
 the next pertinent question is: does it out perform simpler models? To answer
 this question we have included the `ClinicalModel` class, which leverages the
-`glm` function from the `stats` package to fit a generalized model based on
-a set of clinical variables. To do this, we need to specify a model formula
-based on the column names available in the `colData` slot of our 
-`SurvivalExperiment` objects. 
+`glm` function from the `stats` package to fit a generalized linear model based 
+on a set of clinical variables in the patient metadata. To do this, we need to 
+specify a model formula based on the column names available in the `colData` 
+slot of our training data `SurvivalExpeiment` objects. All formula parameters 
+must be valid column names in the `colData` of the training cohorts. The same
+patient metadata must be present in any validation cohorts used to make risk 
+predictions.
 
 
 ## Build the Model
 
+We can see there are a number of clinical variables related to patient
+survived in the patient metadata. For our model, we will be using patient sex,
+age and tumour grade along with the TNM staging of the tumour.
 
 ```{r training_data_patient_metadata}
 knitr::kable(head(colData(ICGCtrainCohorts)))
@@ -404,7 +430,14 @@ trainedClinicalModel <- trainModel(clinicalModel)
 ## Predict the Classes
 
 Clinical annotations are only available for a subset of our patient cohorts,
-thus we subset our cohort list to ensure the model works as expected.
+thus we subset our cohort list to ensure the model works as expected. Variable
+columns with levels of a model parameter which are not present in the original
+model will be dropped automatically. To prevent this behavior, it is necessary
+to add any missing levels to the `colData` of the training data before training
+the model. The easiest way to achieve this is by converting the columns in
+question into factors and ensuring all levels in the training and validation
+data are set for those columns.
+
 
 ```{r ClinicalModel_prediction}
 hasModelParamsCohortList <-
@@ -423,18 +456,28 @@ validatedClinicalModel <- validateModel(trainedClinicalModel,
 
 ## Visualize Comparison with PCOSP Model
 
-```{r ClinicalModel_vs_PCOSP_AUC_barplot}
+To get a general idea of how the `ClinicalModel` performed relative to the
+`PCOSP` model, the `barPlotModelComaprison` can be used to show the . For 
+this example, we will compare the AUC of the models in each of the validation
+cohorts. Other statistics in the `validationStats` slot can be used by changing
+the `stat` argument to the plotting function.
+
+```{r ClinicalModel_vs_PCOSP_AUC_barplot, fig.wide=TRUE, fig.width=8, fig.height=8}
 clinicalVsPCOSPbarPlot <- barPlotModelComparison(validatedClinicalModel,
     validatedPCOSPmodel, stat='AUC')
 clinicalVsPCOSPbarPlot
 ```
-To reduce the number of plotting functions and make meta-analysis of many models
-of different types, we have included the `ModelComparison` object. This object
-aggregates the validation statistics from two models. Plotting methods can then
-be dispatched on this class, greatly simplifying the process of comparison models
-of any type. You can also compare a model to an existing model comparison, and
-in this way built up a collection of model performance statistics which can 
-be visualized in a forest plot to enable complex comparisons between many models.
+To reduce the number of plotting functions and simplify meta-analysis of many 
+models of different types, we have included the `ModelComparison` object. This 
+object aggregates the validation statistics from two models. Plotting methods 
+can then be dispatched on this class, greatly simplifying the process of 
+comparing several `SurivalModel` sub-classes. You can also compare a model to 
+an existing model comparison, and in this way built up a collection of model 
+performance statistics which can be visualized in a forest plot to enable 
+complex comparisons between many models.
+
+Below, we use this feature to compare the PCOSP and `ClinicalModels` based on
+D index and concordance index, as calculated using the `survcomp` R package.
 
 ```{r ModelComparison_object}
 clinicalVsPCOSP <- compareModels(validatedClinicalModel, validatedPCOSPmodel)
@@ -458,8 +501,8 @@ To get and idea of how our PCOSP model stacks up against other classifiers
 from the literature, we have included the `GeneFuModel` class. This 
 `SurvivalModel` performs risk prediction using a set of genes and corresponding
 coefficients using the `genefu::sig.score` function. We have included data
-for three published classifiers from <Haider et al citation>, 
-<Birnbuam et al citation>, <Chen et all citation>.
+for three published classifiers from Chen *et al.* (2015), Birnbaum *et al.* 
+(2017) and Haider *et al.* (2014).
 
 ## Make the Models
 
@@ -484,6 +527,7 @@ models(chenGeneFuModel) <- SimpleList(list(chen=chen))
 models(birnbaumGeneFuModel) <- SimpleList(list(birnbuam=birnbaum))
 models(haiderGeneFuModel) <- SimpleList(list(haider=NA)) 
 ```
+
 ## Predict the Classes
 
 
@@ -510,6 +554,7 @@ mcols(haiderClassPredictions)$hasPredictions <- TRUE
 metadata(haiderClassPredictions)$predictionModel <- haiderGeneFuModel
 ```
 
+
 ## Validate the Models
 
 ```{r}
@@ -518,6 +563,7 @@ validatedBirnbaumModel <- validateModel(birnbaumGeneFuModel,
     valData=birnClassPredictions)
 validatedHaiderModel <- validateModel(haiderGeneFuModel, valData=haiderClassPredictions)
 ```
+
 
 ## Model Performance Meta-Analysis
 
@@ -536,8 +582,39 @@ allModelComparisons <- compareModels(genefuModelComparisons, validatedPCOSPmodel
 allModelComparisons <- subset(allModelComparisons, isSummary == TRUE)
 ```
 
-```{r plotting Model Comparisons}
+```{r plotting Model_Comparisons_dindex, fig.wide=TRUE}
 allDindexComparisonForestPlot <- forestPlot(allModelComparisons,
     stat='D_index', transform='log2', colourBy='model', groupBy='mDataType')
 allDindexComparisonForestPlot
 ```
+
+
+```{r plotting Model Comparisons_concindex, fig.wide=TRUE}
+allConcIndexComparisonForestPlot <- forestPlot(allModelComparisons,
+    stat='concordance_index', colourBy='model', groupBy='mDataType')
+allConcIndexComparisonForestPlot
+```
+
+From the two forest plots, we can see that the `PCOSP` model matched our 
+outperformed all of the public classifiers, even when only trained with 100
+models. It is likely that using 1000 models, we would see even better separation
+of the `PCOSP` model. Indeed, this is was the result in Sandhu *et al.* (2019).
+
+# References
+
+1. Sandhu V, Labori KJ, Borgida A, et al. Meta-Analysis of 1,200 Transcriptomic 
+Profiles Identifies a Prognostic Model for Pancreatic Ductal Adenocarcinoma. 
+JCO Clin Cancer Inform. 2019;3:1-16. doi:10.1200/CCI.18.00102
+
+2. Chen DT, Davis-Yadley AH, Huang PY, et al. Prognostic Fifteen-Gene Signature 
+for Early Stage Pancreatic Ductal Adenocarcinoma. PLoS One. 2015;10(8):e0133562. 
+Published 2015 Aug 6. doi:10.1371/journal.pone.0133562 
+
+3. Birnbaum DJ, Finetti P, Lopresti A, et al. A 25-gene classifier predicts 
+overall survival in resectable pancreatic cancer. BMC Med. 2017;15(1):170. 
+Published 2017 Sep 20. doi:10.1186/s12916-017-0936-z
+
+4. Haider S, Wang J, Nagano A, et al. A multi-gene signature predicts outcome 
+in patients with pancreatic ductal adenocarcinoma. Genome Med. 2014;6(12):105. 
+Published 2014 Dec 3. doi:10.1186/s13073-014-0105-3
+

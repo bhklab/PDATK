@@ -25,6 +25,7 @@ Imports:
     methods,
     S4Vectors, 
     BiocGenerics,
+    survival,
     stats,
     plyr,
     BiocParallel,

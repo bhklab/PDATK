@@ -24,8 +24,8 @@ and therefore has data in the \code{validationStats} slot.}
 
 \item{stat}{A \code{character} vector specifying a statistic to plot.}
 
-\item{groupBy}{A \code{character} vector with one or more columns in \code{validationStats}
-to group by. These will be the facets in your}
+\item{groupBy}{A \code{character} vector with one or more columns in
+\code{validationStats} to group by. These will be the facets in your forestplot.}
 
 \item{colourBy}{A \code{character} vector specifying the columns in
 \code{validationStats} to colour by.}
@@ -38,7 +38,7 @@ line.}
 \item{xlab}{A \code{character} vector specifying the desired x label.
 Automatically guesses based on the \code{stat} argument.}
 
-\item{ylab}{A \code{character} vector specifyuing the desired y label.
+\item{ylab}{A \code{character} vector specifying the desired y label.
 Defaults to 'Cohort (P-value)'.}
 
 \item{transform}{The name of a numeric function to transform the statistic
@@ -47,7 +47,7 @@ before making the forest plot.}
 \item{colours}{A \code{character} vector of colours to pass into
 \code{ggplot2::scale_fill_manual}, which modify the colourBy argument.}
 
-\item{title}{A \code{characer} vector with a title to add to the plot.}
+\item{title}{A \code{character} vector with a title to add to the plot.}
 }
 \value{
 A \code{ggplot2} object

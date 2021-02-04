@@ -22,7 +22,8 @@ setGeneric('plotROC', function(object, ...)
 #' @param title A `character` vector speciyfing the plot tile.
 #'
 #' @md
-#' @import data.table
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @importFrom pROC roc coords
 #' @importFrom ggplot2 ggplot geom_segment geom_step scale_x_reverse
 #'   theme_classic scale_linetype_manual guides theme xlab ylab aes

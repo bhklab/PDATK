@@ -26,8 +26,9 @@ setGeneric('validateModel', function(model, valData, ...)
 #'   slots occupied.
 #'
 #' @md
-#' @import data.table
 #' @import survcomp
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @importFrom BiocParallel bplapply
 #' @importFrom switchBox SWAP.KTSP.Classify
 #' @importFrom SummarizedExperiment colData colData<-
@@ -119,7 +120,8 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'   slot and the validation data in the `validationData` slot.
 #'
 #' @md
-#' @import data.table
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @import survcomp
 #' @import reportROC
 #' @import survival
@@ -199,7 +201,8 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'   `validationData` slot.
 #'
 #' @md
-#' @import data.table
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @import survcomp
 #' @importFrom S4Vectors metadata
 #' @importFrom SummarizedExperiment colData
@@ -235,13 +238,15 @@ setMethod('validateModel', signature(model='ClinicalModel',
     names(aucStats) <- c('estimate', 'se', 'lower', 'upper', 'p.value', 'n')
 
     # calculate the validation statistcs
+    ## FIXME:: Should this be 1 - clinical_prob_good?
     validationStats <- with(survivalDF,
         list(
-            dIndex=D.index(x=1 - clinical_prob_good, surv.time=days_survived,
+            dIndex=D.index(x=clinical_prob_good, surv.time=days_survived,
                 surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
                 method.test='logrank'),
-            cIndex=concordance.index(x=1 - clinical_prob_good, surv.time=days_survived,
-                surv.event=is_deceased, method='noether', na.rm=TRUE),
+            cIndex=concordance.index(x=clinical_prob_good,
+                surv.time=days_survived, surv.event=is_deceased,
+                method='noether', na.rm=TRUE),
             AUC=as.list(aucStats)
         )
     )
@@ -360,7 +365,8 @@ setMethod('validateModel', signature(model='ClinicalModel',
 #'   `validationData` slot.
 #'
 #' @md
-#' @import data.table
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @import survcomp
 #' @importFrom S4Vectors metadata
 #' @importFrom SummarizedExperiment colData
@@ -381,15 +387,15 @@ setMethod('validateModel', signature(model='GeneFuModel',
             'minDaysSurvived value in modelParams...'))
         survivalDF <- within(survivalDF,
             prognosis <- ifelse(days_survived >
-                metadata(model)$modelParams$minDaysSurvived,'good', 'bad'))
+                metadata(model)$modelParams$minDaysSurvived, 'good', 'bad'))
     }
 
     # convert prognosis to numeric for the ROC stats
     survivalDF <- within(survivalDF, {
-        prognosis <- ifelse(prognosis == 'good', 1, 0)
+        prognosis <- ifelse(prognosis == 'good', 1L, 0L)
     })
 
-    # calculate the validation statistcs
+    # calculate the validation statistics
     validationStats <- with(survivalDF,
         list(
             dIndex=D.index(x=genefu_score, surv.time=days_survived,

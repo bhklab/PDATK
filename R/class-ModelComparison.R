@@ -20,7 +20,8 @@
 #' @md
 #' @importFrom methods is
 #' @importFrom S4Vectors DataFrame
-#' @import data.table
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @export
 ModelComparison <- function(model1, model2, ...) {
 

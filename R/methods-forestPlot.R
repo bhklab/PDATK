@@ -34,7 +34,8 @@ setGeneric('forestPlot', function(object, ...)
 #' @return A `ggplot2` object
 #'
 #' @md
-#' @import data.table
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @importFrom ggplot2 ggplot geom_pointrange theme_bw facet_grid theme
 #'   geom_vline vars xlab ylab scale_colour_manual ggtitle element_text
 #'   element_blank
@@ -109,7 +110,8 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 #' @param object A `ModelComparison` object to forest plot.
 #'
 #' @md
-#' @import data.table
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @importFrom CoreGx .errorMsg .warnMsg
 #' @importFrom ggplot2 ggplot geom_pointrange theme_bw facet_grid theme
 #'   geom_vline vars xlab ylab scale_colour_manual ggtitle element_text
@@ -136,7 +138,7 @@ setMethod('forestPlot', signature(object='ModelComparison'),
         vline <- switch(stat,
             'D_index' = 1,
             'concordance_index' = 0.5,
-            stop(.errorMsg(.context(), 'Unkown statistic specified, please ',
+            stop(.errorMsg(.context(), 'Unknown statistic specified, please ',
                 'manually set the vline location with the vline argument!')))
     }
 

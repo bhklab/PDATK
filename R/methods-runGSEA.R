@@ -25,7 +25,7 @@ setGeneric('runGSEA', function(object, geneSet, ...)
 #' @param adjMethod An optional parameter specifying the multiple testing
 #'   correction to use in [`piano::runGSAhyper`]. This paremeter must be named.
 #' @param allResults Return the full results from [`piano::runGSAhyper`] instead
-#'   of a `data.frame` of signficant results? Default is FALSE. This paramter
+#'   of a `data.frame` of significant results? Default is FALSE. This parameter
 #'   must be named.
 #'
 #' @md
@@ -54,8 +54,7 @@ setMethod('runGSEA', signature(object='PCOSP', geneSet='data.frame'),
         GSC <- loadGSC(file=geneSet)
     }
 
-    GSEAresults <- runGSAhyper(genes=topFeatures, gsc=GSC, adjMethod=adjMethod,
-        universe=refFeatures)
+    GSEAresults <- runGSAhyper(genes=topFeatures, gsc=GSC, adjMethod=adjMethod)
 
     gseaDT <- as.data.table(GSEAresults$resTab, keep.rownames='gene_set')
 

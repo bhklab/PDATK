@@ -8,7 +8,8 @@
 #' @md
 #' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
 #' @importFrom CoreGx .warnMsg .errorMsg
-#' @import data.table
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @export
 setMethod('merge', signature('SurvivalExperiment', 'SurvivalExperiment'),
     function(x, y, cohortNames)

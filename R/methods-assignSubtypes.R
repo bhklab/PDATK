@@ -33,8 +33,7 @@ setGeneric('assignSubtypes',
 #' @md
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom CoreGx .warnMsg .errorMsg
-#' @importFrom S4Vectors metadata
-#' @import data.table
+#' @importFrom S4Vectors metadata merge
 #' @export
 setMethod('assignSubtypes', signature(object='SurvivalExperiment',
     subtypes='data.frame'), function(object, subtypes, ...,

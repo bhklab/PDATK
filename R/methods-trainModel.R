@@ -296,7 +296,7 @@ setMethod('trainModel', signature('RGAModel'),
 #' @return A `ClinicalModel` object with a `glm` object in the models slot.
 #'
 #' @md
-#' @importFrom stats na.omit glm as.formula binomial na.exclude
+#' @importFrom stats glm as.formula binomial
 #' @importFrom S4Vectors SimpleList
 #' @export
 setMethod('trainModel', signature(object='ClinicalModel'),
