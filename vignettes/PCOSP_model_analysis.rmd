@@ -23,10 +23,11 @@ vignette: >
 
 # Pancreate Cancer Overall Survival Predictor
 
-As an example of the utility of the PDATK package, we will provide code
+As an example of the utility of the PDATK package, we provide code
 replicating the analysis published in <insert PCSOP citation>. While the
-code presented here is run on dummy data to ensure that PDATK is not too large,
-the full data from that study can be downloaded from <where to download it?>.
+code presented here is run on a subset of the original data to ensure that 
+the PDATK installation size is not too large, the full data from that study can 
+be downloaded from <where to download it?>.
 
 ```{r load_dependencies, message=FALSE, warning=FALSE, include=FALSE}
 library(PDATK)
@@ -41,7 +42,7 @@ sampleCohortList
 
 ## Split Training and Validation Data
 
-To get started using PDATK, we recommend you place your patient cohorts into
+To get started using PDATK, place each of your patient cohorts into 
 `SurvivalExperiment` objects and then assemble those into a master `CohortList`,
 which holds the training and validation data for use with the various
 `SurvivalModel`s in this package.
@@ -63,19 +64,23 @@ patients with insufficient data to be useful. In general, we want to remove
 patients who did not have an event in our period of interest. As such we remove
 samples who dropped out of a study, but did not pass away before the first year.
 
+
 ```{r drop_not_censored_patients}
 validationCohortList <- dropNotCensored(validationCohortList)
 ICGCcohortList <- dropNotCensored(ICGCcohortList)
 ```
-We have now split our data into training and validation data. For this analysis
-we will be training using the ICGC cohorts, which includes one cohort with
-RNA micro-array data and another with RNA sequencing data. When using multiple
-cohorts to train a model, it is required that those cohorts share samples. As
-a result we will take as training data all patients shared between the two
-cohorts and leave the remainder of patients as part of our validationData.
+
+We have now split our patient cohorts into training and validation data. For 
+this analysis we will be training using the ICGC cohorts, which includes one 
+cohort with RNA micro-array data and another with RNA sequencing data. When 
+using multiple cohorts to train a model, it is required that those cohorts share
+samples. As a result we will take as training data all patients shared between 
+the two cohorts and leave the remainder of patients as part of our 
+validationData.
+
 
 ```{r split_train_test}
-# find common samples between our training cohort in a cohort list
+# find common samples between our training cohorts in a cohort list
 commonSamples <- findCommonSamples(ICGCcohortList)
 
 # split into shared samples for training, the rest for testing
@@ -84,6 +89,10 @@ ICGCtestCohorts <- subset(ICGCcohortList, select=commonSamples, invert=TRUE)
 
 # merge our training cohort test data into the rest of the validation data
 validationCohortList <- c(ICGCtestCohorts, validationCohortList)
+
+# drop ICGCSEQ from the validation data, because it only has 7 patients
+validationCohortList <- 
+    validationCohortList[names(validationCohortList) != 'ICGCSEQ']
 ```
 
 ## Setup A `PCOSP` Model Object
@@ -91,8 +100,8 @@ validationCohortList <- c(ICGCtestCohorts, validationCohortList)
 We now have patient molecular data, annotated with the number of days survived
 since treatment and the survival status and are ready to apply a `SurvivalModel`
 to this data. In this example, we are applying a Pancreatic Cancer Overall
-Survival Model, as described in <PCOSP_paper reference>. This object uses the
-`switchBox` package to create an ensembl of binary classifiers, whos votes are
+Survival Model, as described in <PCOSP_paper reference>. This class uses the
+`switchBox` package to create an ensemble of binary classifiers, whos votes are
 then tallied into a PCOSP score. A PCOSP score is simply the proportion of
 models predicting good survival out of the total number of models in the
 ensemble.
@@ -105,10 +114,11 @@ metadata(PCOSPmodel)$modelParams
 ```
 ## Training a PCOSP Model
 
-To simplify working with different `SurvivalModel`, we have implemented a
-standard work-flow that is valid for all `SurvivalModel`s. This involves first
-training the model, then using it to predict risk/risk-classes for a set
-of validation cohorts and finally assessing performance on the validation data.
+To simplify working with different `SurvivalModel` sub-classes, we have 
+implemented a standard work-flow that is valid for all `SurvivalModel`s. 
+This involves first training the model, then using it to predict 
+risk/risk-classes for a set of validation cohorts and finally assessing 
+performance on the validation data.
 
 To train a model, the `trainModel` method is used. This function abstracts away
 the implementation of model training, allowing end-users to focus on applying
@@ -122,8 +132,10 @@ scores. To keep computation brief, we are only training 100 models. However, it
 is recommended to use a minimum of 1000 for real world applications. The second
 parameter is `minAccuracy`, which is the minimum model accuracy for a trained
 model to included in the final model ensemble. Paradoxically, increasing this
-too high can actually decrease the overall performance of the PCOSP model; we
-recommend 0.6 as a sweet spot between random chance and over-fitting.
+too high can actually decrease the overall performance of the PCOSP model. We
+recommend 0.6 as a sweet spot between random chance and over-fitting but 
+encourage experimentation to see what works best with your data.
+
 
 ```{r}
 trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=100, minAccuracy=0.6)
@@ -135,28 +147,32 @@ We can see that after training, the additional model parameters are added to the
 model training, prediction and validation are fully reproducible by capturing
 the parameters relevant to a specific model.
 
+
 ## Risk Prediction with a PCOSP Model
 
 After training, a model can now be used with new data to make risk predicitons
 and classify samples into 'good' or 'bad' survival groups. To do this, the
 standard `predictClasses` method is used. Similar to `trainData`, we have
 abstracted away the implementation details to provide users with a simple,
-consistent interface to the use of `SurvivalModel` objects for making
+consistent interface for using `SurvivalModel` sub-classes to make patient risk
 predictions.
+
 
 ```{r PCOSP_predictions}
 PCOSPpredValCohorts <- predictClasses(validationCohortList,
     model=trainedPCOSPmodel)
 ```
 
+
 The returned `CohortList` object now indicates that each of the cohorts have
 predictions. This information is available in the `elementMetadata` slot of
 the cohort list and can be accessed with the `mcols` function from `S4Vectors`.
 
+
 ```{r predicted_elementMetadata}
 mcols(PCOSPpredValCohorts)
 ```
-Predicting classes with a specific model adds a corresponding metadata
+Predicting risk with a specific model adds a corresponding metadata
 column to the object `colData`. In the case of a `PCOSP` model, the new column
 is called `PCOSP_prob_good` and represents the proportion of models in the
 ensemble which predicted good survival for a given sample.
@@ -171,22 +187,23 @@ the raw predictions from the model for each classifier in the ensemble, ordered
 by classifier accuracy. This data is not important for end users, but is used
 internally when calculating validation statistics for the model. For users
 wishing to classify samples rather than estimate risks, we recommend a
-PCOSP cut-off of > 0.5 for good survival prognosis.
+PCOSP cut-off of >0.5 for good survival prognosis.
 
 ```{r raw_predictions}
-knitr::kable(metadata(PCOSPpredValCohorts[[1]])$PCOSPpredictions[1:3, 1:5])
+knitr::kable(metadata(PCOSPpredValCohorts[[1]])$PCOSPpredictions[1:5, 1:5])
 ```
 
 ## Validating A PCOSP Model
 
-The final step in the standard `SurvivalModel` work-flow is to compute performance
-statistics for the model on the validation data. This can be accomplished using
-the `validateModel` method, which will add statistics to the `validationStats`
-slot of a `SurvivalModel` object and the data to the `validationData` slot.
+The final step in the standard `SurvivalModel` work-flow is to compute 
+model performance statistics for the model on the validation data. This can be 
+accomplished using the `validateModel` method, which will add statistics to the 
+`validationStats` slot of a `SurvivalModel` object and the data to the 
+`validationData` slot.
 
 ```{r validate_PCOSP_model}
 validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
-    valData=PCOSPpredValCohorts[-2]) # drop ICGCSEQ from the validation data
+    valData=PCOSPpredValCohorts)
 ```
 
 ```{r validationStats}
@@ -203,6 +220,7 @@ model performance.
 ## Plotting Model Performance
 
 
+
 ```{r PCOSP_D_index_forestplot}
 PCOSPdIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index',
     transform='log2')
@@ -217,7 +235,7 @@ PCOSPconcIndexForestPlot
 ```
 
 
-```{r PCOSP_ROC_curve, fig.height=8, fig.width=8, message=FALSE}
+```{r PCOSP_ROC_curve, fig.height=8, fig.width=8, fig.wide=TRUE, message=FALSE}
 cohortROCplots <- plotROC(validatedPCOSPmodel, alpha=0.05)
 cohortROCplots
 ```
@@ -262,7 +280,7 @@ RLSpredCohortList <- predictClasses(validationCohortList, model=trainedRLSmodel)
 ### Validate Model Performance
 
 ```{r RLSModel_validation}
-validatedRLSmodel <- validateModel(trainedRLSmodel, RLSpredCohortList[-2])
+validatedRLSmodel <- validateModel(trainedRLSmodel, RLSpredCohortList)
 ```
 
 ### Compare with a PCOSP Model
@@ -299,7 +317,7 @@ RGApredCohortList <- predictClasses(validationCohortList,
 ### Validate Model Performance
 
 ```{r RGAModel_validation}
-validatedRGAmodel <- validateModel(trainedRGAmodel, RGApredCohortList[-2])
+validatedRGAmodel <- validateModel(trainedRGAmodel, RGApredCohortList)
 ```
 
 ### Compare RGAModel to PCOSP
@@ -488,7 +506,7 @@ for (i in seq_along(haiderClassPredictions)) {
   colData(haiderClassPredictions[[i]]) <- colMData
 }
 # Setup the correct model metadata
-mcols(hairderClassPredictions)$hasPredictions <- TRUE
+mcols(haiderClassPredictions)$hasPredictions <- TRUE
 metadata(haiderClassPredictions)$predictionModel <- haiderGeneFuModel
 ```
 

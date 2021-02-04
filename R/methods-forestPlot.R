@@ -14,18 +14,18 @@ setGeneric('forestPlot', function(object, ...)
 #' @param object A `PCOSP` model which has been validated with `validateModel`
 #'   and therefore has data in the `validationStats` slot.
 #' @param stat A `character` vector specifying a statistic to plot.
-#' @param groupBy A `character` vector with one or more columns in `validationStats`
-#'   to group by. These will be the facets in your
+#' @param groupBy A `character` vector with one or more columns in
+#'   `validationStats` to group by. These will be the facets in your forestplot.
 #' @param colourBy A `character` vector specifying the columns in
 #'   `validationStats` to colour by.
 #' @param ... Force subsequent parameters to be named, not used.
 #' @param xlab A `character` vector specifying the desired x label.
 #'   Automatically guesses based on the `stat` argument.
-#' @param ylab A `character` vector specifyuing the desired y label.
+#' @param ylab A `character` vector specifying the desired y label.
 #'   Defaults to 'Cohort (P-value)'.
 #' @param colours A `character` vector of colours to pass into
 #'   `ggplot2::scale_fill_manual`, which modify the colourBy argument.
-#' @param title A `characer` vector with a title to add to the plot.
+#' @param title A `character` vector with a title to add to the plot.
 #' @param vline An `integer` value on the x-axis to place a dotted vertical
 #'   line.
 #' @param transform The name of a numeric function to transform the statistic
@@ -64,7 +64,7 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 
     if (missing(xlab)) {
         xlab <- switch(stat,
-            'D_index' = 'Hazard Ratio',
+            'D_index' = 'D Index',
             'concordance_index' = 'Concordance Index',
             stop(.errorMsg(.context(), 'Unkown statistic specified, please ',
                 'manually set the x label with the xlab argument!')))
@@ -142,7 +142,7 @@ setMethod('forestPlot', signature(object='ModelComparison'),
 
     if (missing(xlab)) {
         xlab <- switch(stat,
-            'D_index' = 'Hazard Ratio',
+            'D_index' = 'D index',
             'concordance_index' = 'Concordance Index',
             stop(.errorMsg(.context(), 'Unknown statistic specified, please ',
                 'manually set the x label with the xlab argument!')))
