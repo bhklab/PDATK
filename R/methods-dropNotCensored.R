@@ -60,6 +60,8 @@ setMethod('dropNotCensored', signature('SurvivalExperiment'),
 #' @param minDaysSurvived An `integer` specifying the minimum number of days
 #'   a patient needs to have survived to be included in the cohort.
 #'
+#' @return The `CohortList` with censored samples removed.
+#'
 #' @examples
 #' data(sampleCohortList)
 #' valCohortList <- dropNotCensored(sampleCohortList)

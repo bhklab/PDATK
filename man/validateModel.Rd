@@ -13,6 +13,9 @@ validateModel(model, valData, ...)
 
 \item{...}{Allow new parameters to be defined for this generic.}
 }
+\value{
+The \code{S4} object with added model performance metadata.
+}
 \description{
 Perform Validation on an \code{S4} Object Respresenting a Trained Model
 }

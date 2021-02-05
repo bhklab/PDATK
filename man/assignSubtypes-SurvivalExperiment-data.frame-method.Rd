@@ -31,6 +31,14 @@ column in the \code{subtypes} \code{data.frame} object. Defaults to 'subtype'.}
 \value{
 The \code{SurvivalExperiment} with the subtypes in the \code{subtypes} column
 of the colData slot and a metadata item, \code{hasSubtypes}, set to TRUE.
+
+data(sampleICGCmicro)
+data(cohortSubtypeDFs)
+
+cohortList <- assignSubtypes(sampleICGCmicro,
+subtypes=cohortSubtypeDFs$ICGCMICRO,
+sampleCol='sample_name',
+subtypeCol='subtype')
 }
 \description{
 Assign Subtype Annotations to a SurvivalExperiment Object

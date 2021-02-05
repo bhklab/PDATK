@@ -20,3 +20,8 @@ None, updated the object.
 Setter for the validationStats slot of a \code{SurvivalModel} object with a
 \code{data.frame}
 }
+\examples{
+data(samplePCOSPmodel)
+validationStats(samplePCOSPmodel) <- data.frame()
+
+}

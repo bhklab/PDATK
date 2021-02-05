@@ -24,3 +24,9 @@ A \code{SurvivalModel} object.
 \description{
 Constructor for a SurvivalModel Object.
 }
+\examples{
+data(sampleICGCmicro)
+survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=385,
+  randomSeed=1987)
+
+}

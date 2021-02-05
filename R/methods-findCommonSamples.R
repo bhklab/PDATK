@@ -5,6 +5,8 @@
 #'   samples.
 #' @param ... Allow new parameters to be defined for this generic.
 #'
+#' @return A `character` vector of common sample names.
+#'
 #' @md
 #' @export
 setGeneric('findCommonSamples',

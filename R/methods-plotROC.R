@@ -21,6 +21,26 @@ setGeneric('plotROC', function(object, ...)
 #' @param ylabel A `character` vector specifying the y label.
 #' @param title A `character` vector speciyfing the plot tile.
 #'
+#' @return A `ggplot` object containing the ROC curves.
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(sampleCohortList)
+#'
+#' # Train the model
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
+#'   minAccuracy=0.6)
+#'
+#' # Make predictions
+#' PCOSPpredCohortList <- predictClasses(sampleCohortList[1:4],
+#'   model=trainedPCOSPmodel)
+#'
+#' # Validate the model
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel, PCOSPpredCohortList)
+#'
+#' # Plot ROC curves
+#' AUROCplot <- plotROC(validatedPCOSPmodel)
+#'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder

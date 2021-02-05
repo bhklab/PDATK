@@ -13,6 +13,9 @@ each \code{SurvivalExperiment} item a specified date.}
 \item{minDaysSurvived}{An \code{integer} specifying the minimum number of days
 a patient needs to have survived to be included in the cohort.}
 }
+\value{
+The \code{CohortList} with censored samples removed.
+}
 \description{
 Remove Censored Patients from Each \code{SurvivalExperiemnt} in a \code{CohortList}
 }

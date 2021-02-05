@@ -13,7 +13,7 @@
 setGeneric("barPlotModelComparison", function(model1, model2, ...)
     standardGeneric('barPlotModelComparison'))
 #'
-#' Make a Bar Plot Comparison Model Performance Between a ClinicalMode
+#' Make a Bar Plot Comparison Model Performance Between a ClinicalModel
 #'   and a PCOSP, RLSModel or RGAModel object.
 #'
 #' @param model1 A `ClinicalModel` object.
@@ -25,6 +25,35 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #' @return A `ggplot2` object showing a barplot coloured by the model and
 #'   comparing the stat between all cohorts that both models were validated
 #'   with.
+#'
+#' @examples
+#' data(sampleCohortList)
+#' data(sampleICGCmicro)
+#'
+#' # Setup the models
+#' PCOSPmodel <- PCOSP(sampleICGCmicro, randomSeed=1987)
+#' clinicalModel <- ClinicalModel(sampleICGCmicro,
+#'   formula='prognosis ~ sex + age + T + N + M + grade')
+#'
+#' # Train the models
+#' trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=5, minAccuracy=0.6)
+#' trainedClinicalModel <- trainModel(clinicalModel)
+#'
+#' # Make predctions
+#' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+#'   model=trainedPCOSPmodel)
+#' clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+#'   model=trainedClinicalModel)
+#'
+#' # Validate the models
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#'   valData=PCOSPpredCohortList)
+#' validatedClinicalModel <- validateModel(trainedClinicalModel,
+#'   valData=clinicalPredCohortList)
+#'
+#' # Plot the comparison
+#' modelCompBarPlot <- barPlotModelComparison(validatedClinicalModel,
+#'  validatedPCOSPmodel, stat='AUC')
 #'
 #' @md
 #' @include classUnions.R
@@ -45,6 +74,6 @@ setMethod('barPlotModelComparison', signature(model1='ClinicalModel',
     plot <- ggplot(valStats, aes(x=cohort, y=estimate)) +
         geom_col(aes(fill=model), position='dodge')
 
-    plot
+    return(plot)
 
 })

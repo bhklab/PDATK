@@ -19,6 +19,9 @@
 #'
 #' @return A `GeneFuModel` object, with model parameters in the
 #'
+#' @examples
+#' geneFuModel <- GeneFuModel(randomSeed=1987)
+#'
 #' @md
 #' @export
 GeneFuModel <- function(trainCohorts=SurvivalExperiment(),

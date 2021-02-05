@@ -50,8 +50,27 @@ before making the forest plot.}
 \item{title}{A \code{character} vector with a title to add to the plot.}
 }
 \value{
-A \code{ggplot2} object
+A \code{ggplot2} object.
 }
 \description{
 Render a forest plot from the \code{validationStats} slot of a \code{PCOSP} model object.
+}
+\examples{
+data(sampleCohortList)
+data(samplePCOSPmodel)
+
+# Train the models
+trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+
+# Make predctions
+PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+  model=trainedPCOSPmodel)
+
+# Validate the models
+validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+  valData=PCOSPpredCohortList)
+
+# Plot
+dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index')
+
 }

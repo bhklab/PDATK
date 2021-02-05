@@ -166,14 +166,14 @@ NULL
 
 #' @title A list of sample subtypes for the data in sampleCohortList
 #'
-#' @name sampleCohortClasses
+#' @name cohortSubtypeDFs
 #'
 #' @examples
-#' data(sampleCohortClasses)
+#' data(cohortSubtypeDFs)
 #'
 #' @description
 #' A `list` of `data.frames` containing clinical subtypes for the data
-#'   in the `sampleCohortList` object.
+#'   in the `cohortSubtypeDFs` object.
 #'
 #' @md
 NULL

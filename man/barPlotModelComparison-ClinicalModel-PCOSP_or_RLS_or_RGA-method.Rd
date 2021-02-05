@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods-barPlotModelComparison.R
 \name{barPlotModelComparison,ClinicalModel,PCOSP_or_RLS_or_RGA-method}
 \alias{barPlotModelComparison,ClinicalModel,PCOSP_or_RLS_or_RGA-method}
-\title{Make a Bar Plot Comparison Model Performance Between a ClinicalMode
+\title{Make a Bar Plot Comparison Model Performance Between a ClinicalModel
 and a PCOSP, RLSModel or RGAModel object.}
 \usage{
 \S4method{barPlotModelComparison}{ClinicalModel,PCOSP_or_RLS_or_RGA}(model1, model2, stat, ...)
@@ -23,6 +23,36 @@ comparing the stat between all cohorts that both models were validated
 with.
 }
 \description{
-Make a Bar Plot Comparison Model Performance Between a ClinicalMode
+Make a Bar Plot Comparison Model Performance Between a ClinicalModel
 and a PCOSP, RLSModel or RGAModel object.
+}
+\examples{
+data(sampleCohortList)
+data(sampleICGCmicro)
+
+# Setup the models
+PCOSPmodel <- PCOSP(sampleICGCmicro, randomSeed=1987)
+clinicalModel <- ClinicalModel(sampleICGCmicro,
+  formula='prognosis ~ sex + age + T + N + M + grade')
+
+# Train the models
+trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=5, minAccuracy=0.6)
+trainedClinicalModel <- trainModel(clinicalModel)
+
+# Make predctions
+PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+  model=trainedPCOSPmodel)
+clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+  model=trainedClinicalModel)
+
+# Validate the models
+validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+  valData=PCOSPpredCohortList)
+validatedClinicalModel <- validateModel(trainedClinicalModel,
+  valData=clinicalPredCohortList)
+
+# Plot the comparison
+modelCompBarPlot <- barPlotModelComparison(validatedClinicalModel,
+ validatedPCOSPmodel, stat='AUC')
+
 }

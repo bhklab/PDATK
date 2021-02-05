@@ -14,6 +14,10 @@
 \item{cohortNames}{An optional \code{character} vector specifying the a name for
 each \code{SurvivalExperiment}.}
 }
+\value{
+A \code{SurvivalExperiment} object with merge data from x and y, and
+the assay from each in the \code{assays} slot.
+}
 \description{
 Merge two \code{SurvivalExperiments}, subsetting to shared rows and columns
 }

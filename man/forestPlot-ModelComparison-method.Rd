@@ -49,8 +49,36 @@ before making the forest plot.}
 \item{title}{A \code{character} vector with a title to add to the plot.}
 }
 \value{
-A \code{ggplot2} object
+A \code{ggplot2} object.
 }
 \description{
 Render a forest plot from the \code{validationStats} slot of a \code{PCOSP} model object.
+}
+\examples{
+data(samplePCOSPmodel)
+data(sampleClinicalModel)
+data(samplePCSIsurvExp)
+
+# Train the models
+trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+trainedClinicalModel <- trainModel(sampleClinicalModel)
+
+# Predict risk/risk-class
+PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+  model=trainedClinicalModel)
+
+# Validate the models
+validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+  valData=PCOSPpredPCSI)
+validatedClinicalModel <- validateModel(trainedClinicalModel,
+  valData=ClinicalPredPCSI)
+
+# Compare the models
+modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+
+# Make the forest plot
+modelComp <- modelComp[modelComp$isSummary == TRUE, ]
+modelCindexCompForestPlot <- forestPlot(modelComp, stat='concordance_index')
+
 }

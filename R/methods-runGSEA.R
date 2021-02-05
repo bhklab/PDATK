@@ -1,13 +1,11 @@
 #' Run Gene Set Enrichment Analysis
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   data(samplePCOSPmodel)
 #'   geneSet <- msigdbr()
 #'   GSEAresults <- runGSEA(samplePCOSPmodel, geneSet)
 #' }
-#'
-#'
 #'
 #' @param object An `S4` object to conduct Gene Set Enrichment Analysis (GSEA)
 #'   with.
@@ -36,6 +34,8 @@ setGeneric('runGSEA', function(object, geneSet, ...)
 #' @param allResults Return the full results from [`piano::runGSAhyper`] instead
 #'   of a `data.frame` of significant results? Default is FALSE. This parameter
 #'   must be named.
+#'
+#' @return A `data.table` containing the significantly enriched gene sets.
 #'
 #' @md
 #' @importFrom piano runGSAhyper loadGSC

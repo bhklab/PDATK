@@ -11,9 +11,14 @@
 #' @return A `CohortList` containing only the rows and columns selected in i
 #'   and j, respectively.
 #'
+#' @examples
+#' data(sampleCohortList)
+#' commonGenes <- findCommonGenes(sampleCohortList)
+#' commonGenesCohortList <- subset(sampleCohortList, subset=commonGenes)
+#'
+#' @md
 #' @importMethodsFrom S4Vectors subset
 #' @importFrom S4Vectors endoapply
-#' @md
 #' @export
 setMethod('subset', signature(x='CohortList'),
     function(x, subset=TRUE, select=TRUE, invert=FALSE)

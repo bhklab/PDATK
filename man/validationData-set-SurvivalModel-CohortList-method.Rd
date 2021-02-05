@@ -19,3 +19,8 @@ None, updates the object.
 Setter for the \code{validationData} slot of a \code{SurvivalModel} object with a
 \code{CohortList}.
 }
+\examples{
+data(samplePCOSPmodel)
+validationData(samplePCOSPmodel) <- validationData(samplePCOSPmodel)
+
+}

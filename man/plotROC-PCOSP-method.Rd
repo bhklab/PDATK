@@ -21,6 +21,28 @@ signficiant cohorts will have dotted lines.}
 
 \item{title}{A \code{character} vector speciyfing the plot tile.}
 }
+\value{
+A \code{ggplot} object containing the ROC curves.
+}
 \description{
 Plot ROC curves for a \code{PCOSP} model object.
+}
+\examples{
+data(samplePCOSPmodel)
+data(sampleCohortList)
+
+# Train the model
+trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
+  minAccuracy=0.6)
+
+# Make predictions
+PCOSPpredCohortList <- predictClasses(sampleCohortList[1:4],
+  model=trainedPCOSPmodel)
+
+# Validate the model
+validatedPCOSPmodel <- validateModel(trainedPCOSPmodel, PCOSPpredCohortList)
+
+# Plot ROC curves
+AUROCplot <- plotROC(validatedPCOSPmodel)
+
 }

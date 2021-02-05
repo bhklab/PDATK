@@ -6,5 +6,7 @@
 \alias{.ClinicalModel}
 \title{ClinicalModel Class Definition}
 \description{
-ClinicalModel Class Definition
+An S4 class with a number of predefined methods for
+accessing slots relavant to a surival model. More specific model types
+will inherit from this class for their accessor methods and constructor.
 }

@@ -23,3 +23,9 @@ and j, respectively.
 \description{
 Works using endoapply of \code{[} over the list \code{SurvivalExperiment}s
 }
+\examples{
+data(sampleCohortList)
+commonGenes <- findCommonGenes(sampleCohortList)
+commonGenesCohortList <- subset(sampleCohortList, subset=commonGenes)
+
+}

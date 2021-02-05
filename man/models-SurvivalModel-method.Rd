@@ -15,3 +15,8 @@ A \code{SimpleList} of top scoring KTSPmodels
 \description{
 Getter for the models slot of a \code{SurvivalModel} object
 }
+\examples{
+data(samplePCOSPmodel)
+models(samplePCOSPmodel)
+
+}

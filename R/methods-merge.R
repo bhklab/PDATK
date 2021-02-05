@@ -5,6 +5,9 @@
 #' @param cohortNames An optional `character` vector specifying the a name for
 #'   each `SurvivalExperiment`.
 #'
+#' @return A `SurvivalExperiment` object with merge data from x and y, and
+#'   the assay from each in the `assays` slot.
+#'
 #' @examples
 #' data(sampleICGCmicro)
 #' survExp2 <- sampleICGCmicro

@@ -11,6 +11,9 @@ models(object, ...)
 
 \item{...}{Allow new parameters to be defined for this generic.}
 }
+\value{
+An R object representing a model.
+}
 \description{
 Accessor for the models slot of an \code{S4} object
 }

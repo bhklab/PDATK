@@ -22,3 +22,28 @@ A \code{ModelComparison} object with statistics comparing the two models.
 Compare Two \code{SurivalModel} Objects, Returing A \code{ModelComparison} Object
 With Statistics Comparing the Performance of Each Model.
 }
+\examples{
+data(samplePCOSPmodel)
+data(sampleClinicalModel)
+data(samplePCSIsurvExp)
+
+# Train the models
+trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+trainedClinicalModel <- trainModel(sampleClinicalModel)
+
+# Predict risk/risk-class
+PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+  model=trainedClinicalModel)
+
+# Validate the models
+validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+  valData=PCOSPpredPCSI)
+validatedClinicalModel <- validateModel(trainedClinicalModel,
+  valData=ClinicalPredPCSI)
+
+# Compare the models
+modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+head(modelComp)
+
+}

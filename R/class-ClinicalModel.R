@@ -1,5 +1,7 @@
 #' ClinicalModel Class Definition
 #'
+#' @inherit SurvivalModel-class
+#'
 #' @md
 #' @include class-SurvivalModel.R
 #' @export

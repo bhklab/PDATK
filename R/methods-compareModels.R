@@ -21,6 +21,30 @@ setGeneric('compareModels', function(model1, model2, ...)
 #'
 #' @return A `ModelComparison` object with statistics comparing the two models.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(sampleClinicalModel)
+#' data(samplePCSIsurvExp)
+#'
+#' # Train the models
+#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+#' trainedClinicalModel <- trainModel(sampleClinicalModel)
+#'
+#' # Predict risk/risk-class
+#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+#' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+#'   model=trainedClinicalModel)
+#'
+#' # Validate the models
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#'   valData=PCOSPpredPCSI)
+#' validatedClinicalModel <- validateModel(trainedClinicalModel,
+#'   valData=ClinicalPredPCSI)
+#'
+#' # Compare the models
+#' modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+#' head(modelComp)
+#'
 #' @md
 #' @export
 setMethod('compareModels', signature(model1='SurvivalModel',
@@ -29,7 +53,7 @@ setMethod('compareModels', signature(model1='SurvivalModel',
     # deal with making model names unique when comparing two models of the
     # same type
     if (missing(modelNames)) {
-        if (class(model1) != class(model2)) {
+        if (!is(model1, class(model2))) {
             modelNames <- c(class(model1), class(model2))
         } else {
             modelNames <- c(paste0(class(model1), '_', 1),
@@ -44,7 +68,35 @@ setMethod('compareModels', signature(model1='SurvivalModel',
 })
 
 #' @inherit compareModels,SurvivalModel,SurvivalModel-method
+#'
 #' @param model2Name A `character` vector with the name of the second model.
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(sampleClinicalModel)
+#' data(samplePCSIsurvExp)
+#'
+#' # Train the models
+#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+#' trainedClinicalModel <- trainModel(sampleClinicalModel)
+#'
+#' # Predict risk/risk-class
+#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+#' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+#'   model=trainedClinicalModel)
+#'
+#' # Validate the models
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#'   valData=PCOSPpredPCSI)
+#' validatedClinicalModel <- validateModel(trainedClinicalModel,
+#'   valData=ClinicalPredPCSI)
+#'
+#' # Compare the models
+#' modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+#' head(modelComp)
+#'
+#' # Compare model comparison to another model
+#' modelCompComp <- compareModels(modelComp, validatedPCOSPmodel)
 #'
 #' @md
 #' @export

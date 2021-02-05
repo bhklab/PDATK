@@ -23,7 +23,7 @@
 #' data(samplePCSIsurvExp)
 #'
 #' # Train the models
-#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=10, minAccuracy=0.6)
+#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class

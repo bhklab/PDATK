@@ -31,3 +31,7 @@ A \code{GeneFuModel} object, with model parameters in the
 \description{
 \code{GeneFuModel} Constructor Method
 }
+\examples{
+geneFuModel <- GeneFuModel(randomSeed=1987)
+
+}

@@ -13,6 +13,9 @@ samples.}
 
 \item{...}{Allow new parameters to be defined for this generic.}
 }
+\value{
+A \code{character} vector of common sample names.
+}
 \description{
 Find Common Samples in a List-like S4 Object where The Columns of Each Item
 Represent Samples

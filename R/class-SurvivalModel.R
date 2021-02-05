@@ -33,6 +33,11 @@
 #'
 #' @return A `SurvivalModel` object.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=385,
+#'   randomSeed=1987)
+#'
 #' @md
 #' @import BiocGenerics
 #' @import S4Vectors
@@ -76,6 +81,8 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
 #' @param object An `S4` object to retrieve models from.
 #' @param ... Allow new parameters to be defined for this generic.
 #'
+#' @return An R object representing a model.
+#'
 #' @md
 #' @export
 setGeneric('models', function(object, ...) standardGeneric('models'))
@@ -85,6 +92,10 @@ setGeneric('models', function(object, ...) standardGeneric('models'))
 #' @param object A `SurvivalModel` model object to retrieve the models slot from.
 #'
 #' @return A `SimpleList` of top scoring KTSPmodels
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' models(samplePCOSPmodel)
 #'
 #' @md
 #' @export
@@ -105,12 +116,17 @@ setMethod('models', signature('SurvivalModel'), function(object) {
 #' @export
 setGeneric('models<-',
     function(object, ..., value) standardGeneric('models<-'))
+#'
 #' Setter for the models slot of a `SurvivalModel` object
 #'
-#' @param object A `SurvivalMdeol` object to update
+#' @param object A `SurvivalModel` object to update
 #' @param value A `SimpleList` of trained KTSP models
 #'
 #' @return None, updates the object.
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' models(samplePCOSPmodel) <- SimpleList(model1=NA)
 #'
 #' @md
 #' @export
@@ -141,6 +157,10 @@ setGeneric('validationStats', function(object, ...)
 #' @return A `data.table` of validation statistics for the `SurvivalModel`
 #'   object.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' validationStats(samplePCOSPmodel)
+#'
 #' @md
 #' @export
 setMethod('validationStats', signature(object='SurvivalModel'), function(object) {
@@ -169,6 +189,10 @@ setGeneric('validationStats<-', function(object, ..., value) standardGeneric('va
 #'
 #' @return None, updated the object.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' validationStats(samplePCOSPmodel) <- data.frame()
+#'
 #' @md
 #' @export
 setReplaceMethod('validationStats', signature(object='SurvivalModel',
@@ -190,15 +214,17 @@ setReplaceMethod('validationStats', signature(object='SurvivalModel',
 #' @md
 #' @export
 setGeneric('validationData', function(object, ...) standardGeneric('validationData'))
-
-
-
+#'
 #' Accessor for the `validationData` slot of a `SurvivalModel` object.
 #'
 #' @param object A `SurvivalModel` object.
 #'
 #' @return A `CohortList` object containing the datasets used to compute
 #'   validation statistics for this model.
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' validationData(samplePCOSPmodel)
 #'
 #' @md
 #' @export
@@ -220,8 +246,7 @@ setMethod('validationData', signature(object='SurvivalModel'), function(object)
 #' @md
 #' @export
 setGeneric('validationData<-', function(object, ..., value) standardGeneric('validationData<-'))
-
-
+#'
 #' Setter for the `validationData` slot of a `SurvivalModel` object with a
 #'  `CohortList`.
 #'
@@ -229,6 +254,10 @@ setGeneric('validationData<-', function(object, ..., value) standardGeneric('val
 #' @param value A `CohortList` of validation cohorts for the `SurvivalModel` model.
 #'
 #' @return None, updates the object.
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' validationData(samplePCOSPmodel) <- validationData(samplePCOSPmodel)
 #'
 #' @md
 #' @export
@@ -245,7 +274,6 @@ setReplaceMethod('validationData', signature(object='SurvivalModel', value='Coho
 #'
 #' @md
 #' @importFrom CoreGx .errorMsg
-#' @export
 setValidity('SurvivalModel', function(object) {
 
     hasSurvivalGroup <- 'prognosis' %in% colnames(colData(object))

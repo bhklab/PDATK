@@ -31,7 +31,25 @@ setGeneric('forestPlot', function(object, ...)
 #' @param transform The name of a numeric function to transform the statistic
 #'   before making the forest plot.
 #'
-#' @return A `ggplot2` object
+#' @return A `ggplot2` object.
+#'
+#' @examples
+#' data(sampleCohortList)
+#' data(samplePCOSPmodel)
+#'
+#' # Train the models
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+#'
+#' # Make predctions
+#' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+#'   model=trainedPCOSPmodel)
+#'
+#' # Validate the models
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#'   valData=PCOSPpredCohortList)
+#'
+#' # Plot
+#' dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index')
 #'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
@@ -108,6 +126,34 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 #' @inherit forestPlot,PCOSP_or_ClinicalModel-method
 #'
 #' @param object A `ModelComparison` object to forest plot.
+#'
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(sampleClinicalModel)
+#' data(samplePCSIsurvExp)
+#'
+#' # Train the models
+#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+#' trainedClinicalModel <- trainModel(sampleClinicalModel)
+#'
+#' # Predict risk/risk-class
+#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+#' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+#'   model=trainedClinicalModel)
+#'
+#' # Validate the models
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#'   valData=PCOSPpredPCSI)
+#' validatedClinicalModel <- validateModel(trainedClinicalModel,
+#'   valData=ClinicalPredPCSI)
+#'
+#' # Compare the models
+#' modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+#'
+#' # Make the forest plot
+#' modelComp <- modelComp[modelComp$isSummary == TRUE, ]
+#' modelCindexCompForestPlot <- forestPlot(modelComp, stat='concordance_index')
 #'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist

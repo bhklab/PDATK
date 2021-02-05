@@ -30,7 +30,7 @@ data(samplePCOSPmodel)
 data(sampleCohortList)
 
 # Train Model
-trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
   minAccuracy=0.6)
 
 # Make predictions

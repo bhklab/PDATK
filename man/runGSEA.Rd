@@ -21,12 +21,10 @@ A \code{data.frame} containing the significantly enriched gene sets.
 Run Gene Set Enrichment Analysis
 }
 \examples{
-\dontrun{
+\donttest{
   data(samplePCOSPmodel)
   geneSet <- msigdbr()
   GSEAresults <- runGSEA(samplePCOSPmodel, geneSet)
 }
-
-
 
 }

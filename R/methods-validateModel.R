@@ -4,6 +4,8 @@
 #' @param valData `Any` Data to verify the model with.
 #' @param ... Allow new parameters to be defined for this generic.
 #'
+#' @return The `S4` object with added model performance metadata.
+#'
 #' @md
 #' @export
 setGeneric('validateModel', function(model, valData, ...)
@@ -62,13 +64,13 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
             if (all.equal(model, metadata(valData)$predictionModel) == TRUE) {
                 predCohortList <- valData
             } else {
-                warning(.warnMsg(.context(), 'The validationData argument ',
+                warning(.warnMsg(.context(6), 'The validationData argument ',
                     'has predictions, but the prediction model does not match',
                     'the model argument. Recalculating classes...'))
                 predCohortList <- predictClasses(valData, model=model)
             }
         } else {
-          warning(.warnMsg(.context(), 'One or more of the
+          warning(.warnMsg(.context(6), 'One or more of the
                 SurvivalExperiments in valData does not have model
                 model predictions, recalculating...'))
             predCohortList <- predictClasses(valData, model=model)

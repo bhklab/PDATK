@@ -8,7 +8,7 @@
   object,
   subtypes,
   ...,
-  sampleCol = "sample",
+  sampleCol = "sample_name",
   subtypeCol = "subtype"
 )
 }
@@ -34,4 +34,14 @@ each \code{SurvivalExperiment}.
 }
 \description{
 Assign Subtype Annotations to a SurvivalExperiment Object
+}
+\examples{
+data(sampleCohortList)
+data(cohortSubtypeDFs)
+
+cohortList <- assignSubtypes(sampleCohortList,
+  subtypes=cohortSubtypeDFs[names(sampleCohortList)],
+  sampleCol='sample_name',
+  subtypeCol='subtype')
+
 }

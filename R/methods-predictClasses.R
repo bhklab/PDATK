@@ -29,7 +29,7 @@ setGeneric('predictClasses',
 #' data(samplePCSIsurvExp)
 #'
 #' # Train Model
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
 #'   minAccuracy=0.6)
 #'
 #' # Make predictions
@@ -49,7 +49,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     # drop NA samples, they mess with calculating statistics
     keepSamples <- rownames(na.omit(colData(object)))
     if (!all(colnames(object) %in% keepSamples)) {
-        warning(.warnMsg(.context(5), 'Dropped samples with NA survival data!'))
+        warning(.warnMsg(.context(7), 'Dropped samples with NA survival data!'))
     }
     object <- object[, keepSamples]
 
@@ -103,7 +103,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #' data(sampleCohortList)
 #'
 #' # Train Model
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
 #'   minAccuracy=0.6)
 #'
 #' # Make predictions

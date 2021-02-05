@@ -7,7 +7,7 @@
 \S4method{models}{SurvivalModel,SimpleList}(object) <- value
 }
 \arguments{
-\item{object}{A \code{SurvivalMdeol} object to update}
+\item{object}{A \code{SurvivalModel} object to update}
 
 \item{value}{A \code{SimpleList} of trained KTSP models}
 }
@@ -16,4 +16,9 @@ None, updates the object.
 }
 \description{
 Setter for the models slot of a \code{SurvivalModel} object
+}
+\examples{
+data(samplePCOSPmodel)
+models(samplePCOSPmodel) <- SimpleList(model1=NA)
+
 }

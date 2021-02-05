@@ -26,6 +26,9 @@ correction to use in \code{\link[piano:runGSAhyper]{piano::runGSAhyper}}. This p
 of a \code{data.frame} of significant results? Default is FALSE. This parameter
 must be named.}
 }
+\value{
+A \code{data.table} containing the significantly enriched gene sets.
+}
 \description{
 Run Gene Set Enrichment Analysis On A \code{PCOSP} Model Object.
 }

@@ -29,7 +29,13 @@ setGeneric('assignSubtypes',
 #' @return The `SurvivalExperiment` with the subtypes in the `subtypes` column
 #'   of the colData slot and a metadata item, `hasSubtypes`, set to TRUE.
 #'
-#' @examples
+#' data(sampleICGCmicro)
+#' data(cohortSubtypeDFs)
+#'
+#' cohortList <- assignSubtypes(sampleICGCmicro,
+#'   subtypes=cohortSubtypeDFs$ICGCMICRO,
+#'   sampleCol='sample_name',
+#'   subtypeCol='subtype')
 #'
 #'
 #' @md
@@ -87,14 +93,20 @@ setMethod('assignSubtypes', signature(object='SurvivalExperiment',
 #'   each `SurvivalExperiment`.
 #'
 #' @examples
-#' data(sampleICGCmicro)
+#' data(sampleCohortList)
+#' data(cohortSubtypeDFs)
+#'
+#' cohortList <- assignSubtypes(sampleCohortList,
+#'   subtypes=cohortSubtypeDFs[names(sampleCohortList)],
+#'   sampleCol='sample_name',
+#'   subtypeCol='subtype')
 #'
 #' @md
 #' @importFrom S4Vectors mendoapply
 #' @importFrom CoreGx .errorMsg
 #' @export
 setMethod('assignSubtypes', signature(object='CohortList',
-    subtypes='list'), function(object, subtypes, ..., sampleCol='sample',
+    subtypes='list'), function(object, subtypes, ..., sampleCol='sample_name',
         subtypeCol='subtype')
 {
     if (!all(names(object) %in% names(subtypes))) stop(.errorMsg(.context(),

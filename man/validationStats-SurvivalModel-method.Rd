@@ -16,3 +16,8 @@ object.
 \description{
 Accessor for the \code{validationStats} slot of a \code{SurvivalModel} object.
 }
+\examples{
+data(samplePCOSPmodel)
+validationStats(samplePCOSPmodel)
+
+}
