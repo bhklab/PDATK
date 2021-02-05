@@ -27,11 +27,17 @@ setGeneric('trainModel', function(object, ...)
 #' @param minAccuracy A `float` specifying the balanced accurary required
 #'   to consider a model 'top scoring'. Defaults to 0.6. Must be in the
 #'   range \[0, 1\].
-#' @param ... Fall through arguments to `BiocParallel::bplapply`
+#' @param ... Fall through arguments to `BiocParallel::bplapply`. Use this to
+#'   configure parallelization options. By default the settings inferred in
+#'   `BiocParallel::bpparam()` will be used.
 #'
 #' @return A `PCOSP` object with the trained model in the `model` slot.
 #'
 #' @seealso switchBox::SWAP.KTSP.Train BiocParallel::bplapply
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' trainModel(samplePCOSPmodel, numModels=10, minAccuracy=0.6)
 #'
 #' @md
 #' @importFrom BiocParallel bplapply

@@ -14,6 +14,7 @@
 #' @md
 NULL
 
+
 #' @title A Sample SurvivalExperiment Containing Data from the ICGC micro-array
 #'   cohort from `MetaGxPancreas`
 #'
@@ -26,6 +27,7 @@ NULL
 #'
 #' @md
 NULL
+
 
 #' @title A Sample PCOSP Model Containing the ICGC micro-array cohort from
 #'   `MetaGxPancreas` as training data.
@@ -40,6 +42,33 @@ NULL
 #' @md
 NULL
 
+
+#' @title Sample RLS Model Containing the ICGC micro-array cohort from
+#'   `MetaGxPancreas` as training data.
+#'
+#' @name sampleRLSmodel
+#'
+#' @examples
+#' data(sampleRLSmodel)
+#'
+#' @seealso `MetaGxPancreas::loadPancraseDatasets`
+#'
+#' @md
+NULL
+
+
+#' @title Sample RGA Model Containing the ICGC micro-array cohort from
+#'   `MetaGxPancreas` as training data.
+#'
+#' @name sampleRGAmodel
+#'
+#' @examples
+#' data(sampleRGAmodel)
+#'
+#' @seealso `MetaGxPancreas::loadPancraseDatasets`
+#'
+#' @md
+NULL
 
 
 #' existingClassifierData
@@ -58,6 +87,7 @@ NULL
 #' @md
 NULL
 
+
 #' @title Published classifier gene signature for Chen
 #'
 #' @name chen
@@ -72,6 +102,7 @@ NULL
 #'
 #' @md
 NULL
+
 
 #' @title Published classifier gene signature for Birnbaum
 #'
@@ -88,6 +119,7 @@ NULL
 #' @md
 NULL
 
+
 #' @title Classifier survival scores for Haider
 #'
 #' @name haiderSigScores
@@ -102,11 +134,13 @@ NULL
 #' @md
 NULL
 
+
 #' @title A list of sample subtypes for the data in sampleCohortList
 #'
 #' @name sampleCohortClasses
 #'
 #' @examples
+#' data(sampleCohortClasses)
 #'
 #' @description
 #' A `list` of `data.frames` containing clinical subtypes for the data
