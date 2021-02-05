@@ -259,7 +259,7 @@ setMethod('trainModel', signature('RLSModel'),
 #'
 #' @examples
 #' data(sampleRGAmodel)
-#' trainedRGAmodel <- trainModel(sampleRGAModel, numModels=10, minAccuracy=0)
+#' trainedRGAmodel <- trainModel(sampleRGAmodel, numModels=10, minAccuracy=0)
 #'
 #' @md
 #' @importFrom BiocParallel bplapply

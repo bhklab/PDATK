@@ -16,7 +16,7 @@ ModelComparison(model1, model2, ...)
 \item{...}{Not used.}
 }
 \value{
-A \code{ModelComparison} object, which is a soft wrapper for \code{DataFrame}
+A \code{ModelComparison} object, which is a wrapper for \code{DataFrame}
 which is used for method dispatch.
 }
 \description{
@@ -25,15 +25,25 @@ ModelComparison Constructor
 \examples{
 data(samplePCOSPmodel)
 data(sampleClinicalModel)
+data(samplePCSIsurvExp)
 
 # Train the models
 trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=10, minAccuracy=0.6)
 trainedClinicalModel <- trainModel(sampleClinicalModel)
 
-# Validate the models
+# Predict risk/risk-class
+PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+  model=trainedClinicalModel)
 
+# Validate the models
+validatedPCOSPmodel <- validateModel(trainedPCSOPmodel,
+  valData=PCOSPpredPCSI)
+validatedClinicalModel <- validateModel(trainedClinicalModel,
+  valData=ClinicalPredPCSI)
 
 # Compare the models
-
+modelComp <- ModelComparison(validatedPCOSPmodel, validatedClinicalModel)
+head(modelComp)
 
 }
