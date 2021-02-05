@@ -84,6 +84,21 @@ NULL
 #' @md
 NULL
 
+#' @title Sample SurvivalExperiment Containing the PCSI rna-sequencing cohort
+#'   from `MetaGxPancreas`.
+#'
+#' @name samplePCSIsurvExp
+#'
+#' @description
+#' Used as validation data for modelling examples
+#'
+#' @seealso `MetaGxPancreas::loadPancreasDatasets`
+#'
+#' @examples
+#' data(samplePCSIsurvExp)
+#'
+#' @md
+NULL
 
 #' existingClassifierData
 #'

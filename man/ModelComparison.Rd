@@ -22,3 +22,18 @@ which is used for method dispatch.
 \description{
 ModelComparison Constructor
 }
+\examples{
+data(samplePCOSPmodel)
+data(sampleClinicalModel)
+
+# Train the models
+trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=10, minAccuracy=0.6)
+trainedClinicalModel <- trainModel(sampleClinicalModel)
+
+# Validate the models
+
+
+# Compare the models
+
+
+}
