@@ -73,6 +73,7 @@ setMethod('trainModel', signature('PCOSP'),
 #' @importFrom switchBox SWAP.KTSP.Train
 #' @importFrom BiocParallel bplapply
 #' @importFrom S4Vectors SimpleList
+#' @keywords internal
 .generateTSPmodels <- function(trainMatrix, survivalGroups, numModels,
     minAccuracy, sampleFUN=.randomSampleIndex, ...)
 {
@@ -169,12 +170,23 @@ setMethod('trainModel', signature('PCOSP'),
         .Label=as.factor(labels[rowIndices])))
 }
 
+
+# ---- RLSModel methods
+
 #' @inherit trainModel,PCOSP-method
+#'
+#' @param minAccuracy This parameter should be set to zero, since we do
+#'   not expect the permuted models to perform well. Setting this higher will
+#'   result in an ensemble with very few models included.
+#'
+#' @examples
+#' data(sampleRLSmodel)
+#' trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=10)
 #'
 #' @md
 #' @export
 setMethod('trainModel', signature('RLSModel'),
-    function(object, numModels=10, ...)
+    function(object, numModels=10, minAccuracy=0, ...)
 {
     # Configure local parameters
     oldSeed <- .Random.seed
@@ -190,10 +202,10 @@ setMethod('trainModel', signature('RLSModel'),
     survivalGroups <- factor(colData(object)$prognosis, levels=c('good', 'bad'))
 
     RLSmodels <- .generateTSPmodels(trainMatrix, survivalGroups, numModels,
-        sampleFUN=.randomSampleIndexShuffle, minAccuracy=0, ...)
+        sampleFUN=.randomSampleIndexShuffle, minAccuracy=minAccuracy, ...)
 
     models(object) <- RLSmodels
-    # Add additiona model paramters to metadta
+    # Add additional model parameters to metadata
     metadata(object)$modelParams <- c(metadata(object)$modelParams,
         list(numModels=numModels))
     return(object)
@@ -201,8 +213,6 @@ setMethod('trainModel', signature('RLSModel'),
 
 ##TODO:: Generalize this to n dimensions
 #' Generate a random sample from each group and randomly shuffle the labels
-#'
-#' Returns a list of
 #'
 #' @param n The sample size
 #' @param labels A \code{vector} of the group labels for all rows of the
@@ -247,13 +257,17 @@ setMethod('trainModel', signature('RLSModel'),
 #'
 #' @seealso switchBox::SWAP.KTSP.Train BiocParallel::bplapply
 #'
+#' @examples
+#' data(sampleRGAmodel)
+#' trainedRGAmodel <- trainModel(sampleRGAModel, numModels=10, minAccuracy=0)
+#'
 #' @md
 #' @importFrom BiocParallel bplapply
 #' @importFrom SummarizedExperiment assays assays<-
 #' @importFrom S4Vectors metadata
 #' @export
 setMethod('trainModel', signature('RGAModel'),
-    function(object, numModels=10, minAccuracy=0.0, ...)
+    function(object, numModels=10, minAccuracy=0, ...)
 {
     # Configure local parameters
     oldSeed <- .Random.seed
@@ -300,6 +314,10 @@ setMethod('trainModel', signature('RGAModel'),
 #'   formula variables.
 #'
 #' @return A `ClinicalModel` object with a `glm` object in the models slot.
+#'
+#' @examples
+#' data(sampleClinicalModel)
+#' trainModel(sampleClinicalModel)
 #'
 #' @md
 #' @importFrom stats glm as.formula binomial

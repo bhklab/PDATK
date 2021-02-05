@@ -9,7 +9,7 @@
 #' A `CohortList` object containing sample data for the PCOSP vignette. This
 #' data is a subset of the the Pancreas datasets available in `MetaGxPancreas`.
 #'
-#' @seealso `MetaGxPancreas::loadPancraseDatasets`
+#' @seealso `MetaGxPancreas::loadPancreasDatasets`
 #'
 #' @md
 NULL
@@ -23,7 +23,7 @@ NULL
 #'
 #' @name sampleICGCmicro
 #'
-#' @seealso `MetaGxPancreas::loadPancraseDatasets`
+#' @seealso `MetaGxPancreas::loadPancreasDatasets`
 #'
 #' @md
 NULL
@@ -37,7 +37,7 @@ NULL
 #'
 #' @name samplePCOSPmodel
 #'
-#' @seealso `MetaGxPancreas::loadPancraseDatasets`
+#' @seealso `MetaGxPancreas::loadPancreasDatasets`
 #'
 #' @md
 NULL
@@ -51,7 +51,7 @@ NULL
 #' @examples
 #' data(sampleRLSmodel)
 #'
-#' @seealso `MetaGxPancreas::loadPancraseDatasets`
+#' @seealso `MetaGxPancreas::loadPancreasDatasets`
 #'
 #' @md
 NULL
@@ -65,7 +65,21 @@ NULL
 #' @examples
 #' data(sampleRGAmodel)
 #'
-#' @seealso `MetaGxPancreas::loadPancraseDatasets`
+#' @seealso `MetaGxPancreas::loadPancreasDatasets`
+#'
+#' @md
+NULL
+
+
+#' @title Sample ClinicalModel Containing the ICGC micro-array cohort from
+#'   `MetaGxPancreas` as training data.
+#'
+#' @name sampleClinicalModel
+#'
+#' @examples
+#' data(sampleClinicalModel)
+#'
+#' @seealso `MetaGxPancreas::loadPancreasDatasets`
 #'
 #' @md
 NULL
