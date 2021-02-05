@@ -23,6 +23,11 @@
 #' @return A `CohortList` object containing one or more `SurvivalExperiment`
 #'   objects.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' cohortList <- CohortList(list(survExp1=sampleICGCmicro,
+#'   survExp2=sampleICGCmicro), mDataTypes=c('rna_micro', 'rna_micro'))
+#'
 #' @md
 #' @importFrom S4Vectors metadata metadata<- mcols mcols<- mendoapply
 #' @importClassesFrom S4Vectors SimpleList

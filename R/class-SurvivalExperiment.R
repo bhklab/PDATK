@@ -40,7 +40,7 @@
 #'   is_deceased='is_deceased')
 #'
 #' # build a SurvivalExperiment from an existig SummarizedExperment
-#' ICGCmicroSumExp <- as(sampleICGCmciro, 'SummarizedExperiment')
+#' ICGCmicroSumExp <- as(sampleICGCmicro, 'SummarizedExperiment')
 #' ICGCmicro <- SurvivalExperiment(sumExp=ICGCmicroSumExp,
 #'   days_survived='days_survived', is_deceased='is_deceased')
 #'

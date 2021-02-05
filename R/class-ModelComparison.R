@@ -17,6 +17,20 @@
 #' @return A `ModelComparison` object, which is a soft wrapper for `DataFrame`
 #'   which is used for method dispatch.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(sampleClinicalModel)
+#'
+#' # Train the models
+#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=10, minAccuracy=0.6)
+#' trainedClinicalModel <- trainModel(sampleClinicalModel)
+#'
+#' # Validate the models
+#'
+#'
+#' # Compare the models
+#'
+#'
 #' @md
 #' @importFrom methods is
 #' @importFrom S4Vectors DataFrame
