@@ -30,6 +30,20 @@
 #'
 #' @return A `SurvivalExperiment` object.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#'
+#' # build a SurvivalExperiment from raw data
+#' ICGCmicro <- SurvivalExperiment(assays=assays(sampleICGCmicro),
+#'   rowData=rowData(sampleICGCmicro), colData=colData(sampleICGCmicro),
+#'   metadata=metadata(sampleICGCmicro), days_survived='days_survived',
+#'   is_deceased='is_deceased')
+#'
+#' # build a SurvivalExperiment from an existig SummarizedExperment
+#' ICGCmicroSumExp <- as(sampleICGCmciro, 'SummarizedExperiment')
+#' ICGCmicro <- SurvivalExperiment(sumExp=ICGCmicroSumExp,
+#'   days_survived='days_survived', is_deceased='is_deceased')
+#'
 #' @md
 #' @importFrom SummarizedExperiment SummarizedExperiment colData colData<-
 #' @importFrom S4Vectors rename

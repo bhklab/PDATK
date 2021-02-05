@@ -32,3 +32,8 @@ Pancreatic Cancer Overall Survival Predictor (PCOSP) Constructor
 This function assumes there is only 1 assay per
 \code{SurvivalExperiment}.
 }
+\examples{
+data(sampleICGCmicro)
+PCOSPmodel <- PCOSP(sampleICGCmicro, minDaysSurvived=365, randomSeed=1987)
+
+}

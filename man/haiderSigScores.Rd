@@ -6,3 +6,8 @@
 \description{
 The classifier risk scores from Haider \emph{et al.} (2014)
 }
+\examples{
+# Loads chen, birnbaum and haiderSigScores objects
+data(existingClassifierData)
+
+}

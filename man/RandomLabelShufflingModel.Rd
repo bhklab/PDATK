@@ -25,3 +25,8 @@ A \code{SurvivalModel} object.
 \description{
 RandomLabelShufflingModel Constructor
 }
+\examples{
+data(sampleICGCmicro)
+RLSmodel <- RLSModel(sampleICGCmicro, minDaysSurvived=365, randomSeed=1987)
+
+}

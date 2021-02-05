@@ -7,3 +7,8 @@
 The genes and coefficients for the gene signature from
 Chen \emph{et al.} (2015)
 }
+\examples{
+# Loads chen, birnbaum and haiderSigScores objects
+data(existingClassifierData)
+
+}

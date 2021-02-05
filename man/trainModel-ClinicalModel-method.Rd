@@ -30,3 +30,8 @@ A \code{ClinicalModel} object with a \code{glm} object in the models slot.
 \description{
 Fit a GLM Using Clinical Predictors Specified in a \code{ClinicalModel} Object.
 }
+\examples{
+data(sampleClinicalModel)
+trainedClinicalModel <- trainModel(sampleClinicalModel)
+
+}

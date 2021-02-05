@@ -31,6 +31,11 @@ This function is parallelized with BiocParallel, thus if you wish
 to change the back-end for parallelization, number of threads, or any
 other parallelization configuration please pass BPPARAM to bplapply.
 }
+\examples{
+data(sampleRGAmodel)
+trainedRGAmodel <- trainModel(sampleRGAModel, numModels=10, minAccuracy=0)
+
+}
 \seealso{
 switchBox::SWAP.KTSP.Train BiocParallel::bplapply
 }

@@ -25,3 +25,8 @@ A \code{SurvivalModel} object.
 \description{
 RandomGeneAssignmentModel Constructor
 }
+\examples{
+data(sampleICGCmicro)
+RGAmodel <- RGAModel(sampleICGCmicro, minDaysSurvived=365, randomSeed=1987)
+
+}

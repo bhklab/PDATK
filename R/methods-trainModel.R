@@ -317,7 +317,7 @@ setMethod('trainModel', signature('RGAModel'),
 #'
 #' @examples
 #' data(sampleClinicalModel)
-#' trainModel(sampleClinicalModel)
+#' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' @md
 #' @importFrom stats glm as.formula binomial
@@ -342,7 +342,7 @@ setMethod('trainModel', signature(object='ClinicalModel'),
     model <- eval(substitute(glm(formula, data=survivalData,
         family=family, na.action=na.action, ...)))
 
-    models(clinicalModel) <- SimpleList(glm=model)
-    return(clinicalModel)
+    models(object) <- SimpleList(glm=model)
+    return(object)
 
 })

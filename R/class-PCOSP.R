@@ -24,6 +24,10 @@
 #'   together the molecular data types and labelling the genes with the data
 #'   type to ensure the results are easily interpretable.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' PCOSPmodel <- PCOSP(sampleICGCmicro, minDaysSurvived=365, randomSeed=1987)
+#'
 #' @md
 #' @export
 PCOSP <- function(trainCohorts, minDaysSurvived=365, ..., randomSeed) {

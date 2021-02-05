@@ -17,3 +17,11 @@ each \code{SurvivalExperiment}.}
 \description{
 Merge two \code{SurvivalExperiments}, subsetting to shared rows and columns
 }
+\examples{
+data(sampleICGCmicro)
+survExp2 <- sampleICGCmicro
+mergedSurvExp <- merge(survExp2, sampleICGCmicro,
+  cohortNames=c('copyICGCmicro', 'ICGCmicro'))
+mergedSurvExp
+
+}

@@ -8,3 +8,10 @@ cohort from \code{MetaGxPancreas}}
 A Sample SurvivalExperiment Containing Data from the ICGC micro-array
 cohort from \code{MetaGxPancreas}
 }
+\examples{
+data(sampleICGCmicro)
+
+}
+\seealso{
+\code{MetaGxPancreas::loadPancreasDatasets}
+}

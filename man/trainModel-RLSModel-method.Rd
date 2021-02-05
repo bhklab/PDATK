@@ -4,7 +4,7 @@
 \alias{trainModel,RLSModel-method}
 \title{Train a PCOSP Model Based on The Data the assay \code{trainMatrix}.}
 \usage{
-\S4method{trainModel}{RLSModel}(object, numModels = 10, ...)
+\S4method{trainModel}{RLSModel}(object, numModels = 10, minAccuracy = 0, ...)
 }
 \arguments{
 \item{object}{A \code{PCOSP} object to train.}
@@ -12,7 +12,13 @@
 \item{numModels}{An \code{integer} specifying the number of models to train.
 Defaults to 10. We recommend using 1000+ for good results.}
 
-\item{...}{Fall through arguments to \code{BiocParallel::bplapply}}
+\item{minAccuracy}{This parameter should be set to zero, since we do
+not expect the permuted models to perform well. Setting this higher will
+result in an ensemble with very few models included.}
+
+\item{...}{Fall through arguments to \code{BiocParallel::bplapply}. Use this to
+configure parallelization options. By default the settings inferred in
+\code{BiocParallel::bpparam()} will be used.}
 }
 \value{
 A \code{PCOSP} object with the trained model in the \code{model} slot.
@@ -26,6 +32,11 @@ on the specified paramters.
 This function is parallelized with BiocParallel, thus if you wish
 to change the back-end for parallelization, number of threads, or any
 other parallelization configuration please pass BPPARAM to bplapply.
+}
+\examples{
+data(sampleRLSmodel)
+trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=10)
+
 }
 \seealso{
 switchBox::SWAP.KTSP.Train BiocParallel::bplapply

@@ -7,6 +7,10 @@
 #'
 #' @inherit SurvivalModel
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' RGAmodel <- RGAModel(sampleICGCmicro, minDaysSurvived=365, randomSeed=1987)
+#'
 #' @aliases RGAModel
 #' @export
 RandomGeneAssignmentModel <- function(trainCohorts, minDaysSurvived=365, ...,

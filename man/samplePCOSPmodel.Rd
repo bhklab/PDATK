@@ -8,3 +8,10 @@
 A Sample PCOSP Model Containing the ICGC micro-array cohort from
 \code{MetaGxPancreas} as training data.
 }
+\examples{
+data(samplePCOSPmodel)
+
+}
+\seealso{
+\code{MetaGxPancreas::loadPancreasDatasets}
+}

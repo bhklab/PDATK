@@ -16,7 +16,9 @@ Defaults to 10. We recommend using 1000+ for good results.}
 to consider a model 'top scoring'. Defaults to 0.6. Must be in the
 range [0, 1].}
 
-\item{...}{Fall through arguments to \code{BiocParallel::bplapply}}
+\item{...}{Fall through arguments to \code{BiocParallel::bplapply}. Use this to
+configure parallelization options. By default the settings inferred in
+\code{BiocParallel::bpparam()} will be used.}
 }
 \value{
 A \code{PCOSP} object with the trained model in the \code{model} slot.
@@ -30,6 +32,11 @@ on the specified paramters.
 This function is parallelized with BiocParallel, thus if you wish
 to change the back-end for parallelization, number of threads, or any
 other parallelization configuration please pass BPPARAM to bplapply.
+}
+\examples{
+data(samplePCOSPmodel)
+trainModel(samplePCOSPmodel, numModels=10, minAccuracy=0.6)
+
 }
 \seealso{
 switchBox::SWAP.KTSP.Train BiocParallel::bplapply

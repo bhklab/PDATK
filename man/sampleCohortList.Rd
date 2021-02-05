@@ -7,6 +7,10 @@
 A \code{CohortList} object containing sample data for the PCOSP vignette. This
 data is a subset of the the Pancreas datasets available in \code{MetaGxPancreas}.
 }
+\examples{
+data(sampleCohortList)
+
+}
 \seealso{
-\code{MetaGxPancreas::loadPancraseDatasets}
+\code{MetaGxPancreas::loadPancreasDatasets}
 }

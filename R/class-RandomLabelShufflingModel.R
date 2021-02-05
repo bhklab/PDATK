@@ -7,6 +7,10 @@
 #'
 #' @inherit SurvivalModel
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' RLSmodel <- RLSModel(sampleICGCmicro, minDaysSurvived=365, randomSeed=1987)
+#'
 #' @aliases RLSModel
 #' @export
 RandomLabelShufflingModel <- function(trainCohorts, minDaysSurvived=365, ...,

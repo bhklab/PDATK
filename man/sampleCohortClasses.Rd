@@ -7,3 +7,7 @@
 A \code{list} of \code{data.frames} containing clinical subtypes for the data
 in the \code{sampleCohortList} object.
 }
+\examples{
+data(sampleCohortClasses)
+
+}
