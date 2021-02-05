@@ -20,3 +20,9 @@ A \code{character} vector of common sample names.
 Find Common Samples in a List-like S4 Object where The Columns of Each Item
 Represent Samples
 }
+\examples{
+data(sampleCohortList)
+commonSamples <- findCommonSamples(sampleCohortList)
+head(commonSamples)
+
+}

@@ -5,6 +5,16 @@
 #'
 #' @return A `character` vector of top predictive features.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#'
+#' # Train the model
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+#'   minAccuracy=0.6)
+#'
+#' # Get the top features
+#' topFeatures <- getTopFeatures(trainedPCOSPmodel, numModels=5)
+#'
 #' @md
 #' @export
 setGeneric('getTopFeatures',

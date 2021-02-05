@@ -19,3 +19,8 @@ None, updates the object.
 \description{
 Generic for Setting the Models Slot for an S4 Object
 }
+\examples{
+data(samplePCOSPmodel)
+models(samplePCOSPmodel) <- SimpleList(model1=NA)
+
+}

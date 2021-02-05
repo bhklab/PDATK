@@ -28,3 +28,9 @@ A \code{ClinicalModel} object.
 \description{
 Constructor for the ClinicalModel Class
 }
+\examples{
+data(sampleICGCmicro)
+clinicalModel <- ClinicalModel(sampleICGCmicro,
+  formula='prognosis ~ sex + age + T + N + M + grade')
+
+}

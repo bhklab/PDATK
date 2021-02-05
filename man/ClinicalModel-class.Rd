@@ -10,3 +10,9 @@ An S4 class with a number of predefined methods for
 accessing slots relavant to a surival model. More specific model types
 will inherit from this class for their accessor methods and constructor.
 }
+\examples{
+data(sampleICGCmicro)
+survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=385,
+  randomSeed=1987)
+
+}

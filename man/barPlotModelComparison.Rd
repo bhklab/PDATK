@@ -22,3 +22,33 @@ A bar plot comparing some aspect of model1 and model2
 Make A Bar Plot Comparing Perforamnce Between Two \code{S4} Obects Representing
 Mathematical Models.
 }
+\examples{
+data(sampleCohortList)
+data(sampleICGCmicro)
+
+# Setup the models
+PCOSPmodel <- PCOSP(sampleICGCmicro, randomSeed=1987)
+clinicalModel <- ClinicalModel(sampleICGCmicro,
+  formula='prognosis ~ sex + age + T + N + M + grade')
+
+# Train the models
+trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=5, minAccuracy=0.6)
+trainedClinicalModel <- trainModel(clinicalModel)
+
+# Make predctions
+PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+  model=trainedPCOSPmodel)
+clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+  model=trainedClinicalModel)
+
+# Validate the models
+validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+  valData=PCOSPpredCohortList)
+validatedClinicalModel <- validateModel(trainedClinicalModel,
+  valData=clinicalPredCohortList)
+
+# Plot the comparison
+modelCompBarPlot <- barPlotModelComparison(validatedClinicalModel,
+ validatedPCOSPmodel, stat='AUC')
+
+}

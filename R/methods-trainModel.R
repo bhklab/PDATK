@@ -6,6 +6,10 @@
 #'
 #' @return The same object with the @model slot populated with the fit model
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' trainModel(samplePCOSPmodel, numModels=10, minAccuracy=0.6)
+#'
 #' @md
 #' @export
 setGeneric('trainModel', function(object, ...)

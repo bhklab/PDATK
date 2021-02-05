@@ -8,6 +8,15 @@
 #' @return object with subtypes assigned to the sample metadata and the
 #'   isSubtyped metadata item set to TRUE.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' data(cohortSubtypeDFs)
+#'
+#' cohortList <- assignSubtypes(sampleICGCmicro,
+#'   subtypes=cohortSubtypeDFs$ICGCMICRO,
+#'   sampleCol='sample_name',
+#'   subtypeCol='subtype')
+#'
 #' @md
 #' @export
 setGeneric('assignSubtypes',
@@ -29,6 +38,7 @@ setGeneric('assignSubtypes',
 #' @return The `SurvivalExperiment` with the subtypes in the `subtypes` column
 #'   of the colData slot and a metadata item, `hasSubtypes`, set to TRUE.
 #'
+#' @examples
 #' data(sampleICGCmicro)
 #' data(cohortSubtypeDFs)
 #'

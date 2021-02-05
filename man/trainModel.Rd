@@ -18,3 +18,8 @@ The same object with the @model slot populated with the fit model
 \description{
 Train a Model Based on the Data in an S4 Object
 }
+\examples{
+data(samplePCOSPmodel)
+trainModel(samplePCOSPmodel, numModels=10, minAccuracy=0.6)
+
+}

@@ -19,3 +19,8 @@ None, updates the object
 \description{
 Setter for the \code{validationStats} slot on an \code{S4} object
 }
+\examples{
+data(samplePCOSPmodel)
+validationStats(samplePCOSPmodel) <- data.frame()
+
+}

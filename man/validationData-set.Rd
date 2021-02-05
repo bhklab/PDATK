@@ -19,3 +19,8 @@ None, updates the object
 \description{
 Generic for setting the \code{validationData} slot on an \code{S4} object
 }
+\examples{
+data(samplePCOSPmodel)
+validationData(samplePCOSPmodel) <- validationData(samplePCOSPmodel)
+
+}

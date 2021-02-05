@@ -5,6 +5,11 @@
 #'
 #' @return A `character` vector of common gene names.
 #'
+#' @examples
+#' data(sampleCohortList)
+#' commonGenes <- findCommonGenes(sampleCohortList)
+#' head(commonGenes)
+#'
 #' @md
 #' @export
 setGeneric('findCommonGenes', function(object, ...)

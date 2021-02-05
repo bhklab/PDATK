@@ -7,6 +7,10 @@
 #' @return `S4` The object subset to only those patients which pass the
 #'   censoring criteria.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' ICGCmicro <- dropNotCensored(sampleICGCmicro)
+#'
 #' @md
 #' @export
 setGeneric('dropNotCensored',

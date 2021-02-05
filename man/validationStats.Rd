@@ -18,3 +18,8 @@ provided to \code{validateModel} function for a given \code{SurvivalModel} objec
 \description{
 Accessor for the \code{validationStats} slot of an \code{S4} object
 }
+\examples{
+data(samplePCOSPmodel)
+validationStats(samplePCOSPmodel)
+
+}

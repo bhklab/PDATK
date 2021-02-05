@@ -7,6 +7,11 @@
 #'
 #' @return A `character` vector of common sample names.
 #'
+#' @examples
+#' data(sampleCohortList)
+#' commonSamples <- findCommonSamples(sampleCohortList)
+#' head(commonSamples)
+#'
 #' @md
 #' @export
 setGeneric('findCommonSamples',

@@ -23,6 +23,11 @@
 #'
 #' @return A `ClinicalModel` object.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' clinicalModel <- ClinicalModel(sampleICGCmicro,
+#'   formula='prognosis ~ sex + age + T + N + M + grade')
+#'
 #' @md
 #' @importFrom plyr is.formula
 #' @export

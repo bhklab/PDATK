@@ -12,6 +12,11 @@
 #' @slot validationStats A `data.frame` object containing validation statistics
 #'   calculated by the `validateModel` method.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=385,
+#'   randomSeed=1987)
+#'
 #' @md
 #' @include class-SurvivalExperiment.R
 #' @include class-CohortList.R
@@ -83,6 +88,10 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
 #'
 #' @return An R object representing a model.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' models(samplePCOSPmodel)
+#'
 #' @md
 #' @export
 setGeneric('models', function(object, ...) standardGeneric('models'))
@@ -111,6 +120,10 @@ setMethod('models', signature('SurvivalModel'), function(object) {
 #' @param value A model or list of models to assign to the object
 #'
 #' @return None, updates the object.
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' models(samplePCOSPmodel) <- SimpleList(model1=NA)
 #'
 #' @md
 #' @export
@@ -145,6 +158,10 @@ setReplaceMethod('models', signature(object='SurvivalModel',
 #' @return A `data.frame` of validation statistics for the validation cohorts
 #'   provided to `validateModel` function for a given `SurvivalModel` object.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' validationStats(samplePCOSPmodel)
+#'
 #' @md
 #' @export
 setGeneric('validationStats', function(object, ...)
@@ -175,6 +192,10 @@ setMethod('validationStats', signature(object='SurvivalModel'), function(object)
 #' @param value A `data.frame` of validation statistics.
 #'
 #' @return None, updates the object
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' validationStats(samplePCOSPmodel) <- data.frame()
 #'
 #' @md
 #' @export
@@ -211,6 +232,10 @@ setReplaceMethod('validationStats', signature(object='SurvivalModel',
 #' @return A `CohortList` with the validation data used for the `SurvivalModel` model,
 #'   or nothing if the model has not be validated.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' validationData(samplePCOSPmodel)
+#'
 #' @md
 #' @export
 setGeneric('validationData', function(object, ...) standardGeneric('validationData'))
@@ -242,6 +267,10 @@ setMethod('validationData', signature(object='SurvivalModel'), function(object)
 #' @param value A `data.frame` of validation statistics.
 #'
 #' @return None, updates the object
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' validationData(samplePCOSPmodel) <- validationData(samplePCOSPmodel)
 #'
 #' @md
 #' @export

@@ -17,3 +17,8 @@ An R object representing a model.
 \description{
 Accessor for the models slot of an \code{S4} object
 }
+\examples{
+data(samplePCOSPmodel)
+models(samplePCOSPmodel)
+
+}

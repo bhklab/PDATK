@@ -24,3 +24,9 @@ objects used to validate the model. This slot is populated by the when the
 calculated by the \code{validateModel} method.}
 }}
 
+\examples{
+data(sampleICGCmicro)
+survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=385,
+  randomSeed=1987)
+
+}

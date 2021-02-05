@@ -17,3 +17,9 @@ A \code{character} vector of common gene names.
 \description{
 Find the common genes in an \code{S4} object.
 }
+\examples{
+data(sampleCohortList)
+commonGenes <- findCommonGenes(sampleCohortList)
+head(commonGenes)
+
+}

@@ -18,3 +18,8 @@ or nothing if the model has not be validated.
 \description{
 Accessor for the \code{validationData} slot of an \code{S4} object
 }
+\examples{
+data(samplePCOSPmodel)
+validationData(samplePCOSPmodel)
+
+}

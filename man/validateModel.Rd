@@ -19,3 +19,20 @@ The \code{S4} object with added model performance metadata.
 \description{
 Perform Validation on an \code{S4} Object Respresenting a Trained Model
 }
+\examples{
+data(samplePCOSPmodel)
+data(sampleCohortList)
+
+# Train Model
+trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+  minAccuracy=0.6)
+
+# Make predictions
+PCOSPpredCohortList <- predictClasses(sampleCohortList,
+  model=trainedPCOSPmodel)
+
+# Validate model
+validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+  valData=PCOSPpredCohortList)
+
+}

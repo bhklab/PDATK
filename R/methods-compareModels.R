@@ -6,6 +6,30 @@
 #'
 #' @return A `S4` object with statistics about the performance of each model.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(sampleClinicalModel)
+#' data(samplePCSIsurvExp)
+#'
+#' # Train the models
+#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+#' trainedClinicalModel <- trainModel(sampleClinicalModel)
+#'
+#' # Predict risk/risk-class
+#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+#' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+#'   model=trainedClinicalModel)
+#'
+#' # Validate the models
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#'   valData=PCOSPpredPCSI)
+#' validatedClinicalModel <- validateModel(trainedClinicalModel,
+#'   valData=ClinicalPredPCSI)
+#'
+#' # Compare the models
+#' modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+#' head(modelComp)
+#'
 #' @md
 #' @export
 setGeneric('compareModels', function(model1, model2, ...)

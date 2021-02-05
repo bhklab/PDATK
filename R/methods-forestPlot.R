@@ -5,6 +5,24 @@
 #'
 #' @return None, draws a forest plot.
 #'
+#' @examples
+#' data(sampleCohortList)
+#' data(samplePCOSPmodel)
+#'
+#' # Train the models
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+#'
+#' # Make predctions
+#' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+#'   model=trainedPCOSPmodel)
+#'
+#' # Validate the models
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#'   valData=PCOSPpredCohortList)
+#'
+#' # Plot
+#' dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index')
+#'
 #' @export
 setGeneric('forestPlot', function(object, ...)
     standardGeneric('forestPlot'))

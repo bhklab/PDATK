@@ -21,3 +21,13 @@ isSubtyped metadata item set to TRUE.
 \description{
 Assign Sample Subtypes to an S4 Object
 }
+\examples{
+data(sampleICGCmicro)
+data(cohortSubtypeDFs)
+
+cohortList <- assignSubtypes(sampleICGCmicro,
+  subtypes=cohortSubtypeDFs$ICGCMICRO,
+  sampleCol='sample_name',
+  subtypeCol='subtype')
+
+}

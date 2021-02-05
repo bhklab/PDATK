@@ -6,6 +6,22 @@
 #'
 #' @return The `S4` object with added model performance metadata.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(sampleCohortList)
+#'
+#' # Train Model
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+#'   minAccuracy=0.6)
+#'
+#' # Make predictions
+#' PCOSPpredCohortList <- predictClasses(sampleCohortList,
+#'   model=trainedPCOSPmodel)
+#'
+#' # Validate model
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#'   valData=PCOSPpredCohortList)
+#'
 #' @md
 #' @export
 setGeneric('validateModel', function(model, valData, ...)

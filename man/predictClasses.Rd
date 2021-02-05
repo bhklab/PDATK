@@ -14,6 +14,23 @@ models.}
 
 \item{...}{Allow further parameters to be defined on this generic.}
 }
+\value{
+The \code{S4} object with class predictions added to the metadata.
+}
 \description{
 Predict Classes for New Data Based on a Train Classifier Model
+}
+\examples{
+data(samplePCOSPmodel)
+data(samplePCSIsurvExp)
+
+# Train Model
+trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
+  minAccuracy=0.6)
+
+# Make predictions
+PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
+  model=trainedPCOSPmodel)
+head(colData(PCOSPpredSurvExp))
+
 }

@@ -19,3 +19,8 @@ censoring criteria.
 \description{
 Remove Censored Patient Samples from An \code{S4} Object.
 }
+\examples{
+data(sampleICGCmicro)
+ICGCmicro <- dropNotCensored(sampleICGCmicro)
+
+}

@@ -5,6 +5,21 @@
 #'   models.
 #' @param ... Allow further parameters to be defined on this generic.
 #'
+#' @return The `S4` object with class predictions added to the metadata.
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(samplePCSIsurvExp)
+#'
+#' # Train Model
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
+#'   minAccuracy=0.6)
+#'
+#' # Make predictions
+#' PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
+#'   model=trainedPCOSPmodel)
+#' head(colData(PCOSPpredSurvExp))
+#'
 #' @md
 #' @export
 setGeneric('predictClasses',
