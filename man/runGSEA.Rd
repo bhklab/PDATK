@@ -20,3 +20,6 @@ A \code{data.frame} containing the significantly enriched gene sets.
 \description{
 Run Gene Set Enrichment Analysis
 }
+\examples{
+
+}

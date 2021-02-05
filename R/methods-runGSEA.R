@@ -1,5 +1,14 @@
 #' Run Gene Set Enrichment Analysis
 #'
+#' @examples
+#' \dontrun{
+#'   data(samplePCOSPmodel)
+#'   geneSet <- msigdbr()
+#'   GSEAresults <- runGSEA(samplePCOSPmodel, geneSet)
+#' }
+#'
+#'
+#'
 #' @param object An `S4` object to conduct Gene Set Enrichment Analysis (GSEA)
 #'   with.
 #' @param geneSet An object representing a gene set, such as a `data.frame`.
@@ -23,7 +32,7 @@ setGeneric('runGSEA', function(object, geneSet, ...)
 #'   of models.
 #' @param ... Force subsequent parameters to be named. Not used.
 #' @param adjMethod An optional parameter specifying the multiple testing
-#'   correction to use in [`piano::runGSAhyper`]. This paremeter must be named.
+#'   correction to use in [`piano::runGSAhyper`]. This parameter must be named.
 #' @param allResults Return the full results from [`piano::runGSAhyper`] instead
 #'   of a `data.frame` of significant results? Default is FALSE. This parameter
 #'   must be named.

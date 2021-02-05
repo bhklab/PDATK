@@ -5,6 +5,13 @@
 #' @param cohortNames An optional `character` vector specifying the a name for
 #'   each `SurvivalExperiment`.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' survExp2 <- sampleICGCmicro
+#' mergedSurvExp <- merge(survExp2, sampleICGCmicro,
+#'   cohortNames=c('copyICGCmicro', 'ICGCmicro'))
+#' mergedSurvExp
+#'
 #' @md
 #' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
 #' @importFrom CoreGx .warnMsg .errorMsg

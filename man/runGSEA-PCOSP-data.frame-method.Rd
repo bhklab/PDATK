@@ -20,7 +20,7 @@ of models.}
 \item{...}{Force subsequent parameters to be named. Not used.}
 
 \item{adjMethod}{An optional parameter specifying the multiple testing
-correction to use in \code{\link[piano:runGSAhyper]{piano::runGSAhyper}}. This paremeter must be named.}
+correction to use in \code{\link[piano:runGSAhyper]{piano::runGSAhyper}}. This parameter must be named.}
 
 \item{allResults}{Return the full results from \code{\link[piano:runGSAhyper]{piano::runGSAhyper}} instead
 of a \code{data.frame} of significant results? Default is FALSE. This parameter

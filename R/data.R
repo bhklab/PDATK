@@ -2,6 +2,8 @@
 #'
 #' @name sampleCohortList
 #'
+#' @examples
+#' data(sampleCohortList)
 #'
 #' @description
 #' A `CohortList` object containing sample data for the PCOSP vignette. This
@@ -12,7 +14,39 @@
 #' @md
 NULL
 
+#' @title A Sample SurvivalExperiment Containing Data from the ICGC micro-array
+#'   cohort from `MetaGxPancreas`
+#'
+#' @examples
+#' data(sampleICGCmicro)
+#'
+#' @name sampleICGCmicro
+#'
+#' @seealso `MetaGxPancreas::loadPancraseDatasets`
+#'
+#' @md
+NULL
+
+#' @title A Sample PCOSP Model Containing the ICGC micro-array cohort from
+#'   `MetaGxPancreas` as training data.
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#'
+#' @name samplePCOSPmodel
+#'
+#' @seealso `MetaGxPancreas::loadPancraseDatasets`
+#'
+#' @md
+NULL
+
+
+
 #' existingClassifierData
+#'
+#' @examples
+#' # Loads chen, birnbaum and haiderSigScores objects
+#' data(existingClassifierData)
 #'
 #' Three objects:
 #' - `chen`: The genes and coefficients for the gene signature from
@@ -28,6 +62,10 @@ NULL
 #'
 #' @name chen
 #'
+#' @examples
+#' # Loads chen, birnbaum and haiderSigScores objects
+#' data(existingClassifierData)
+#'
 #' @description
 #' The genes and coefficients for the gene signature from
 #' Chen *et al.* (2015)
@@ -38,6 +76,10 @@ NULL
 #' @title Published classifier gene signature for Birnbaum
 #'
 #' @name birnbaum
+#'
+#' @examples
+#' # Loads chen, birnbaum and haiderSigScores objects
+#' data(existingClassifierData)
 #'
 #' @description
 #' The genes and coefficients for the gene signature from
@@ -50,6 +92,10 @@ NULL
 #'
 #' @name haiderSigScores
 #'
+#' @examples
+#' # Loads chen, birnbaum and haiderSigScores objects
+#' data(existingClassifierData)
+#'
 #' @description
 #' The classifier risk scores from Haider *et al.* (2014)
 #'
@@ -59,6 +105,8 @@ NULL
 #' @title A list of sample subtypes for the data in sampleCohortList
 #'
 #' @name sampleCohortClasses
+#'
+#' @examples
 #'
 #' @description
 #' A `list` of `data.frames` containing clinical subtypes for the data
