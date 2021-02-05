@@ -17,3 +17,9 @@ in the \code{CohortList}.
 \description{
 Intersect Gene Names for All \code{SurvivalExperiments} in a \code{CohortList}
 }
+\examples{
+data(sampleCohortList)
+commonGenes <- findCommonGenes(sampleCohortList)
+head(commonGenes)
+
+}

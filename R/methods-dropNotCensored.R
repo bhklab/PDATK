@@ -26,6 +26,10 @@ setGeneric('dropNotCensored',
 #'
 #' @return The `SurvivalExperiment` with censored samples removed.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' ICGCmicro <- dropNotCensored(sampleICGCmicro)
+#'
 #' @md
 #' @importFrom S4Vectors na.omit
 #' @importFrom SummarizedExperiment colData colData<-
@@ -55,6 +59,10 @@ setMethod('dropNotCensored', signature('SurvivalExperiment'),
 #'   each `SurvivalExperiment` item a specified date.
 #' @param minDaysSurvived An `integer` specifying the minimum number of days
 #'   a patient needs to have survived to be included in the cohort.
+#'
+#' @examples
+#' data(sampleCohortList)
+#' valCohortList <- dropNotCensored(sampleCohortList)
 #'
 #' @md
 #' @importFrom S4Vectors endoapply

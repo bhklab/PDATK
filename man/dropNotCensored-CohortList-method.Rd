@@ -16,3 +16,8 @@ a patient needs to have survived to be included in the cohort.}
 \description{
 Remove Censored Patients from Each \code{SurvivalExperiemnt} in a \code{CohortList}
 }
+\examples{
+data(sampleCohortList)
+valCohortList <- dropNotCensored(sampleCohortList)
+
+}

@@ -20,3 +20,19 @@ The \code{ClinicalModel} with the validation statistics in the
 \description{
 Validate a ClinicalModel object with a single SurvivalExperiment object.
 }
+\examples{
+data(sampleClinicalModel)
+data(sampleCohortList)
+
+# Train Model
+trainedClinicalModel <- trainModel(sampleClinicalModel)
+
+# Make predictions
+clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+  model=trainedClinicalModel)
+
+# Validate model
+validatedClinicalModel <- validateModel(trainedClinicalModel,
+  valData=clinicalPredCohortList)
+
+}

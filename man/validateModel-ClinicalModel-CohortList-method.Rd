@@ -8,7 +8,8 @@ Model}
 \S4method{validateModel}{ClinicalModel,CohortList}(model, valData, ...)
 }
 \arguments{
-\item{model}{A \code{PCOSP} model which has been trained using \code{trainModel}.}
+\item{model}{A trained \code{ClinicalModel} object, as returned by the \code{trainModel}
+method.}
 
 \item{valData}{A \code{CohortList} containing one or more
 \code{SurvivalExperiment}s. The first assay in each \code{SurvivalExperiment} will
@@ -25,6 +26,22 @@ slots occupied.
 \description{
 Evaluate the Performance of a List of Trained KTSP Models from a PCOSP
 Model
+}
+\examples{
+data(sampleClinicalModel)
+data(samplePCSIsurvExp)
+
+# Train Model
+trainedClinicalModel <- trainModel(sampleClinicalModel)
+
+# Make predictions
+clinicalPredSurvExp <- predictClasses(samplePCSIsurvExp,
+  model=trainedClinicalModel)
+
+# Validate model
+validatedClincalModel <- validateModel(trainedClinicalModel,
+  valData=clinicalPredSurvExp)
+
 }
 \seealso{
 \code{\link[BiocParallel:bplapply]{BiocParallel::bplapply}}, \code{\link[switchBox:SWAP.KTSP.Classify]{switchBox::SWAP.KTSP.Classify}}

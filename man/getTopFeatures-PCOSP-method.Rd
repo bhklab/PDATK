@@ -19,3 +19,14 @@ from the top \code{numModels} KTSPs models in the model \code{object}.
 \description{
 Get the top features for classification using a PCOSP model object.
 }
+\examples{
+data(samplePCOSPmodel)
+
+# Train the model
+trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+  minAccuracy=0.6)
+
+# Get the top features
+topFeatures <- getTopFeatures(trainedPCOSPmodel, numModels=5)
+
+}

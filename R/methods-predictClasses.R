@@ -24,6 +24,19 @@ setGeneric('predictClasses',
 #'   a column in colData, `prob_good_survival`, which contains the proportion
 #'   of models which predicted good prognosis for each sample.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(samplePCSIsurvExp)
+#'
+#' # Train Model
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+#'   minAccuracy=0.6)
+#'
+#' # Make predictions
+#' PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
+#'   model=trainedPCOSPmodel)
+#' head(colData(PCOSPpredSurvExp))
+#'
 #' @md
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom CoreGx .warnMsg .errorMsg
@@ -36,7 +49,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     # drop NA samples, they mess with calculating statistics
     keepSamples <- rownames(na.omit(colData(object)))
     if (!all(colnames(object) %in% keepSamples)) {
-        warning(.warnMsg(.context(4), 'Dropped sampels with NA survival data!'))
+        warning(.warnMsg(.context(5), 'Dropped samples with NA survival data!'))
     }
     object <- object[, keepSamples]
 
@@ -49,13 +62,13 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     assayData <- assays(object)
     if (length(assayData) > 1)
         warning(.warnMsg(.context(), 'Please ensure your prediction ',
-            'data only has one assay! Ignoring ',
-            'all but the first assay!'))
+                         'data only has one assay! Ignoring ',
+                         'all but the first assay!'))
 
     assayMatrix <- assayData[[1]]
 
     predictionList <- bplapply(modelList, FUN=SWAP.KTSP.Classify,
-        inputMat=assayMatrix)
+                               inputMat=assayMatrix)
     # convert factor to character
     predictionListChar <- lapply(predictionList, as.character)
     predictions <- BiocGenerics::do.call(rbind, predictionListChar)
@@ -70,7 +83,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
         ifelse(colData(object)$days_survived > 365, 'good', 'bad')
 
     return(object)
-})
+    })
 #'
 #' Predict Survival Prognosis Classes and Risk Scores for A `CohortList` Using
 #'   a `PCOSP`, `RLSModel` or `RGAModel` object.
@@ -84,6 +97,19 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #' @return A `CohortList` with the model predictions attached to each
 #'   `SurvivalExperiment` in the metadata slot and the `prob_good_survival`
 #'   column added to the colData slot.
+#'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(sampleCohortList)
+#'
+#' # Train Model
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+#'   minAccuracy=0.6)
+#'
+#' # Make predictions
+#' PCOSPpredCohortList <- predictClasses(sampleCohortList,
+#'   model=trainedPCOSPmodel)
+#' head(colData(PCOSPpredCohortList[[1]]))
 #'
 #' @md
 #' @importFrom S4Vectors endoapply mcols metadata
@@ -112,6 +138,18 @@ setMethod('predictClasses', signature(object='CohortList',
 #' @return A `SurvivalExperiment` with the model predictions in the colData
 #'   slot as clinical_prob_good.
 #'
+#' @examples
+#' data(sampleClinicalModel)
+#' data(samplePCSIsurvExp)
+#'
+#' # Train Model
+#' trainedClinicalModel <- trainModel(sampleClinicalModel)
+#'
+#' # Make predictions
+#' ClinicalPredSurvExp <- predictClasses(samplePCSIsurvExp,
+#'   model=trainedClinicalModel)
+#' head(colData(ClinicalPredSurvExp))
+#'
 #' @md
 #' @importFrom stats predict glm as.formula
 #' @importFrom SummarizedExperiment colData colData<-
@@ -122,7 +160,6 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='ClinicalModel'), function(object, model, ..., na.action='na.exclude',
         type='response')
 {
-
     # check that the formula is valid and the variables are in the training data
     formula <- as.formula(metadata(model)$modelParams$formula)
     formulaCols <- as.character(formula[seq(2, 3)])
@@ -148,20 +185,16 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     if (!all(keepRows))
         warning(.warnMsg(.context(1), 'Rows ', paste0(which(!keepRows), collapse=', '),
             ' have levels that are not in the model, skipping these rows...'))
-
     # Calculate survival probabiltiies
     predictions <- predict(models(model)[[1]], colData(object)[keepRows, ], ...,
-        na.action=na.action, type=type)
-
+                           na.action=na.action, type=type)
     # Update the `SurvivalExperiment` object with the predicted probabilities
     colData(object)$clinical_prob_good <- NA
     colData(object)$clinical_prob_good[keepRows] <- predictions
-
     metadata(object)$GLMpredictions <- matrix(
         ifelse(colData(object)$clinical_prob_good > 0.5, 'good', 'bad'),
         byrow=TRUE, nrow=1, dimnames=list('glm', rownames(colData(object))))
     metadata(object)$GLMparams <- metadata(model)$modelParams
-
     return(object)
 })
 #'
@@ -180,6 +213,18 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #'   slot as clinical_prob_good for each `SurvivalExperiment`, and the
 #'   model in the metadata as predictionModel.
 #'
+#' @examples
+#' data(sampleClinicalModel)
+#' data(sampleCohortList)
+#'
+#' # Train Model
+#' trainedClinicalModel <- trainModel(sampleClinicalModel)
+#'
+#' # Make predictions
+#' ClinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+#'   model=trainedClinicalModel)
+#' head(colData(ClinicalPredCohortList[[1]]))
+#'
 #' @md
 #' @importFrom S4Vectors endoapply mcols metadata
 #' @export
@@ -188,7 +233,7 @@ setMethod('predictClasses', signature(object='CohortList',
         type='response')
 {
     predictionResults <- endoapply(object, predictClasses, model=model, ...,
-        na.action=na.action, type=type)
+                                   na.action=na.action, type=type)
     mcols(predictionResults)$hasPredictions <- TRUE
     metadata(predictionResults)$predictionModel <- model
     return(predictionResults)
@@ -209,6 +254,8 @@ setMethod('predictClasses', signature(object='CohortList',
 #' @details
 #' A signature score should be interpreted as unit-less continuous risk predictor.
 #'
+#' @return The `SurvivalExperiment` passed to the `object` argument with
+#'   the `genefu_score` column added to the objects `colData` slot.
 #'
 #' @md
 #' @importFrom genefu sig.score
@@ -219,7 +266,6 @@ setMethod('predictClasses', signature(object='CohortList',
 setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='GeneFuModel'), function(object, model, ..., annot=NA)
 {
-
     if (length(models(model)) > 1)
         warning(.warnMsg(.context(), 'There is more than one model in the
             models slot of the GeneFuModel. Currently only single model
@@ -227,11 +273,9 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 
     # Calculate survival releative risks (not probabiltiies)
     predictions <- genefu::sig.score(x=models(model)[[1]],
-        t(assay(object, 1)), annot=annot, ...)
-
+                                     t(assay(object, 1)), annot=annot, ...)
     # Add a column to colData for each model in the GeneFuModel
     colData(object)$genefu_score <- predictions$score
-
     metadata(object)$genefuPredictions <- 'GeneFu models do not make explicit
         category predictions, instead they return a signature score which should
         be treated as a unitless continuous risk predictor. To make a class
@@ -264,7 +308,7 @@ setMethod('predictClasses', signature(object='CohortList',
     model='GeneFuModel'), function(object, model, ..., annot=NA)
 {
     predictionResults <- endoapply(object, predictClasses, model=model, ...,
-        annot=annot)
+                                   annot=annot)
     mcols(predictionResults)$hasPredictions <- TRUE
     metadata(predictionResults)$predictionModel <- model
     return(predictionResults)

@@ -24,6 +24,20 @@ of models which predicted good prognosis for each sample.
 Predict Survival Prognosis Classes and Risk Scores for A \code{CohortList} Using
 a \code{PCOSP}, \code{RLSModel} or \code{RGAModel} object.
 }
+\examples{
+data(samplePCOSPmodel)
+data(samplePCSIsurvExp)
+
+# Train Model
+trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+  minAccuracy=0.6)
+
+# Make predictions
+PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
+  model=trainedPCOSPmodel)
+head(colData(PCOSPpredSurvExp))
+
+}
 \seealso{
 \code{\link[BiocParallel:bplapply]{BiocParallel::bplapply}}, \code{\link[switchBox:SWAP.KTSP.Classify]{switchBox::SWAP.KTSP.Classify}}
 }

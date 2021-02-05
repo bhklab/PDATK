@@ -24,3 +24,8 @@ censored, we keep patients who had an event before minDaysSurvived.
 Therefore we keep individuals surviving > \code{minDaysSurvived}, or who had an
 event (died) before minDaysSurvived.
 }
+\examples{
+data(sampleICGCmicro)
+ICGCmicro <- dropNotCensored(sampleICGCmicro)
+
+}

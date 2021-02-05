@@ -37,7 +37,7 @@ ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
   model=trainedClinicalModel)
 
 # Validate the models
-validatedPCOSPmodel <- validateModel(trainedPCSOPmodel,
+validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
   valData=PCOSPpredPCSI)
 validatedClinicalModel <- validateModel(trainedClinicalModel,
   valData=ClinicalPredPCSI)

@@ -32,7 +32,7 @@
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(trainedPCSOPmodel,
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
 #'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=ClinicalPredPCSI)
@@ -55,14 +55,14 @@ ModelComparison <- function(model1, model2, ...) {
     if (is(model1, 'ModelComparison')) {
         model1StatsDT <- as.data.table(model1)
     } else {
-        model1StatsDT <- validationStats(model1)
+        model1StatsDT <- as.data.table(validationStats(model1))
         model1StatsDT[, model := class(model1)]
     }
 
     if (is(model2, 'ModelComparison')) {
-
+        model2StatsDT <- as.data.table(model2)
     } else {
-        model2StatsDT <- validationStats(model2)
+        model2StatsDT <- as.data.table(validationStats(model2))
         model2StatsDT[, model := class(model2)]
     }
 

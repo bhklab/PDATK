@@ -12,8 +12,7 @@
 #' @export
 setGeneric('assignSubtypes',
     function(object, subtypes, ...) standardGeneric('assignSubtypes'))
-
-
+#'
 #' Assign Subtype Annotations to a SurvivalExperiment Object
 #'
 #' @param object A `SurvivalExperiment` object where the subtype annotations
@@ -29,6 +28,9 @@ setGeneric('assignSubtypes',
 #'
 #' @return The `SurvivalExperiment` with the subtypes in the `subtypes` column
 #'   of the colData slot and a metadata item, `hasSubtypes`, set to TRUE.
+#'
+#' @examples
+#'
 #'
 #' @md
 #' @importFrom SummarizedExperiment colData colData<-
@@ -83,6 +85,9 @@ setMethod('assignSubtypes', signature(object='SurvivalExperiment',
 #' @return The `CohortList` with the subtypes in the `subtypes` column
 #'   of the colData slot and a metadata item, `hasSubtypes`, set to TRUE for
 #'   each `SurvivalExperiment`.
+#'
+#' @examples
+#' data(sampleICGCmicro)
 #'
 #' @md
 #' @importFrom S4Vectors mendoapply

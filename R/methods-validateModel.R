@@ -25,6 +25,22 @@ setGeneric('validateModel', function(model, valData, ...)
 #' @return The `model` object with the validationStats and validationData
 #'   slots occupied.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(sampleCohortList)
+#'
+#' # Train Model
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+#'   minAccuracy=0.6)
+#'
+#' # Make predictions
+#' PCOSPpredCohortList <- predictClasses(sampleCohortList,
+#'   model=trainedPCOSPmodel)
+#'
+#' # Validate model
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#'   valData=PCOSPpredCohortList)
+#'
 #' @md
 #' @import survcomp
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
@@ -119,6 +135,23 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #' @return The `PCOSPmodel` with the validation statistics in the `validationStats`
 #'   slot and the validation data in the `validationData` slot.
 #'
+#' @examples
+#' data(samplePCOSPmodel)
+#' data(samplePCSIsurvExp)
+#'
+#' # Train Model
+#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+#'   minAccuracy=0.6)
+#'
+#' # Make predictions
+#' PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
+#'   model=trainedPCOSPmodel)
+#'
+#' # Validate model
+#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#'   valData=PCOSPpredSurvExp)
+#'
+#'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
@@ -182,6 +215,8 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
         isSummary=FALSE
     )
 
+    valStatsDF$cohort <- class(model)
+
     validationStats(model) <- valStatsDF
     validationData(model) <- CohortList(list(predSurvExp),
         mDataTypes=metadata(predSurvExp)$mDataType)
@@ -199,6 +234,21 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #' @return The `ClinicalModel` with the validation statistics in the
 #'   `validationStats` slot and the validation data in the
 #'   `validationData` slot.
+#'
+#' @examples
+#' data(sampleClinicalModel)
+#' data(sampleCohortList)
+#'
+#' # Train Model
+#' trainedClinicalModel <- trainModel(sampleClinicalModel)
+#'
+#' # Make predictions
+#' clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+#'   model=trainedClinicalModel)
+#'
+#' # Validate model
+#' validatedClinicalModel <- validateModel(trainedClinicalModel,
+#'   valData=clinicalPredCohortList)
 #'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
@@ -234,7 +284,7 @@ setMethod('validateModel', signature(model='ClinicalModel',
     aucStats <- with(survivalDF,
         c(as.numeric(reportROC(prognosis, clinical_prob_good,
                 plot=FALSE)[c('AUC', 'AUC.SE', 'AUC.low', 'AUC.up')]),
-            roc.area(prognosis, clinical_prob_good)$p.value, nrow(survivalDF)))
+          roc.area(prognosis, clinical_prob_good)$p.value, nrow(survivalDF)))
     names(aucStats) <- c('estimate', 'se', 'lower', 'upper', 'p.value', 'n')
 
     # calculate the validation statistcs
@@ -264,6 +314,8 @@ setMethod('validateModel', signature(model='ClinicalModel',
         isSummary=FALSE
     )
 
+    valStatsDF$cohort <- class(model)
+
     validationStats(model) <- valStatsDF
     validationData(model) <- CohortList(list(predSurvExp),
         mDataTypes=metadata(predSurvExp)$mDataType)
@@ -271,6 +323,24 @@ setMethod('validateModel', signature(model='ClinicalModel',
 })
 ## TODO:: Refactor this into a helper method or extend the class union to include ClinicalModel
 #' @inherit validateModel,PCOSP_or_RLS_or_RGA,CohortList-method
+#'
+#' @param model A trained `ClinicalModel` object, as returned by the `trainModel`
+#'   method.
+#'
+#' @examples
+#' data(sampleClinicalModel)
+#' data(samplePCSIsurvExp)
+#'
+#' # Train Model
+#' trainedClinicalModel <- trainModel(sampleClinicalModel)
+#'
+#' # Make predictions
+#' clinicalPredSurvExp <- predictClasses(samplePCSIsurvExp,
+#'   model=trainedClinicalModel)
+#'
+#' # Validate model
+#' validatedClincalModel <- validateModel(trainedClinicalModel,
+#'   valData=clinicalPredSurvExp)
 #'
 #' @md
 #' @importFrom survival strata
@@ -418,6 +488,8 @@ setMethod('validateModel', signature(model='GeneFuModel',
         n=vapply(validationStats, `[[`, i='n', FUN.VALUE=numeric(1)),
         isSummary=FALSE
     )
+
+    valStatsDF$cohort <- class(model)
 
     validationStats(model) <- valStatsDF
     validationData(model) <- CohortList(list(predSurvExp),

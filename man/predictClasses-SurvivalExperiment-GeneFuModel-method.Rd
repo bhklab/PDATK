@@ -17,6 +17,10 @@ to Predict Signature Scores for Each Sample.}
 \item{annot}{A named parameter with annotations mapping from the gene
 identifiers in the genefu model.}
 }
+\value{
+The \code{SurvivalExperiment} passed to the \code{object} argument with
+the \code{genefu_score} column added to the objects \code{colData} slot.
+}
 \description{
 Use a Gene Signature Based Prediciton Model from the \code{genefu} Package
 to Predict Signature Scores for Each Sample.

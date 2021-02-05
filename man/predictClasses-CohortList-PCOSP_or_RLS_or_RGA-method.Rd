@@ -25,3 +25,17 @@ column added to the colData slot.
 Predict Survival Prognosis Classes and Risk Scores for A \code{CohortList} Using
 a \code{PCOSP}, \code{RLSModel} or \code{RGAModel} object.
 }
+\examples{
+data(samplePCOSPmodel)
+data(sampleCohortList)
+
+# Train Model
+trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
+  minAccuracy=0.6)
+
+# Make predictions
+PCOSPpredCohortList <- predictClasses(sampleCohortList,
+  model=trainedPCOSPmodel)
+head(colData(PCOSPpredCohortList[[1]]))
+
+}

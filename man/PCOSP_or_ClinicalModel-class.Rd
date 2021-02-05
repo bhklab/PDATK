@@ -5,5 +5,5 @@
 \alias{PCOSP_or_ClinicalModel-class}
 \title{Class Union for PCOSP and ClinicalModel Types}
 \description{
-Class Union for PCOSP and ClinicalModel Types
+Class union used for method dispatch without inheritance
 }

@@ -5,5 +5,5 @@
 \alias{PCOSP_or_RLS_or_RGA-class}
 \title{Class Union for PCOSP, RLSModel and RGAModel Types}
 \description{
-Class Union for PCOSP, RLSModel and RGAModel Types
+Class union used for method dispatch without inheritance
 }

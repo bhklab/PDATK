@@ -18,6 +18,11 @@ setGeneric('findCommonSamples',
 #'
 #' @return A `character` vector of common sample names.
 #'
+#' @examples
+#' data(sampleCohortList)
+#' commonSamples <- findCommonSamples(sampleCohortList)
+#' head(commonSamples)
+#'
 #' @md
 #' @importFrom CoreGx .errorMsg
 #' @export

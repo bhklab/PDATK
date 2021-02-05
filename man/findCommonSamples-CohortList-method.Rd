@@ -18,3 +18,9 @@ A \code{character} vector of common sample names.
 Find Common Samples in a CohortList Object where The Columns of Each Item
 Represent Samples
 }
+\examples{
+data(sampleCohortList)
+commonSamples <- findCommonSamples(sampleCohortList)
+head(commonSamples)
+
+}

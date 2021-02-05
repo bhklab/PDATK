@@ -29,3 +29,16 @@ model in the metadata as predictionModel.
 Use a Clinical GLM to Predict Classes for a \code{CohortList} of
 \code{SurvivalExperment} Objects.
 }
+\examples{
+data(sampleClinicalModel)
+data(sampleCohortList)
+
+# Train Model
+trainedClinicalModel <- trainModel(sampleClinicalModel)
+
+# Make predictions
+ClinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
+  model=trainedClinicalModel)
+head(colData(ClinicalPredCohortList[[1]]))
+
+}

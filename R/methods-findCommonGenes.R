@@ -18,6 +18,11 @@ setGeneric('findCommonGenes', function(object, ...)
 #' @return A `character` vector of genes common to all `SurvivalExperiment`s
 #'   in the `CohortList`.
 #'
+#' @examples
+#' data(sampleCohortList)
+#' commonGenes <- findCommonGenes(sampleCohortList)
+#' head(commonGenes)
+#'
 #' @md
 #' @export
 setMethod('findCommonGenes', signature='CohortList', function(object)

@@ -27,3 +27,16 @@ slot as clinical_prob_good.
 Predict Survival Prognosis Classes and Risk Scores for A \code{SurvivalModel} Using
 a \code{ClinicalModel} Object.
 }
+\examples{
+data(sampleClinicalModel)
+data(samplePCSIsurvExp)
+
+# Train Model
+trainedClinicalModel <- trainModel(sampleClinicalModel)
+
+# Make predictions
+ClinicalPredSurvExp <- predictClasses(samplePCSIsurvExp,
+  model=trainedClinicalModel)
+head(colData(ClinicalPredSurvExp))
+
+}
