@@ -21,7 +21,7 @@
 
     # name of function which called this function
     callStack <- rlang::trace_back()$calls
-    context <- deparse(callStack[[length(callStack) - n]])
+    context <- deparse(callStack[[length(callStack) - n]][1])
 
     # remove function arguments
     context <- gsub('\\(.*\\)', '', context)

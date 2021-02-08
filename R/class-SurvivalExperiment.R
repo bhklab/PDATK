@@ -106,6 +106,9 @@ SurvivalExperiment <- function(..., days_survived='days_survived',
             'character'={ tryCatch({
                 colData(SE)$days_survived <- as.integer(days_survived)
                 },
+                warning=function(w) stop(.errorMsg(funContext, 'Tried to ',
+                    'coerce days_survived from character to integer, but ',
+                    'failed.')),
                 error=function(e) stop(.errorMsg(funContext, 'Tried to ',
                     'coerce days_survived from character to integer, but ',
                     'failed.')))

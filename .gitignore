@@ -7,3 +7,6 @@ results/*
 .deprecated
 .deprecated/*
 .\.*
+scratch.R
+.idea/*
+*.Rproj

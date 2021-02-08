@@ -9,15 +9,17 @@ test_that('SurivalExperiment constructor errors as expected', {
         '.*sumExp is not a `SummarizedExperiment`!.*')
 })
 
-test_that('SurivalExperiment constructor errors for missing days_surived or is_deceased column arguments', {
-    expect_error(SurvivalExperiment(sumExp=sampleICGCmicro, is_deceased='wrong_name'),
-         '.*The columns .* are not present in the .*!')
-    invalidExp1 <- invalidExp2 <- sampleICGCmicro
+test_that('SurivalExperiment constructor errors for missing days_surived or
+    is_deceased column arguments',
+    {
+    expect_error(SurvivalExperiment(sumExp=sampleICGCmicro,
+        is_deceased='wrong_name'), '.*The columns .* are not present in the .*!')
 })
 
 test_that('SurvivalExperiment constructor errors if days_survived or is_deceased
     columns are wrong types',
     {
+    invalidExp1 <- invalidExp2 <- sampleICGCmicro
     colData(invalidExp1)$is_deceased <-
         as.factor(colData(invalidExp1)$is_deceased)
     colData(invalidExp2)$days_survived <-
@@ -31,13 +33,14 @@ test_that('SurvivalExperiment constructor errors if days_survived or is_deceased
 test_that('SurvivalExperiment constructor errors if days_survived or is_deceased
     columns are character but not coercibel to integers',
     {
+    invalidExp1 <- invalidExp2 <- sampleICGCmicro
     # Character not coercible to integer
     colData(invalidExp1)$is_deceased <- 'A'
     colData(invalidExp2)$days_survived <- 'A'
     expect_error(SurvivalExperiment(sumExp=invalidExp1),
-        '.*The is_deceased column is not logical or integer,.*')
+        '.*The string deceased is not in the is_deceased column.*')
     expect_error(SurvivalExperiment(sumExp=invalidExp2),
-        '.*The days_survived column is not logical or integer,.*')
+        '.*Tried to coerce days_survived from character to integer.*')
 })
 
 test_that('SurvivalExperiment constructor can be made from raw data', {

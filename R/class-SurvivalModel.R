@@ -50,16 +50,19 @@
 SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
     randomSeed)
 {
+    funContext <- .context(1)
+
     if (!is(trainCohorts, 'SurvivalExperiment')) {
         if (is(trainCohorts, 'CohortList')) {
+            message(funContext, 'Merging trainCohorts `CohortList` into a',
+                ' `SurvivalExperiment` with shared genes and samples...')
             .mergeWithNames <- function(x, y) merge(x, y,
                 cohortNames=names(trainCohorts))
             trainCohorts <- Reduce(.mergeWithNames, trainCohorts)
             trainCohorts <- dropNotCensored(trainCohorts, minDaysSurvived)
-            message(.context(), 'Merging trainCohorts `CohortList` into a',
-                '`SurvivalExperiment` with shared genes and samples...')
+
         } else {
-            stop(.errorMsg(.context(3),
+            stop(.errorMsg(funContext,
                 'The trainCohorts argument is not a CohortList or ',
                 'SurvivalExperiment object. Please convert it before building',
                 ' a SurvivalModel object!'))
