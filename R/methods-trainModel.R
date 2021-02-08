@@ -84,7 +84,7 @@ setMethod('trainModel', signature('PCOSP'),
 
     # determine the largest sample size we can take
     sampleSize <- min(sum(survivalGroups == levels(survivalGroups)[1]),
-        sum(survivalGroups == levels(survivalGroups[2]))) / 2
+        sum(survivalGroups == levels(survivalGroups)[2])) / 2
 
     # random sample for each model
     trainingDataColIdxs <- lapply(rep(sampleSize, numModels),

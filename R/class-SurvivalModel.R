@@ -183,7 +183,9 @@ setGeneric('validationStats', function(object, ...)
 #'
 #' @md
 #' @export
-setMethod('validationStats', signature(object='SurvivalModel'), function(object) {
+setMethod('validationStats', signature(object='SurvivalModel'),
+    function(object)
+{
     object@validationStats
 })
 
@@ -202,7 +204,8 @@ setMethod('validationStats', signature(object='SurvivalModel'), function(object)
 #'
 #' @md
 #' @export
-setGeneric('validationStats<-', function(object, ..., value) standardGeneric('validationStats<-'))
+setGeneric('validationStats<-', function(object, ..., value)
+    standardGeneric('validationStats<-'))
 #'
 #' Setter for the validationStats slot of a `SurvivalModel` object with a
 #'   `data.frame`
@@ -277,7 +280,8 @@ setMethod('validationData', signature(object='SurvivalModel'), function(object)
 #'
 #' @md
 #' @export
-setGeneric('validationData<-', function(object, ..., value) standardGeneric('validationData<-'))
+setGeneric('validationData<-', function(object, ..., value)
+    standardGeneric('validationData<-'))
 #'
 #' Setter for the `validationData` slot of a `SurvivalModel` object with a
 #'  `CohortList`.
@@ -293,7 +297,8 @@ setGeneric('validationData<-', function(object, ..., value) standardGeneric('val
 #'
 #' @md
 #' @export
-setReplaceMethod('validationData', signature(object='SurvivalModel', value='CohortList'), function(object, value)
+setReplaceMethod('validationData', signature(object='SurvivalModel',
+    value='CohortList'), function(object, value)
 {
     object@validationData <- value
     return(object)
@@ -307,13 +312,14 @@ setReplaceMethod('validationData', signature(object='SurvivalModel', value='Coho
 #' @md
 #' @importFrom CoreGx .errorMsg
 setValidity('SurvivalModel', function(object) {
+    funContext <- .context(1)
 
     hasSurvivalGroup <- 'prognosis' %in% colnames(colData(object))
-    if (!hasSurvivalGroup) .errorMsg(.context(), 'The ',
+    if (!hasSurvivalGroup) .errorMsg(funContext, 'The ',
         '`prognosis` column is missing. Object inheriting from the ',
         '`SurvivalModel` class must contain this column!')
     hasModelParams <- 'modelParams' %in% names(metadata(object))
-    if (!hasModelParams) .errorMsg(.context(), 'The ',
+    if (!hasModelParams) .errorMsg(funContext, 'The ',
         '`modelParams` item is missing from the from the `SurvivalModel`',
         'metadata slot. Please ensure you are using the constructor to build ',
         'your `SurvivalModel` object!')
