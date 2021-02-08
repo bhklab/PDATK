@@ -5,7 +5,8 @@ author:
 - name: Heewon Seo
 - name: Christopher Eeles
   affiliation:
-  - &pm Bioinformatics and Computational Genomics Laboratory, Princess Margaret Cancer Center, University Health Network, Toronto, Ontario, Canada
+  - &pm Bioinformatics and Computational Genomics Laboratory, Princess Margaret 
+  Cancer Center, University Health Network, Toronto, Ontario, Canada
   email: christopher.eeles@uhnresearch.ca
 - name: Benjamin Haibe-Kains
   affiliation:

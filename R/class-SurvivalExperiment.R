@@ -52,18 +52,27 @@
 SurvivalExperiment <- function(..., days_survived='days_survived',
     is_deceased='is_deceased', sumExp)
 {
+    funContext <- .context(1)
+
     ## TODO:: Clean up constructor logic
     SE <- if (missing(sumExp)) SummarizedExperiment(...) else sumExp
 
     if (!is(SE, 'SummarizedExperiment'))
-        stop(CoreGx::.errorMsg(.context(),
+        stop(CoreGx::.errorMsg(funContext,
             'sumExp is not a `SummarizedExperiment`!'))
 
     renameVector <- c('days_survived', 'is_deceased')
     names(renameVector) <- c(days_survived, is_deceased)
 
-    if (all(names(renameVector) %in% colnames(colData(SE))))
+    hasColumnsToRename <- names(renameVector) %in% colnames(colData(SE))
+    if (all(hasColumnsToRename)) {
         colData(SE) <- rename(colData(SE), renameVector)
+    } else {
+        stop(.errorMsg(funContext, 'The columns  ',
+            names(renameVector)[!hasColumnsToRename], ' are not present in ',
+            'the object colData, please ensure you specify existing column',
+            'names to the days_surived and is_deceased parameters!'))
+    }
 
     # allow empty SurivalExperiments to exist
     if (nrow(colData(SE)) == 0) {
@@ -79,31 +88,31 @@ SurvivalExperiment <- function(..., days_survived='days_survived',
             'logical'={ colData(SE)$is_deceased <- as.integer(is_deceased_col) },
             'character'={
                 if (!('deceased' %in% is_deceased_col))
-                    stop(.errorMsg(.context(), 'The string deceased is not in ',
-                        'the is_deceased column. Please convert this column to
-                        integer manually, where 1 is deceased and 0 is alive.'))
+                    stop(.errorMsg(funContext, 'The string deceased is not in ',
+                        'the is_deceased column. Please convert this column to ',
+                        'integer manually, where 1 is deceased and 0 is alive.'))
                 colData(SE)$is_deceased <-
                     as.integer(is_deceased_col == 'deceased')
             },
-            stop(.errorMsg(.context(), 'The is_deceased column is not logical
-              or integer, please convert this column such that deceased is 1
-              or TRUE and alive is 0 or FALSE before retrying the conversion!'))
+            stop(.errorMsg(funContext, 'The is_deceased column is not logical ',
+              'or integer, please convert this column such that deceased is 1 ',
+              'or TRUE and alive is 0 or FALSE before retrying the conversion!'))
         )
     }
     if (!is.integer(colData(SE)$days_survived)) {
         days_survived <- colData(SE)$days_survived
-        switch(class(is_deceased),
+        switch(class(days_survived),
             'numeric'={ colData(SE)$days_survived <- as.integer(days_survived) },
             'character'={ tryCatch({
-                colData(SE)$is_deceased <- as.integer(is_deceased)
+                colData(SE)$days_survived <- as.integer(days_survived)
                 },
-                warning=function(w) stop(.errorMsg(.context(), 'Tried to ',
+                error=function(e) stop(.errorMsg(funContext, 'Tried to ',
                     'coerce days_survived from character to integer, but ',
                     'failed.')))
             },
-            stop(.errorMsg(.context(), 'The days_survived column is not numeric
-              or integer, please convert this column before retrying the
-              conversion'))
+            stop(.errorMsg(funContext, 'The days_survived column is not logical',
+              ' or integer, please convert this column before retrying the ',
+              'conversion'))
         )
     }
 
