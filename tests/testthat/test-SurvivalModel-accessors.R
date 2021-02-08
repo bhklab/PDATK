@@ -1,25 +1,20 @@
 library(testthat)
 library(PDATK)
 
-context("Testing SurvivalModel Class Accessor Methods")
+data(sampleICGCmicro)
+survModel <- SurvivalModel(trainCohorts=sampleICGCmicro)
 
-test_that('SurivalModel constructor errors as expected', {
-    data(sampleICGCmicro)
-    sampleData
-    expect_error(SurvivalExperiment(data=list()), 'unused argument')
-    expect_error(SurvivalExperiment(sumExp=list()),
-        '.*[PDATK::SurvivalExperiment] sumExp is not a `SummarizedExperiment`!.*')
-    expect_error(SurvivalExperiment(sumExp=sampleICGCmicro, is_deceased='wrong_name'),
-        '.*[PDATK::SurvivalExperiment] The columns .* are not present in the .*!')
+test_that('SurvivalModel models accessors work correctly', {
+    expect_s4_class(models(survModel), 'SimpleList')
+    expect_silent(models(survModel) <- models(survModel))
 })
 
-test_that('SurvivalModel constructor can be made from raw data', {
-    expect_is(SurvivalExperiment(assays=assays(sampleICGCmicro)),
-        'SurvivalExperiment')
+test_that('SurvivalModel validationStats accessors work correctly', {
+    expect_s3_class(validationStats(survModel), 'data.frame')
+    expect_silent(validationStats(survModel) <- validationStats(survModel))
 })
 
-test_that('SurvivalModel constructor can be made from SummarizedExperiment', {
-
+test_that('SurvivalModel validationData accessors work correctly', {
+    expect_s4_class(validationData(survModel), 'CohortList')
+    expect_silent(validationData(survModel) <- validationData(survModel))
 })
-
-test_that(")
