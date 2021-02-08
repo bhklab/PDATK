@@ -141,7 +141,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     allValStatsDT <- rbindlist(list(validationDT, combinedDT), fill=TRUE)
 
     validationStats(validatedPCOSPmodel) <- allValStatsDT
-    mcols(predCohortList)$isValidated <- TRUE
+    metadata(validatedPCOSPmodel)$isValidated <- TRUE
     validationData(validatedPCOSPmodel) <- predCohortList
     return(validatedPCOSPmodel)
 })
@@ -238,6 +238,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     validationStats(model) <- valStatsDF
     validationData(model) <- CohortList(list(predSurvExp),
         mDataTypes=metadata(predSurvExp)$mDataType)
+    metadata(model)$isValidated <- TRUE
     return(model)
 })
 

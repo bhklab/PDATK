@@ -69,7 +69,7 @@ setMethod('trainModel', signature('PCOSP'),
     models(object) <- topModels
     # Add additiona model paramters to metadta
     metadata(object)$modelParams <- c(metadata(object)$modelParams,
-        list(numModels=numModels, minAccurary=minAccuracy))
+        list(numModels=numModels, minAccuracy=minAccuracy))
     return(object)
 })
 
