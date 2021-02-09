@@ -27,6 +27,7 @@
 GeneFuModel <- function(trainCohorts=SurvivalExperiment(),
     minDaysSurvived=365, ..., randomSeed)
 {
+
     survModel <- SurvivalModel(trainCohorts, minDaysSurvived=minDaysSurvived,
         ..., randomSeed=randomSeed)
 
