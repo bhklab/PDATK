@@ -164,7 +164,6 @@ PCOSPpredValCohorts <- predictClasses(validationCohortList,
     model=trainedPCOSPmodel)
 ```
 
-
 The returned `CohortList` object now indicates that each of the cohorts have
 predictions. This information is available in the `elementMetadata` slot of
 the cohort list and can be accessed with the `mcols` function from `S4Vectors`.

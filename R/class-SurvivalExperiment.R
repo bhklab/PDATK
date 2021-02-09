@@ -64,22 +64,22 @@ SurvivalExperiment <- function(..., days_survived='days_survived',
     renameVector <- c('days_survived', 'is_deceased')
     names(renameVector) <- c(days_survived, is_deceased)
 
-    hasColumnsToRename <- names(renameVector) %in% colnames(colData(SE))
-    if (all(hasColumnsToRename)) {
-        colData(SE) <- rename(colData(SE), renameVector)
-    } else {
-        stop(.errorMsg(funContext, 'The columns  ',
-            names(renameVector)[!hasColumnsToRename], ' are not present in ',
-            'the object colData, please ensure you specify existing column',
-            'names to the days_surived and is_deceased parameters!'))
-    }
-
     # allow empty SurivalExperiments to exist
     if (nrow(colData(SE)) == 0) {
         if (!all(renameVector %in% colnames(colData(SE)))) {
             colData(SE) <- cbind(colData(SE),
                 DataFrame(days_survived=integer(), is_deceased=integer()))
         }
+    }
+
+    hasColumnsToRename <- names(renameVector) %in% colnames(colData(SE))
+    if (all(hasColumnsToRename)) {
+        colData(SE) <- rename(colData(SE), renameVector)
+    } else {
+        stop(.errorMsg(funContext, 'The columns ',
+            names(renameVector)[!hasColumnsToRename], ' are not present in ',
+            'the object colData, please ensure you specify existing column',
+            'names to the days_surived and is_deceased parameters!'))
     }
 
     if (!is.integer(colData(SE)$is_deceased)) {

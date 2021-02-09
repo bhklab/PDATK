@@ -202,20 +202,22 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     )
 
     # calculate AUROC statistics
+    riskProbCol <- paste0(class(model)[1], '_prob_good')
     aucStats <- with(survivalDF,
-        c(as.numeric(reportROC(prognosis, PCOSP_prob_good,
+        c(as.numeric(reportROC(prognosis, get(riskProbCol),
                 plot=FALSE)[c('AUC', 'AUC.SE', 'AUC.low', 'AUC.up')]),
-            roc.area(prognosis, PCOSP_prob_good)$p.value, nrow(survivalDF)))
+            roc.area(prognosis, get(riskProbCol))$p.value, nrow(survivalDF)))
     names(aucStats) <- c('estimate', 'se', 'lower', 'upper', 'p.value', 'n')
 
     # calculate the validation statistcs
     validationStats <- with(survivalDF,
         list(
-            dIndex=D.index(x=1 - PCOSP_prob_good, surv.time=days_survived,
+            dIndex=D.index(x=1 - get(riskProbCol), surv.time=days_survived,
                 surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
                 method.test='logrank'),
-            cIndex=concordance.index(x=1 - PCOSP_prob_good, surv.time=days_survived,
-                surv.event=is_deceased, method='noether', na.rm=TRUE),
+            cIndex=concordance.index(x=1 - get(riskProbCol),
+                surv.time=days_survived, surv.event=is_deceased,
+                method='noether', na.rm=TRUE),
             AUC=as.list(aucStats)
         )
     )
@@ -390,9 +392,8 @@ setMethod('validateModel', signature(model='ClinicalModel',
     }
 
     # validate the model against the validation data
-    ## FIXME:: remove comment from dots
     validatedModelList <-
-        bplapply(predCohortList, validateModel, model=model)#, ...)
+        bplapply(predCohortList, validateModel, model=model, ...)
     validatedModel <- validatedModelList[[1]]
     validationDT <- rbindlist(lapply(validatedModelList, validationStats))
     validationDT[, `:=`(cohort=rep(names(predCohortList), each=3),

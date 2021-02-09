@@ -45,7 +45,8 @@ setMethod('densityPlotModelComparison',
     # Extract the per model prognosis predictions
     valData <- validationData(object)
     metaData <- lapply(valData, metadata)
-    predictions <- lapply(metaData, `[[`, 'PCOSPpredictions')
+    predictions <- lapply(metaData, `[[`,
+        paste0(class(object)[1], 'predictions'))
     predictions <- lapply(predictions, as.data.table, keep.rownames='model')
     predictions <- lapply(predictions, transpose, keep.names='sample',
         make.names='model')

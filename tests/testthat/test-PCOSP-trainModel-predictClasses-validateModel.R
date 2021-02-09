@@ -13,7 +13,7 @@ suppressWarnings({
         valData=PCOSPpredCohortList)
 })
 
-test_that('PCOSP method for trainModel works correctly', {
+test_that('trainModel method for PCOSP works correctly', {
     expect_s4_class(trainModel(PCOSPmodel, numModels=10), 'PCOSP')
     expect_true(length(models(trainedPCOSPmodel)) > 5)
     # the model list has the correct items
@@ -25,7 +25,7 @@ test_that('PCOSP method for trainModel works correctly', {
             'minAccuracy'))
 })
 
-test_that('PCOSP method for predictClasses works correctly', {
+test_that('predictClasses method for PCOSP works correctly', {
     expect_warning(predictClasses(sampleCohortList[[1]], model=trainedPCOSPmodel),
         '.*Dropped samples with NA survival data.*')
     expect_true(all(mcols(PCOSPpredCohortList)$hasPredictions))
@@ -34,7 +34,7 @@ test_that('PCOSP method for predictClasses works correctly', {
     expect_true(is.matrix(metadata(PCOSPpredCohortList[[1]])$PCOSPpredictions))
 })
 
-test_that('PCOSP method for validateModel works correctly', {
+test_that('validateModel method for PCOSP  works correctly', {
     expect_message(validateModel(trainedPCOSPmodel,
         valData=PCOSPpredCohortList[[1]]), 'Setting levels: .*')
     expect_true(metadata(validatedPCOSPModel)$isValidated)
