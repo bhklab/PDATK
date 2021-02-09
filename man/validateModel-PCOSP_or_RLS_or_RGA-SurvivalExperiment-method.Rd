@@ -34,5 +34,4 @@ PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
 validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
   valData=PCOSPpredSurvExp)
 
-
 }

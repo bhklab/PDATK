@@ -61,22 +61,24 @@ setGeneric('predictClasses',
 setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='PCOSP_or_RLS_or_RGA'), function(object, model, ...)
 {
+    funContext <- .context(1)
+
     # drop NA samples, they mess with calculating statistics
     keepSamples <- rownames(na.omit(colData(object)))
     if (!all(colnames(object) %in% keepSamples)) {
-        warning(.warnMsg(.context(7), 'Dropped samples with NA survival data!'))
+        warning(.warnMsg(funContext, 'Dropped samples with NA survival data!'))
     }
     object <- object[, keepSamples]
 
     modelList <- models(model)
     if (length(modelList) < 1)
-        stop(.errorMsg(.context(), 'There are no models in the PCOSP model ',
+        stop(.errorMsg(funContext, 'There are no models in the PCOSP model ',
             'passed as the model argument. Please ensure you train your model',
             ' with `trainModel` before attempting to predict classes with it.'))
 
     assayData <- assays(object)
     if (length(assayData) > 1)
-        warning(.warnMsg(.context(), 'Please ensure your prediction ',
+        warning(.warnMsg(funConext, 'Please ensure your prediction ',
                          'data only has one assay! Ignoring ',
                          'all but the first assay!'))
 
@@ -89,16 +91,17 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     predictions <- BiocGenerics::do.call(rbind, predictionListChar)
     colnames(predictions) <- colnames(assayMatrix)
 
-    metadata(object)$PCOSPpredictions <- predictions
-    metadata(object)$PCOSPparams <- metadata(model)$modelParams
+    metadata(object)[[paste0(class(model)[1], 'predictions')]] <- predictions
+    metadata(object)[[paste0(class(model)[1], 'params')]] <-
+        metadata(model)$modelParams
 
-    colData(object)$PCOSP_prob_good <-
+    colData(object)[paste0(class(model)[1], '_prob_good')] <-
         colSums(predictions == 'good') / nrow(predictions)
     colData(object)$prognosis <-
         ifelse(colData(object)$days_survived > 365, 'good', 'bad')
 
     return(object)
-    })
+})
 #'
 #' Predict Survival Prognosis Classes and Risk Scores for A `CohortList` Using
 #'   a `PCOSP`, `RLSModel` or `RGAModel` object.

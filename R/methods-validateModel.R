@@ -97,7 +97,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 
     # validate the model against the validation data
     valPCOSPmodelList <-
-        bplapply(predCohortList, validateModel, model=model)#, ...)
+        bplapply(predCohortList, validateModel, model=model, ...)
     validatedPCOSPmodel <- valPCOSPmodelList[[1]]
     validationDT <- rbindlist(lapply(valPCOSPmodelList, validationStats))
     validationDT[, `:=`(cohort=rep(names(predCohortList), each=3),
@@ -145,6 +145,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     validationData(validatedPCOSPmodel) <- predCohortList
     return(validatedPCOSPmodel)
 })
+#'
 #' Validate a PCOSP model with a single SurvivalExperiment object.
 #'
 #' @param model A `PCOSP` model which has been trained using `trainModel`.
@@ -169,8 +170,8 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
 #'   valData=PCOSPpredSurvExp)
 #'
-#'
 #' @md
+#' @include classUnions.R
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @import survcomp
@@ -185,15 +186,14 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 {
 
     # determine if we need to rerun the classification model
-    if (identical(metadata(model)$modelParams, metadata(valData)$PCOSPparams))
+    if (identical(metadata(model)$modelParams,
+        metadata(valData)[[paste0(class(model), 'params')]]))
     {
-        survivalDF <- colData(valData)[, c('sample_name', 'days_survived',
-            'is_deceased', 'PCOSP_prob_good', 'prognosis')]
+        survivalDF <- colData(valData)
         predSurvExp <- valData
     } else {
-        predSurvExp <- predictClasses(model, valData)
-        survivalDF <- colData(predSurvExp)[, c('sample_name', 'days_survived',
-            'is_deceased', 'PCOSP_prob_good', 'prognosis')]
+        predSurvExp <- predictClasses(valData, model)
+        survivalDF <- colData(predSurvExp)
     }
 
     # convert prognosis to numeric for the ROC stats
