@@ -187,11 +187,11 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
         split='[\\s]*[\\+\\-\\~\\=\\*][\\s]*', perl=TRUE))
     hasFormulaCols <- formulaCols %in% colnames(colData(object))
     if (!all(hasFormulaCols))
-        stop(.errorMsg(fulContext, 'The columns ', formulaCols[!hasFormulaCols],
-            ' are missing from the colData slot of the training data',
+        stop(.errorMsg(funContext, 'The columns ', formulaCols[!hasFormulaCols],
+            ' are missing from the colData slot of the training data. ',
             'Please only specify valid column names in colData to the formula!'))
-    if (length(models(model)) > 1) warning(.warnMsg(funContext, 'There is more
-        than one model in your ClinicalModel. Only using the first one...'))
+    if (length(models(model)) > 1) warning(.warnMsg(funContext, 'There is more ',
+        'than one model in your ClinicalModel. Only using the first one...'))
 
     # Skip rows with levels that aren't in the model; prevents predict.glm for
     #   breaking if there are new levels prediction data

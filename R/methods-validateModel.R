@@ -437,7 +437,7 @@ setMethod('validateModel', signature(model='ClinicalModel',
     allValStatsDT <- rbindlist(list(validationDT, combinedDT), fill=TRUE)
 
     validationStats(validatedModel) <- allValStatsDT
-    mcols(predCohortList)$isValidated <- TRUE
+    metadata(validatedModel)$isValidated <- TRUE
     validationData(validatedModel) <- predCohortList
     return(validatedModel)
 })
