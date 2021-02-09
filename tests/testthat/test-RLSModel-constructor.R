@@ -4,7 +4,7 @@ library(PDATK)
 data(sampleICGCmicro)
 data(sampleCohortList)
 
-test_that('RandomLabelShufflingModel constructor works with SurvivalExperiment
+test_that('RLSModel constructor works with SurvivalExperiment
     trainCohorts',
 {
     expect_s4_class({
@@ -13,7 +13,7 @@ test_that('RandomLabelShufflingModel constructor works with SurvivalExperiment
     expect_true(validObject(RLSmodel))
 })
 
-test_that('RandomLabelShufflingModel constuctor works with CohortList
+test_that('RLSModel constuctor works with CohortList
     trainCohorts',
 {
     suppressMessages({
