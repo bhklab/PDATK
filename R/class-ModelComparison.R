@@ -5,7 +5,6 @@
 #' @export
 .ModelComparison <- setClass('ModelComparison', contains='DataFrame')
 
-
 #' ModelComparison Constructor
 #'
 #' @param model1 An object with a `validationStats` method which returns a
@@ -48,7 +47,6 @@
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @export
 ModelComparison <- function(model1, model2, ...) {
-
 
     ## TODO:: Is it better to define a validationStats method for a
     ##   ModelComparsion? Then can't do class for model column.
