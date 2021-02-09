@@ -34,13 +34,14 @@
 ClinicalModel <- function(trainData, formula, minDaysSurvived=365, ...,
     randomSeed)
 {
-    survModel <-
-        SurvivalModel(trainData, minDaysSurived=minDaysSurvived,
+    funContext <- .context(1)
+
+    survModel <- SurvivalModel(trainData, minDaysSurived=minDaysSurvived,
             randomSeed=randomSeed)
 
     # ensure the formula is formatted correctly and all columns are in the data
     if (!(is.formula(formula) || is.character(formula)))
-        stop(.errorMsg(.context(), "The formula for a clinical model must ",
+        stop(.errorMsg(funContext, "The formula for a clinical model must ",
             "either be a formula object or a character vector coercible to ",
             "a formula object"))
 

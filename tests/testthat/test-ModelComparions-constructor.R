@@ -16,7 +16,9 @@ suppressWarnings({
 test_that('ModelComparison constructor works with two SurvivalModel
     sub-classes',
 {
-    expect_s4_class(compareModels(validatedPCOSPModel, validatedPCOSPModel),
+    expect_s4_class(
+        compareModels(validatedPCOSPModel, validatedPCOSPModel,
+            modelNames=c('PCOSP1', 'PCOSP2')),
         'ModelComparison')
 })
 
@@ -24,7 +26,8 @@ test_that('ModelComparison constructor works with one ModelComparison
     and one SurvivalModel sub-class',
 {
     modComp <- compareModels(validatedPCOSPModel, validatedPCOSPModel)
-    expect_s4_class(compareModels(modComp, validatedPCOSPModel),
+    expect_s4_class(
+        compareModels(modComp, validatedPCOSPModel, model2Name='PCOSP3'),
         'ModelComparison')
 })
 
