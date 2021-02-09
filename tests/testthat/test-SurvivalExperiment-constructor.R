@@ -16,8 +16,8 @@ test_that('SurivalExperiment constructor errors for missing days_surived or
         is_deceased='wrong_name'), '.*The columns .* are not present in the .*!')
 })
 
-test_that('SurvivalExperiment constructor errors if days_survived or is_deceased
-    columns are wrong types',
+test_that('SurvivalExperiment constructor errors if days_survived or
+    is_deceased columns are wrong types',
     {
     invalidExp1 <- invalidExp2 <- sampleICGCmicro
     colData(invalidExp1)$is_deceased <-
@@ -30,8 +30,8 @@ test_that('SurvivalExperiment constructor errors if days_survived or is_deceased
         '.*The days_survived column is not logical or integer,.*')
 })
 
-test_that('SurvivalExperiment constructor errors if days_survived or is_deceased
-    columns are character but not coercibel to integers',
+test_that('SurvivalExperiment constructor errors if days_survived or
+    is_deceased columns are character but not coercibel to integers',
     {
     invalidExp1 <- invalidExp2 <- sampleICGCmicro
     # Character not coercible to integer
@@ -51,8 +51,16 @@ test_that('SurvivalExperiment constructor can be made from raw data', {
     expect_true(validObject(survExp, complete=TRUE))
 })
 
-test_that('SurvivalExperimemt constructor can be made from SummarizedExperiment', {
+test_that('SurvivalExperimemt constructor can be made from
+    SummarizedExperiment',
+{
     survExp <- SurvivalExperiment(sumExp=sampleICGCmicro)
     expect_s4_class(survExp, 'SurvivalExperiment')
     expect_true(validObject(survExp, complete=TRUE))
+})
+
+test_that('SurvivalExperiment constructor works to create empty
+    SurvivalExperiment',
+{
+    expect_s4_class(SurvivalExperiment(), 'SurvivalExperiment')
 })
