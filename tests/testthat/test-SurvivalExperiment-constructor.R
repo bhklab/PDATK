@@ -16,8 +16,18 @@ test_that('SurivalExperiment constructor errors for missing days_surived or
         is_deceased='wrong_name'), '.*The columns .* are not present in the .*!')
 })
 
+test_that('SurvivalExperiment constructor successfully coerces is_deceased
+    and days_survived when they are the wrong types',
+{
+    colData(sampleICGCmicro)$days_survived <-
+        as.float(colData(sampleICGCmicro)$days_survived)
+    colData(sampleICGCmicro)$is_deceased <-
+        as.logical(colData(sampleICGCmicro)$is_deceased)
+    expect_s4_class(SurvialExpeiment(sampleICGCmicro))
+})
+
 test_that('SurvivalExperiment constructor errors if days_survived or
-    is_deceased columns are wrong types',
+    is_deceased columns are wrong types and coercion is not possible',
     {
     invalidExp1 <- invalidExp2 <- sampleICGCmicro
     colData(invalidExp1)$is_deceased <-
