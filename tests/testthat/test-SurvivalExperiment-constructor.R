@@ -20,10 +20,11 @@ test_that('SurvivalExperiment constructor successfully coerces is_deceased
     and days_survived when they are the wrong types',
 {
     colData(sampleICGCmicro)$days_survived <-
-        as.float(colData(sampleICGCmicro)$days_survived)
+        as.numeric(colData(sampleICGCmicro)$days_survived)
     colData(sampleICGCmicro)$is_deceased <-
         as.logical(colData(sampleICGCmicro)$is_deceased)
-    expect_s4_class(SurvialExpeiment(sampleICGCmicro))
+    expect_s4_class(SurvivalExperiment(sumExp=sampleICGCmicro),
+        'SurvivalExperiment')
 })
 
 test_that('SurvivalExperiment constructor errors if days_survived or

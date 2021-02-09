@@ -1,2 +1,2 @@
 library(testthat)
-library(PCOSP)
+library(PDATK)
