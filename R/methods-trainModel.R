@@ -350,3 +350,23 @@ setMethod('trainModel', signature(object='ClinicalModel'),
     return(object)
 
 })
+
+# ---- GeneFuModel Methods
+
+## TODO: Update constructor to allow GeneFuModel data to be input into the object
+#' Train a GeneFuModel Object
+#'
+#' @param object A `GeneFuModel` object to train.
+#'
+#' @return An error message, since we have not finished implementing this
+#'   functionality yet.
+#'
+#' @md
+#' @export
+setMethod('trainModel', signature(object='GeneFuModel'), function(object) {
+
+    funContext <- .context(1)
+    stop(.errorMsg(funContext, 'Unfortunately we have not implemented model ',
+        'training for a GeneFuModel yet!'))
+
+})
