@@ -178,6 +178,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='ClinicalModel'), function(object, model, ..., na.action='na.exclude',
         type='response')
 {
+    funContext <- .context(1)
     # check that the formula is valid and the variables are in the training data
     formula <- as.formula(metadata(model)$modelParams$formula)
     formulaCols <- as.character(formula[seq(2, 3)])
@@ -186,10 +187,10 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
         split='[\\s]*[\\+\\-\\~\\=\\*][\\s]*', perl=TRUE))
     hasFormulaCols <- formulaCols %in% colnames(colData(object))
     if (!all(hasFormulaCols))
-        stop(.errorMsg(.context(), 'The columns ', formulaCols[!hasFormulaCols],
+        stop(.errorMsg(fulContext, 'The columns ', formulaCols[!hasFormulaCols],
             ' are missing from the colData slot of the training data',
             'Please only specify valid column names in colData to the formula!'))
-    if (length(models(model)) > 1) warning(.warnMsg(.context(), 'There is more
+    if (length(models(model)) > 1) warning(.warnMsg(funContext, 'There is more
         than one model in your ClinicalModel. Only using the first one...'))
 
     # Skip rows with levels that aren't in the model; prevents predict.glm for
@@ -201,14 +202,16 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
         keepRows <- keepRows & keep
     }
     if (!all(keepRows))
-        warning(.warnMsg(.context(1), 'Rows ', paste0(which(!keepRows), collapse=', '),
-            ' have levels that are not in the model, skipping these rows...'))
+        warning(.warnMsg(funContext, 'Rows ', paste0(which(!keepRows),
+            collapse=', '), ' have levels that are not in the model, skipping ',
+            'these rows...'))
     # Calculate survival probabiltiies
-    predictions <- predict(models(model)[[1]], colData(object)[keepRows, ], ...,
-                           na.action=na.action, type=type)
+    predictions <- predict(models(model)[[1]], colData(object)[keepRows, ],
+        ..., na.action=na.action, type=type)
     # Update the `SurvivalExperiment` object with the predicted probabilities
     colData(object)$clinical_prob_good <- NA
-    colData(object)$clinical_prob_good[keepRows] <- predictions
+    colData(object)$clinical_prob_good[
+        rownames(colData(object)) %in% names(predictions)] <- predictions
     metadata(object)$GLMpredictions <- matrix(
         ifelse(colData(object)$clinical_prob_good > 0.5, 'good', 'bad'),
         byrow=TRUE, nrow=1, dimnames=list('glm', rownames(colData(object))))
