@@ -73,6 +73,8 @@ setGeneric('validateModel', function(model, valData, ...)
 setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     valData='CohortList'), function(model, valData, ...)
 {
+    funContext <- .context(1)
+
     # determine if the validation data already has predictions and if
     #   if the predictions were made using the same model
     if ('hasPredictions' %in% colnames(mcols(valData))) {
@@ -80,13 +82,13 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
             if (all.equal(model, metadata(valData)$predictionModel) == TRUE) {
                 predCohortList <- valData
             } else {
-                warning(.warnMsg(.context(6), 'The validationData argument ',
+                warning(.warnMsg(funContext, 'The validationData argument ',
                     'has predictions, but the prediction model does not match',
                     'the model argument. Recalculating classes...'))
                 predCohortList <- predictClasses(valData, model=model)
             }
         } else {
-          warning(.warnMsg(.context(6), 'One or more of the
+          warning(.warnMsg(funContext, 'One or more of the
                 SurvivalExperiments in valData does not have model
                 model predictions, recalculating...'))
             predCohortList <- predictClasses(valData, model=model)
@@ -458,6 +460,7 @@ setMethod('validateModel', signature(model='ClinicalModel',
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @import survcomp
+#' @importFrom CoreGx .warnMsg
 #' @importFrom S4Vectors metadata
 #' @importFrom SummarizedExperiment colData
 #' @importFrom reportROC reportROC
@@ -467,13 +470,15 @@ setMethod('validateModel', signature(model='ClinicalModel',
 setMethod('validateModel', signature(model='GeneFuModel',
     valData='SurvivalExperiment'), function(model, valData)
 {
+    funContext <- .context(1)
+
     survivalDF <- colData(valData)
     predSurvExp <- valData
 
     # deal with missing prognosis column
     if (!('prognosis' %in% colnames(survivalDF))) {
-        warning(.warnMsg(.context(), 'The prognosis column is missing from',
-            'the validation SurvivalExperiment, calculating based on ',
+        warning(.warnMsg(funContext, 'The prognosis column is missing from',
+            ' the validation SurvivalExperiment, calculating based on ',
             'minDaysSurvived value in modelParams...'))
         survivalDF <- within(survivalDF,
             prognosis <- ifelse(days_survived >
@@ -529,6 +534,7 @@ setMethod('validateModel', signature(model='GeneFuModel',
 setMethod('validateModel', signature(model='GeneFuModel',
     valData='CohortList'), function(model, valData, ...)
 {
+    funContext <- .context(1)
     # determine if the validation data already has predictions and if
     #   if the predictions were made using the same model
     if ('hasPredictions' %in% colnames(mcols(valData))) {
@@ -536,13 +542,13 @@ setMethod('validateModel', signature(model='GeneFuModel',
             if (all.equal(model, metadata(valData)$predictionModel)) {
                 predCohortList <- valData
             } else {
-                warning(.warnMsg(.context(), 'The validationData argument ',
+                warning(.warnMsg(funContext, 'The validationData argument ',
                     'has predictions, but the prediction model does not match',
                     'the model argument. Recalculating classes...'))
                 predCohortList <- predictClasses(valData, model=model)
             }
         } else {
-          warning(.warnMsg(.context(), 'One or more of the
+          warning(.warnMsg(funContext, 'One or more of the
                 SurvivalExperiments in valData does not have model
                 model predictions, recalculating...'))
             predCohortList <- predictClasses(valData, model=model)
@@ -601,7 +607,7 @@ setMethod('validateModel', signature(model='GeneFuModel',
     allValStatsDT <- rbindlist(list(validationDT, combinedDT), fill=TRUE)
 
     validationStats(validatedModel) <- allValStatsDT
-    mcols(predCohortList)$isValidated <- TRUE
+    metadata(validatedModel)$isValidated <- TRUE
     validationData(validatedModel) <- predCohortList
     return(validatedModel)
 })

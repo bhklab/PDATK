@@ -287,10 +287,13 @@ setMethod('predictClasses', signature(object='CohortList',
 setMethod('predictClasses', signature(object='SurvivalExperiment',
     model='GeneFuModel'), function(object, model, ..., annot=NA)
 {
-    if (length(models(model)) > 1)
-        warning(.warnMsg(.context(), 'There is more than one model in the
-            models slot of the GeneFuModel. Currently only single model
-            predictions are supported, ignoring other models.'))
+    funContext <- .context(1)
+
+    if (length(models(model)) > 1) {
+        warning(.warnMsg(funContext, 'There is more than one model in the ',
+            'models slot of the GeneFuModel. Currently only single model ',
+            'predictions are supported, ignoring other models.'))
+    }
 
     # Calculate survival releative risks (not probabiltiies)
     predictions <- genefu::sig.score(x=models(model)[[1]],
