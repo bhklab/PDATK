@@ -57,6 +57,8 @@ setMethod('assignSubtypes', signature(object='SurvivalExperiment',
     subtypes='data.frame'), function(object, subtypes, ...,
         sampleCol='sample_name', subtypeCol='subtype')
 {
+    funContext <- .context(1)
+
     subtypes$rownames <- rownames(subtypes)
     columnData <- colData(object)
 
@@ -65,11 +67,11 @@ setMethod('assignSubtypes', signature(object='SurvivalExperiment',
 
     sampleHasSubtypes <- columnSamples %in% subtypeSamples
 
-    if (all(!sampleHasSubtypes)) warning(.warnMsg(.context(), 'No samples in the',
+    if (all(!sampleHasSubtypes)) warning(.warnMsg(funContext, 'No samples in the',
         ' column names of the SurvivalExperiment match the sampleCol of the ',
         'subtypes data.frame.'))
 
-    if (!all(sampleHasSubtypes)) message(.warnMsg(.context(), 'The samples ',
+    if (!all(sampleHasSubtypes)) message(.warnMsg(funContext, 'The samples ',
         paste0(columnSamples[!sampleHasSubtypes], collapse=', '), ' are not ',
         'present in the subtypes data.frame. Their subtype will be NA.'))
 
@@ -119,13 +121,17 @@ setMethod('assignSubtypes', signature(object='CohortList',
     subtypes='list'), function(object, subtypes, ..., sampleCol='sample_name',
         subtypeCol='subtype')
 {
-    if (!all(names(object) %in% names(subtypes))) stop(.errorMsg(.context(),
+    funContext <- .context(1)
+
+    if (!all(names(object) %in% names(subtypes))) stop(.errorMsg(funContext,
         'The names of the subtypes list must match the names of the CohortList',
         'passed as the object argument.'))
 
     subtypedCohortList <- mendoapply(FUN=assignSubtypes,
         object=object, subtypes=subtypes[names(object)],
         MoreArgs=list(sampleCol=sampleCol, subtypeCol=subtypeCol))
+
+    mcols(subtypedCohortList)$hasSubtypes <- TRUE
 
     return(subtypedCohortList)
 })

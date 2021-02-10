@@ -599,6 +599,21 @@ outperformed all of the public classifiers, even when only trained with 100
 models. It is likely that using 1000 models, we would see even better separation
 of the `PCOSP` model. Indeed, this is was the result in Sandhu *et al.* (2019).
 
+# Comparing PCOSP Models By Patient Subtype
+
+```{r adding_subtypes_to_CohortList}
+data(cohortSubtypeDFs)
+
+# Add the subtypes to the prediction cohort
+subtypedPCOSPValCohorts <- assignSubtypes(PCOSPpredValCohorts, cohortSubtypeDFs)
+```
+
+```{r validateModel_with_subtypes}
+subtypeValidatedPCOSPmodel <- validateModel(subtypedPCOSPValCohorts, 
+    model=trainedPCOSPmodel)
+```
+
+
 # References
 
 1. Sandhu V, Labori KJ, Borgida A, et al. Meta-Analysis of 1,200 Transcriptomic 

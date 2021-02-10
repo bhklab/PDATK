@@ -78,7 +78,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 
     assayData <- assays(object)
     if (length(assayData) > 1)
-        warning(.warnMsg(funConext, 'Please ensure your prediction ',
+        warning(.warnMsg(funContext, 'Please ensure your prediction ',
                          'data only has one assay! Ignoring ',
                          'all but the first assay!'))
 

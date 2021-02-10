@@ -191,60 +191,87 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     if (identical(metadata(model)$modelParams,
         metadata(valData)[[paste0(class(model), 'params')]]))
     {
-        survivalDF <- colData(valData)
+        survivalDT <- as.data.table(colData(valData))
         predSurvExp <- valData
     } else {
         predSurvExp <- predictClasses(valData, model)
-        survivalDF <- colData(predSurvExp)
+        survivalDT <- as.data.table(colData(predSurvExp))
     }
 
     # convert prognosis to numeric for the ROC stats
-    survivalDF <- within(survivalDF,
-        prognosis <- ifelse(prognosis == 'good', 1L, 0L)
-    )
+    survivalDT[, prognosis := ifelse(prognosis == 'good', 1L, 0L)]
 
-    # calculate AUROC statistics
+    # make the name of the score column from the class of the model
     riskProbCol <- paste0(class(model)[1], '_prob_good')
-    aucStats <- with(survivalDF,
-        c(as.numeric(reportROC(prognosis, get(riskProbCol),
-                plot=FALSE)[c('AUC', 'AUC.SE', 'AUC.low', 'AUC.up')]),
-            roc.area(prognosis, get(riskProbCol))$p.value, nrow(survivalDF)))
-    names(aucStats) <- c('estimate', 'se', 'lower', 'upper', 'p.value', 'n')
 
-    # calculate the validation statistcs
-    validationStats <- with(survivalDF,
-        list(
-            dIndex=D.index(x=1 - get(riskProbCol), surv.time=days_survived,
-                surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
-                method.test='logrank'),
-            cIndex=concordance.index(x=1 - get(riskProbCol),
-                surv.time=days_survived, surv.event=is_deceased,
-                method='noether', na.rm=TRUE),
-            AUC=as.list(aucStats)
-        )
-    )
+    # calcualte normal validation statistics
+    ## TODO:: Can we clean this up a bit?
+    valStatsDT <- .calculateUntransposedValStatsDT(survivalDT, riskProbCol)
+    valStatsDT <- transpose(valStatsDT, keep.names='statistic')
+    colnames(valStatsDT) <-  c('statistic', 'estimate', 'se', 'lower', 'upper',
+        'p_value', 'n')
+    valStatsDT$cohort <- class(model)
 
-    # assemble into a data.frame
-    valStatsDF <- data.frame(
-        statistic=c('D_index', 'concordance_index', 'AUC'),
-        estimate=c(validationStats$dIndex$d.index,
-            validationStats$cIndex$c.index, validationStats$AUC$estimate),
-        se=vapply(validationStats, `[[`, i='se', FUN.VALUE=numeric(1)),
-        lower=vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1)),
-        upper=vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1)),
-        p_value=vapply(validationStats, `[[`, i='p.value', FUN.VALUE=numeric(1)),
-        n=vapply(validationStats, `[[`, i='n', FUN.VALUE=numeric(1)),
-        isSummary=FALSE
-    )
+    # calculate subtype specific validation statistics
+    if ('hasSubtypes' %in% names(metadata(valData)) && metadata(valData)$hasSubtype) {
+        subtypeStatsDT <- .calculateUntransposedValStatsDT(survivalDT,
+            riskProbCol, by='subtype')
+        subtypeList <- list()
+        for (subtypeName in unique(survivalDT$subtype)) {
+            DT <- transpose(subtypeStatsDT[subtype == subtypeName, -'subtype'],
+                keep.names='statistic')
+            DT[, subtype := subtypeName]
+            subtypeList <- c(subtypeList, list(DT))
+        }
+        subtypeStatsDT <- rbindlist(subtypeList)
+        colnames(subtypeStatsDT) <- c('statistic', 'estimate', 'se', 'lower',
+            'upper', 'p.value', 'n', 'subtype')
+        subtypeStatsDT$cohort <- class(model)
+        valStatsDT$subtype <- 'all'
+        valStatsDT <- rbind(valStatsDT, subtypeStatsDT)
+        metadata(model)$hasSubtpyes <- TRUE
+    }
 
-    valStatsDF$cohort <- class(model)
-
-    validationStats(model) <- valStatsDF
+    validationStats(model) <- valStatsDT
     validationData(model) <- CohortList(list(predSurvExp),
         mDataTypes=metadata(predSurvExp)$mDataType)
     metadata(model)$isValidated <- TRUE
     return(model)
 })
+
+#' Calculate the Survival Validation Statistics
+#'
+#' @param DT A `data.table` produced from coercing the colData of a
+#'   `SurvivalExperiment` object with [`as.data.table`]
+#' @param riskProbCol A character vector witht he name of the column with risk
+#'   probabitlies in it.
+#'
+#' @return A `data.table` where the columns are AUC, D_index, concordance_index,
+#'   and any arugments specified to by in ...
+#'
+#' @md
+#' @noRd
+#' @keywords internal
+.calculateUntransposedValStatsDT <- function(DT, riskProbCol, ...) {
+    DT[,
+        .(AUC=c(
+            as.numeric(reportROC(prognosis, get(riskProbCol),
+                plot=FALSE)[c('AUC', 'AUC.SE', 'AUC.low', 'AUC.up')]),
+            roc.area(prognosis, get(riskProbCol))$p.value, .N),
+          D_index=
+              as.numeric(D.index(x=1 - get(riskProbCol), surv.time=days_survived,
+                    surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
+                    method.test='logrank')[c('d.index', 'se', 'lower', 'upper',
+                                                          'p.value', 'n')]),
+          concordance_index=
+              as.numeric(concordance.index(x=1 - get(riskProbCol),
+                surv.time=days_survived, surv.event=is_deceased, method='noether',
+                na.rm=TRUE)[c('c.index', 'se', 'lower', 'upper', 'p.value',
+                              'n')])
+        ),
+        ...
+    ]
+}
 
 # ---- ClinicalModel methods
 

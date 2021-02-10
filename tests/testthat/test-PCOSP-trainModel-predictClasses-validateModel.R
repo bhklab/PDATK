@@ -39,8 +39,9 @@ test_that('validateModel method for PCOSP  works correctly', {
         valData=PCOSPpredCohortList[[1]]), 'Setting levels: .*')
     expect_true(metadata(validatedPCOSPModel)$isValidated)
     expect_true(is.data.frame(validationStats(validatedPCOSPModel)))
-    expect_equal(colnames(validationStats(validatedPCOSPModel)),
+    expect_true(all(
         c('statistic', 'estimate', 'se', 'lower', 'upper', 'p_value',
-            'n', 'isSummary', 'cohort', 'mDataType'))
+            'n', 'cohort', 'mDataType') %in%
+                colnames(validationStats(validatedPCOSPModel))))
     expect_equal(validationData(validatedPCOSPModel), PCOSPpredCohortList)
 })
