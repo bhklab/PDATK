@@ -225,7 +225,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
         }
         subtypeStatsDT <- rbindlist(subtypeList)
         colnames(subtypeStatsDT) <- c('statistic', 'estimate', 'se', 'lower',
-            'upper', 'p.value', 'n', 'subtype')
+            'upper', 'p_value', 'n', 'subtype')
         subtypeStatsDT$cohort <- class(model)
         valStatsDT$subtype <- 'all'
         valStatsDT <- rbind(valStatsDT, subtypeStatsDT)
@@ -262,12 +262,12 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
               as.numeric(D.index(x=1 - get(riskProbCol), surv.time=days_survived,
                     surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
                     method.test='logrank')[c('d.index', 'se', 'lower', 'upper',
-                                                          'p.value', 'n')]),
+                        'p.value', 'n')]),
           concordance_index=
               as.numeric(concordance.index(x=1 - get(riskProbCol),
                 surv.time=days_survived, surv.event=is_deceased, method='noether',
                 na.rm=TRUE)[c('c.index', 'se', 'lower', 'upper', 'p.value',
-                              'n')])
+                    'n')])
         ),
         ...
     ]
@@ -585,9 +585,8 @@ setMethod('validateModel', signature(model='GeneFuModel',
     }
 
     # validate the model against the validation data
-    ## FIXME:: remove comment from dots
     validatedModelList <-
-        bplapply(predCohortList, validateModel, model=model)#, ...)
+        bplapply(predCohortList, validateModel, model=model, ...)
     validatedModel <- validatedModelList[[1]]
     validationDT <- rbindlist(lapply(validatedModelList, validationStats))
     validationDT[, `:=`(
