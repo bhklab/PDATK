@@ -609,8 +609,7 @@ subtypedPCOSPValCohorts <- assignSubtypes(PCOSPpredValCohorts, cohortSubtypeDFs)
 ```
 
 ```{r validateModel_with_subtypes}
-subtypeValidatedPCOSPmodel <- validateModel(subtypedPCOSPValCohorts, 
-    model=trainedPCOSPmodel)
+subtypeValidatedPCOSPmodel <- validateModel(trainedPCOSPmodel, valData=subtypedPCOSPValCohorts)
 ```
 
 

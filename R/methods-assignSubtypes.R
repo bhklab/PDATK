@@ -78,6 +78,12 @@ setMethod('assignSubtypes', signature(object='SurvivalExperiment',
     columnData <- merge(columnData, subtypes[, c(sampleCol, subtypeCol)],
         by.x='sample_name', by.y=sampleCol, all.x=TRUE)
 
+    # Handle case where subtype is already a column
+    if ('subtype.y' %in% colnames(columnData)) {
+        columnData <- rename(columnData,
+            c(subtype.y='subtype', subtype.x='old_subtype'))
+    }
+
     # Lose rownames in join; reassign them
     rownames(columnData) <- rownames(colData(object))
 

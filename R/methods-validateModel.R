@@ -102,8 +102,10 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
         bplapply(predCohortList, validateModel, model=model, ...)
     validatedPCOSPmodel <- valPCOSPmodelList[[1]]
     validationDT <- rbindlist(lapply(valPCOSPmodelList, validationStats))
-    validationDT[, `:=`(cohort=rep(names(predCohortList), each=3),
-        mDataType=rep(mcols(predCohortList)$mDataType, each=3))]
+    rep <- if ('subtype' %in% colnames(validationDT)) length(unique(subtype)) * 3 else 3
+    print(rep)
+    validationDT[, `:=`(cohort=rep(names(predCohortList), each=rep),
+        mDataType=rep(mcols(predCohortList)$mDataType, each=rep))]
     validationStats(validatedPCOSPmodel) <- copy(validationDT)
 
     # calculate the per molecular data type statistics
@@ -253,24 +255,58 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #' @noRd
 #' @keywords internal
 .calculateUntransposedValStatsDT <- function(DT, riskProbCol, ...) {
-    DT[,
-        .(AUC=c(
-            as.numeric(reportROC(prognosis, get(riskProbCol),
-                plot=FALSE)[c('AUC', 'AUC.SE', 'AUC.low', 'AUC.up')]),
-            roc.area(prognosis, get(riskProbCol))$p.value, .N),
-          D_index=
-              as.numeric(D.index(x=1 - get(riskProbCol), surv.time=days_survived,
-                    surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
-                    method.test='logrank')[c('d.index', 'se', 'lower', 'upper',
-                        'p.value', 'n')]),
-          concordance_index=
-              as.numeric(concordance.index(x=1 - get(riskProbCol),
-                surv.time=days_survived, surv.event=is_deceased, method='noether',
-                na.rm=TRUE)[c('c.index', 'se', 'lower', 'upper', 'p.value',
-                    'n')])
+    DT[, .(AUC=.safe_AUC(prognosis, get(riskProbCol), .N),
+        D_index=.safe_D.index(get(riskProbCol), days_survived, is_deceased, .N),
+        concordance_index=.safe_concordance.index(get(riskProbCol),
+            days_survived, is_deceased, .N)
         ),
         ...
     ]
+}
+
+#' Calculate AUC or return NAs if it fails
+#'
+#' @keywords internal
+.safe_AUC <- function(prognosis, risk, n) {
+    as.numeric(
+        c(tryCatch({
+            x <- reportROC(prognosis, risk, plot=FALSE)[c('AUC', 'AUC.SE', 'AUC.low',
+                'AUC.up')]
+            if (length(x) != 4) stop('report ROC failed') else x
+            }, error=function(e) { print(e); return(rep(NA_real_, 4)) }),
+        tryCatch({ roc.area(prognosis, risk)$p.value },
+            error=function(e) { print(e); return(NA_real_) }),
+        c(n=n))
+        )
+}
+
+#' Calculate concordance.index or return NAs if it fails
+#'
+#' @keywords internal
+.safe_D.index <- function(risk, days_survived, is_deceased, n) {
+    as.numeric(
+        tryCatch({
+            D.index(x=1 - risk, surv.time=days_survived,
+                surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
+                method.test='logrank')[c('d.index', 'se', 'lower', 'upper',
+                    'p.value', 'n')]
+                },
+            error=function(e) { print(e); return(c(rep(NA, 5), n))}
+        )
+    )
+}
+
+#' Calculate D.index or return NAs if it fails
+#'
+#' @keywrods internal
+.safe_concordance.index <- function(risk, days_survived, is_deceased, n) {
+    as.numeric(
+        tryCatch({
+            concordance.index(x=1 - risk,
+                surv.time=days_survived, surv.event=is_deceased,
+                method='noether', na.rm=TRUE)[c('c.index', 'se', 'lower',
+                    'upper', 'p.value', 'n')] },
+            error=function(e) {print(e); return(c(rep(NA, 5), n)) }))
 }
 
 # ---- ClinicalModel methods

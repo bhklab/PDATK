@@ -82,7 +82,9 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
     function(object, stat, groupBy='mDataType', colourBy='isSummary',
         vline, ..., xlab, ylab, transform, colours, title)
 {
-    if (!is.character(stat)) stop(.errorMsg(.context(), 'The stat parameter',
+    funContext <- .context(1)
+
+    if (!is.character(stat)) stop(.errorMsg(funContext, 'The stat parameter',
         'must be a character vector present in the statistics column of the ',
         'PCOSP models validationStats slot!'))
 
@@ -91,11 +93,17 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
     # Add p-value to the cohort labels
     stats[, cohort := paste0(cohort, ' (', scientific(p_value,  2), ')')]
 
+    ## FIXME:: Corect these issues in the validateModel method
+    if ('subtype' %in% colnames(stats)) {
+        stats[is.na(subtype), subtype := 'all']
+        stats[is.na(isSummary), isSummary := FALSE]
+    }
+
     if (missing(vline)) {
         vline <- switch(stat,
             'D_index' = 1,
             'concordance_index' = 0.5,
-            stop(.errorMsg(.context(), 'Unkown statistic specified, please ',
+            stop(.errorMsg(funContext, 'Unkown statistic specified, please ',
                 'manually set the vline location with the vline argument!')))
     }
 
@@ -103,7 +111,7 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
         xlab <- switch(stat,
             'D_index' = 'D Index',
             'concordance_index' = 'Concordance Index',
-            stop(.errorMsg(.context(), 'Unkown statistic specified, please ',
+            stop(.errorMsg(funContext, 'Unkown statistic specified, please ',
                 'manually set the x label with the xlab argument!')))
     }
 

@@ -24,7 +24,6 @@
 
     # remove function arguments
     context <- gsub('\\(.*\\)', '', context)
-    print(context)
 
     # deal with getting function names from inside an lapply statement
     ## TODO:: clean this up
