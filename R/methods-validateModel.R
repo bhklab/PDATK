@@ -234,6 +234,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
         metadata(model)$hasSubtpyes <- TRUE
     }
 
+    valStatsDT[, isSummary := FALSE]
     validationStats(model) <- valStatsDT
     validationData(model) <- CohortList(list(predSurvExp),
         mDataTypes=metadata(predSurvExp)$mDataType)
