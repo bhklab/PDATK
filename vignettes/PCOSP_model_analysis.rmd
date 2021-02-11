@@ -611,6 +611,14 @@ subtypedPCOSPValCohorts <- assignSubtypes(PCOSPpredValCohorts, cohortSubtypeDFs)
 ```{r validateModel_with_subtypes}
 subtypeValidatedPCOSPmodel <- validateModel(trainedPCOSPmodel, valData=subtypedPCOSPValCohorts)
 ```
+```{r forestPlot_subtyped_PCOSP_model}
+forestPlot(subtypeValidatedPCOSPmodel, stat='D_index', groupBy='cohort',
+    colourBy='subtype', transform='log2')
+```
+```{r }
+forestPlot(subtypeValidatedPCOSPmodel, stat='concordance_index', groupBy='cohort',
+    colourBy='subtype')
+```
 
 
 # References

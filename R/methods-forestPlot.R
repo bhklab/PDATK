@@ -91,13 +91,30 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
     stats <- copy(validationStats(object))[statistic == stat
         ][order(-mDataType, isSummary)]
     # Add p-value to the cohort labels
-    stats[, cohort := paste0(cohort, ' (', scientific(p_value,  2), ')')]
+    stats[, cohort_formatted := paste0(cohort, ' (', scientific(p_value,  2), ')')]
 
     ## FIXME:: Corect these issues in the validateModel method
     if ('subtype' %in% colnames(stats)) {
         stats[is.na(subtype), subtype := 'all']
         stats[is.na(isSummary), isSummary := FALSE]
+        if ('subtype' %in% c(groupBy, colourBy)) {
+            stats[,
+                cohort_formatted := paste0(cohort, ': ', subtype, ' (p=',
+                    scientific(p_value, 2), '; n=', n,')')
+            ]
+            if (missing(ylab)) ylab <- 'Cohort: subtype (p-value; N)'
+        } else {
+            stats <- stats[subtype == 'all', ]
+        }
+        stats <- stats[order(isSummary, -cohort, -subtype)]
+    } else {
+        stats <- stats[order(isSummary, -cohort)]
     }
+
+    stats[, cohort_formatted := factor(cohort_formatted,
+        levels=unique(cohort_formatted))]
+    stats[[groupBy]] <- factor(stats[[groupBy]], levels=unique(stats[[groupBy]]))
+    stats[[colourBy]] <- factor(stats[[colourBy]], levels=unique(stats[[colourBy]]))
 
     if (missing(vline)) {
         vline <- switch(stat,
@@ -124,8 +141,8 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
         vline <- get(transform)(vline)
     }
 
-    plot <- ggplot(stats, aes(y=reorder(cohort, -isSummary), x=estimate,
-                xmin=lower, xmax=upper, shape=isSummary)) +
+    plot <- ggplot(stats, aes(y=cohort_formatted,
+                x=estimate, xmin=lower, xmax=upper, shape=isSummary)) +
         geom_pointrange(aes_string(colour=colourBy, group=groupBy)) +
         theme_bw() +
         facet_grid(reformulate('.', groupBy), scales='free_y',

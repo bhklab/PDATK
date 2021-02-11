@@ -102,23 +102,28 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
         bplapply(predCohortList, validateModel, model=model, ...)
     validatedPCOSPmodel <- valPCOSPmodelList[[1]]
     validationDT <- rbindlist(lapply(valPCOSPmodelList, validationStats))
-    rep <- if ('subtype' %in% colnames(validationDT)) length(unique(subtype)) * 3 else 3
+    hasSubtypes <- 'subtype' %in% colnames(validationDT)
+    rep <- if (hasSubtypes) length(unique(validationDT$subtype)) * 3 else 3
     print(rep)
     validationDT[, `:=`(cohort=rep(names(predCohortList), each=rep),
         mDataType=rep(mcols(predCohortList)$mDataType, each=rep))]
     validationStats(validatedPCOSPmodel) <- copy(validationDT)
 
+    by <- c('mDataType', 'statistic')
+    if (hasSubtypes) by <- c(by, 'subtype')
     # calculate the per molecular data type statistics
     byMolecDT <- validationDT[,
         j=c(combine.est(estimate, se, hetero=FALSE, na.rm=TRUE), n=sum(n),
             isSummary=TRUE),
-        by=.(mDataType, statistic)]
+        by=by]
     byMolecDT[, cohort := toupper(mDataType)]
 
+    by <- c('statistic')
+    if (hasSubtypes) by <- c(by, 'subtype')
     overallDT <- validationDT[,
         j=c(combine.est(estimate, se, hetero=TRUE, na.rm=TRUE), n=sum(n),
-            isSummary=TRUE),
-        by=statistic]
+                isSummary=TRUE),
+            by=by]
 
     # calculate the overall statistics
     overallDT[, `:=`(mDataType='combined', cohort='OVERALL')]
@@ -136,11 +141,14 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     .conIndexMetaPValue <- function(estimate, se)
         2 * pnorm((estimate - 0.5) / se, lower.tail=estimate < 0.5)
 
+    by <- c('statistic', 'mDataType')
+    if (hasSubtypes) by <- c(by, 'subtype')
+
     combinedDT[,
         p_value := fifelse(statistic == 'D_index',
             .dIndexMetaPValue(estimate, se),
             .conIndexMetaPValue(estimate, se)),
-        by=.(statistic, mDataType)]
+        by=by]
 
     allValStatsDT <- rbindlist(list(validationDT, combinedDT), fill=TRUE)
 
