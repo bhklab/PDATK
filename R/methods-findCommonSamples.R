@@ -31,7 +31,7 @@ setGeneric('findCommonSamples',
 #' head(commonSamples)
 #'
 #' @md
-#' @importFrom CoreGx .errorMsg
+# @importFrom CoreGx .errorMsg
 #' @export
 setMethod('findCommonSamples', signature(object='CohortList'),
     function(object)

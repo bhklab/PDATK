@@ -53,7 +53,7 @@ ClinicalModel <- function(trainData, formula, minDaysSurvived=365, ...,
     return(clinicalModel)
 }
 
-#' @importFrom CoreGx .warnMsg
+# @importFrom CoreGx .warnMsg
 #' @export
 setValidity('ClinicalModel', function(object) {
 

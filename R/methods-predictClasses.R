@@ -54,7 +54,7 @@ setGeneric('predictClasses',
 #'
 #' @md
 #' @importFrom SummarizedExperiment assays assay
-#' @importFrom CoreGx .warnMsg .errorMsg
+# @importFrom CoreGx .warnMsg .errorMsg
 #' @importFrom BiocParallel bplapply
 #' @importFrom S4Vectors metadata
 #' @export
@@ -168,7 +168,7 @@ setMethod('predictClasses', signature(object='CohortList',
 #' @md
 #' @importFrom stats predict glm as.formula
 #' @importFrom SummarizedExperiment colData colData<-
-#' @importFrom CoreGx .errorMsg .warnMsg
+# @importFrom CoreGx .errorMsg .warnMsg
 #' @importFrom S4Vectors metadata
 #' @export
 setMethod('predictClasses', signature(object='SurvivalExperiment',
@@ -274,7 +274,7 @@ setMethod('predictClasses', signature(object='CohortList',
 #'
 #' @md
 #' @importFrom genefu sig.score
-#' @importFrom CoreGx .warnMsg
+# @importFrom CoreGx .warnMsg
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom S4Vectors metadata
 #' @export

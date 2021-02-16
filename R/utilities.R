@@ -30,3 +30,11 @@
 }
 #' @noRd
 .context <- .getExecutionContext
+
+#' @export
+#' @import CoreGx
+.errorMsg <- CoreGx:::.errorMsg
+
+#' @import CoreGx
+#' @export
+.warnMsg <- CoreGx:::.warnMsg

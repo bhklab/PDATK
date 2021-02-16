@@ -50,7 +50,7 @@ setGeneric('assignSubtypes',
 #'
 #' @md
 #' @importFrom SummarizedExperiment colData colData<-
-#' @importFrom CoreGx .warnMsg .errorMsg
+# @importFrom CoreGx .warnMsg .errorMsg
 #' @importFrom S4Vectors metadata merge
 #' @export
 setMethod('assignSubtypes', signature(object='SurvivalExperiment',
@@ -113,7 +113,7 @@ setMethod('assignSubtypes', signature(object='SurvivalExperiment',
 #'
 #' @md
 #' @importFrom S4Vectors mendoapply
-#' @importFrom CoreGx .errorMsg
+# @importFrom CoreGx .errorMsg
 #' @export
 setMethod('assignSubtypes', signature(object='CohortList',
     subtypes='list'), function(object, subtypes, ..., sampleCol='sample_name',

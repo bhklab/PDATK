@@ -17,7 +17,7 @@
 #'
 #' @md
 #' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
-#' @importFrom CoreGx .warnMsg .errorMsg
+# @importFrom CoreGx .warnMsg .errorMsg
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
 #' @export

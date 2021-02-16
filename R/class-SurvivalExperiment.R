@@ -47,7 +47,7 @@
 #' @md
 #' @importFrom SummarizedExperiment SummarizedExperiment colData colData<-
 #' @importFrom S4Vectors rename
-#' @importFrom CoreGx .errorMsg .warnMsg
+# @importFrom CoreGx .errorMsg .warnMsg
 #' @export
 SurvivalExperiment <- function(..., days_survived='days_survived',
     is_deceased='is_deceased', sumExp)
@@ -56,7 +56,7 @@ SurvivalExperiment <- function(..., days_survived='days_survived',
     SE <- if (missing(sumExp)) SummarizedExperiment(...) else sumExp
 
     if (!is(SE, 'SummarizedExperiment'))
-        stop(CoreGx::.errorMsg(.context(),
+        stop(.errorMsg(.context(),
             'sumExp is not a `SummarizedExperiment`!'))
 
     renameVector <- c('days_survived', 'is_deceased')
@@ -127,7 +127,7 @@ setAs('RangedSummarizedExperiment', 'SurvivalExperiment',
 #' @param object A `SurvivalExperiment` object to verify class validity of.
 #'
 #' @md
-#' @importFrom CoreGx .errorMsg
+# @importFrom CoreGx .errorMsg
 #' @export
 setValidity('SurvivalExperiment', function(object) {
 
@@ -138,7 +138,7 @@ setValidity('SurvivalExperiment', function(object) {
     survivalColNames <- c("days_survived", "is_deceased")
     hasSurvivalCols <- survivalColNames %in% colnames(colData(object))
     if (!all(hasSurvivalCols))
-        CoreGx::.errorMsg(.context(), 'Mandatory columns ',
+        .errorMsg(.context(), 'Mandatory columns ',
             paste0(surivalColNames[!hasSurvivalCols], collapse=', '),
             ' are missing from colData. Please add them or double check
             the column names are spelled correctly.')

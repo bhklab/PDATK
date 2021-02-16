@@ -302,7 +302,7 @@ setReplaceMethod('validationData', signature(object='SurvivalModel', value='Coho
 #' @param object A `SurvivalModel` object to verify class validity of.
 #'
 #' @md
-#' @importFrom CoreGx .errorMsg
+# @importFrom CoreGx .errorMsg
 setValidity('SurvivalModel', function(object) {
 
     hasSurvivalGroup <- 'prognosis' %in% colnames(colData(object))

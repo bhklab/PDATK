@@ -176,7 +176,7 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
-#' @importFrom CoreGx .errorMsg .warnMsg
+# @importFrom CoreGx .errorMsg .warnMsg
 #' @importFrom ggplot2 ggplot geom_pointrange theme_bw facet_grid theme
 #'   geom_vline vars xlab ylab scale_colour_manual ggtitle element_text
 #'   element_blank aes aes_string
