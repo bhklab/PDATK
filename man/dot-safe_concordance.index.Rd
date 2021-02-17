@@ -9,3 +9,4 @@
 \description{
 Calculate D.index or return NAs if it fails
 }
+\keyword{internal}

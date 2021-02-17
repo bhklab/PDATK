@@ -14,6 +14,7 @@
 #' @md
 #' @keywords internal
 #' @importFrom rlang trace_back
+#' @importFrom utils packageName
 #' @noRd
 #' @aliases .context
 .getExecutionContext <- function(n=2) {

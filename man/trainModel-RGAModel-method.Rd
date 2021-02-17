@@ -12,7 +12,7 @@
 \item{numModels}{An \code{integer} specifying the number of models to train.
 Defaults to 10. We recommend using 1000+ for good results.}
 
-\item{minAccuracy}{A \code{float} specifying the balanced accurary required
+\item{minAccuracy}{A \code{float} specifying the balanced accuracy required
 to consider a model 'top scoring'. Defaults to 0. Must be in the
 range 0 to 1.}
 

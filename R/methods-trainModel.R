@@ -95,30 +95,29 @@ setMethod('trainModel', signature('PCOSP'),
     # train the model
     system.time({
     trainedModels <- bplapply(trainingDataColIdxs,
-                              function(idx, data)
-                                  switchBox::SWAP.KTSP.Train(data[, idx], levels(idx)),
-                              data=trainMatrix, ...)
+        function(idx, data)
+            switchBox::SWAP.KTSP.Train(data[, idx], levels(idx)),
+        data=trainMatrix, ...)
     })
 
     # get the testing data
     testingDataColIdxs <- lapply(trainingDataColIdxs,
-                                 function(idx, rowIdx, labels)
-                                structure(setdiff(rowIdx, idx),
-                                          .Label=as.factor(
-                                              labels[setdiff(rowIdx, idx)])),
-                                 rowIdx=seq_len(ncol(trainMatrix)),
-                                 labels=survivalGroups)
+        function(idx, rowIdx, labels)
+            structure(setdiff(rowIdx, idx), .Label=as.factor(
+                labels[setdiff(rowIdx, idx)])),
+        rowIdx=seq_len(ncol(trainMatrix)),
+        labels=survivalGroups)
 
     # make predictions
     predictions <- bplapply(seq_along(testingDataColIdxs),
-                            function(i, testIdxs, data, models) {
-                                        switchBox::SWAP.KTSP.Classify(data[, testIdxs[[i]]],
-                                                   models[[i]])
-                            },
-                            testIdxs=testingDataColIdxs,
-                            data=trainMatrix,
-                            models=trainedModels,
-                            ...)
+        function(i, testIdxs, data, models) {
+                    switchBox::SWAP.KTSP.Classify(data[, testIdxs[[i]]],
+                               models[[i]])
+        },
+        testIdxs=testingDataColIdxs,
+        data=trainMatrix,
+        models=trainedModels,
+        ...)
 
     # assess the models
     .calculateConfMatrix <- function(i, predictions, labels) {
@@ -252,7 +251,7 @@ setMethod('trainModel', signature('RLSModel'),
 #' @param object A `RGAmodel` object to train.
 #' @param numModels An `integer` specifying the number of models to train.
 #'   Defaults to 10. We recommend using 1000+ for good results.
-#' @param minAccuracy A `float` specifying the balanced accurary required
+#' @param minAccuracy A `float` specifying the balanced accuracy required
 #'   to consider a model 'top scoring'. Defaults to 0. Must be in the
 #'   range 0 to 1.
 #' @param ... Fall through arguments to `BiocParallel::bplapply`.

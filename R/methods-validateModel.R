@@ -295,7 +295,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 
 #' Calculate D.index or return NAs if it fails
 #'
-#' @keywrods internal
+#' @keywords internal
 .safe_concordance.index <- function(risk, days_survived, is_deceased, n) {
     as.numeric(
         tryCatch({

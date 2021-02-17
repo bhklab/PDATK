@@ -29,6 +29,15 @@ quantification models. Functions are included for assessing and visualizing
 individual model performance as well as conducting meta-analyses to compare
 performance differences between models used on novel patient molecular data.
 
+# Installation
+
+The PDATK package can be installed from Bioconductor using the `BiocManager`
+package.
+
+```{r eval=FALSE, echo=TRUE}
+if (!require('PDATK')) BiocManager::install('PDATK')
+```
+
 # Classes
 
 ## SurvivalExperiment
@@ -147,8 +156,8 @@ slot as a `data.table`. The validation data will be attached to the model in the
 `validationData` slot, to make it clear that what data the validation statistics
 apply to.
 
-Additional methods are included in this package to conduct model comparions
-meta-analyses. These will be discuessed in the detail in the `PCOSP` vignette.
+Additional methods are included in this package to conduct model comparison
+meta-analyses. These will be discussed in the detail in the `PCOSP` vignette.
 
 ### Constructor
 
@@ -183,4 +192,6 @@ configuration. See the `PCOSP` vignette for an explanation of each.
 
 # References
 
-TODO: Add references.
+1. Sandhu V, Labori KJ, Borgida A, et al. Meta-Analysis of 1,200 Transcriptomic 
+Profiles Identifies a Prognostic Model for Pancreatic Ductal Adenocarcinoma. 
+JCO Clin Cancer Inform. 2019;3:1-16. doi:10.1200/CCI.18.00102
