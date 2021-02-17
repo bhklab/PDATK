@@ -25,16 +25,12 @@ Predict Survival Prognosis Classes and Risk Scores for A \code{CohortList} Using
 a \code{PCOSP}, \code{RLSModel} or \code{RGAModel} object.
 }
 \examples{
-data(samplePCOSPmodel)
+data(sampleTrainedPCOSPmodel)
 data(samplePCSIsurvExp)
-
-# Train Model
-trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
-  minAccuracy=0.6)
 
 # Make predictions
 PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
-  model=trainedPCOSPmodel)
+  model=sampleTrainedPCOSPmodel)
 head(colData(PCOSPpredSurvExp))
 
 }

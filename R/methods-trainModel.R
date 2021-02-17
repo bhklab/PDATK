@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' data(samplePCOSPmodel)
-#' trainModel(samplePCOSPmodel, numModels=10, minAccuracy=0.6)
+#' trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #'
 #' @md
 #' @export
@@ -41,7 +41,7 @@ setGeneric('trainModel', function(object, ...)
 #'
 #' @examples
 #' data(samplePCOSPmodel)
-#' trainModel(samplePCOSPmodel, numModels=10, minAccuracy=0.6)
+#' trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #'
 #' @md
 #' @importFrom BiocParallel bplapply
@@ -74,7 +74,7 @@ setMethod('trainModel', signature('PCOSP'),
 })
 
 #' @importFrom caret confusionMatrix
-#' @importFrom switchBox SWAP.KTSP.Train
+#' @importFrom switchBox SWAP.KTSP.Train SWAP.KTSP.Classify
 #' @importFrom BiocParallel bplapply
 #' @importFrom S4Vectors SimpleList
 #' @keywords internal
@@ -96,7 +96,7 @@ setMethod('trainModel', signature('PCOSP'),
     system.time({
     trainedModels <- bplapply(trainingDataColIdxs,
                               function(idx, data)
-                                  SWAP.KTSP.Train(data[, idx], levels(idx)),
+                                  switchBox::SWAP.KTSP.Train(data[, idx], levels(idx)),
                               data=trainMatrix, ...)
     })
 
@@ -112,7 +112,7 @@ setMethod('trainModel', signature('PCOSP'),
     # make predictions
     predictions <- bplapply(seq_along(testingDataColIdxs),
                             function(i, testIdxs, data, models) {
-                                        SWAP.KTSP.Classify(data[, testIdxs[[i]]],
+                                        switchBox::SWAP.KTSP.Classify(data[, testIdxs[[i]]],
                                                    models[[i]])
                             },
                             testIdxs=testingDataColIdxs,
@@ -122,7 +122,7 @@ setMethod('trainModel', signature('PCOSP'),
 
     # assess the models
     .calculateConfMatrix <- function(i, predictions, labels) {
-        confusionMatrix(predictions[[i]], levels(labels[[i]]),
+        caret::confusionMatrix(predictions[[i]], levels(labels[[i]]),
             mode="prec_recall")
     }
 
@@ -185,7 +185,7 @@ setMethod('trainModel', signature('PCOSP'),
 #'
 #' @examples
 #' data(sampleRLSmodel)
-#' trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=10)
+#' trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=5)
 #'
 #' @md
 #' @export
@@ -263,7 +263,7 @@ setMethod('trainModel', signature('RLSModel'),
 #'
 #' @examples
 #' data(sampleRGAmodel)
-#' trainedRGAmodel <- trainModel(sampleRGAmodel, numModels=10, minAccuracy=0)
+#' trainedRGAmodel <- trainModel(sampleRGAmodel, numModels=5, minAccuracy=0)
 #'
 #' @md
 #' @importFrom BiocParallel bplapply
@@ -296,7 +296,7 @@ setMethod('trainModel', signature('RGAModel'),
     }
 
     models(object) <- RGAmodels
-    # Add additiona model paramters to metadata
+    # Add additional model paramters to metadata
     metadata(object)$modelParams <- c(metadata(object)$modelParams,
         list(numModels=numModels, minAccurary=minAccuracy))
     return(object)
@@ -348,25 +348,5 @@ setMethod('trainModel', signature(object='ClinicalModel'),
 
     models(object) <- SimpleList(glm=model)
     return(object)
-
-})
-
-# ---- GeneFuModel Methods
-
-## TODO: Update constructor to allow GeneFuModel data to be input into the object
-#' Train a GeneFuModel Object
-#'
-#' @param object A `GeneFuModel` object to train.
-#'
-#' @return An error message, since we have not finished implementing this
-#'   functionality yet.
-#'
-#' @md
-#' @export
-setMethod('trainModel', signature(object='GeneFuModel'), function(object) {
-
-    funContext <- .context(1)
-    stop(.errorMsg(funContext, 'Unfortunately we have not implemented model ',
-        'training for a GeneFuModel yet!'))
 
 })

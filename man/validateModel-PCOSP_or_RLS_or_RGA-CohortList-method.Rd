@@ -27,19 +27,15 @@ Evaluate the Performance of a List of Trained KTSP Models from a PCOSP
 Model
 }
 \examples{
-data(samplePCOSPmodel)
+data(sampleTrainedPCOSPmodel)
 data(sampleCohortList)
-
-# Train Model
-trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
-  minAccuracy=0.6)
 
 # Make predictions
 PCOSPpredCohortList <- predictClasses(sampleCohortList,
-  model=trainedPCOSPmodel)
+  model=sampleTrainedPCOSPmodel)
 
 # Validate model
-validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
   valData=PCOSPpredCohortList)
 
 }

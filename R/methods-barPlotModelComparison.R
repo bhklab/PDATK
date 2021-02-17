@@ -10,25 +10,24 @@
 #'
 #' @examples
 #' data(sampleCohortList)
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleICGCmicro)
 #'
 #' # Setup the models
-#' PCOSPmodel <- PCOSP(sampleICGCmicro, randomSeed=1987)
 #' clinicalModel <- ClinicalModel(sampleICGCmicro,
 #'   formula='prognosis ~ sex + age + T + N + M + grade')
 #'
 #' # Train the models
-#' trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=5, minAccuracy=0.6)
 #' trainedClinicalModel <- trainModel(clinicalModel)
 #'
 #' # Make predctions
 #' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-#'   model=trainedPCOSPmodel)
+#'   model=sampleTrainedPCOSPmodel)
 #' clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredCohortList)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=clinicalPredCohortList)
@@ -56,6 +55,7 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #'   with.
 #'
 #' @examples
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleCohortList)
 #' data(sampleICGCmicro)
 #'
@@ -65,17 +65,16 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #'   formula='prognosis ~ sex + age + T + N + M + grade')
 #'
 #' # Train the models
-#' trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=5, minAccuracy=0.6)
 #' trainedClinicalModel <- trainModel(clinicalModel)
 #'
 #' # Make predctions
 #' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-#'   model=trainedPCOSPmodel)
+#'   model=sampleTrainedPCOSPmodel)
 #' clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredCohortList)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=clinicalPredCohortList)

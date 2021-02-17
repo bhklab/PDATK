@@ -7,17 +7,14 @@
 #'
 #' @examples
 #' data(sampleCohortList)
-#' data(samplePCOSPmodel)
-#'
-#' # Train the models
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
-#'
+#' data(sampleTrainedPCOSPmodel)
+#'#'
 #' # Make predctions
 #' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-#'   model=trainedPCOSPmodel)
+#'   model=sampleTrainedPCOSPmodel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredCohortList)
 #'
 #' # Plot
@@ -52,18 +49,15 @@ setGeneric('forestPlot', function(object, ...)
 #' @return A `ggplot2` object.
 #'
 #' @examples
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleCohortList)
-#' data(samplePCOSPmodel)
-#'
-#' # Train the models
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #'
 #' # Make predctions
 #' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-#'   model=trainedPCOSPmodel)
+#'   model=sampleTrainedPCOSPmodel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredCohortList)
 #'
 #' # Plot
@@ -172,21 +166,20 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 #'
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleClinicalModel)
 #' data(samplePCSIsurvExp)
 #'
 #' # Train the models
-#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
-#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=sampleTrainedPCOSPmodel)
 #' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=ClinicalPredPCSI)

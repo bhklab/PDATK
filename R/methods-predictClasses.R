@@ -8,16 +8,12 @@
 #' @return The `S4` object with class predictions added to the metadata.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(samplePCSIsurvExp)
-#'
-#' # Train Model
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
-#'   minAccuracy=0.6)
 #'
 #' # Make predictions
 #' PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
-#'   model=trainedPCOSPmodel)
+#'   model=sampleTrainedPCOSPmodel)
 #' head(colData(PCOSPpredSurvExp))
 #'
 #' @md
@@ -40,16 +36,12 @@ setGeneric('predictClasses',
 #'   of models which predicted good prognosis for each sample.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(samplePCSIsurvExp)
-#'
-#' # Train Model
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
-#'   minAccuracy=0.6)
 #'
 #' # Make predictions
 #' PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
-#'   model=trainedPCOSPmodel)
+#'   model=sampleTrainedPCOSPmodel)
 #' head(colData(PCOSPpredSurvExp))
 #'
 #' @md
@@ -117,16 +109,12 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #'   column added to the colData slot.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleCohortList)
-#'
-#' # Train Model
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
-#'   minAccuracy=0.6)
 #'
 #' # Make predictions
 #' PCOSPpredCohortList <- predictClasses(sampleCohortList,
-#'   model=trainedPCOSPmodel)
+#'   model=sampleTrainedPCOSPmodel)
 #' head(colData(PCOSPpredCohortList[[1]]))
 #'
 #' @md

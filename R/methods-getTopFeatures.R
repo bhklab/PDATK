@@ -6,14 +6,10 @@
 #' @return A `character` vector of top predictive features.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
-#'
-#' # Train the model
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
-#'   minAccuracy=0.6)
+#' data(sampleTrainedPCOSPmodel)
 #'
 #' # Get the top features
-#' topFeatures <- getTopFeatures(trainedPCOSPmodel, numModels=5)
+#' topFeatures <- getTopFeatures(sampleTrainedPCOSPmodel, numModels=2)
 #'
 #' @md
 #' @export
@@ -30,14 +26,11 @@ setGeneric('getTopFeatures',
 #'   from the top `numModels` KTSPs models in the model `object`.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #'
-#' # Train the model
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
-#'   minAccuracy=0.6)
 #'
 #' # Get the top features
-#' topFeatures <- getTopFeatures(trainedPCOSPmodel, numModels=5)
+#' topFeatures <- getTopFeatures(sampleTrainedPCOSPmodel, numModels=5)
 #'
 #' @md
 #' @export

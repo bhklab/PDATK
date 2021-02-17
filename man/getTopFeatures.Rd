@@ -18,13 +18,9 @@ A \code{character} vector of top predictive features.
 Get the Top Predictive Features from an S4 Object
 }
 \examples{
-data(samplePCOSPmodel)
-
-# Train the model
-trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
-  minAccuracy=0.6)
+data(sampleTrainedPCOSPmodel)
 
 # Get the top features
-topFeatures <- getTopFeatures(trainedPCOSPmodel, numModels=5)
+topFeatures <- getTopFeatures(sampleTrainedPCOSPmodel, numModels=2)
 
 }

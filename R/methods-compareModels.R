@@ -7,21 +7,21 @@
 #' @return A `S4` object with statistics about the performance of each model.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleClinicalModel)
 #' data(samplePCSIsurvExp)
 #'
 #' # Train the models
-#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
-#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp,
+#'   model=sampleTrainedPCOSPmodel)
 #' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=ClinicalPredPCSI)
@@ -46,21 +46,20 @@ setGeneric('compareModels', function(model1, model2, ...)
 #' @return A `ModelComparison` object with statistics comparing the two models.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleClinicalModel)
 #' data(samplePCSIsurvExp)
 #'
 #' # Train the models
-#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
-#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=sampleTrainedPCOSPmodel)
 #' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=ClinicalPredPCSI)
@@ -96,21 +95,20 @@ setMethod('compareModels', signature(model1='SurvivalModel',
 #' @param model2Name A `character` vector with the name of the second model.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleClinicalModel)
 #' data(samplePCSIsurvExp)
 #'
 #' # Train the models
-#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
-#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=sampleTrainedPCOSPmodel)
 #' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=ClinicalPredPCSI)
