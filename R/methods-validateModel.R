@@ -531,10 +531,8 @@ setMethod('validateModel', signature(model='ClinicalModel',
 setMethod('validateModel', signature(model='GeneFuModel',
     valData='SurvivalExperiment'), function(model, valData)
 {
-<<<<<<< HEAD
     funContext <- .context(1)
-=======
->>>>>>> master
+
 
     survivalDF <- colData(valData)
     predSurvExp <- valData
