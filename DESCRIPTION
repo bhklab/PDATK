@@ -50,7 +50,7 @@ VignetteBuilder: knitr
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software,
     Classification,  Survival
 BugReports: https://github.com/bhklab/PDATK/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.1.9001
 Collate: 
     'class-CohortList.R'
     'class-SurvivalExperiment.R'

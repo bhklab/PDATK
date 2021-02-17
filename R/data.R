@@ -42,6 +42,19 @@ NULL
 #' @md
 NULL
 
+#' @title A Sample Trained PCOSP Model Containing the ICGC micro-array cohort from
+#'   `MetaGxPancreas` as training data.
+#'
+#' @examples
+#' data(sampleTrainedPCOSPmodel)
+#'
+#' @name sampleTrainedPCOSPmodel
+#'
+#' @seealso `MetaGxPancreas::loadPancreasDatasets`
+#'
+#' @md
+NULL
+
 
 #' @title Sample RLS Model Containing the ICGC micro-array cohort from
 #'   `MetaGxPancreas` as training data.

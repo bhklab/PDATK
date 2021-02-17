@@ -19,17 +19,14 @@ Generate a forest plot from an `S4` object
 }
 \examples{
 data(sampleCohortList)
-data(samplePCOSPmodel)
-
-# Train the models
-trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
-
+data(sampleTrainedPCOSPmodel)
+#'
 # Make predctions
 PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-  model=trainedPCOSPmodel)
+  model=sampleTrainedPCOSPmodel)
 
 # Validate the models
-validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
   valData=PCOSPpredCohortList)
 
 # Plot

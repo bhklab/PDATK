@@ -7,19 +7,15 @@
 #' @return The `S4` object with added model performance metadata.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleCohortList)
-#'
-#' # Train Model
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
-#'   minAccuracy=0.6)
 #'
 #' # Make predictions
 #' PCOSPpredCohortList <- predictClasses(sampleCohortList,
-#'   model=trainedPCOSPmodel)
+#'   model=sampleTrainedPCOSPmodel)
 #'
 #' # Validate model
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredCohortList)
 #'
 #' @md
@@ -44,19 +40,15 @@ setGeneric('validateModel', function(model, valData, ...)
 #'   slots occupied.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleCohortList)
-#'
-#' # Train Model
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
-#'   minAccuracy=0.6)
 #'
 #' # Make predictions
 #' PCOSPpredCohortList <- predictClasses(sampleCohortList,
-#'   model=trainedPCOSPmodel)
+#'   model=sampleTrainedPCOSPmodel)
 #'
 #' # Validate model
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredCohortList)
 #'
 #' @md
@@ -154,19 +146,15 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'   slot and the validation data in the `validationData` slot.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(samplePCSIsurvExp)
-#'
-#' # Train Model
-#' trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
-#'   minAccuracy=0.6)
 #'
 #' # Make predictions
 #' PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
-#'   model=trainedPCOSPmodel)
+#'   model=sampleTrainedPCOSPmodel)
 #'
 #' # Validate model
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredSurvExp)
 #'
 #'
@@ -281,6 +269,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 setMethod('validateModel', signature(model='ClinicalModel',
     valData='SurvivalExperiment'), function(model, valData)
 {
+
     # determine if we need to rerun the classification model
     if (identical(metadata(model)$modelParams, metadata(valData)$GLMparams))
     {
@@ -465,6 +454,7 @@ setMethod('validateModel', signature(model='ClinicalModel',
 setMethod('validateModel', signature(model='GeneFuModel',
     valData='SurvivalExperiment'), function(model, valData)
 {
+
     survivalDF <- colData(valData)
     predSurvExp <- valData
 

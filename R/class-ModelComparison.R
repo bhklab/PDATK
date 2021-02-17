@@ -18,21 +18,20 @@
 #'   which is used for method dispatch.
 #'
 #' @examples
-#' data(samplePCOSPmodel)
+#' data(sampleTrainedPCOSPmodel)
 #' data(sampleClinicalModel)
 #' data(samplePCSIsurvExp)
 #'
 #' # Train the models
-#' trainedPCOSPmodel <-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
-#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=trainedPCOSPmodel)
+#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=sampleTrainedPCOSPmodel)
 #' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=ClinicalPredPCSI)

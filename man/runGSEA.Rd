@@ -22,9 +22,11 @@ Run Gene Set Enrichment Analysis
 }
 \examples{
 \donttest{
-  data(samplePCOSPmodel)
-  geneSet <- msigdbr()
-  GSEAresults <- runGSEA(samplePCOSPmodel, geneSet)
+  if (interactive()) {
+    data(samplePCOSPmodel)
+    geneSet <- msigdbr::msigdbr()
+    GSEAresults <- runGSEA(samplePCOSPmodel, geneSet)
+  }
 }
 
 }

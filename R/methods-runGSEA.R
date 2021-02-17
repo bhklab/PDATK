@@ -2,9 +2,11 @@
 #'
 #' @examples
 #' \donttest{
-#'   data(samplePCOSPmodel)
-#'   geneSet <- msigdbr()
-#'   GSEAresults <- runGSEA(samplePCOSPmodel, geneSet)
+#'   if (interactive()) {
+#'     data(samplePCOSPmodel)
+#'     geneSet <- msigdbr::msigdbr(subcategory='CP:KEGG')
+#'     GSEAresults <- runGSEA(samplePCOSPmodel, geneSet)
+#'   }
 #' }
 #'
 #' @param object An `S4` object to conduct Gene Set Enrichment Analysis (GSEA)

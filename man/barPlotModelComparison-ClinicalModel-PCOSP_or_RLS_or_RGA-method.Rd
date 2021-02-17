@@ -27,6 +27,7 @@ Make a Bar Plot Comparison Model Performance Between a ClinicalModel
 and a PCOSP, RLSModel or RGAModel object.
 }
 \examples{
+data(sampleTrainedPCOSPmodel)
 data(sampleCohortList)
 data(sampleICGCmicro)
 
@@ -36,17 +37,16 @@ clinicalModel <- ClinicalModel(sampleICGCmicro,
   formula='prognosis ~ sex + age + T + N + M + grade')
 
 # Train the models
-trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=5, minAccuracy=0.6)
 trainedClinicalModel <- trainModel(clinicalModel)
 
 # Make predctions
 PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-  model=trainedPCOSPmodel)
+  model=sampleTrainedPCOSPmodel)
 clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
   model=trainedClinicalModel)
 
 # Validate the models
-validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
   valData=PCOSPpredCohortList)
 validatedClinicalModel <- validateModel(trainedClinicalModel,
   valData=clinicalPredCohortList)

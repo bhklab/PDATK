@@ -128,7 +128,7 @@ uninterested in the details of survival prediction methods.
 
 For training a PCOSP model there are two parameters. First, `numModels` is the
 number of models to train for use in the ensemble classifier to predict PCOSP
-scores. To keep computation brief, we are only training 100 models. However, it
+scores. To keep computation brief, we are only training 25 models. However, it
 is recommended to use a minimum of 1000 for real world applications. The second
 parameter is `minAccuracy`, which is the minimum model accuracy for a trained
 model to included in the final model ensemble. Paradoxically, increasing this
@@ -138,10 +138,11 @@ encourage experimentation to see what works best with your data.
 
 
 ```{r}
-trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=100, minAccuracy=0.6)
+trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=25, minAccuracy=0.6)
 
 metadata(trainedPCOSPmodel)$modelParams
 ```
+
 We can see that after training, the additional model parameters are added to the
 `modelParams` item in the model `metadata`. The goal is to ensure that your
 model training, prediction and validation are fully reproducible by capturing
@@ -270,7 +271,7 @@ RLSmodel <- RLSModel(ICGCtrainCohorts, minDaysSurvived=365, randomSeed=1987)
 ### Train the Model
 
 ```{r RLSModel_training}
-trainedRLSmodel <- trainModel(RLSmodel, numModels=100)
+trainedRLSmodel <- trainModel(RLSmodel, numModels=25)
 ```
 
 ### Predict the Classes
@@ -318,7 +319,7 @@ RGAmodel <- RGAModel(ICGCtrainCohorts, randomSeed=1987)
 ### Train the Model
 
 ```{r RGAModel_training}
-trainedRGAmodel <- trainModel(RGAmodel, numModels=100)
+trainedRGAmodel <- trainModel(RGAmodel, numModels=25)
 ```
 
 ### Predict the Classes
@@ -467,6 +468,7 @@ clinicalVsPCOSPbarPlot <- barPlotModelComparison(validatedClinicalModel,
     validatedPCOSPmodel, stat='AUC')
 clinicalVsPCOSPbarPlot
 ```
+
 To reduce the number of plotting functions and simplify meta-analysis of many 
 models of different types, we have included the `ModelComparison` object. This 
 object aggregates the validation statistics from two models. Plotting methods 

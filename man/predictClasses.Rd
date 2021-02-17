@@ -21,16 +21,12 @@ The \code{S4} object with class predictions added to the metadata.
 Predict Classes for New Data Based on a Train Classifier Model
 }
 \examples{
-data(samplePCOSPmodel)
+data(sampleTrainedPCOSPmodel)
 data(samplePCSIsurvExp)
-
-# Train Model
-trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5,
-  minAccuracy=0.6)
 
 # Make predictions
 PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
-  model=trainedPCOSPmodel)
+  model=sampleTrainedPCOSPmodel)
 head(colData(PCOSPpredSurvExp))
 
 }

@@ -35,7 +35,7 @@ other parallelization configuration please pass BPPARAM to bplapply.
 }
 \examples{
 data(sampleRLSmodel)
-trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=10)
+trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=5)
 
 }
 \seealso{

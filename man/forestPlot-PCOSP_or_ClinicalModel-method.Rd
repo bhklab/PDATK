@@ -56,18 +56,15 @@ A \code{ggplot2} object.
 Render a forest plot from the \code{validationStats} slot of a \code{PCOSP} model object.
 }
 \examples{
+data(sampleTrainedPCOSPmodel)
 data(sampleCohortList)
-data(samplePCOSPmodel)
-
-# Train the models
-trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 
 # Make predctions
 PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-  model=trainedPCOSPmodel)
+  model=sampleTrainedPCOSPmodel)
 
 # Validate the models
-validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
   valData=PCOSPpredCohortList)
 
 # Plot

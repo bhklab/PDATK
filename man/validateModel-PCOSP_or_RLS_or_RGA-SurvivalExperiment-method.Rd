@@ -19,19 +19,15 @@ slot and the validation data in the \code{validationData} slot.
 Validate a PCOSP model with a single SurvivalExperiment object.
 }
 \examples{
-data(samplePCOSPmodel)
+data(sampleTrainedPCOSPmodel)
 data(samplePCSIsurvExp)
-
-# Train Model
-trainedPCOSPmodel <- trainModel(samplePCOSPmodel, numModels=10,
-  minAccuracy=0.6)
 
 # Make predictions
 PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
-  model=trainedPCOSPmodel)
+  model=sampleTrainedPCOSPmodel)
 
 # Validate model
-validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
+validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
   valData=PCOSPpredSurvExp)
 
 
