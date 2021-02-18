@@ -24,7 +24,7 @@ Run Gene Set Enrichment Analysis
 \donttest{
   if (interactive()) {
     data(samplePCOSPmodel)
-    geneSet <- msigdbr::msigdbr()
+    geneSet <- msigdbr::msigdbr(subcategory='CP:KEGG')
     GSEAresults <- runGSEA(samplePCOSPmodel, geneSet)
   }
 }
