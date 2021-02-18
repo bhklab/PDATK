@@ -50,18 +50,20 @@ setGeneric('plotROC', function(object, ...)
 setMethod('plotROC', signature(object='PCOSP'),
     function(object, alpha=0.05, ..., xlabel, ylabel, title)
 {
+    funContext <- .context(1)
+
     # -- check for the correct columns
     ##TODO:: use mcols to specify if validation data has predictions
     valData <- validationData(object)
     if (length(valData) < 1)
-        stop(.errorMsg(.context(), 'There is no validation data in this',
+        stop(.errorMsg(funContext, 'There is no validation data in this',
             'PCOSP object, please ensure you run validateModel before trying',
             ' to plot ROC curves!'))
 
     survivalDfList <- lapply(valData, colData)
     .hasPCOSPcol <- function(colData) 'PCOSP_prob_good' %in% colnames(colData)
     if (!all(unlist(lapply(survivalDfList, .hasPCOSPcol)))) {
-        stop(.errorMsg(.context(), 'One or more of the SurvivalExperiment ',
+        stop(.errorMsg(funContext, 'One or more of the SurvivalExperiment ',
             'objects in the validationData slot of the PCOSP object are missing ',
             'the PCOSP_prob_good column. Please rerun predictClasses on your ',
             'validation data, then rerun validateModel with the updated ',

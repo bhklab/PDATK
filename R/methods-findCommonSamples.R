@@ -36,8 +36,9 @@ setGeneric('findCommonSamples',
 setMethod('findCommonSamples', signature(object='CohortList'),
     function(object)
 {
+    funContext <- .context(1)
     if (is.null(colnames(object[[1]])))
-        stop(.errorMsg(.context(), 'There are no colnames for the first item ',
+        stop(.errorMsg(funContext, 'There are no colnames for the first item ',
             'in the object list-like. This method required column names!'))
 
     Reduce(intersect, lapply(object, colnames))

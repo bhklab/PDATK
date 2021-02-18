@@ -24,6 +24,8 @@
 setMethod('merge', signature('SurvivalExperiment', 'SurvivalExperiment'),
     function(x, y, cohortNames)
 {
+    funContext <- .context(1)
+
     cohortL <- CohortList(list(x, y))
     names(cohortL) <- cohortNames
 
@@ -34,7 +36,7 @@ setMethod('merge', signature('SurvivalExperiment', 'SurvivalExperiment'),
     # subset to common genes
     if (!all(actualGenes %in% commonGenes)) {
         cohortL <- subset(cohortL, subset=commonGenes)
-        warning(.warnMsg(.context(), 'The training cohorts did not have only ',
+        warning(.warnMsg(funContext, 'The training cohorts did not have only ',
             'common genes. Subsetting to common genes...'))
     }
 
@@ -45,7 +47,7 @@ setMethod('merge', signature('SurvivalExperiment', 'SurvivalExperiment'),
     # subset to common samples
     if (!all(actualSamples %in% commonSamples)) {
         cohortL <- subset(cohortL, select=commonSamples)
-        warning(.warnMsg(.context(), 'The training cohorts did not have only ',
+        warning(.warnMsg(funContext, 'The training cohorts did not have only ',
                          'common samples. Subsetting to common samples...'))
     }
 

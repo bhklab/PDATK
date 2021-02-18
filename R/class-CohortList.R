@@ -34,6 +34,7 @@
 #' @export
 CohortList <- function(..., mDataTypes) {
 
+    funContext <- .context(1)
     cohortList <- .CohortList(...)
 
     # Use existing mDataTypes if they exist
@@ -53,9 +54,8 @@ CohortList <- function(..., mDataTypes) {
     })
 
     # warning if we couldn't get the mDataTypes
-    ## FIXME:: .context() doesn't find the correct execution context
     if (missing(mDataTypes)) {
-        warning(.warnMsg(.context(), 'The mDataTypes for each cohort have ',
+        warning(.warnMsg(funContext, 'The mDataTypes for each cohort have ',
             'not been set. Please set them manually using ',
             'mcols(cohortList)$mDataType <- c("rna_seq", "rna_micro", etc.)'))
     } else {
@@ -108,10 +108,11 @@ setValidity('CohortList', function(object) {
     isSurvivalExperiment <- vapply(object, FUN=is,
         class2='SurvivalExperiment', FUN.VALUE=logical(1))
 
+    funContext <- .context(1)
     if (all(isSurvivalExperiment)) {
         TRUE
     } else {
-        .errorMsg(.context(), 'The items at indexes ',
+        .errorMsg(funContext, 'The items at indexes ',
             paste0(which(!isSurvivalExperiment), collapse=', '),
             ' are not `SurvivalExperiment`s. A `CohortList` can only ',
             'contain objects of that class!')

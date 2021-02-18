@@ -432,6 +432,7 @@ setMethod('validateModel', signature(model='ClinicalModel',
 setMethod('validateModel', signature(model='ClinicalModel',
     valData='CohortList'), function(model, valData, ...)
 {
+    funContext <- .context(1)
     # determine if the validation data already has predictions and if
     #   if the predictions were made using the same model
     if ('hasPredictions' %in% colnames(mcols(valData))) {
@@ -439,16 +440,16 @@ setMethod('validateModel', signature(model='ClinicalModel',
             if (all.equal(model, metadata(valData)$predictionModel)) {
                 predCohortList <- valData
             } else {
-                warning(.warnMsg(.context(), 'The validationData argument ',
+                warning(.warnMsg(funContext, 'The validationData argument ',
                     'has predictions, but the prediction model does not match',
                     'the model argument. Recalculating classes...'))
                 predCohortList <- predictClasses(valData, model=model)
             }
         } else {
-          warning(.warnMsg(.context(), 'One or more of the
-                SurvivalExperiments in valData does not have model
-                model predictions, recalculating...'))
-            predCohortList <- predictClasses(valData, model=model)
+            warning(.warnMsg(funContext, 'One or more of the
+                  SurvivalExperiments in valData does not have model
+                  model predictions, recalculating...'))
+              predCohortList <- predictClasses(valData, model=model)
         }
     } else {
         predCohortList <- predictClasses(valData, model=model)

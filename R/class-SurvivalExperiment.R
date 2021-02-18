@@ -50,7 +50,7 @@
 #' @importFrom CoreGx .errorMsg .warnMsg
 #' @export
 SurvivalExperiment <- function(..., days_survived='days_survived',
-    is_deceased='is_deceased', sumExp)
+                               is_deceased='is_deceased', sumExp)
 {
     funContext <- .context(1)
 
@@ -59,7 +59,7 @@ SurvivalExperiment <- function(..., days_survived='days_survived',
 
     if (!is(SE, 'SummarizedExperiment'))
         stop(CoreGx::.errorMsg(funContext,
-            'sumExp is not a `SummarizedExperiment`!'))
+                               'sumExp is not a `SummarizedExperiment`!'))
 
     renameVector <- c('days_survived', 'is_deceased')
     names(renameVector) <- c(days_survived, is_deceased)
@@ -68,7 +68,7 @@ SurvivalExperiment <- function(..., days_survived='days_survived',
     if (nrow(colData(SE)) == 0) {
         if (!all(renameVector %in% colnames(colData(SE)))) {
             colData(SE) <- cbind(colData(SE),
-                DataFrame(days_survived=integer(), is_deceased=integer()))
+                                 DataFrame(days_survived=integer(), is_deceased=integer()))
         }
     }
 
@@ -77,45 +77,45 @@ SurvivalExperiment <- function(..., days_survived='days_survived',
         colData(SE) <- rename(colData(SE), renameVector)
     } else {
         stop(.errorMsg(funContext, 'The columns ',
-            names(renameVector)[!hasColumnsToRename], ' are not present in ',
-            'the object colData, please ensure you specify existing column',
-            'names to the days_surived and is_deceased parameters!'))
+                       names(renameVector)[!hasColumnsToRename], ' are not present in ',
+                       'the object colData, please ensure you specify existing column',
+                       'names to the days_surived and is_deceased parameters!'))
     }
 
     if (!is.integer(colData(SE)$is_deceased)) {
         is_deceased_col <- colData(SE)$is_deceased
         switch(class(is_deceased_col),
-            'logical'={ colData(SE)$is_deceased <- as.integer(is_deceased_col) },
-            'character'={
-                if (!('deceased' %in% is_deceased_col))
-                    stop(.errorMsg(funContext, 'The string deceased is not in ',
-                        'the is_deceased column. Please convert this column to ',
-                        'integer manually, where 1 is deceased and 0 is alive.'))
-                colData(SE)$is_deceased <-
-                    as.integer(is_deceased_col == 'deceased')
-            },
-            stop(.errorMsg(funContext, 'The is_deceased column is not logical ',
-              'or integer, please convert this column such that deceased is 1 ',
-              'or TRUE and alive is 0 or FALSE before retrying the conversion!'))
+               'logical'={ colData(SE)$is_deceased <- as.integer(is_deceased_col) },
+               'character'={
+                   if (!('deceased' %in% is_deceased_col))
+                       stop(.errorMsg(funContext, 'The string deceased is not in ',
+                                      'the is_deceased column. Please convert this column to ',
+                                      'integer manually, where 1 is deceased and 0 is alive.'))
+                   colData(SE)$is_deceased <-
+                       as.integer(is_deceased_col == 'deceased')
+               },
+               stop(.errorMsg(funContext, 'The is_deceased column is not logical ',
+                              'or integer, please convert this column such that deceased is 1 ',
+                              'or TRUE and alive is 0 or FALSE before retrying the conversion!'))
         )
     }
     if (!is.integer(colData(SE)$days_survived)) {
         days_survived <- colData(SE)$days_survived
         switch(class(days_survived),
-            'numeric'={ colData(SE)$days_survived <- as.integer(days_survived) },
-            'character'={ tryCatch({
-                colData(SE)$days_survived <- as.integer(days_survived)
-                },
-                warning=function(w) stop(.errorMsg(funContext, 'Tried to ',
-                    'coerce days_survived from character to integer, but ',
-                    'failed.')),
-                error=function(e) stop(.errorMsg(funContext, 'Tried to ',
-                    'coerce days_survived from character to integer, but ',
-                    'failed.')))
-            },
-            stop(.errorMsg(funContext, 'The days_survived column is not logical',
-              ' or integer, please convert this column before retrying the ',
-              'conversion'))
+               'numeric'={ colData(SE)$days_survived <- as.integer(days_survived) },
+               'character'={ tryCatch({
+                   colData(SE)$days_survived <- as.integer(days_survived)
+               },
+               warning=function(w) stop(.errorMsg(funContext, 'Tried to ',
+                                                  'coerce days_survived from character to integer, but ',
+                                                  'failed.')),
+               error=function(e) stop(.errorMsg(funContext, 'Tried to ',
+                                                'coerce days_survived from character to integer, but ',
+                                                'failed.')))
+               },
+               stop(.errorMsg(funContext, 'The days_survived column is not logical',
+                              ' or integer, please convert this column before retrying the ',
+                              'conversion'))
         )
     }
 
@@ -142,7 +142,7 @@ setAs('RangedSummarizedExperiment', 'SurvivalExperiment',
 #' @importFrom CoreGx .errorMsg
 #' @export
 setValidity('SurvivalExperiment', function(object) {
-
+    funContext <- .context(1)
     validateSummarizedExperiment <-
         getValidity(getClassDef('SummarizedExperiment'))
     isValidSummarizedExperiment <- validateSummarizedExperiment(object)
@@ -150,7 +150,7 @@ setValidity('SurvivalExperiment', function(object) {
     survivalColNames <- c("days_survived", "is_deceased")
     hasSurvivalCols <- survivalColNames %in% colnames(colData(object))
     if (!all(hasSurvivalCols))
-        CoreGx::.errorMsg(.context(), 'Mandatory columns ',
+        .errorMsg(funContext, 'Mandatory columns ',
             paste0(surivalColNames[!hasSurvivalCols], collapse=', '),
             ' are missing from colData. Please add them or double check
             the column names are spelled correctly.')

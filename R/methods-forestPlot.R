@@ -204,7 +204,8 @@ setMethod('forestPlot', signature(object='ModelComparison'),
     function(object, stat, groupBy='cohort', colourBy='model',
         vline, ..., xlab, ylab, transform, colours, title)
 {
-    if (!is.character(stat)) stop(.errorMsg(.context(), 'The stat parameter',
+    funContext <- .context(1)
+    if (!is.character(stat)) stop(.errorMsg(funContext, 'The stat parameter',
         'must be a character vector present in the statistics column of the ',
         'PCOSP models validationStats slot!'))
 
@@ -220,7 +221,7 @@ setMethod('forestPlot', signature(object='ModelComparison'),
         vline <- switch(stat,
             'D_index' = 1,
             'concordance_index' = 0.5,
-            stop(.errorMsg(.context(), 'Unknown statistic specified, please ',
+            stop(.errorMsg(funContext, 'Unknown statistic specified, please ',
                 'manually set the vline location with the vline argument!')))
     }
 
@@ -228,7 +229,7 @@ setMethod('forestPlot', signature(object='ModelComparison'),
         xlab <- switch(stat,
             'D_index' = 'D index',
             'concordance_index' = 'Concordance Index',
-            stop(.errorMsg(.context(), 'Unknown statistic specified, please ',
+            stop(.errorMsg(funContext, 'Unknown statistic specified, please ',
                 'manually set the x label with the xlab argument!')))
     }
 

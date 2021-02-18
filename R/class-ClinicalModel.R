@@ -64,7 +64,7 @@ setValidity('ClinicalModel', function(object) {
         split='[\\s]*[\\+\\-\\~\\=\\*][\\s]*', perl=TRUE))
     hasFormulaCols <- formulaCols %in% colnames(colData(object))
     if (!all(hasFormulaCols)) {
-        warning(.warnMsg(.context(), 'The columns ', formulaCols[!hasFormulaCols],
+        warning(.warnMsg(funContext, 'The columns ', formulaCols[!hasFormulaCols],
             ' are missing from the colData slot of the training data',
             'Please only specify valid column names in colData to the formula!'))
         FALSE

@@ -45,13 +45,14 @@ setGeneric('runGSEA', function(object, geneSet, ...)
 setMethod('runGSEA', signature(object='PCOSP', geneSet='data.frame'),
     function(object, geneSet, numModels, ..., adjMethod='fdr', allResults=FALSE)
 {
+    funContext <- .context(1)
     if (missing(numModels))
         numModels <- floor(length(models(object))*0.1)
     # get the features of interest
     topFeatures <- getTopFeatures(object, numModels)
 
     if (!any(rownames(object) %in% geneSet[[1]]))
-        stop(.errorMsg(.context(), "No gene names in `geneSet` are in ",
+        stop(.errorMsg(funContext, "No gene names in `geneSet` are in ",
             "the rownames of `object`"))
 
     # provide a background of uninteresting features
