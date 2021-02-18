@@ -27,19 +27,6 @@ slots occupied.
 Evaluate the Performance of a List of Trained KTSP Models from a PCOSP
 Model
 }
-\examples{
-data(sampleTrainedPCOSPmodel)
-data(sampleCohortList)
-
-# Make predictions
-PCOSPpredCohortList <- predictClasses(sampleCohortList,
-  model=sampleTrainedPCOSPmodel)
-
-# Validate model
-validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-  valData=PCOSPpredCohortList)
-
-}
 \seealso{
 \code{\link[BiocParallel:bplapply]{BiocParallel::bplapply}}, \code{\link[switchBox:SWAP.KTSP.Classify]{switchBox::SWAP.KTSP.Classify}}
 }

@@ -39,17 +39,17 @@ setGeneric('validateModel', function(model, valData, ...)
 #' @return The `model` object with the validationStats and validationData
 #'   slots occupied.
 #'
-#' @examples
-#' data(sampleTrainedPCOSPmodel)
-#' data(sampleCohortList)
-#'
-#' # Make predictions
-#' PCOSPpredCohortList <- predictClasses(sampleCohortList,
-#'   model=sampleTrainedPCOSPmodel)
-#'
-#' # Validate model
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredCohortList)
+# @examples
+# data(sampleTrainedPCOSPmodel)
+# data(sampleCohortList)
+#
+# # Make predictions
+# PCOSPpredCohortList <- predictClasses(sampleCohortList,
+#   model=sampleTrainedPCOSPmodel)
+#
+# # Validate model
+# validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
+#   valData=PCOSPpredCohortList)
 #'
 #' @md
 #' @import survcomp
@@ -158,17 +158,17 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #' @return The `PCOSPmodel` with the validation statistics in the `validationStats`
 #'   slot and the validation data in the `validationData` slot.
 #'
-#' @examples
-#' data(sampleTrainedPCOSPmodel)
-#' data(samplePCSIsurvExp)
-#'
-#' # Make predictions
-#' PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
-#'   model=sampleTrainedPCOSPmodel)
-#'
-#' # Validate model
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredSurvExp)
+# @examples
+# data(sampleTrainedPCOSPmodel)
+# data(samplePCSIsurvExp)
+#
+# # Make predictions
+# PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
+#   model=sampleTrainedPCOSPmodel)
+#
+# # Validate model
+# validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
+#   valData=PCOSPpredSurvExp)
 #'
 #' @md
 #' @include classUnions.R
@@ -263,6 +263,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 
 #' Calculate AUC or return NAs if it fails
 #'
+#' @noRd
 #' @keywords internal
 .safe_AUC <- function(prognosis, risk, n) {
     as.numeric(
@@ -279,6 +280,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 
 #' Calculate concordance.index or return NAs if it fails
 #'
+#' @noRd
 #' @keywords internal
 .safe_D.index <- function(risk, days_survived, is_deceased, n) {
     as.numeric(
@@ -295,6 +297,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 
 #' Calculate D.index or return NAs if it fails
 #'
+#' @noRd
 #' @keywords internal
 .safe_concordance.index <- function(risk, days_survived, is_deceased, n) {
     as.numeric(

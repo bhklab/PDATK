@@ -20,13 +20,3 @@ A \code{data.frame} containing the significantly enriched gene sets.
 \description{
 Run Gene Set Enrichment Analysis
 }
-\examples{
-\donttest{
-  if (interactive()) {
-    data(samplePCOSPmodel)
-    geneSet <- msigdbr::msigdbr(subcategory='CP:KEGG')
-    GSEAresults <- runGSEA(samplePCOSPmodel, geneSet)
-  }
-}
-
-}
