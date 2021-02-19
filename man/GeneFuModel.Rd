@@ -22,8 +22,9 @@ to be considered in the 'good' survival prognosis group.}
 
 \item{...}{Fall through paramater to \code{SurvivalModel} constructor.}
 
-\item{randomSeed}{A random seed to use for any sampling done in when
-training or evaluating your model.}
+\item{randomSeed}{An \code{integer} randomSeed that was used to train the model.
+Users should specify this when initializing a model to ensure
+reproducibilty.}
 }
 \value{
 A \code{GeneFuModel} object, with model parameters in the

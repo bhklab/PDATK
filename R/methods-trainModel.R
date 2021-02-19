@@ -50,12 +50,6 @@ setGeneric('trainModel', function(object, ...)
 setMethod('trainModel', signature('PCOSP'),
     function(object, numModels=10, minAccuracy=0.6, ...)
 {
-    # Configure local parameters
-    oldSeed <- .Random.seed
-    on.exit( .Random.seed <- oldSeed )
-
-    # Set local seed for random sampling
-    set.seed(metadata(object)$modelParams$randomSeed)
 
     assays <- assays(object)
 
@@ -191,12 +185,6 @@ setMethod('trainModel', signature('PCOSP'),
 setMethod('trainModel', signature('RLSModel'),
     function(object, numModels=10, minAccuracy=0, ...)
 {
-    # Configure local parameters
-    oldSeed <- .Random.seed
-    on.exit( .Random.seed <- oldSeed )
-
-    # Set local seed for random sampling
-    set.seed(metadata(object)$modelParams$randomSeed)
 
     assays <- assays(object)
 
@@ -272,12 +260,6 @@ setMethod('trainModel', signature('RLSModel'),
 setMethod('trainModel', signature('RGAModel'),
     function(object, numModels=10, minAccuracy=0, ...)
 {
-    # Configure local parameters
-    oldSeed <- .Random.seed
-    on.exit( .Random.seed <- oldSeed )
-
-    # Set local seed for random sampling
-    set.seed(metadata(object)$modelParams$randomSeed)
 
     assays <- assays(object)
 
@@ -329,12 +311,6 @@ setMethod('trainModel', signature('RGAModel'),
 setMethod('trainModel', signature(object='ClinicalModel'),
     function(object, ..., family=binomial(link='logit'), na.action=na.exclude)
 {
-    # Configure local parameters
-    oldSeed <- .Random.seed
-    on.exit( .Random.seed <- oldSeed )
-
-    # Set local seed for random sampling
-    set.seed(metadata(object)$modelParams$randomSeed)
 
     survivalData <- colData(object)
     survivalData$prognosis <- factor(survivalData$prognosis,

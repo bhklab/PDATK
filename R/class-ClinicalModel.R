@@ -18,8 +18,9 @@
 #' @param minDaysSurvived An `integer` specifying the minimum number of days
 #'   required to be 'good' prognosis. Default is 365.
 #' @param ... Force all subsequent parameters to be named. Not used.
-#' @param randomSeed An `integer` randomSeed to use when sampling with this
-#'   model object. If missing defaults to 1234.
+#' @param randomSeed An `integer` randomSeed that was used to train the model.
+#'   Users should specify this when initializing a model to ensure
+#'   reproducibilty.
 #'
 #' @return A `ClinicalModel` object.
 #'
@@ -30,11 +31,17 @@
 #'
 #' @md
 #' @importFrom plyr is.formula
+#' @importFrom CoreGx .errorMsg .warnMsg
 #' @export
 ClinicalModel <- function(trainData, formula, minDaysSurvived=365, ...,
     randomSeed)
 {
     funContext <- .context(1)
+
+    if (missing(randomSeed)) stop(.errorMsg(funContext, 'No random seed was ',
+        'specied for your model. Please include the value used for set.seed ',
+        'when training this model! This ensures other can reproduce your ',
+        'results.'))
 
     survModel <- SurvivalModel(trainData, minDaysSurived=minDaysSurvived,
             randomSeed=randomSeed)

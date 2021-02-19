@@ -17,8 +17,9 @@ cut-off will be considered low survival. Default is 365 days.}
 \item{...}{Force subsequent parameters to be named. This parameter is not
 used.}
 
-\item{randomSeed}{An \code{integer} random seed to use for training the model. If
-missing, this defaults to the seed 1234.}
+\item{randomSeed}{An \code{integer} randomSeed that was used to train the model.
+Users should specify this when initializing a model to ensure
+reproducibilty.}
 }
 \value{
 A \code{PCOSP} object with training data in the assays slot, concatenating

@@ -19,8 +19,9 @@ required to be 'good' prognosis. Default is 365.}
 
 \item{...}{Force all subsequent parameters to be named. Not used.}
 
-\item{randomSeed}{An \code{integer} randomSeed to use when sampling with this
-model object. If missing defaults to 1234.}
+\item{randomSeed}{An \code{integer} randomSeed that was used to train the model.
+Users should specify this when initializing a model to ensure
+reproducibilty.}
 }
 \value{
 A \code{ClinicalModel} object.

@@ -14,8 +14,9 @@
 #' @param minDaysSurvived An `integer` specifying the minimum days survived
 #'   to be considered in the 'good' survival prognosis group.
 #' @param ... Fall through paramater to `SurvivalModel` constructor.
-#' @param randomSeed A random seed to use for any sampling done in when
-#'   training or evaluating your model.
+#' @param randomSeed An `integer` randomSeed that was used to train the model.
+#'   Users should specify this when initializing a model to ensure
+#'   reproducibilty.
 #'
 #' @return A `GeneFuModel` object, with model parameters in the
 #'

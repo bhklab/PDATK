@@ -15,8 +15,9 @@ classified as a 'good' prognosis.}
 
 \item{...}{Force subsequent paramters to be named. Not used.}
 
-\item{randomSeed}{An \code{integer} random seed to use when sampling for the
-this \code{SurvialModel} object. If excluded defaults to 1234.}
+\item{randomSeed}{An \code{integer} randomSeed that was used to train the model.
+Users should specify this when initializing a model to ensure
+reproducibilty.}
 }
 \value{
 A \code{SurvivalModel} object.
@@ -26,7 +27,8 @@ Constructor for a SurvivalModel Object.
 }
 \examples{
 data(sampleICGCmicro)
-survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=385,
+set.seed(1987)
+survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=365,
   randomSeed=1987)
 
 }

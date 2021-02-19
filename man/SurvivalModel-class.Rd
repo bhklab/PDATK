@@ -26,6 +26,7 @@ calculated by the \code{validateModel} method.}
 
 \examples{
 data(sampleICGCmicro)
+set.seed(1987)
 survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=385,
   randomSeed=1987)
 

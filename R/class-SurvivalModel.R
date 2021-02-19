@@ -14,6 +14,7 @@
 #'
 #' @examples
 #' data(sampleICGCmicro)
+#' set.seed(1987)
 #' survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=385,
 #'   randomSeed=1987)
 #'
@@ -33,24 +34,32 @@
 #' @param minDaysSurvived An `integer` minimum number of days survived to be
 #'   classified as a 'good' prognosis.
 #' @param ... Force subsequent paramters to be named. Not used.
-#' @param randomSeed An `integer` random seed to use when sampling for the
-#'   this `SurvialModel` object. If excluded defaults to 1234.
+#' @param randomSeed An `integer` randomSeed that was used to train the model.
+#'   Users should specify this when initializing a model to ensure
+#'   reproducibilty.
 #'
 #' @return A `SurvivalModel` object.
 #'
 #' @examples
 #' data(sampleICGCmicro)
-#' survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=385,
+#' set.seed(1987)
+#' survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=365,
 #'   randomSeed=1987)
 #'
 #' @md
 #' @import BiocGenerics
+#' @importFrom CoreGx .errorMsg .warnMsg
 #' @import S4Vectors
 #' @export
 SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
     randomSeed)
 {
     funContext <- .context(1)
+
+    if (missing(randomSeed)) stop(.errorMsg(funContext, 'No random seed was ',
+        'specied for your model. Please include the value used for set.seed ',
+        'when training this model! This ensures other can reproduce your ',
+        'results.'))
 
     if (!is(trainCohorts, 'SurvivalExperiment')) {
         if (is(trainCohorts, 'CohortList')) {
@@ -76,8 +85,8 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
     }
 
     metadata(trainCohorts)$modelParams <-
-        list(randomSeed=if (!missing(randomSeed)) randomSeed else 1234,
-            RNGkind=RNGkind(), minDaysSurvived=minDaysSurvived)
+        list(randomSeed=randomSeed, RNGkind=RNGkind(),
+            minDaysSurvived=minDaysSurvived)
 
     SurvModel <- .SurvivalModel(trainCohorts, models=SimpleList(),
         validationData=CohortList(mDataTypes=""), validationStats=data.frame())

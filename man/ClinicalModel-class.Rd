@@ -12,6 +12,7 @@ will inherit from this class for their accessor methods and constructor.
 }
 \examples{
 data(sampleICGCmicro)
+set.seed(1987)
 survModel <- SurvivalModel(sampleICGCmicro, minDaysSurvived=385,
   randomSeed=1987)
 

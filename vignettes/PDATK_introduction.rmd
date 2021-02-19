@@ -167,10 +167,11 @@ subset to include only common samples and genes before being converted to
 a `SurvivalModel`. The molecular data for the models are stored in the `assays`
 slot of the `SurvivalModel`. Additionally, model parmeters must be specified
 depending on the model subclass. For pure `SurvivalModel` objects, the only
-model paramter is `randomSeed`, which is used to set a seed for reproducible
-sampling in model training, prediction and validation methods.
+model parameter is `randomSeed`, which should be the value used in `set.seed`
+when a user trained a model.
 
 ```{r SurvivalModel_constructor}
+set.seed(1987)
 survModel <- SurvivalModel(survExperiment, randomSeed=1987)
 ```
 

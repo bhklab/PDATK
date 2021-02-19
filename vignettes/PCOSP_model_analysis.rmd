@@ -107,6 +107,7 @@ models predicting good survival out of the total number of models in the
 ensemble.
 
 ```{r build_PCOSP_model}
+set.seed(1987)
 PCOSPmodel <- PCOSP(ICGCtrainCohorts, minDaysSurvived=365, randomSeed=1987)
 
 # view the model parameters; these make your model run reproducible
