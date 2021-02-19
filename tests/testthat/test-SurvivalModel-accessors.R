@@ -2,7 +2,8 @@ library(testthat)
 library(PDATK)
 
 data(sampleICGCmicro)
-survModel <- SurvivalModel(trainCohorts=sampleICGCmicro)
+set.seed(1987)
+survModel <- SurvivalModel(trainCohorts=sampleICGCmicro, randomSeed=1987)
 
 test_that('SurvivalModel models accessors work correctly', {
     expect_s4_class(models(survModel), 'SimpleList')

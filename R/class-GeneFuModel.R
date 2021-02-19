@@ -30,6 +30,13 @@ GeneFuModel <- function(trainCohorts=SurvivalExperiment(),
     minDaysSurvived=365, ..., randomSeed)
 {
 
+    funContext <- .context(1)
+
+    if (missing(randomSeed)) stop(.errorMsg(funContext, 'No random seed was ',
+        'specied for your model. Please include the value used for set.seed ',
+        'when training this model! This ensures other can reproduce your ',
+        'results.'))
+
     survModel <- SurvivalModel(trainCohorts, minDaysSurvived=minDaysSurvived,
         ..., randomSeed=randomSeed)
 

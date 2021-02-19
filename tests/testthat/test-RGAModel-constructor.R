@@ -8,7 +8,7 @@ test_that('RGAModel constructor works with SurvivalExperiment
     trainCohorts',
 {
     expect_s4_class({
-        RGAmodel <- RGAModel(sampleICGCmicro); RGAmodel
+        RGAmodel <- RGAModel(sampleICGCmicro, randomSeed=1987); RGAmodel
     },'RGAModel')
     expect_true(validObject(RGAmodel))
 })
@@ -19,7 +19,7 @@ test_that('RGAModel constuctor works with CohortList
     suppressMessages({
         expect_s4_class({
             RGAmodel <- RGAModel(CohortList(list(cohort1=sampleICGCmicro,
-                cohort2=sampleICGCmicro))); RGAmodel
+                cohort2=sampleICGCmicro)), randomSeed=1987); RGAmodel
         }, 'RGAModel')
         expect_true(validObject(RGAmodel))
     })

@@ -4,7 +4,8 @@ library(PDATK)
 data(existingClassifierData)
 data(sampleCohortList)
 
-chenGeneFuModel <- GeneFuModel()
+set.seed(1987)
+chenGeneFuModel <- GeneFuModel(randomSeed=1987)
 models(chenGeneFuModel) <- SimpleList(list(chen=chen))
 chenGeneFuPredCohortList <- predictClasses(sampleCohortList[1],
     model=chenGeneFuModel)

@@ -8,7 +8,7 @@ test_that('RLSModel constructor works with SurvivalExperiment
     trainCohorts',
 {
     expect_s4_class({
-        RLSmodel <- RLSModel(sampleICGCmicro); RLSmodel
+        RLSmodel <- RLSModel(sampleICGCmicro, randomSeed=1987); RLSmodel
     },'RLSModel')
     expect_true(validObject(RLSmodel))
 })
@@ -19,7 +19,7 @@ test_that('RLSModel constuctor works with CohortList
     suppressMessages({
         expect_s4_class({
             RLSmodel <- RLSModel(CohortList(list(cohort1=sampleICGCmicro,
-                cohort2=sampleICGCmicro))); RLSmodel
+                cohort2=sampleICGCmicro)), randomSeed=1987); RLSmodel
         }, 'RLSModel')
         expect_true(validObject(RLSmodel))
     })
