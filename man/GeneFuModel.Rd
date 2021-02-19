@@ -33,6 +33,7 @@ A \code{GeneFuModel} object, with model parameters in the
 \code{GeneFuModel} Constructor Method
 }
 \examples{
+set.seed(1987)
 geneFuModel <- GeneFuModel(randomSeed=1987)
 
 }

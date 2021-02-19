@@ -26,8 +26,9 @@
 #'
 #' @examples
 #' data(sampleICGCmicro)
+#' set.seed(1987)
 #' clinicalModel <- ClinicalModel(sampleICGCmicro,
-#'   formula='prognosis ~ sex + age + T + N + M + grade')
+#'   formula='prognosis ~ sex + age + T + N + M + grade', randomSeed=1987)
 #'
 #' @md
 #' @importFrom plyr is.formula

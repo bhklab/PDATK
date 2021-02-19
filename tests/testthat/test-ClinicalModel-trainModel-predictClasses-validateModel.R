@@ -6,7 +6,7 @@ data(sampleCohortList)
 
 suppressWarnings({
     clinicalModel <- ClinicalModel(sampleICGCmicro,
-        formula='prognosis ~ sex + age + T + N + M + grade')
+        formula='prognosis ~ sex + age + T + N + M + grade', randomSeed=1987)
     trainedClinicalModel <- trainModel(clinicalModel)
     clinicalPredCohortList <- predictClasses(sampleCohortList[seq_len(2)],
         model=trainedClinicalModel)

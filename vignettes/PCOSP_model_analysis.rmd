@@ -417,7 +417,8 @@ knitr::kable(head(colData(ICGCtrainCohorts)))
 
 ```{r ClinicalModel_constructor}
 clinicalModel <- ClinicalModel(ICGCtrainCohorts,
-    formula='prognosis ~ sex + age + T + N + M + grade')
+    formula='prognosis ~ sex + age + T + N + M + grade',
+    randomSeed=1987)
 ```
 
 

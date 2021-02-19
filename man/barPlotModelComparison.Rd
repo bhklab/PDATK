@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods-barPlotModelComparison.R
 \name{barPlotModelComparison}
 \alias{barPlotModelComparison}
-\title{Make A Bar Plot Comparing Perforamnce Between Two \code{S4} Obects Representing
+\title{Make A Bar Plot Comparing Performance Between Two \code{S4} Objects Representing
 Mathematical Models.}
 \usage{
 barPlotModelComparison(model1, model2, ...)
@@ -11,7 +11,7 @@ barPlotModelComparison(model1, model2, ...)
 \item{model1}{An\code{S4} object containing results of a mathematical model}
 
 \item{model2}{An \code{S4} object containing results of a different mathematical
-model, but with the same or overalapping samples.}
+model, but with the same or overlapping samples.}
 
 \item{...}{Allow new parameters to be defined for this generic.}
 }
@@ -19,7 +19,7 @@ model, but with the same or overalapping samples.}
 A bar plot comparing some aspect of model1 and model2
 }
 \description{
-Make A Bar Plot Comparing Perforamnce Between Two \code{S4} Obects Representing
+Make A Bar Plot Comparing Performance Between Two \code{S4} Objects Representing
 Mathematical Models.
 }
 \examples{
@@ -28,8 +28,10 @@ data(sampleTrainedPCOSPmodel)
 data(sampleICGCmicro)
 
 # Setup the models
+set.seed(1987)
 clinicalModel <- ClinicalModel(sampleICGCmicro,
-  formula='prognosis ~ sex + age + T + N + M + grade')
+  formula='prognosis ~ sex + age + T + N + M + grade',
+  randomSeed=1987)
 
 # Train the models
 trainedClinicalModel <- trainModel(clinicalModel)

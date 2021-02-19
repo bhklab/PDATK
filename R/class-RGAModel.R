@@ -9,6 +9,7 @@
 #'
 #' @examples
 #' data(sampleICGCmicro)
+#' set.seed(1987)
 #' RGAmodel <- RGAModel(sampleICGCmicro, minDaysSurvived=365, randomSeed=1987)
 #'
 #' @aliases RGAModel

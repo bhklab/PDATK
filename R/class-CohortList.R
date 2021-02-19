@@ -25,6 +25,7 @@
 #'
 #' @examples
 #' data(sampleICGCmicro)
+#' set.seed(1987)
 #' cohortList <- CohortList(list(survExp1=sampleICGCmicro,
 #'   survExp2=sampleICGCmicro), mDataTypes=c('rna_micro', 'rna_micro'))
 #'

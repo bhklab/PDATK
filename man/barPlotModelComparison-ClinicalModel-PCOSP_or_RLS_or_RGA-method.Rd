@@ -32,9 +32,11 @@ data(sampleCohortList)
 data(sampleICGCmicro)
 
 # Setup the models
+set.seed(1987)
 PCOSPmodel <- PCOSP(sampleICGCmicro, randomSeed=1987)
 clinicalModel <- ClinicalModel(sampleICGCmicro,
-  formula='prognosis ~ sex + age + T + N + M + grade')
+  formula='prognosis ~ sex + age + T + N + M + grade',
+  randomSeed=1987)
 
 # Train the models
 trainedClinicalModel <- trainModel(clinicalModel)

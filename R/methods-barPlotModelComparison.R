@@ -1,9 +1,9 @@
-#' Make A Bar Plot Comparing Perforamnce Between Two `S4` Obects Representing
+#' Make A Bar Plot Comparing Performance Between Two `S4` Objects Representing
 #'   Mathematical Models.
 #'
 #' @param model1 An`S4` object containing results of a mathematical model
 #' @param model2 An `S4` object containing results of a different mathematical
-#'   model, but with the same or overalapping samples.
+#'   model, but with the same or overlapping samples.
 #' @param ... Allow new parameters to be defined for this generic.
 #'
 #' @return A bar plot comparing some aspect of model1 and model2
@@ -14,8 +14,10 @@
 #' data(sampleICGCmicro)
 #'
 #' # Setup the models
+#' set.seed(1987)
 #' clinicalModel <- ClinicalModel(sampleICGCmicro,
-#'   formula='prognosis ~ sex + age + T + N + M + grade')
+#'   formula='prognosis ~ sex + age + T + N + M + grade',
+#'   randomSeed=1987)
 #'
 #' # Train the models
 #' trainedClinicalModel <- trainModel(clinicalModel)
@@ -60,9 +62,11 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #' data(sampleICGCmicro)
 #'
 #' # Setup the models
+#' set.seed(1987)
 #' PCOSPmodel <- PCOSP(sampleICGCmicro, randomSeed=1987)
 #' clinicalModel <- ClinicalModel(sampleICGCmicro,
-#'   formula='prognosis ~ sex + age + T + N + M + grade')
+#'   formula='prognosis ~ sex + age + T + N + M + grade',
+#'   randomSeed=1987)
 #'
 #' # Train the models
 #' trainedClinicalModel <- trainModel(clinicalModel)

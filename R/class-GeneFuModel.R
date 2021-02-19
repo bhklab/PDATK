@@ -21,6 +21,7 @@
 #' @return A `GeneFuModel` object, with model parameters in the
 #'
 #' @examples
+#' set.seed(1987)
 #' geneFuModel <- GeneFuModel(randomSeed=1987)
 #'
 #' @md

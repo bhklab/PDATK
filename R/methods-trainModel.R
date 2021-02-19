@@ -8,6 +8,7 @@
 #'
 #' @examples
 #' data(samplePCOSPmodel)
+#' set.seed()
 #' trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #'
 #' @md

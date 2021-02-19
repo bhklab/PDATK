@@ -27,7 +27,6 @@ setGeneric('plotROC', function(object, ...)
 #' data(sampleTrainedPCOSPmodel)
 #' data(sampleCohortList)
 #'
-#'
 #' # Make predictions
 #' PCOSPpredCohortList <- predictClasses(sampleCohortList[1:4],
 #'   model=sampleTrainedPCOSPmodel)

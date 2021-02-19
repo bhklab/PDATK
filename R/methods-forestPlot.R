@@ -8,8 +8,8 @@
 #' @examples
 #' data(sampleCohortList)
 #' data(sampleTrainedPCOSPmodel)
-#'#'
-#' # Make predctions
+#'
+#' # Make predction
 #' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
 #'   model=sampleTrainedPCOSPmodel)
 #'

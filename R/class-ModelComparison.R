@@ -22,6 +22,7 @@
 #' data(samplePCSIsurvExp)
 #'
 #' # Train the models
+#' set.seed(metadata(sampleClinicalModel)$modelParams$randomSeed)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class

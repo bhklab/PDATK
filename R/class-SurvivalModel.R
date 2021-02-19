@@ -313,6 +313,43 @@ setReplaceMethod('validationData', signature(object='SurvivalModel',
     return(object)
 })
 
+#' Generic for retrieving the randomSeed parameter from a `SurvivalModel` object.
+#'
+#' This should be used to set the seed before model training to ensure
+#' reproducible results.
+#'
+#' @param object An `S4` object to get the seed from.
+#'
+#' @return An `integer` seed to be used when training the a `SurivvalModel`.
+#'
+#' @examples
+#' data(sampleSurvivalModel)
+#' getModelSeed(sampleSurivalModel)
+#'
+#' @md
+#' @export
+setGeneric('getModelSeed', function(object) standardGeneric('getModelSeed'))
+#'
+#' Method for retrieving the random seed used for training a specific survival
+#' model object.
+#'
+#' This should be used to set the seed before model training to ensure
+#' reproducible results.
+#'
+#' @param object A `SurvivalModel` object to get the seed from.
+#'
+#' @return An `integer` seed to be used when training the a `SurivalModel`.
+#'
+#' @examples
+#' data(sampleSurvivalModel)
+#' getModelSeed(sampleSurivalModel)
+#'
+#' @md
+#' @importFrom S4Vectors metadata
+#' @export
+setMethod('getModelSeed', signature(object='SurvivalModel'),
+    function(object) metadata(object)$modelParams$randomSeed)
+
 
 #' Class Validity Method for the SurvivalModel Class
 #'

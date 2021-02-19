@@ -31,7 +31,6 @@ Plot ROC curves for a \code{PCOSP} model object.
 data(sampleTrainedPCOSPmodel)
 data(sampleCohortList)
 
-
 # Make predictions
 PCOSPpredCohortList <- predictClasses(sampleCohortList[1:4],
   model=sampleTrainedPCOSPmodel)

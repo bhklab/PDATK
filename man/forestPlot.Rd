@@ -20,8 +20,8 @@ Generate a forest plot from an `S4` object
 \examples{
 data(sampleCohortList)
 data(sampleTrainedPCOSPmodel)
-#'
-# Make predctions
+
+# Make predction
 PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
   model=sampleTrainedPCOSPmodel)
 

@@ -12,6 +12,7 @@
 #' data(samplePCSIsurvExp)
 #'
 #' # Train the models
+#' set.seed(metadata(sampleTrainedPCOSPmodel)$modelParams$randomSeed)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
@@ -51,6 +52,7 @@ setGeneric('compareModels', function(model1, model2, ...)
 #' data(samplePCSIsurvExp)
 #'
 #' # Train the models
+#' set.seed(metadata(sampleTrainedPCOSPmodel)$modelParams$randomSeed)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
@@ -100,6 +102,7 @@ setMethod('compareModels', signature(model1='SurvivalModel',
 #' data(samplePCSIsurvExp)
 #'
 #' # Train the models
+#' set.seed(metadata(sampleTrainedPCOSPmodel)$modelParams$randomSeed)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class

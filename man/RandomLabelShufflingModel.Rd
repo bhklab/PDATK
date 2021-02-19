@@ -28,6 +28,7 @@ RandomLabelShufflingModel Constructor
 }
 \examples{
 data(sampleICGCmicro)
+set.seed(1987)
 RLSmodel <- RLSModel(sampleICGCmicro, minDaysSurvived=365, randomSeed=1987)
 
 }

@@ -27,6 +27,7 @@
 #'
 #' @examples
 #' data(sampleICGCmicro)
+#' set.seed(1987)
 #' PCOSPmodel <- PCOSP(sampleICGCmicro, minDaysSurvived=365, randomSeed=1987)
 #'
 #' @md
