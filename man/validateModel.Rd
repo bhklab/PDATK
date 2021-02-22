@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods-validateModel.R
 \name{validateModel}
 \alias{validateModel}
-\title{Perform Validation on an \code{S4} Object Respresenting a Trained Model}
+\title{Perform Validation on an \code{S4} Object Representing a Trained Model}
 \usage{
 validateModel(model, valData, ...)
 }
@@ -17,7 +17,7 @@ validateModel(model, valData, ...)
 The \code{S4} object with added model performance metadata.
 }
 \description{
-Perform Validation on an \code{S4} Object Respresenting a Trained Model
+Perform Validation on an \code{S4} Object Representing a Trained Model
 }
 \examples{
 data(sampleTrainedPCOSPmodel)

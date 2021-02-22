@@ -35,6 +35,7 @@ other parallelization configuration please pass BPPARAM to bplapply.
 }
 \examples{
 data(samplePCOSPmodel)
+set.seed(getModelSeed(samplePCOSPmodel))
 trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 
 }

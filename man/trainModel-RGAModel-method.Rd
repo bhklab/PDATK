@@ -33,6 +33,7 @@ other parallelization configuration please pass BPPARAM to bplapply.
 }
 \examples{
 data(sampleRGAmodel)
+set.seed(getModelSeed(sampleRGAmodel))
 trainedRGAmodel <- trainModel(sampleRGAmodel, numModels=5, minAccuracy=0)
 
 }

@@ -138,7 +138,7 @@ recommend 0.6 as a sweet spot between random chance and over-fitting but
 encourage experimentation to see what works best with your data.
 
 
-```{r}
+```{r message=FALSE, warnings=FALSE}
 trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=25, minAccuracy=0.6)
 
 metadata(trainedPCOSPmodel)$modelParams
@@ -160,7 +160,7 @@ consistent interface for using `SurvivalModel` sub-classes to make patient risk
 predictions.
 
 
-```{r PCOSP_predictions}
+```{r PCOSP_predictions, message=FALSE, warnings=FALSE}
 PCOSPpredValCohorts <- predictClasses(validationCohortList,
     model=trainedPCOSPmodel)
 ```
@@ -173,6 +173,7 @@ the cohort list and can be accessed with the `mcols` function from `S4Vectors`.
 ```{r predicted_elementMetadata}
 mcols(PCOSPpredValCohorts)
 ```
+
 Predicting risk with a specific model adds a corresponding metadata
 column to the object `colData`. In the case of a `PCOSP` model, the new column
 is called `PCOSP_prob_good` and represents the proportion of models in the
@@ -202,7 +203,7 @@ accomplished using the `validateModel` method, which will add statistics to the
 `validationStats` slot of a `SurvivalModel` object and the data to the 
 `validationData` slot.
 
-```{r validate_PCOSP_model}
+```{r validate_PCOSP_model, messages=FALSE, warnings=FALSE}
 validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
     valData=PCOSPpredValCohorts)
 ```
@@ -223,14 +224,13 @@ model performance.
 
 
 ```{r PCOSP_D_index_forestplot, fig.width=8, fig.height=8, fig.wide=TRUE}
-PCOSPdIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index',
-    transform='log2')
+PCOSPdIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='log_D_index')
 PCOSPdIndexForestPlot
 ```
 
 
 
-```{r PCOSP_concordance_index_forestplot}
+```{r PCOSP_concordance_index_forestplot, fig.width=8, fig.height=8, fig.wide=TRUE}
 PCOSPconcIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='concordance_index')
 PCOSPconcIndexForestPlot
 ```

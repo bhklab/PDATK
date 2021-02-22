@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' data(samplePCOSPmodel)
-#' set.seed()
+#' set.seed(getModelSeed(samplePCOSPmodel))
 #' trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #'
 #' @md
@@ -42,6 +42,7 @@ setGeneric('trainModel', function(object, ...)
 #'
 #' @examples
 #' data(samplePCOSPmodel)
+#' set.seed(getModelSeed(samplePCOSPmodel))
 #' trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #'
 #' @md
@@ -179,6 +180,7 @@ setMethod('trainModel', signature('PCOSP'),
 #'
 #' @examples
 #' data(sampleRLSmodel)
+#' set.seed(getModelSeed(sampleRLSmodel))
 #' trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=5)
 #'
 #' @md
@@ -251,6 +253,7 @@ setMethod('trainModel', signature('RLSModel'),
 #'
 #' @examples
 #' data(sampleRGAmodel)
+#' set.seed(getModelSeed(sampleRGAmodel))
 #' trainedRGAmodel <- trainModel(sampleRGAmodel, numModels=5, minAccuracy=0)
 #'
 #' @md
@@ -303,6 +306,7 @@ setMethod('trainModel', signature('RGAModel'),
 #'
 #' @examples
 #' data(sampleClinicalModel)
+#' set.seed(getModelSeed(sampleClinicalModel))
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' @md

@@ -32,6 +32,7 @@ Fit a GLM Using Clinical Predictors Specified in a \code{ClinicalModel} Object.
 }
 \examples{
 data(sampleClinicalModel)
+set.seed(getModelSeed(sampleClinicalModel))
 trainedClinicalModel <- trainModel(sampleClinicalModel)
 
 }

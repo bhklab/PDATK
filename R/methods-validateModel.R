@@ -1,4 +1,4 @@
-#' Perform Validation on an `S4` Object Respresenting a Trained Model
+#' Perform Validation on an `S4` Object Representing a Trained Model
 #'
 #' @param model An `S4` object.
 #' @param valData `Any` Data to verify the model with.
@@ -277,24 +277,27 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
         )
 }
 
-#' Calculate concordance.index or return NAs if it fails
+#' Calculate log D.index or return NAs if it fails
 #'
 #' @noRd
 #' @keywords internal
 .safe_D.index <- function(risk, days_survived, is_deceased, n) {
     as.numeric(
         tryCatch({
-            D.index(x=1 - risk, surv.time=days_survived,
+            dIndex <- D.index(x=1 - risk, surv.time=days_survived,
                 surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
                 method.test='logrank')[c('coef', 'se', 'lower', 'upper',
                     'p.value', 'n')]
+            dIndex[['lower']] <- log(dIndex[['lower']])
+            dIndex[['upper']] <- log(dIndex[['upper']])
+            dIndex
                 },
             error=function(e) { print(e); return(c(rep(NA, 5), n))}
         )
     )
 }
 
-#' Calculate D.index or return NAs if it fails
+#' Calculate concordance.index or return NAs if it fails
 #'
 #' @noRd
 #' @keywords internal
