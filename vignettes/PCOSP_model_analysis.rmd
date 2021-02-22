@@ -138,7 +138,7 @@ recommend 0.6 as a sweet spot between random chance and over-fitting but
 encourage experimentation to see what works best with your data.
 
 
-```{r message=FALSE, warnings=FALSE}
+```{r messages=FALSE, warning=FALSE}
 trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=25, minAccuracy=0.6)
 
 metadata(trainedPCOSPmodel)$modelParams
@@ -160,7 +160,7 @@ consistent interface for using `SurvivalModel` sub-classes to make patient risk
 predictions.
 
 
-```{r PCOSP_predictions, message=FALSE, warnings=FALSE}
+```{r PCOSP_predictions, message=FALSE, warning=FALSE}
 PCOSPpredValCohorts <- predictClasses(validationCohortList,
     model=trainedPCOSPmodel)
 ```
@@ -203,7 +203,7 @@ accomplished using the `validateModel` method, which will add statistics to the
 `validationStats` slot of a `SurvivalModel` object and the data to the 
 `validationData` slot.
 
-```{r validate_PCOSP_model, messages=FALSE, warnings=FALSE}
+```{r validate_PCOSP_model, message=FALSE, warning=FALSE}
 validatedPCOSPmodel <- validateModel(trainedPCOSPmodel,
     valData=PCOSPpredValCohorts)
 ```
