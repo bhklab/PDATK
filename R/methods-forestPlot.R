@@ -78,9 +78,9 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 {
     funContext <- .context(1)
 
-    if (!is.character(stat)) stop(.errorMsg(funContext, 'The stat parameter',
+    if (!is.character(stat)) stop(.errorMsg(funContext, 'The stat parameter ',
         'must be a character vector present in the statistics column of the ',
-        'PCOSP models validationStats slot!'))
+        class(object), ' models validationStats slot!'))
 
     stats <- copy(validationStats(object))[statistic == stat
         ][order(-mDataType, isSummary)]

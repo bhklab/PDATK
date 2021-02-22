@@ -25,7 +25,7 @@
 .SurvivalModel <- setClass("SurvivalModel",
     contains='SurvivalExperiment', slots=list(models='SimpleList',
     validationData='CohortList', validationStats='data.frame'
-    ))
+))
 
 #' Constructor for a SurvivalModel Object.
 #'
@@ -69,7 +69,6 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
                 cohortNames=names(trainCohorts))
             trainCohorts <- Reduce(.mergeWithNames, trainCohorts)
             trainCohorts <- dropNotCensored(trainCohorts, minDaysSurvived)
-
         } else {
             stop(.errorMsg(funContext,
                 'The trainCohorts argument is not a CohortList or ',
@@ -324,7 +323,7 @@ setReplaceMethod('validationData', signature(object='SurvivalModel',
 #'
 #' @examples
 #' data(sampleSurvivalModel)
-#' getModelSeed(sampleSurivalModel)
+#' getModelSeed(sampleSurvivalModel)
 #'
 #' @md
 #' @export
@@ -342,7 +341,7 @@ setGeneric('getModelSeed', function(object) standardGeneric('getModelSeed'))
 #'
 #' @examples
 #' data(sampleSurvivalModel)
-#' getModelSeed(sampleSurivalModel)
+#' getModelSeed(sampleSurvivalModel)
 #'
 #' @md
 #' @importFrom S4Vectors metadata
