@@ -129,7 +129,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
         by=.(statistic, mDataType)]
 
     .dIndexMetaPValue <- function(estimate, se)
-        2 * pnorm(-abs(log(estimate) / se))
+        2 * pnorm(-abs(estimate / se))
     .conIndexMetaPValue <- function(estimate, se)
         2 * pnorm((estimate - 0.5) / se, lower.tail=estimate < 0.5)
 
@@ -137,7 +137,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     if (hasSubtypes) by <- c(by, 'subtype')
 
     combinedDT[,
-        p_value := fifelse(statistic == 'D_index',
+        p_value := fifelse(statistic == 'log_D_index',
             .dIndexMetaPValue(estimate, se),
             .conIndexMetaPValue(estimate, se)),
         by=by]
@@ -245,15 +245,15 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #' @param riskProbCol A character vector witht he name of the column with risk
 #'   probabitlies in it.
 #'
-#' @return A `data.table` where the columns are AUC, D_index, concordance_index,
-#'   and any arugments specified to by in ...
+#' @return A `data.table` where the columns are AUC, log_D_index,
+#'   concordance_index, and any arguments specified to by in ...
 #'
 #' @md
 #' @noRd
 #' @keywords internal
 .calculateUntransposedValStatsDT <- function(DT, riskProbCol, ...) {
     DT[, .(AUC=.safe_AUC(prognosis, get(riskProbCol), .N),
-        D_index=.safe_D.index(get(riskProbCol), days_survived, is_deceased, .N),
+        log_D_index=.safe_D.index(get(riskProbCol), days_survived, is_deceased, .N),
         concordance_index=.safe_concordance.index(get(riskProbCol),
             days_survived, is_deceased, .N)
         ),
@@ -287,7 +287,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
         tryCatch({
             D.index(x=1 - risk, surv.time=days_survived,
                 surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
-                method.test='logrank')[c('d.index', 'se', 'lower', 'upper',
+                method.test='logrank')[c('coef', 'se', 'lower', 'upper',
                     'p.value', 'n')]
                 },
             error=function(e) { print(e); return(c(rep(NA, 5), n))}
@@ -390,8 +390,8 @@ setMethod('validateModel', signature(model='ClinicalModel',
 
     # assemble into a data.frame
     valStatsDF <- data.frame(
-        statistic=c('D_index', 'concordance_index', 'AUC'),
-        estimate=c(validationStats$dIndex$d.index,
+        statistic=c('log_D_index', 'concordance_index', 'AUC'),
+        estimate=c(validationStats$dIndex$coef,
             validationStats$cIndex$c.index, validationStats$AUC$estimate),
         se=vapply(validationStats, `[[`, i='se', FUN.VALUE=numeric(1)),
         lower=vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1)),
@@ -491,12 +491,12 @@ setMethod('validateModel', signature(model='ClinicalModel',
         by=.(statistic, mDataType)]
 
     .dIndexMetaPValue <- function(estimate, se)
-        2 * pnorm(-abs(log(estimate) / se))
+        2 * pnorm(-abs(estimate / se))
     .conIndexMetaPValue <- function(estimate, se)
         2 * pnorm((estimate - 0.5) / se, lower.tail=estimate < 0.5)
 
     combinedDT[,
-        p_value := fifelse(statistic == 'D_index',
+        p_value := fifelse(statistic == 'log_D_index',
             .dIndexMetaPValue(estimate, se),
             .conIndexMetaPValue(estimate, se)),
         by=.(statistic, mDataType)]
@@ -569,8 +569,8 @@ setMethod('validateModel', signature(model='GeneFuModel',
 
     # assemble into a data.frame
     valStatsDF <- data.frame(
-        statistic=c('D_index', 'concordance_index'),
-        estimate=c(validationStats$dIndex$d.index,
+        statistic=c('log_D_index', 'concordance_index'),
+        estimate=c(validationStats$dIndex$coef,
             validationStats$cIndex$c.index),
         se=vapply(validationStats, `[[`, i='se', FUN.VALUE=numeric(1)),
         lower=vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1)),
@@ -659,12 +659,12 @@ setMethod('validateModel', signature(model='GeneFuModel',
         by=.(statistic, mDataType)]
 
     .dIndexMetaPValue <- function(estimate, se)
-        2 * pnorm(-abs(log(estimate) / se))
+        2 * pnorm(-abs(estimate / se))
     .conIndexMetaPValue <- function(estimate, se)
         2 * pnorm((estimate - 0.5) / se, lower.tail=estimate < 0.5)
 
     combinedDT[,
-        p_value := fifelse(statistic == 'D_index',
+        p_value := fifelse(statistic == 'log_D_index',
             .dIndexMetaPValue(estimate, se),
             .conIndexMetaPValue(estimate, se)),
         by=.(statistic, mDataType)]

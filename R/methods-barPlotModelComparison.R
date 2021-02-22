@@ -49,7 +49,7 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #' @param model1 A `ClinicalModel` object.
 #' @param model2 A `PCOSP` or `RLSModel` or `RGAModel` object.
 #' @param stat A `character` vector specifying which statistic to compare the
-#'   models using. Options are 'AUC', 'D_index' or 'concordance_index'.
+#'   models using. Options are 'AUC', 'log_D_index' or 'concordance_index'.
 #' @param ... Not used.
 #'
 #' @return A `ggplot2` object showing a barplot coloured by the model and

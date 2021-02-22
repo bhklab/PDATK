@@ -18,7 +18,7 @@
 #'   valData=PCOSPpredCohortList)
 #'
 #' # Plot
-#' dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index')
+#' dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='log_D_index')
 #'
 #' @export
 setGeneric('forestPlot', function(object, ...)
@@ -61,7 +61,7 @@ setGeneric('forestPlot', function(object, ...)
 #'   valData=PCOSPpredCohortList)
 #'
 #' # Plot
-#' dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index')
+#' dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='log_D_index')
 #'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
@@ -112,7 +112,7 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 
     if (missing(vline)) {
         vline <- switch(stat,
-            'D_index' = 1,
+            'log_D_index' = 0,
             'concordance_index' = 0.5,
             stop(.errorMsg(funContext, 'Unkown statistic specified, please ',
                 'manually set the vline location with the vline argument!')))
@@ -120,7 +120,7 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 
     if (missing(xlab)) {
         xlab <- switch(stat,
-            'D_index' = 'D Index',
+            'log_D_index' = 'log D Index',
             'concordance_index' = 'Concordance Index',
             stop(.errorMsg(funContext, 'Unkown statistic specified, please ',
                 'manually set the x label with the xlab argument!')))
@@ -131,7 +131,11 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
     if (!missing(transform)) {
         stats[, `:=`(estimate=get(transform)(estimate),
             lower=get(transform)(lower), upper=get(transform)(upper))]
-        xlab <- paste(transform, xlab)
+        if (transform == 'exp' && stat=='log_D_index') {
+            xlab <- 'D index'
+        } else {
+            xlab <- paste(transform, xlab)
+        }
         vline <- get(transform)(vline)
     }
 
@@ -219,26 +223,30 @@ setMethod('forestPlot', signature(object='ModelComparison'),
 
     if (missing(vline)) {
         vline <- switch(stat,
-            'D_index' = 1,
+            'log_D_index' = 0,
             'concordance_index' = 0.5,
-            stop(.errorMsg(funContext, 'Unknown statistic specified, please ',
+            stop(.errorMsg(funContext, 'Unkown statistic specified, please ',
                 'manually set the vline location with the vline argument!')))
     }
 
     if (missing(xlab)) {
         xlab <- switch(stat,
-            'D_index' = 'D index',
+            'log_D_index' = 'log D Index',
             'concordance_index' = 'Concordance Index',
-            stop(.errorMsg(funContext, 'Unknown statistic specified, please ',
+            stop(.errorMsg(funContext, 'Unkown statistic specified, please ',
                 'manually set the x label with the xlab argument!')))
     }
 
-    if (missing(ylab)) ylab <- 'Model (P-value)'
+    if (missing(ylab)) ylab <- 'Cohort (P-value)'
 
     if (!missing(transform)) {
-        statsDT[, `:=`(estimate=get(transform)(estimate),
+        stats[, `:=`(estimate=get(transform)(estimate),
             lower=get(transform)(lower), upper=get(transform)(upper))]
-        xlab <- paste(transform, xlab)
+        if (transform == 'exp' && stat=='log_D_index') {
+            xlab <- 'D index'
+        } else {
+            xlab <- paste(transform, xlab)
+        }
         vline <- get(transform)(vline)
     }
 
