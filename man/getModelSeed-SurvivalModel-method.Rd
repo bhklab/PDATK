@@ -18,7 +18,7 @@ This should be used to set the seed before model training to ensure
 reproducible results.
 }
 \examples{
-data(sampleSurvivalModel)
-getModelSeed(sampleSurivalModel)
+data(samplePCOSPmodel)
+getModelSeed(samplePCOSPmodel)
 
 }

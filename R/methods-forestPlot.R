@@ -219,8 +219,6 @@ setMethod('forestPlot', signature(object='ModelComparison'),
     statsDT[, model_pvalue := factor(model_pvalue,
         levels=model_pvalue)]
 
-    print(statsDT$model_pvalue)
-
     if (missing(vline)) {
         vline <- switch(stat,
             'log_D_index' = 0,
@@ -240,7 +238,7 @@ setMethod('forestPlot', signature(object='ModelComparison'),
     if (missing(ylab)) ylab <- 'Cohort (P-value)'
 
     if (!missing(transform)) {
-        stats[, `:=`(estimate=get(transform)(estimate),
+        statsDT[, `:=`(estimate=get(transform)(estimate),
             lower=get(transform)(lower), upper=get(transform)(upper))]
         if (transform == 'exp' && stat=='log_D_index') {
             xlab <- 'D index'

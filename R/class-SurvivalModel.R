@@ -322,8 +322,8 @@ setReplaceMethod('validationData', signature(object='SurvivalModel',
 #' @return An `integer` seed to be used when training the a `SurivvalModel`.
 #'
 #' @examples
-#' data(sampleSurvivalModel)
-#' getModelSeed(sampleSurvivalModel)
+#' data(samplePCOSPmodel)
+#' getModelSeed(samplePCOSPmodel)
 #'
 #' @md
 #' @export
@@ -340,8 +340,8 @@ setGeneric('getModelSeed', function(object) standardGeneric('getModelSeed'))
 #' @return An `integer` seed to be used when training the a `SurivalModel`.
 #'
 #' @examples
-#' data(sampleSurvivalModel)
-#' getModelSeed(sampleSurvivalModel)
+#' data(samplePCOSPmodel)
+#' getModelSeed(samplePCOSPmodel)
 #'
 #' @md
 #' @importFrom S4Vectors metadata

@@ -13,7 +13,7 @@ and a PCOSP, RLSModel or RGAModel object.}
 \item{model2}{A \code{PCOSP} or \code{RLSModel} or \code{RGAModel} object.}
 
 \item{stat}{A \code{character} vector specifying which statistic to compare the
-models using. Options are 'AUC', 'D_index' or 'concordance_index'.}
+models using. Options are 'AUC', 'log_D_index' or 'concordance_index'.}
 
 \item{...}{Not used.}
 }

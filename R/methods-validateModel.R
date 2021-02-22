@@ -96,7 +96,6 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
     validationDT <- rbindlist(lapply(valPCOSPmodelList, validationStats))
     hasSubtypes <- 'subtype' %in% colnames(validationDT)
     rep <- if (hasSubtypes) length(unique(validationDT$subtype)) * 3 else 3
-    print(rep)
     validationDT[, `:=`(cohort=rep(names(predCohortList), each=rep),
         mDataType=rep(mcols(predCohortList)$mDataType, each=rep))]
     validationStats(validatedPCOSPmodel) <- copy(validationDT)

@@ -30,6 +30,6 @@ validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
   valData=PCOSPpredCohortList)
 
 # Plot
-dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='D_index')
+dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='log_D_index')
 
 }
