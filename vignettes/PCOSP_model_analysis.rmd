@@ -221,8 +221,6 @@ model performance.
 
 ## Plotting Model Performance
 
-
-
 ```{r PCOSP_D_index_forestplot, fig.width=8, fig.height=8, fig.wide=TRUE}
 PCOSPdIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='log_D_index')
 PCOSPdIndexForestPlot

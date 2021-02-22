@@ -90,7 +90,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
     colData(object)[paste0(class(model)[1], '_prob_good')] <-
         colSums(predictions == 'good') / nrow(predictions)
     colData(object)$prognosis <-
-        ifelse(colData(object)$days_survived > 365, 'good', 'bad')
+        ifelse(colData(object)$survival_time > 365, 'good', 'bad')
 
     return(object)
 })

@@ -79,7 +79,7 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
 
     if (!('prognosis' %in% colnames(colData(trainCohorts)))) {
         colData(trainCohorts)$prognosis <-  # split into high and low survival
-            ifelse(colData(trainCohorts)$days_survived >= minDaysSurvived,
+            ifelse(colData(trainCohorts)$survival_time >= minDaysSurvived,
                 'good', 'bad')
     }
 

@@ -42,18 +42,18 @@ setMethod('dropNotCensored', signature('SurvivalExperiment'),
     function(object, minDaysSurvived=365)
 {
     # drop NA rows
-    object <- object[, !is.na(colData(object)$days_survived)]
+    object <- object[, !is.na(colData(object)$survival_time)]
 
-    days_survived <- colData(object)$days_survived
-    is_deceased <- colData(object)$is_deceased
+    survival_time <- colData(object)$survival_time
+    event_occurred <- colData(object)$event_occurred
 
-    notCensoredBefore <- days_survived <= minDaysSurvived & is_deceased == 1
-    notYearOne <- days_survived > minDaysSurvived
+    notCensoredBefore <- survival_time <= minDaysSurvived & event_occurred == 1
+    notYearOne <- survival_time > minDaysSurvived
 
     keepPatients <- notCensoredBefore | notYearOne
     object <- object[, keepPatients]
     colData(object)$prognosis <-
-        ifelse(days_survived[keepPatients] > 365, 'good', 'bad')
+        ifelse(survival_time[keepPatients] > 365, 'good', 'bad')
     return(object)
 })
 #'

@@ -7,5 +7,5 @@
 \title{SurvivalExperiment Class}
 \description{
 A SummarizedExperiment with mandatory numeric survival metadata columns
-\code{days_survived} and \code{is_deceased}.
+\code{survival_time} and \code{event_occurred}.
 }

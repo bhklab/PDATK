@@ -252,9 +252,9 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #' @keywords internal
 .calculateUntransposedValStatsDT <- function(DT, riskProbCol, ...) {
     DT[, .(AUC=.safe_AUC(prognosis, get(riskProbCol), .N),
-        log_D_index=.safe_D.index(get(riskProbCol), days_survived, is_deceased, .N),
+        log_D_index=.safe_D.index(get(riskProbCol), survival_time, event_occurred, .N),
         concordance_index=.safe_concordance.index(get(riskProbCol),
-            days_survived, is_deceased, .N)
+            survival_time, event_occurred, .N)
         ),
         ...
     ]
@@ -281,11 +281,11 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'
 #' @noRd
 #' @keywords internal
-.safe_D.index <- function(risk, days_survived, is_deceased, n) {
+.safe_D.index <- function(risk, survival_time, event_occurred, n) {
     as.numeric(
         tryCatch({
-            dIndex <- D.index(x=1 - risk, surv.time=days_survived,
-                surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
+            dIndex <- D.index(x=1 - risk, surv.time=survival_time,
+                surv.event=event_occurred, na.rm=TRUE, alpha=0.5,
                 method.test='logrank')[c('coef', 'se', 'lower', 'upper',
                     'p.value', 'n')]
             dIndex[['lower']] <- log(dIndex[['lower']])
@@ -301,11 +301,11 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'
 #' @noRd
 #' @keywords internal
-.safe_concordance.index <- function(risk, days_survived, is_deceased, n) {
+.safe_concordance.index <- function(risk, survival_time, event_occurred, n) {
     as.numeric(
         tryCatch({
             concordance.index(x=1 - risk,
-                surv.time=days_survived, surv.event=is_deceased,
+                surv.time=survival_time, surv.event=event_occurred,
                 method='noether', na.rm=TRUE)[c('c.index', 'se', 'lower',
                     'upper', 'p.value', 'n')] },
             error=function(e) {print(e); return(c(rep(NA, 5), n)) }))
@@ -355,13 +355,13 @@ setMethod('validateModel', signature(model='ClinicalModel',
     # determine if we need to rerun the classification model
     if (identical(metadata(model)$modelParams, metadata(valData)$GLMparams))
     {
-        survivalDF <- colData(valData)[, c('sample_name', 'days_survived',
-            'is_deceased', 'clinical_prob_good', 'prognosis')]
+        survivalDF <- colData(valData)[, c('sample_name', 'survival_time',
+            'event_occurred', 'clinical_prob_good', 'prognosis')]
         predSurvExp <- valData
     } else {
         predSurvExp <- predictClasses(model, valData)
-        survivalDF <- colData(predSurvExp)[, c('sample_name', 'days_survived',
-            'is_deceased', 'clinical_prob_good', 'prognosis')]
+        survivalDF <- colData(predSurvExp)[, c('sample_name', 'survival_time',
+            'event_occurred', 'clinical_prob_good', 'prognosis')]
     }
 
     # convert prognosis to numeric for the ROC stats
@@ -380,11 +380,11 @@ setMethod('validateModel', signature(model='ClinicalModel',
     ## FIXME:: Should this be 1 - clinical_prob_good?
     validationStats <- with(survivalDF,
         list(
-            dIndex=D.index(x=clinical_prob_good, surv.time=days_survived,
-                surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
+            dIndex=D.index(x=clinical_prob_good, surv.time=survival_time,
+                surv.event=event_occurred, na.rm=TRUE, alpha=0.5,
                 method.test='logrank'),
             cIndex=concordance.index(x=clinical_prob_good,
-                surv.time=days_survived, surv.event=is_deceased,
+                surv.time=survival_time, surv.event=event_occurred,
                 method='noether', na.rm=TRUE),
             AUC=as.list(aucStats)
         )
@@ -549,7 +549,7 @@ setMethod('validateModel', signature(model='GeneFuModel',
             ' the validation SurvivalExperiment, calculating based on ',
             'minDaysSurvived value in modelParams...'))
         survivalDF <- within(survivalDF,
-            prognosis <- ifelse(days_survived >
+            prognosis <- ifelse(survival_time >
                 metadata(model)$modelParams$minDaysSurvived, 'good', 'bad'))
     }
 
@@ -561,11 +561,11 @@ setMethod('validateModel', signature(model='GeneFuModel',
     # calculate the validation statistics
     validationStats <- with(survivalDF,
         list(
-            dIndex=D.index(x=genefu_score, surv.time=days_survived,
-                surv.event=is_deceased, na.rm=TRUE, alpha=0.5,
+            dIndex=D.index(x=genefu_score, surv.time=survival_time,
+                surv.event=event_occurred, na.rm=TRUE, alpha=0.5,
                 method.test='logrank'),
-            cIndex=concordance.index(x=genefu_score, surv.time=days_survived,
-                surv.event=is_deceased, method='noether', na.rm=TRUE)
+            cIndex=concordance.index(x=genefu_score, surv.time=survival_time,
+                surv.event=event_occurred, method='noether', na.rm=TRUE)
         )
     )
 

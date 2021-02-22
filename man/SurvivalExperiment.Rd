@@ -6,12 +6,12 @@
 
 Builds a \code{SurvivalExperiment} object, which is just a wrapper for a
 \code{SummarizedExperiment} with mandatory survival metadata numeric columns
-\code{days_survived} and \code{is_deceased}.}
+\code{survival_time} and \code{event_occurred}.}
 \usage{
 SurvivalExperiment(
   ...,
-  days_survived = "days_survived",
-  is_deceased = "is_deceased",
+  survival_time = "survival_time",
+  event_occurred = "event_occurred",
   sumExp
 )
 }
@@ -19,12 +19,12 @@ SurvivalExperiment(
 \item{...}{\code{pairlist} Fall through arguments to the \code{SummarizedExperiment}
 constructor. These are ignored if \code{sumExp} is specified}
 
-\item{days_survived}{A \code{character} vector indicating the column name in
+\item{survival_time}{A \code{character} vector indicating the column name in
 \code{colData} which contains the \code{integer} number of days a patient
 has survived since treatment at the time of data collection. If
-\code{is_deceased} is 1/TRUE, then this is the number of days the patient lived.}
+\code{event_occurred} is 1/TRUE, then this is the number of days the patient lived.}
 
-\item{is_deceased}{A \code{character} vector indicating the column name in
+\item{event_occurred}{A \code{character} vector indicating the column name in
 \code{colData} which contains \code{logical} or \code{integer} values where 0/FALSE means
 a patient is alive and 1/TRUE means a patient is deceased.}
 
@@ -40,7 +40,7 @@ Constructor for \code{SurvivalExperiment} Class
 
 Builds a \code{SurvivalExperiment} object, which is just a wrapper for a
 \code{SummarizedExperiment} with mandatory survival metadata numeric columns
-\code{days_survived} and \code{is_deceased}.
+\code{survival_time} and \code{event_occurred}.
 }
 \examples{
 data(sampleICGCmicro)
@@ -48,12 +48,12 @@ data(sampleICGCmicro)
 # build a SurvivalExperiment from raw data
 ICGCmicro <- SurvivalExperiment(assays=assays(sampleICGCmicro),
   rowData=rowData(sampleICGCmicro), colData=colData(sampleICGCmicro),
-  metadata=metadata(sampleICGCmicro), days_survived='days_survived',
-  is_deceased='is_deceased')
+  metadata=metadata(sampleICGCmicro), survival_time='survival_time',
+  event_occurred='event_occurred')
 
 # build a SurvivalExperiment from an existig SummarizedExperment
 ICGCmicroSumExp <- as(sampleICGCmicro, 'SummarizedExperiment')
 ICGCmicro <- SurvivalExperiment(sumExp=ICGCmicroSumExp,
-  days_survived='days_survived', is_deceased='is_deceased')
+  survival_time='survival_time', event_occurred='event_occurred')
 
 }
