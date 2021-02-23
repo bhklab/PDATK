@@ -5,14 +5,12 @@ data(sampleICGCmicro)
 
 test_that('SurivalExperiment constructor errors as expected', {
     expect_error(SurvivalExperiment(data=list()), 'unused argument')
-    expect_error(SurvivalExperiment(sumExp=list()),
-        '.*sumExp is not a `SummarizedExperiment`!.*')
 })
 
 test_that('SurivalExperiment constructor errors for missing days_surived or
     event_occurred column arguments',
     {
-    expect_error(SurvivalExperiment(sumExp=sampleICGCmicro,
+    expect_error(SurvivalExperiment(sampleICGCmicro,
         event_occurred='wrong_name'), '.*The columns .* are not present in the .*!')
 })
 
@@ -23,11 +21,11 @@ test_that('SurvivalExperiment constructor successfully coerces event_occurred
         as.numeric(colData(sampleICGCmicro)$survival_time)
     colData(sampleICGCmicro)$event_occurred <-
         as.logical(colData(sampleICGCmicro)$event_occurred)
-    expect_s4_class(SurvivalExperiment(sumExp=sampleICGCmicro),
+    expect_s4_class(SurvivalExperiment(sampleICGCmicro),
         'SurvivalExperiment')
     colData(sampleICGCmicro)$event_occurred <-
         ifelse(colData(sampleICGCmicro)$event_occurred, 'deceased', 'not_deceased')
-    expect_s4_class(SurvivalExperiment(sumExp=sampleICGCmicro),
+    expect_s4_class(SurvivalExperiment(sampleICGCmicro),
         'SurvivalExperiment')
 })
 
@@ -39,9 +37,9 @@ test_that('SurvivalExperiment constructor errors if survival_time or
         as.factor(colData(invalidExp1)$event_occurred)
     colData(invalidExp2)$survival_time <-
         as.factor(colData(invalidExp2)$survival_time)
-    expect_error(SurvivalExperiment(sumExp=invalidExp1),
+    expect_error(SurvivalExperiment(invalidExp1),
         '.*The event_occurred column is not logical or integer,.*')
-    expect_error(SurvivalExperiment(sumExp=invalidExp2),
+    expect_error(SurvivalExperiment(invalidExp2),
         '.*The survival_time column is not logical or integer,.*')
 })
 
@@ -52,9 +50,9 @@ test_that('SurvivalExperiment constructor errors if survival_time or
     # Character not coercible to integer
     colData(invalidExp1)$event_occurred <- 'A'
     colData(invalidExp2)$survival_time <- 'A'
-    expect_error(SurvivalExperiment(sumExp=invalidExp1),
+    expect_error(SurvivalExperiment(invalidExp1),
         '.*The string deceased is not in the event_occurred column.*')
-    expect_error(SurvivalExperiment(sumExp=invalidExp2),
+    expect_error(SurvivalExperiment(invalidExp2),
         '.*Tried to coerce survival_time from character to integer.*')
 })
 
@@ -69,7 +67,7 @@ test_that('SurvivalExperiment constructor can be made from raw data', {
 test_that('SurvivalExperimemt constructor can be made from
     SummarizedExperiment',
 {
-    survExp <- SurvivalExperiment(sumExp=sampleICGCmicro)
+    survExp <- SurvivalExperiment(sampleICGCmicro)
     expect_s4_class(survExp, 'SurvivalExperiment')
     expect_true(validObject(survExp, complete=TRUE))
 })

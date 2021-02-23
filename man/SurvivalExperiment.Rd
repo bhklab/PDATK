@@ -11,13 +11,13 @@ Builds a \code{SurvivalExperiment} object, which is just a wrapper for a
 SurvivalExperiment(
   ...,
   survival_time = "survival_time",
-  event_occurred = "event_occurred",
-  sumExp
+  event_occurred = "event_occurred"
 )
 }
 \arguments{
 \item{...}{\code{pairlist} Fall through arguments to the \code{SummarizedExperiment}
-constructor. These are ignored if \code{sumExp} is specified}
+constructor. If the first argument to dots is a \code{SummarizedExperiment},
+that object is used instead.}
 
 \item{survival_time}{A \code{character} vector indicating the column name in
 \code{colData} which contains the \code{integer} number of days a patient
@@ -27,10 +27,6 @@ has survived since treatment at the time of data collection. If
 \item{event_occurred}{A \code{character} vector indicating the column name in
 \code{colData} which contains \code{logical} or \code{integer} values where 0/FALSE means
 a patient is alive and 1/TRUE means a patient is deceased.}
-
-\item{sumExp}{An optional \code{SummarizedExperiment} object to coerce to a
-\code{SurvivalExperiment}. If this parameter is included, all arguments to \code{...}
-are ignored.}
 }
 \value{
 A \code{SurvivalExperiment} object.
@@ -53,7 +49,7 @@ ICGCmicro <- SurvivalExperiment(assays=assays(sampleICGCmicro),
 
 # build a SurvivalExperiment from an existig SummarizedExperment
 ICGCmicroSumExp <- as(sampleICGCmicro, 'SummarizedExperiment')
-ICGCmicro <- SurvivalExperiment(sumExp=ICGCmicroSumExp,
+ICGCmicro <- SurvivalExperiment(ICGCmicroSumExp,
   survival_time='survival_time', event_occurred='event_occurred')
 
 }

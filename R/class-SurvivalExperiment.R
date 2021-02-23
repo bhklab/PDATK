@@ -39,7 +39,7 @@
 #'
 #' # build a SurvivalExperiment from an existig SummarizedExperment
 #' ICGCmicroSumExp <- as(sampleICGCmicro, 'SummarizedExperiment')
-#' ICGCmicro <- SurvivalExperiment(sumExp=ICGCmicroSumExp,
+#' ICGCmicro <- SurvivalExperiment(ICGCmicroSumExp,
 #'   survival_time='survival_time', event_occurred='event_occurred')
 #'
 #' @md
@@ -54,12 +54,8 @@ SurvivalExperiment <- function(..., survival_time='survival_time',
 
     ## TODO:: Clean up constructor logic
     dots <- list(...)
-    SE <- if (is(dots[[1]], 'SummarizedExperiment')) dots[[1]] else
-        SummarizedExperiment(...)
-
-    if (!is(SE, 'SummarizedExperiment'))
-        stop(CoreGx::.errorMsg(funContext,
-                               'sumExp is not a `SummarizedExperiment`!'))
+    SE <- if (length(dots) > 0 && is(dots[[1]], 'SummarizedExperiment')) {
+        dots[[1]] } else { SummarizedExperiment(...) }
 
     renameVector <- c('survival_time', 'event_occurred')
     names(renameVector) <- c(survival_time, event_occurred)
@@ -68,7 +64,7 @@ SurvivalExperiment <- function(..., survival_time='survival_time',
     if (nrow(colData(SE)) == 0) {
         if (!all(renameVector %in% colnames(colData(SE)))) {
             colData(SE) <- cbind(colData(SE),
-                                 DataFrame(survival_time=integer(), event_occurred=integer()))
+                DataFrame(survival_time=integer(), event_occurred=integer()))
         }
     }
 
@@ -77,45 +73,46 @@ SurvivalExperiment <- function(..., survival_time='survival_time',
         colData(SE) <- rename(colData(SE), renameVector)
     } else {
         stop(.errorMsg(funContext, 'The columns ',
-                       names(renameVector)[!hasColumnsToRename], ' are not present in ',
-                       'the object colData, please ensure you specify existing column',
-                       'names to the days_surived and event_occurred parameters!'))
+            paste0(names(renameVector)[!hasColumnsToRename], collapse=', '),
+            ' are not present in the object colData, please ensure you specify ',
+            'existing column names to the survival_time and event_occurred ',
+            'parameters!'))
     }
 
     if (!is.integer(colData(SE)$event_occurred)) {
         event_occurred_col <- colData(SE)$event_occurred
         switch(class(event_occurred_col),
-               'logical'={ colData(SE)$event_occurred <- as.integer(event_occurred_col) },
-               'character'={
-                   if (!('deceased' %in% event_occurred_col))
-                       stop(.errorMsg(funContext, 'The string deceased is not in ',
-                                      'the event_occurred column. Please convert this column to ',
-                                      'integer manually, where 1 is deceased and 0 is alive.'))
-                   colData(SE)$event_occurred <-
-                       as.integer(event_occurred_col == 'deceased')
-               },
-               stop(.errorMsg(funContext, 'The event_occurred column is not logical ',
-                              'or integer, please convert this column such that deceased is 1 ',
-                              'or TRUE and alive is 0 or FALSE before retrying the conversion!'))
+            'logical'={ colData(SE)$event_occurred <- as.integer(event_occurred_col) },
+            'character'={
+                if (!('deceased' %in% event_occurred_col))
+                    stop(.errorMsg(funContext, 'The string deceased is not in ',
+                        'the event_occurred column. Please convert this column to ',
+                        'integer manually, where 1 is deceased and 0 is alive.'))
+                colData(SE)$event_occurred <-
+                    as.integer(event_occurred_col == 'deceased')
+            },
+            stop(.errorMsg(funContext, 'The event_occurred column is not logical ',
+                'or integer, please convert this column such that deceased is 1 ',
+                'or TRUE and alive is 0 or FALSE before retrying the conversion!'))
         )
     }
     if (!is.integer(colData(SE)$survival_time)) {
         survival_time <- colData(SE)$survival_time
         switch(class(survival_time),
-               'numeric'={ colData(SE)$survival_time <- as.integer(survival_time) },
-               'character'={ tryCatch({
-                   colData(SE)$survival_time <- as.integer(survival_time)
-               },
-               warning=function(w) stop(.errorMsg(funContext, 'Tried to ',
-                                                  'coerce survival_time from character to integer, but ',
-                                                  'failed.')),
-               error=function(e) stop(.errorMsg(funContext, 'Tried to ',
-                                                'coerce survival_time from character to integer, but ',
-                                                'failed.')))
-               },
-               stop(.errorMsg(funContext, 'The survival_time column is not logical',
-                              ' or integer, please convert this column before retrying the ',
-                              'conversion'))
+            'numeric'={ colData(SE)$survival_time <- as.integer(survival_time) },
+            'character'={ tryCatch({
+                colData(SE)$survival_time <- as.integer(survival_time)
+            },
+            warning=function(w) stop(.errorMsg(funContext, 'Tried to ',
+                'coerce survival_time from character to integer, but ',
+                'failed.')),
+            error=function(e) stop(.errorMsg(funContext, 'Tried to ',
+                'coerce survival_time from character to integer, but ',
+                'failed.')))
+            },
+            stop(.errorMsg(funContext, 'The survival_time column is not logical',
+                ' or integer, please convert this column before retrying the ',
+                'conversion'))
         )
     }
 
@@ -129,10 +126,10 @@ SurvivalExperiment <- function(..., survival_time='survival_time',
 #' @md
 #' @export
 setAs('SummarizedExperiment', 'SurvivalExperiment',
-    function(from) SurvivalExperiment(sumExp=from))
+    function(from) SurvivalExperiment(from))
 #' @export
 setAs('RangedSummarizedExperiment', 'SurvivalExperiment',
-    function(from) SurvivalExperiment(sumExp=from))
+    function(from) SurvivalExperiment(from))
 
 #' Check that a SurvivalExperiment object is valid
 #'
