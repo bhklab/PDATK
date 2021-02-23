@@ -170,26 +170,23 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 #'
 #'
 #' @examples
-#' data(sampleTrainedPCOSPmodel)
+#' data(sampleValPCOSPmodel)
 #' data(sampleClinicalModel)
-#' data(samplePCSIsurvExp)
+#' data(sampleCohortList)
 #'
 #' # Train the models
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
-#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=sampleTrainedPCOSPmodel)
-#' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+#' ClinicalPredCohortL <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
-#'   valData=ClinicalPredPCSI)
+#'   valData=ClinicalPredCohortL)
 #'
 #' # Compare the models
-#' modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+#' modelComp <- compareModels(sampleValPCOSPmodel, validatedClinicalModel)
 #'
 #' # Make the forest plot
 #' modelComp <- modelComp[modelComp$isSummary == TRUE, ]

@@ -16,7 +16,8 @@
 #'   `survival_time` and `event_occurred`.
 #'
 #' @param ... `pairlist` Fall through arguments to the `SummarizedExperiment`
-#'   constructor. These are ignored if `sumExp` is specified
+#'   constructor. If the first argument to dots is a `SummarizedExperiment`,
+#'   that object is used instead.
 #' @param survival_time A `character` vector indicating the column name in
 #'   `colData` which contains the `integer` number of days a patient
 #'   has survived since treatment at the time of data collection. If
@@ -24,9 +25,6 @@
 #' @param event_occurred A `character` vector indicating the column name in
 #'   `colData` which contains `logical` or `integer` values where 0/FALSE means
 #'   a patient is alive and 1/TRUE means a patient is deceased.
-#' @param sumExp An optional `SummarizedExperiment` object to coerce to a
-#'   `SurvivalExperiment`. If this parameter is included, all arguments to `...`
-#'   are ignored.
 #'
 #' @return A `SurvivalExperiment` object.
 #'
@@ -50,12 +48,14 @@
 #' @importFrom CoreGx .errorMsg .warnMsg
 #' @export
 SurvivalExperiment <- function(..., survival_time='survival_time',
-                               event_occurred='event_occurred', sumExp)
+                               event_occurred='event_occurred')
 {
     funContext <- .context(1)
 
     ## TODO:: Clean up constructor logic
-    SE <- if (missing(sumExp)) SummarizedExperiment(...) else sumExp
+    dots <- list(...)
+    SE <- if (is(dots[[1]], 'SummarizedExperiment')) dots[[1]] else
+        SummarizedExperiment(...)
 
     if (!is(SE, 'SummarizedExperiment'))
         stop(CoreGx::.errorMsg(funContext,

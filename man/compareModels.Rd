@@ -20,28 +20,23 @@ A \code{S4} object with statistics about the performance of each model.
 Compare Two Mathematical Models Represented as \code{S4} Objects
 }
 \examples{
-data(sampleTrainedPCOSPmodel)
+data(sampleValPCOSPmodel)
 data(sampleClinicalModel)
-data(samplePCSIsurvExp)
+data(sampleCohortList)
 
-# Train the models
-set.seed(metadata(sampleTrainedPCOSPmodel)$modelParams$randomSeed)
+# Train the model
 trainedClinicalModel <- trainModel(sampleClinicalModel)
 
 # Predict risk/risk-class
-PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp,
-  model=sampleTrainedPCOSPmodel)
-ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+ClinicalPredPCSI <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
   model=trainedClinicalModel)
 
 # Validate the models
-validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-  valData=PCOSPpredPCSI)
 validatedClinicalModel <- validateModel(trainedClinicalModel,
   valData=ClinicalPredPCSI)
 
 # Compare the models
-modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+modelComp <- compareModels(sampleValPCOSPmodel, validatedClinicalModel)
 head(modelComp)
 
 }

@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' data(sampleCohortList)
-#' data(sampleTrainedPCOSPmodel)
+#' data(sampleValPCOSPmodel)
 #' data(sampleICGCmicro)
 #'
 #' # Setup the models
@@ -23,20 +23,16 @@
 #' trainedClinicalModel <- trainModel(clinicalModel)
 #'
 #' # Make predctions
-#' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-#'   model=sampleTrainedPCOSPmodel)
 #' clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredCohortList)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=clinicalPredCohortList)
 #'
 #' # Plot the comparison
 #' modelCompBarPlot <- barPlotModelComparison(validatedClinicalModel,
-#'  validatedPCOSPmodel, stat='AUC')
+#'  sampleValPCOSPmodel, stat='AUC')
 #'
 #' @md
 #' @export
@@ -57,13 +53,11 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #'   with.
 #'
 #' @examples
-#' data(sampleTrainedPCOSPmodel)
+#' data(sampleValPCOSPmodel)
 #' data(sampleCohortList)
 #' data(sampleICGCmicro)
 #'
 #' # Setup the models
-#' set.seed(1987)
-#' PCOSPmodel <- PCOSP(sampleICGCmicro, randomSeed=1987)
 #' clinicalModel <- ClinicalModel(sampleICGCmicro,
 #'   formula='prognosis ~ sex + age + T + N + M + grade',
 #'   randomSeed=1987)
@@ -72,20 +66,16 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #' trainedClinicalModel <- trainModel(clinicalModel)
 #'
 #' # Make predctions
-#' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-#'   model=sampleTrainedPCOSPmodel)
 #' clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredCohortList)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=clinicalPredCohortList)
 #'
 #' # Plot the comparison
 #' modelCompBarPlot <- barPlotModelComparison(validatedClinicalModel,
-#'  validatedPCOSPmodel, stat='AUC')
+#'  sampleValPCOSPmodel, stat='AUC')
 #'
 #' @md
 #' @include classUnions.R

@@ -21,14 +21,10 @@ Perform Validation on an \code{S4} Object Representing a Trained Model
 }
 \examples{
 data(sampleTrainedPCOSPmodel)
-data(sampleCohortList)
-
-# Make predictions
-PCOSPpredCohortList <- predictClasses(sampleCohortList,
-  model=sampleTrainedPCOSPmodel)
+data(samplePCOSPpredList)
 
 # Validate model
 validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-  valData=PCOSPpredCohortList)
+  valData=samplePCOSPpredList[[1]])
 
 }

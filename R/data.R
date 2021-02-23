@@ -69,6 +69,29 @@ NULL
 #' @md
 NULL
 
+#' @title Sample CohortList with PCOSP Risk Predictions
+#'
+#' @name samplePCOSPpredList
+#'
+#' @examples
+#' data(samplePCOSPpredList)
+#'
+#' @seealso `MetaGxPancreas::loadPancreasDatasets`
+#'
+#' @md
+NULL
+
+#' @title Sample Validated PCOSP Model for Plotting Examples
+#'
+#' @name sampleValPCOSPmodel
+#'
+#' @examples
+#' data(sampleValPCOSPmodel)
+#'
+#' @seealso `MetaGxPancreas::loadPancreasDatasets`
+#'
+#' @md
+NULL
 
 #' @title Sample RGA Model Containing the ICGC micro-array cohort from
 #'   `MetaGxPancreas` as training data.

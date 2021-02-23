@@ -28,7 +28,6 @@ setGeneric('getTopFeatures',
 #' @examples
 #' data(sampleTrainedPCOSPmodel)
 #'
-#'
 #' # Get the top features
 #' topFeatures <- getTopFeatures(sampleTrainedPCOSPmodel, numModels=5)
 #'

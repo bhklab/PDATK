@@ -24,19 +24,10 @@ setGeneric('plotROC', function(object, ...)
 #' @return A `ggplot` object containing the ROC curves.
 #'
 #' @examples
-#' data(sampleTrainedPCOSPmodel)
-#' data(sampleCohortList)
-#'
-#' # Make predictions
-#' PCOSPpredCohortList <- predictClasses(sampleCohortList[1:4],
-#'   model=sampleTrainedPCOSPmodel)
-#'
-#' # Validate the model
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   PCOSPpredCohortList)
+#' data(sampleValPCOSPmodel)
 #'
 #' # Plot ROC curves
-#' AUROCplot <- plotROC(validatedPCOSPmodel)
+#' AUROCplot <- plotROC(sampleValPCOSPmodel)
 #'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist

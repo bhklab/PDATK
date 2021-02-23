@@ -7,28 +7,23 @@
 #' @return A `S4` object with statistics about the performance of each model.
 #'
 #' @examples
-#' data(sampleTrainedPCOSPmodel)
+#' data(sampleValPCOSPmodel)
 #' data(sampleClinicalModel)
-#' data(samplePCSIsurvExp)
+#' data(sampleCohortList)
 #'
-#' # Train the models
-#' set.seed(metadata(sampleTrainedPCOSPmodel)$modelParams$randomSeed)
+#' # Train the model
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
-#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp,
-#'   model=sampleTrainedPCOSPmodel)
-#' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+#' ClinicalPredPCSI <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=ClinicalPredPCSI)
 #'
 #' # Compare the models
-#' modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+#' modelComp <- compareModels(sampleValPCOSPmodel, validatedClinicalModel)
 #' head(modelComp)
 #'
 #' @md
@@ -47,27 +42,23 @@ setGeneric('compareModels', function(model1, model2, ...)
 #' @return A `ModelComparison` object with statistics comparing the two models.
 #'
 #' @examples
-#' data(sampleTrainedPCOSPmodel)
+#' data(sampleValPCOSPmodel)
 #' data(sampleClinicalModel)
-#' data(samplePCSIsurvExp)
+#' data(sampleCohortList)
 #'
-#' # Train the models
-#' set.seed(metadata(sampleTrainedPCOSPmodel)$modelParams$randomSeed)
+#' # Train the model
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
-#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=sampleTrainedPCOSPmodel)
-#' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+#' ClinicalPredPCSI <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
 #'   valData=ClinicalPredPCSI)
 #'
 #' # Compare the models
-#' modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+#' modelComp <- compareModels(sampleValPCOSPmodel, validatedClinicalModel)
 #' head(modelComp)
 #'
 #' @md
@@ -97,31 +88,27 @@ setMethod('compareModels', signature(model1='SurvivalModel',
 #' @param model2Name A `character` vector with the name of the second model.
 #'
 #' @examples
-#' data(sampleTrainedPCOSPmodel)
+#' data(sampleValPCOSPmodel)
 #' data(sampleClinicalModel)
-#' data(samplePCSIsurvExp)
+#' data(sampleCohortList)
 #'
 #' # Train the models
-#' set.seed(metadata(sampleTrainedPCOSPmodel)$modelParams$randomSeed)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
-#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=sampleTrainedPCOSPmodel)
-#' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+#' clinicalPredCohortL <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
-#'   valData=ClinicalPredPCSI)
+#'   valData=clinicalPredCohortL)
 #'
 #' # Compare the models
-#' modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+#' modelComp <- compareModels(sampleValPCOSPmodel, validatedClinicalModel)
 #' head(modelComp)
 #'
 #' # Compare model comparison to another model
-#' modelCompComp <- compareModels(modelComp, validatedPCOSPmodel)
+#' modelCompComp <- compareModels(modelComp, sampleValPCOSPmodel)
 #'
 #' @md
 #' @export

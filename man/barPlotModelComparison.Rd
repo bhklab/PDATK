@@ -24,7 +24,7 @@ Mathematical Models.
 }
 \examples{
 data(sampleCohortList)
-data(sampleTrainedPCOSPmodel)
+data(sampleValPCOSPmodel)
 data(sampleICGCmicro)
 
 # Setup the models
@@ -37,19 +37,15 @@ clinicalModel <- ClinicalModel(sampleICGCmicro,
 trainedClinicalModel <- trainModel(clinicalModel)
 
 # Make predctions
-PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-  model=sampleTrainedPCOSPmodel)
 clinicalPredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
   model=trainedClinicalModel)
 
 # Validate the models
-validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-  valData=PCOSPpredCohortList)
 validatedClinicalModel <- validateModel(trainedClinicalModel,
   valData=clinicalPredCohortList)
 
 # Plot the comparison
 modelCompBarPlot <- barPlotModelComparison(validatedClinicalModel,
- validatedPCOSPmodel, stat='AUC')
+ sampleValPCOSPmodel, stat='AUC')
 
 }

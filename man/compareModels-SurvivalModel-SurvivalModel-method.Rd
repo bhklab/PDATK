@@ -23,27 +23,23 @@ Compare Two \code{SurivalModel} Objects, Returing A \code{ModelComparison} Objec
 With Statistics Comparing the Performance of Each Model.
 }
 \examples{
-data(sampleTrainedPCOSPmodel)
+data(sampleValPCOSPmodel)
 data(sampleClinicalModel)
-data(samplePCSIsurvExp)
+data(sampleCohortList)
 
-# Train the models
-set.seed(metadata(sampleTrainedPCOSPmodel)$modelParams$randomSeed)
+# Train the model
 trainedClinicalModel <- trainModel(sampleClinicalModel)
 
 # Predict risk/risk-class
-PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=sampleTrainedPCOSPmodel)
-ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+ClinicalPredPCSI <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
   model=trainedClinicalModel)
 
 # Validate the models
-validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-  valData=PCOSPpredPCSI)
 validatedClinicalModel <- validateModel(trainedClinicalModel,
   valData=ClinicalPredPCSI)
 
 # Compare the models
-modelComp <- compareModels(validatedPCOSPmodel, validatedClinicalModel)
+modelComp <- compareModels(sampleValPCOSPmodel, validatedClinicalModel)
 head(modelComp)
 
 }

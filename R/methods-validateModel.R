@@ -8,15 +8,11 @@
 #'
 #' @examples
 #' data(sampleTrainedPCOSPmodel)
-#' data(sampleCohortList)
-#'
-#' # Make predictions
-#' PCOSPpredCohortList <- predictClasses(sampleCohortList,
-#'   model=sampleTrainedPCOSPmodel)
+#' data(samplePCOSPpredList)
 #'
 #' # Validate model
 #' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredCohortList)
+#'   valData=samplePCOSPpredList[[1]])
 #'
 #' @md
 #' @export
@@ -39,17 +35,13 @@ setGeneric('validateModel', function(model, valData, ...)
 #' @return The `model` object with the validationStats and validationData
 #'   slots occupied.
 #'
-# @examples
-# data(sampleTrainedPCOSPmodel)
-# data(sampleCohortList)
-#
-# # Make predictions
-# PCOSPpredCohortList <- predictClasses(sampleCohortList,
-#   model=sampleTrainedPCOSPmodel)
-#
-# # Validate model
-# validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#   valData=PCOSPpredCohortList)
+#' @examples
+#' data(sampleTrainedPCOSPmodel)
+#' data(samplePCOSPpredList)
+#'
+#' # Validate model
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
+#'   valData=samplePCOSPpredList)
 #'
 #' @md
 #' @import survcomp
@@ -159,15 +151,11 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'
 # @examples
 # data(sampleTrainedPCOSPmodel)
-# data(samplePCSIsurvExp)
-#
-# # Make predictions
-# PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
-#   model=sampleTrainedPCOSPmodel)
+# data(samplePCOSPpredList)
 #
 # # Validate model
 # validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#   valData=PCOSPpredSurvExp)
+#   valData=samplePCOSPpredList)
 #'
 #' @md
 #' @include classUnions.R
