@@ -36,7 +36,7 @@ other parallelization configuration please pass BPPARAM to bplapply.
 \examples{
 data(sampleRLSmodel)
 set.seed(getModelSeed(sampleRLSmodel))
-trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=5)
+trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=2)
 
 }
 \seealso{
