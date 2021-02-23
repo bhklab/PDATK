@@ -86,7 +86,7 @@ colMData <- DataFrame(sample_name=colnames(assay1),
 # -- Use it to build a SurvivalExperiment
 survExperiment <- SurvivalExperiment(assays=SimpleList(rna=assay1),
     rowData=rowMData, colData=colMData, metadata=list(a='Some metadata'),
-    days_survived='overall_survival', is_deceased='os_status')
+    survival_time='overall_survival', event_occurred ='os_status')
 ```
 
 A `SurvivalExperiment` can also be created from an existing
@@ -99,7 +99,7 @@ sumExperiment <- SummarizedExperiment(assays=SimpleList(rna=assay1),
 # -- Convert it to a SurvivalExperiment
 # Use the sumExp parameter, which must be named
 survExperiment <- SurvivalExperiment(sumExp=sumExperiment,
-    days_survived='overall_survival', is_deceased='os_status')
+    survival_time='overall_survival', event_occurred='os_status')
 ```
 
 ### Accessors

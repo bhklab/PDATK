@@ -216,6 +216,8 @@ setMethod('forestPlot', signature(object='ModelComparison'),
     statsDT <- as.data.table(object)[statistic == stat, ]
     statsDT[, model_pvalue :=
         paste0(model_name, ' (', scientific(p_value,  2), ')')]
+    # deal with duplicated factor levels
+    statsDT[duplicated(model_pvalue), model_pvalue := paste0(model_pvalue, ' ')]
     statsDT[, model_pvalue := factor(model_pvalue,
         levels=model_pvalue)]
 

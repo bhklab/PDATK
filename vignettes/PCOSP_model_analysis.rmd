@@ -485,8 +485,7 @@ clinicalVsPCOSP <- compareModels(validatedClinicalModel, validatedPCOSPmodel)
 ```
 
 ```{r ClinicalModel_vs_PCOSP_dIndex, fig.wide=TRUE, fig.height=8, fig.width=8}
-clinVsPCOSPdIndexForestPlot <- forestPlot(clinicalVsPCOSP, stat='D_index',
-    transform='log2')
+clinVsPCOSPdIndexForestPlot <- forestPlot(clinicalVsPCOSP, stat='log_D_index')
 clinVsPCOSPdIndexForestPlot
 ```
 
@@ -512,9 +511,9 @@ empty `GeneFuModel` objects, then assign the model predictors to the `models`
 slot of each respective object.
 
 ```{r GeneFuModel_constructor}
-chenGeneFuModel <- GeneFuModel()
-birnbaumGeneFuModel <- GeneFuModel()
-haiderGeneFuModel <- GeneFuModel()
+chenGeneFuModel <- GeneFuModel(randomSeed=1987)
+birnbaumGeneFuModel <- GeneFuModel(randomSeed=1987)
+haiderGeneFuModel <- GeneFuModel(randomSeed=1987)
 ```
 
 For the Haider model, we were unable to get the genes and coefficients. However,
@@ -585,7 +584,7 @@ allModelComparisons <- subset(allModelComparisons, isSummary == TRUE)
 
 ```{r plotting Model_Comparisons_dindex, fig.wide=TRUE}
 allDindexComparisonForestPlot <- forestPlot(allModelComparisons,
-    stat='D_index', transform='log2', colourBy='model', groupBy='mDataType')
+    stat='log_D_index', colourBy='model', groupBy='mDataType')
 allDindexComparisonForestPlot
 ```
 
@@ -614,8 +613,8 @@ subtypedPCOSPValCohorts <- assignSubtypes(PCOSPpredValCohorts, cohortSubtypeDFs)
 subtypeValidatedPCOSPmodel <- validateModel(trainedPCOSPmodel, valData=subtypedPCOSPValCohorts)
 ```
 ```{r forestPlot_subtyped_PCOSP_model}
-forestPlot(subtypeValidatedPCOSPmodel, stat='D_index', groupBy='cohort',
-    colourBy='subtype', transform='log2')
+forestPlot(subtypeValidatedPCOSPmodel, stat='log_D_index', groupBy='cohort',
+    colourBy='subtype')
 ```
 ```{r }
 forestPlot(subtypeValidatedPCOSPmodel, stat='concordance_index', groupBy='cohort',
