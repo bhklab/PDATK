@@ -17,27 +17,23 @@
 #'   which is used for method dispatch.
 #'
 #' @examples
-#' data(sampleTrainedPCOSPmodel)
+#' data(sampleValPCOSPmodel)
 #' data(sampleClinicalModel)
-#' data(samplePCSIsurvExp)
+#' data(sampleCohortList)
 #'
 #' # Train the models
-#' set.seed(metadata(sampleClinicalModel)$modelParams$randomSeed)
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' # Predict risk/risk-class
-#' PCOSPpredPCSI <- predictClasses(samplePCSIsurvExp, model=sampleTrainedPCOSPmodel)
-#' ClinicalPredPCSI <- predictClasses(samplePCSIsurvExp,
+#' clinicalPredCohortL <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
 #'   model=trainedClinicalModel)
 #'
 #' # Validate the models
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredPCSI)
 #' validatedClinicalModel <- validateModel(trainedClinicalModel,
-#'   valData=ClinicalPredPCSI)
+#'   valData=clinicalPredCohortL)
 #'
 #' # Compare the models
-#' modelComp <- ModelComparison(validatedPCOSPmodel, validatedClinicalModel)
+#' modelComp <- ModelComparison(sampleValPCOSPmodel, validatedClinicalModel)
 #' head(modelComp)
 #'
 #' @md

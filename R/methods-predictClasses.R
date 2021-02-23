@@ -113,7 +113,7 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #' data(sampleCohortList)
 #'
 #' # Make predictions
-#' PCOSPpredCohortList <- predictClasses(sampleCohortList,
+#' PCOSPpredCohortList <- predictClasses(sampleCohortList[seq_len(2)],
 #'   model=sampleTrainedPCOSPmodel)
 #' head(colData(PCOSPpredCohortList[[1]]))
 #'

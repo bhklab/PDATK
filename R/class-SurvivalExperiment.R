@@ -48,7 +48,7 @@
 #' @importFrom CoreGx .errorMsg .warnMsg
 #' @export
 SurvivalExperiment <- function(..., survival_time='survival_time',
-                               event_occurred='event_occurred')
+    event_occurred='event_occurred')
 {
     funContext <- .context(1)
 

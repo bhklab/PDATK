@@ -181,7 +181,7 @@ setMethod('trainModel', signature('PCOSP'),
 #' @examples
 #' data(sampleRLSmodel)
 #' set.seed(getModelSeed(sampleRLSmodel))
-#' trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=5)
+#' trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=2)
 #'
 #' @md
 #' @export
@@ -254,7 +254,7 @@ setMethod('trainModel', signature('RLSModel'),
 #' @examples
 #' data(sampleRGAmodel)
 #' set.seed(getModelSeed(sampleRGAmodel))
-#' trainedRGAmodel <- trainModel(sampleRGAmodel, numModels=5, minAccuracy=0)
+#' trainedRGAmodel <- trainModel(sampleRGAmodel, numModels=2, minAccuracy=0)
 #'
 #' @md
 #' @importFrom BiocParallel bplapply
