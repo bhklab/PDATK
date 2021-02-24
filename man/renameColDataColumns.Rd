@@ -20,6 +20,6 @@ Rename the columns in the \code{colData} slot, or do nothing if they don't match
 }
 \examples{
 data(sampleICGCmicro)
-renameColDataColumns(sampleICGCmicro, c())
+renameColDataColumns(sampleICGCmicro, c(event_occurred='days_survived'))
 
 }

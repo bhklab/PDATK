@@ -23,7 +23,18 @@ vignette: >
 
 # COINCIDE
 
+## Preprocess the data
 
+```{r}
+library(PDATK)
+library(qs)
+
+CSPCmae <- qread('../data/CSPCmae.qs', nthread=16)
+
+commonGenes <- findCommonGenes(CSPCmae)
+CSPCmae <- CSPCmae[commonGenes, , ]
+
+```
 
 
 # Network Community Search

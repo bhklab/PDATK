@@ -18,7 +18,7 @@ as appropriate.
 Convert factor columns in a rectangular object
 }
 \examples{
-x <- data.frame(a=factor(LETTERS[1:5], b=factor(runif(5, 0, 1))))
+x <- data.frame(a=factor(LETTERS[1:5]), b=factor(runif(5, 0, 1)))
 removeFactorColumns(x)
 
 }

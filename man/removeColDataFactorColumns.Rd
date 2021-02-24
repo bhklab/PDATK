@@ -16,3 +16,8 @@ character, as appropriate.
 \description{
 Remave any factor columns from the \code{colData} of an \code{S4} object
 }
+\examples{
+data(sampleICGCmicro)
+removeColDataFactorColumns(sampleICGCmicro)
+
+}

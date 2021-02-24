@@ -22,6 +22,7 @@ fail if the column names are missing.
 Rename columns or do nothing if the names don't match
 }
 \examples{
-
+x <- data.frame(a=factor(LETTERS[1:5]), b=factor(runif(5, 0, 1)))
+renameColumns(x, c(a='c'))
 
 }

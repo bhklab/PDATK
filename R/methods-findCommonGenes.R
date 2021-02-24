@@ -30,8 +30,21 @@ setGeneric('findCommonGenes', function(object, ...)
 #'
 #' @md
 #' @export
-setMethod('findCommonGenes', signature='CohortList', function(object)
+setMethod('findCommonGenes', signature(object='CohortList'), function(object)
 {
     Reduce(intersect, lapply(object, rownames))
 })
 
+#' Intersect Gene Names for All `experiments` in a `MultiAssayExperiment`
+#'
+#' @param object A `MultiAssayExperiment` where rownames represent genes.
+#'
+#' @return A `character` vector of genes common to all `experiments`
+#'   in the `MutliAssayExperiment`.
+#'
+#' @md
+#' @export
+setMethod('findCommonGenes', signature(object='CohortList'), function(object)
+{
+    Reduce(intersect, rownames(object))
+})

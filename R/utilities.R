@@ -68,7 +68,7 @@
 #'   as appropriate.
 #'
 #' @examples
-#' x <- data.frame(a=factor(LETTERS[1:5], b=factor(runif(5, 0, 1))))
+#' x <- data.frame(a=factor(LETTERS[1:5]), b=factor(runif(5, 0, 1)))
 #' removeFactorColumns(x)
 #'
 #' @section WARNING
@@ -100,6 +100,10 @@ removeFactorColumns <- function(x) {
 #' If for some reason the factor levels are doubles, then this will coerce
 #' them to integers.
 #'
+#' @examples
+#' data(sampleICGCmicro)
+#' removeColDataFactorColumns(sampleICGCmicro)
+#'
 #' @md
 #' @export
 removeColDataFactorColumns <- function(x) {
@@ -119,7 +123,8 @@ removeColDataFactorColumns <- function(x) {
 #'   fail if the column names are missing.
 #'
 #' @examples
-#'
+#' x <- data.frame(a=factor(LETTERS[1:5]), b=factor(runif(5, 0, 1)))
+#' renameColumns(x, c(a='c'))
 #'
 #' @md
 #' @export
@@ -140,7 +145,7 @@ renameColumns <- function(x, values) {
 #'
 #' @examples
 #' data(sampleICGCmicro)
-#' renameColDataColumns(sampleICGCmicro, c())
+#' renameColDataColumns(sampleICGCmicro, c(event_occurred='days_survived'))
 #'
 #' @md
 #' @export
