@@ -44,7 +44,8 @@ setMethod('findCommonGenes', signature(object='CohortList'), function(object)
 #'
 #' @md
 #' @export
-setMethod('findCommonGenes', signature(object='CohortList'), function(object)
+setMethod('findCommonGenes', signature(object='MultiAssayExperiment'),
+    function(object)
 {
     Reduce(intersect, rownames(object))
 })

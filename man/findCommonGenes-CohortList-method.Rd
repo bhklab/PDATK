@@ -5,23 +5,17 @@
 \title{Intersect Gene Names for All \code{SurvivalExperiments} in a \code{CohortList}}
 \usage{
 \S4method{findCommonGenes}{CohortList}(object)
-
-\S4method{findCommonGenes}{CohortList}(object)
 }
 \arguments{
-\item{object}{A \code{MultiAssayExperiment} where rownames represent genes.}
+\item{object}{A \code{CohortList} of \code{SurvivalExperiment}s to find common genes
+between.}
 }
 \value{
 A \code{character} vector of genes common to all \code{SurvivalExperiment}s
 in the \code{CohortList}.
-
-A \code{character} vector of genes common to all \code{experiments}
-in the \code{MutliAssayExperiment}.
 }
 \description{
 Intersect Gene Names for All \code{SurvivalExperiments} in a \code{CohortList}
-
-Intersect Gene Names for All \code{experiments} in a \code{MultiAssayExperiment}
 }
 \examples{
 data(sampleCohortList)
