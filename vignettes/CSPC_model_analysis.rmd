@@ -25,7 +25,7 @@ vignette: >
 
 ## Preprocess the data
 
-```{r}
+```{r load_data}
 library(PDATK)
 library(qs)
 
@@ -33,7 +33,6 @@ CSPCmae <- qread('../data/CSPCmae.qs', nthread=16)
 
 commonGenes <- findCommonGenes(CSPCmae)
 CSPCmae <- CSPCmae[commonGenes, , ]
-
 ```
 
 

@@ -43,6 +43,7 @@ setMethod('findCommonGenes', signature(object='CohortList'), function(object)
 #'   in the `MutliAssayExperiment`.
 #'
 #' @md
+#' @importClassesFrom MultiAssayExperiment MultiAssayExperiment
 #' @export
 setMethod('findCommonGenes', signature(object='MultiAssayExperiment'),
     function(object)

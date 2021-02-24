@@ -28,6 +28,9 @@ Imports:
     survival,
     stats,
     plyr,
+    dplyr,
+    MatrixGenerics,
+    MultiAssayExperiment,
     BiocParallel,
     rlang,
     piano,
@@ -65,6 +68,7 @@ Collate:
     'classUnions.R'
     'data.R'
     'globals.R'
+    'method-rankFeatures.R'
     'methods-assignSubtypes.R'
     'methods-barPlotModelComparison.R'
     'methods-compareModels.R'
