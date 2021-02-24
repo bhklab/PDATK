@@ -16,7 +16,7 @@ date: 2021-02-01
 output:
     BiocStyle::html_document
 vignette: >
-    %\VignetteIndexEntry{PCOSP: Pancreatic Cancer Overall Survival Predictor}
+    %\VignetteIndexEntry{"CSPC: Consensus Subtypes in Pancreatic Cancer"}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---
