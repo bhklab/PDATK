@@ -1,0 +1,23 @@
+---
+title: "CSPC: Consensus Subtypes in Pancreatic Cancer"
+author:
+- name: Vandana Sandhu
+- name: Heewon Seo
+- name: Christopher Eeles
+  affiliation:
+  - &pm Bioinformatics and Computational Genomics Laboratory, Princess Margaret Cancer Center, University Health Network, Toronto, Ontario, Canada
+  email: christopher.eeles@uhnresearch.ca
+- name: Benjamin Haibe-Kains
+  affiliation:
+  - *pm
+  - &mbp Department of Medical Biophysics, University of Toronto, Toronto, Canada
+  email: benjamin.haibe.kains@utoronto.ca
+date: 2021-02-01
+output:
+    BiocStyle::html_document
+vignette: >
+    %\VignetteIndexEntry{PCOSP: Pancreatic Cancer Overall Survival Predictor}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
