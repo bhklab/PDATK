@@ -58,3 +58,93 @@
 }
 #' @noRd
 .context <- .getExecutionContext
+
+#' Convert factor columns in a rectangular object
+#'
+#' @param x A list-like rectangular object such as a `data.frame`,
+#'   `data.table`, or `DataFrame`.
+#'
+#' @return `x` with factor columns converted to either integer or character,
+#'   as appropriate.
+#'
+#' @examples
+#' x <- data.frame(a=factor(LETTERS[1:5], b=factor(runif(5, 0, 1))))
+#' removeFactorColumns(x)
+#'
+#' @section WARNING
+#' If for some reason the factor levels are doubles, then this will coerce
+#' them to integers.
+#'
+#' @md
+#' @export
+removeFactorColumns <- function(x) {
+    isFactor <- vapply(x, is.factor, logical(1))
+    for (col in colnames(x)[isFactor]) {
+        x[[col]] <-
+            tryCatch({
+                as.integer(levels(x[[col]])[x[[col]]]) },
+            warning=function(w) { levels(x[[col]])[x[[col]]]
+            })
+    }
+    return(x)
+}
+
+#' Remave any factor columns from the `colData` of an `S4` object
+#'
+#' @param x An `S4` object with a `colData` method defined for it.
+#'
+#' @return `x` with colData factor columsn converted to either integer or
+#'   character, as appropriate.
+#'
+#' @section WARNING
+#' If for some reason the factor levels are doubles, then this will coerce
+#' them to integers.
+#'
+#' @md
+#' @export
+removeColDataFactorColumns <- function(x) {
+    colData(x) <- removeFactorColumns(colData(x))
+    return(x)
+}
+
+#' Rename columns or do nothing if the names don't match
+#'
+#' @param x An object for which `colnames` is defined, probably a `data.frame`
+#'   or other similar object.
+#' @param value A character vector where names are the old column names
+#'   and values are the new column names. Uses `gsub` internally to do
+#'   the renaming.
+#'
+#' @return `x` with the updated column names if they are present. Does not
+#'   fail if the column names are missing.
+#'
+#' @examples
+#'
+#'
+#' @md
+#' @export
+renameColumns <- function(x, values) {
+    for (i in seq_along(values)) {
+        colnames(x) <- gsub(names(values)[i], values[i], colnames(x))
+    }
+    return(x)
+}
+
+#'Rename the columns in the `colData` slot, or do nothing if they don't match
+#'
+#' @param x An `S4` object with a `colData` method.
+#' @param values A character vector where names are the existing column
+#'   names and values are the new column names.
+#'
+#' @return `x` with updated column names, if they match any existing columns.
+#'
+#' @examples
+#' data(sampleICGCmicro)
+#' renameColDataColumns(sampleICGCmicro, c())
+#'
+#' @md
+#' @export
+renameColDataColumns <- function(x, values) {
+    colData(x) <- renameColumns(colData(x), values)
+    return(x)
+}
