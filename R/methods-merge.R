@@ -66,7 +66,7 @@ setMethod('merge', signature('SurvivalExperiment', 'SurvivalExperiment'),
     ## TODO:: NA in join columns break the merge, how can I fix this?
     colDataL <- lapply(cohortL, colData)
     colDTL <- lapply(colDataL, as.data.table)
-    if (!all(colDTL[[1]] == colDTL[[2]], na.rm=TRUE)) {
+    if (all.equal(colDTL[[1]], colDTL[[2]]) != TRUE)) {
         sharedColData <- Reduce(intersect, lapply(colDataL, colnames))
         mergeBy <- function(x, y) merge.data.table(x, y, by=sharedColData)
         colDT <- Reduce(mergeBy, colDTL)
