@@ -24,6 +24,9 @@ Predict Classes for New Data Based on a Train Classifier Model
 data(sampleTrainedPCOSPmodel)
 data(samplePCSIsurvExp)
 
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 # Make predictions
 PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
   model=sampleTrainedPCOSPmodel)

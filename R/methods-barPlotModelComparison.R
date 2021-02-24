@@ -13,6 +13,9 @@
 #' data(sampleValPCOSPmodel)
 #' data(sampleICGCmicro)
 #'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
 #' # Setup the models
 #' set.seed(1987)
 #' clinicalModel <- ClinicalModel(sampleICGCmicro,
@@ -56,6 +59,9 @@ setGeneric("barPlotModelComparison", function(model1, model2, ...)
 #' data(sampleValPCOSPmodel)
 #' data(sampleCohortList)
 #' data(sampleICGCmicro)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
 #'
 #' # Setup the models
 #' clinicalModel <- ClinicalModel(sampleICGCmicro,

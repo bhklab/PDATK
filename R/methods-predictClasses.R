@@ -11,6 +11,9 @@
 #' data(sampleTrainedPCOSPmodel)
 #' data(samplePCSIsurvExp)
 #'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
 #' # Make predictions
 #' PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
 #'   model=sampleTrainedPCOSPmodel)
@@ -38,6 +41,9 @@ setGeneric('predictClasses',
 #' @examples
 #' data(sampleTrainedPCOSPmodel)
 #' data(samplePCSIsurvExp)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
 #'
 #' # Make predictions
 #' PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
@@ -112,6 +118,9 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #' data(sampleTrainedPCOSPmodel)
 #' data(sampleCohortList)
 #'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
 #' # Make predictions
 #' PCOSPpredCohortList <- predictClasses(sampleCohortList[seq_len(2)],
 #'   model=sampleTrainedPCOSPmodel)
@@ -147,6 +156,9 @@ setMethod('predictClasses', signature(object='CohortList',
 #' @examples
 #' data(sampleClinicalModel)
 #' data(samplePCSIsurvExp)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
 #'
 #' # Train Model
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
@@ -225,6 +237,9 @@ setMethod('predictClasses', signature(object='SurvivalExperiment',
 #' @examples
 #' data(sampleClinicalModel)
 #' data(sampleCohortList)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
 #'
 #' # Train Model
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)

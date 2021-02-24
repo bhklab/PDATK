@@ -34,9 +34,13 @@ other parallelization configuration please pass BPPARAM to bplapply.
 \examples{
 data(sampleRGAmodel)
 set.seed(getModelSeed(sampleRGAmodel))
+
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 trainedRGAmodel <- trainModel(sampleRGAmodel, numModels=2, minAccuracy=0)
 
 }
 \seealso{
-switchBox::SWAP.KTSP.Train BiocParallel::bplapply
+\code{switchBox::SWAP.KTSP.Train} \code{BiocParallel::bplapply}
 }

@@ -29,6 +29,9 @@ a \code{PCOSP}, \code{RLSModel} or \code{RGAModel} object.
 data(sampleTrainedPCOSPmodel)
 data(sampleCohortList)
 
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 # Make predictions
 PCOSPpredCohortList <- predictClasses(sampleCohortList[seq_len(2)],
   model=sampleTrainedPCOSPmodel)

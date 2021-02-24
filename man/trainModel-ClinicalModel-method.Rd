@@ -33,6 +33,10 @@ Fit a GLM Using Clinical Predictors Specified in a \code{ClinicalModel} Object.
 \examples{
 data(sampleClinicalModel)
 set.seed(getModelSeed(sampleClinicalModel))
+
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 trainedClinicalModel <- trainModel(sampleClinicalModel)
 
 }

@@ -33,6 +33,9 @@ Use a Clinical GLM to Predict Classes for a \code{CohortList} of
 data(sampleClinicalModel)
 data(sampleCohortList)
 
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 # Train Model
 trainedClinicalModel <- trainModel(sampleClinicalModel)
 

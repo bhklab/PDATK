@@ -59,6 +59,9 @@ data(sampleValPCOSPmodel)
 data(sampleClinicalModel)
 data(sampleCohortList)
 
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 # Train the models
 trainedClinicalModel <- trainModel(sampleClinicalModel)
 

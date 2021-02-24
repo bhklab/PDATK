@@ -28,6 +28,9 @@ a \code{PCOSP}, \code{RLSModel} or \code{RGAModel} object.
 data(sampleTrainedPCOSPmodel)
 data(samplePCSIsurvExp)
 
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 # Make predictions
 PCOSPpredSurvExp <- predictClasses(samplePCSIsurvExp,
   model=sampleTrainedPCOSPmodel)

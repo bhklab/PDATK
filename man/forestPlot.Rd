@@ -18,18 +18,9 @@ None, draws a forest plot.
 Generate a forest plot from an `S4` object
 }
 \examples{
-data(sampleCohortList)
-data(sampleTrainedPCOSPmodel)
-
-# Make predction
-PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-  model=sampleTrainedPCOSPmodel)
-
-# Validate the models
-validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-  valData=PCOSPpredCohortList)
+data(sampleValPCOSPmodel)
 
 # Plot
-dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='log_D_index')
+dIndexForestPlot <- forestPlot(sampleValPCOSPmodel, stat='log_D_index')
 
 }

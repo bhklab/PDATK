@@ -14,8 +14,7 @@
 }
 \value{
 The \code{ClinicalModel} with the validation statistics in the
-\code{validationStats} slot and the validation data in the
-\code{validationData} slot.
+\code{validationStats} slot and the validation data in the \code{validationData} slot.
 }
 \description{
 Validate a ClinicalModel object with a single SurvivalExperiment object.
@@ -23,6 +22,9 @@ Validate a ClinicalModel object with a single SurvivalExperiment object.
 \examples{
 data(sampleClinicalModel)
 data(sampleCohortList)
+
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
 
 # Train Model
 trainedClinicalModel <- trainModel(sampleClinicalModel)

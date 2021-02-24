@@ -1,10 +1,15 @@
 library(testthat)
 library(PDATK)
+library(BiocParallel)
+
 
 data(sampleICGCmicro)
 data(sampleCohortList)
 
 suppressWarnings({
+    if (Sys.info()['sysname'] == 'windows') {
+        BiocParallel::register(BiocParallel::SerialParam())
+    }
     clinicalModel <- ClinicalModel(sampleICGCmicro,
         formula='prognosis ~ sex + age + T + N + M + grade', randomSeed=1987)
     trainedClinicalModel <- trainModel(clinicalModel)
@@ -27,7 +32,7 @@ test_that('trainModel method for ClinicalModel works correctly', {
 test_that('predictClasses for Clinical model warnings/errors as expected',{
     expect_warning(
         predictClasses(sampleCohortList[[1]], model=trainedClinicalModel),
-'.*Rows .* have levels that are not in the model, skipping.*')
+            '.*Rows .* have levels that are not in the model, skipping.*')
     expect_error(predictClasses(sampleCohortList$UNC, model=trainedClinicalModel),
         '.*The columns .* are missing from the colData slot of the .*')
     models(trainedClinicalModel) <- c(models(trainedClinicalModel),

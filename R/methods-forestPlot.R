@@ -6,19 +6,10 @@
 #' @return None, draws a forest plot.
 #'
 #' @examples
-#' data(sampleCohortList)
-#' data(sampleTrainedPCOSPmodel)
-#'
-#' # Make predction
-#' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-#'   model=sampleTrainedPCOSPmodel)
-#'
-#' # Validate the models
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredCohortList)
+#' data(sampleValPCOSPmodel)
 #'
 #' # Plot
-#' dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='log_D_index')
+#' dIndexForestPlot <- forestPlot(sampleValPCOSPmodel, stat='log_D_index')
 #'
 #' @export
 setGeneric('forestPlot', function(object, ...)
@@ -49,19 +40,10 @@ setGeneric('forestPlot', function(object, ...)
 #' @return A `ggplot2` object.
 #'
 #' @examples
-#' data(sampleTrainedPCOSPmodel)
-#' data(sampleCohortList)
-#'
-#' # Make predctions
-#' PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-#'   model=sampleTrainedPCOSPmodel)
-#'
-#' # Validate the models
-#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#'   valData=PCOSPpredCohortList)
+#' data(sampleValPCOSPmodel)
 #'
 #' # Plot
-#' dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='log_D_index')
+#' dIndexForestPlot <- forestPlot(sampleValPCOSPmodel, stat='log_D_index')
 #'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
@@ -168,11 +150,13 @@ setMethod('forestPlot', signature('PCOSP_or_ClinicalModel'),
 #'
 #' @param object A `ModelComparison` object to forest plot.
 #'
-#'
 #' @examples
 #' data(sampleValPCOSPmodel)
 #' data(sampleClinicalModel)
 #' data(sampleCohortList)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
 #'
 #' # Train the models
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)

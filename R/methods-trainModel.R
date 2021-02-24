@@ -9,6 +9,10 @@
 #' @examples
 #' data(samplePCOSPmodel)
 #' set.seed(getModelSeed(samplePCOSPmodel))
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
 #' trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 #'
 #' @md
@@ -42,8 +46,12 @@ setGeneric('trainModel', function(object, ...)
 #'
 #' @examples
 #' data(samplePCOSPmodel)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
 #' set.seed(getModelSeed(samplePCOSPmodel))
-#' trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+#' trainModel(samplePCOSPmodel, numModels=2, minAccuracy=0.6)
 #'
 #' @md
 #' @importFrom BiocParallel bplapply
@@ -181,6 +189,10 @@ setMethod('trainModel', signature('PCOSP'),
 #' @examples
 #' data(sampleRLSmodel)
 #' set.seed(getModelSeed(sampleRLSmodel))
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
 #' trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=2)
 #'
 #' @md
@@ -249,11 +261,15 @@ setMethod('trainModel', signature('RLSModel'),
 #'
 #' @return A `RGAModel` object with the trained model in the `model` slot.
 #'
-#' @seealso switchBox::SWAP.KTSP.Train BiocParallel::bplapply
+#' @seealso `switchBox::SWAP.KTSP.Train` `BiocParallel::bplapply`
 #'
 #' @examples
 #' data(sampleRGAmodel)
 #' set.seed(getModelSeed(sampleRGAmodel))
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
 #' trainedRGAmodel <- trainModel(sampleRGAmodel, numModels=2, minAccuracy=0)
 #'
 #' @md
@@ -307,6 +323,10 @@ setMethod('trainModel', signature('RGAModel'),
 #' @examples
 #' data(sampleClinicalModel)
 #' set.seed(getModelSeed(sampleClinicalModel))
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
 #' @md

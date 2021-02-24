@@ -10,6 +10,9 @@
 #' data(sampleTrainedPCOSPmodel)
 #' data(samplePCOSPpredList)
 #'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
 #' # Validate model
 #' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
 #'   valData=samplePCOSPpredList[[1]])
@@ -38,6 +41,9 @@ setGeneric('validateModel', function(model, valData, ...)
 #' @examples
 #' data(sampleTrainedPCOSPmodel)
 #' data(samplePCOSPpredList)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
 #'
 #' # Validate model
 #' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
@@ -146,16 +152,20 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #' @param model A `PCOSP` model which has been trained using `trainModel`.
 #' @param valData A `SurvivalExperiment` to validate the model with.
 #'
-#' @return The `PCOSPmodel` with the validation statistics in the `validationStats`
-#'   slot and the validation data in the `validationData` slot.
+#' @return
+#' The `PCOSPmodel` with the validation statistics in the `validationStats`
+#' slot and the validation data in the `validationData` slot.
 #'
-# @examples
-# data(sampleTrainedPCOSPmodel)
-# data(samplePCOSPpredList)
-#
-# # Validate model
-# validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-#   valData=samplePCOSPpredList)
+#' @examples
+#' data(sampleTrainedPCOSPmodel)
+#' data(samplePCOSPpredList)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
+#' # Validate model
+#' validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
+#'   valData=samplePCOSPpredList)
 #'
 #' @md
 #' @include classUnions.R
@@ -308,12 +318,14 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #' @param valData A `SurvivalExperiment` to validate the model with.
 #'
 #' @return The `ClinicalModel` with the validation statistics in the
-#'   `validationStats` slot and the validation data in the
-#'   `validationData` slot.
+#'   `validationStats` slot and the validation data in the `validationData` slot.
 #'
 #' @examples
 #' data(sampleClinicalModel)
 #' data(sampleCohortList)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
 #'
 #' # Train Model
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
@@ -384,8 +396,8 @@ setMethod('validateModel', signature(model='ClinicalModel',
         estimate=c(validationStats$dIndex$coef,
             validationStats$cIndex$c.index, validationStats$AUC$estimate),
         se=vapply(validationStats, `[[`, i='se', FUN.VALUE=numeric(1)),
-        lower=vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1)),
-        upper=vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1)),
+        lower=log(vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1))),
+        upper=log(vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1))),
         p_value=vapply(validationStats, `[[`, i='p.value', FUN.VALUE=numeric(1)),
         n=vapply(validationStats, `[[`, i='n', FUN.VALUE=numeric(1)),
         isSummary=FALSE
@@ -407,6 +419,9 @@ setMethod('validateModel', signature(model='ClinicalModel',
 #' @examples
 #' data(sampleClinicalModel)
 #' data(samplePCSIsurvExp)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
 #'
 #' # Train Model
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
@@ -508,8 +523,7 @@ setMethod('validateModel', signature(model='ClinicalModel',
 #' @param valData A `SurvivalExperiment` to validate the model with.
 #'
 #' @return The `GeneModel` with the validation statistics in the
-#'   `validationStats` slot and the validation data in the
-#'   `validationData` slot.
+#'   `validationStats` slot and the validation data in the `validationData` slot.
 #'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
@@ -526,7 +540,6 @@ setMethod('validateModel', signature(model='GeneFuModel',
     valData='SurvivalExperiment'), function(model, valData)
 {
     funContext <- .context(1)
-
 
     survivalDF <- colData(valData)
     predSurvExp <- valData

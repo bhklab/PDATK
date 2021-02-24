@@ -35,8 +35,12 @@ other parallelization configuration please pass BPPARAM to bplapply.
 }
 \examples{
 data(samplePCOSPmodel)
+
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 set.seed(getModelSeed(samplePCOSPmodel))
-trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
+trainModel(samplePCOSPmodel, numModels=2, minAccuracy=0.6)
 
 }
 \seealso{

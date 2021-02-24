@@ -18,3 +18,15 @@ slot and the validation data in the \code{validationData} slot.
 \description{
 Validate a PCOSP model with a single SurvivalExperiment object.
 }
+\examples{
+data(sampleTrainedPCOSPmodel)
+data(samplePCOSPpredList)
+
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
+# Validate model
+validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
+  valData=samplePCOSPpredList)
+
+}

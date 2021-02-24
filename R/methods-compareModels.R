@@ -11,6 +11,9 @@
 #' data(sampleClinicalModel)
 #' data(sampleCohortList)
 #'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
+#'
 #' # Train the model
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
 #'
@@ -45,6 +48,9 @@ setGeneric('compareModels', function(model1, model2, ...)
 #' data(sampleValPCOSPmodel)
 #' data(sampleClinicalModel)
 #' data(sampleCohortList)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
 #'
 #' # Train the model
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)
@@ -91,6 +97,9 @@ setMethod('compareModels', signature(model1='SurvivalModel',
 #' data(sampleValPCOSPmodel)
 #' data(sampleClinicalModel)
 #' data(sampleCohortList)
+#'
+#' # Set parallelization settings
+#' BiocParallel::register(BiocParallel::SerialParam())
 #'
 #' # Train the models
 #' trainedClinicalModel <- trainModel(sampleClinicalModel)

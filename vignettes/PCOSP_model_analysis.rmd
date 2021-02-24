@@ -29,6 +29,14 @@ code presented here is run on a subset of the original data to ensure that
 the PDATK installation size is not too large, the full data from that study can 
 is available via the `MetaGxPancreas` Bioconductor data package.
 
+```{r include=FALSE, echo=FALSE, eval=TRUE}
+library(BiocParallel)
+
+if (Sys.info()['sysname'] == 'windows') {
+    BiocParallel::register(BiocParallel::SerialParam())
+}
+```
+
 ```{r load_dependencies, message=FALSE, warning=FALSE, include=FALSE}
 library(PDATK)
 library(msigdbr)
@@ -106,7 +114,7 @@ then tallied into a PCOSP score. A PCOSP score is simply the proportion of
 models predicting good survival out of the total number of models in the
 ensemble.
 
-```{r build_PCOSP_model}
+```{r build_PCOSP_model, message=FALSE}
 set.seed(1987)
 PCOSPmodel <- PCOSP(ICGCtrainCohorts, minDaysSurvived=365, randomSeed=1987)
 
@@ -139,7 +147,7 @@ encourage experimentation to see what works best with your data.
 
 
 ```{r messages=FALSE, warning=FALSE}
-trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=25, minAccuracy=0.6)
+trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=15, minAccuracy=0.6)
 
 metadata(trainedPCOSPmodel)$modelParams
 ```
@@ -269,7 +277,7 @@ RLSmodel <- RLSModel(ICGCtrainCohorts, minDaysSurvived=365, randomSeed=1987)
 ### Train the Model
 
 ```{r RLSModel_training}
-trainedRLSmodel <- trainModel(RLSmodel, numModels=25)
+trainedRLSmodel <- trainModel(RLSmodel, numModels=15)
 ```
 
 ### Predict the Classes
@@ -317,7 +325,7 @@ RGAmodel <- RGAModel(ICGCtrainCohorts, randomSeed=1987)
 ### Train the Model
 
 ```{r RGAModel_training}
-trainedRGAmodel <- trainModel(RGAmodel, numModels=25)
+trainedRGAmodel <- trainModel(RGAmodel, numModels=15)
 ```
 
 ### Predict the Classes

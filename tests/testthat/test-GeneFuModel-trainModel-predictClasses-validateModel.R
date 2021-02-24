@@ -4,6 +4,10 @@ library(PDATK)
 data(existingClassifierData)
 data(sampleCohortList)
 
+if (Sys.info()['sysname'] == 'windows') {
+    BiocParallel::register(BiocParallel::SerialParam())
+}
+
 set.seed(1987)
 chenGeneFuModel <- GeneFuModel(randomSeed=1987)
 models(chenGeneFuModel) <- SimpleList(list(chen=chen))

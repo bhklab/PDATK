@@ -1,12 +1,17 @@
 library(testthat)
 library(PDATK)
+library(BiocParallel)
+
+if (Sys.info()['sysname'] == 'windows') {
+    BiocParallel::register(BiocParallel::SerialParam())
+}
 
 data(sampleICGCmicro)
 data(sampleCohortList)
 
 suppressWarnings({
     PCOSPmodel <- PCOSP(sampleICGCmicro, randomSeed=1987)
-    trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=10)
+    trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=5)
     PCOSPpredCohortList <- predictClasses(sampleCohortList[seq_len(2)],
         model=trainedPCOSPmodel)
     validatedPCOSPModel <- validateModel(trainedPCOSPmodel,
@@ -14,8 +19,8 @@ suppressWarnings({
 })
 
 test_that('trainModel method for PCOSP works correctly', {
-    expect_s4_class(trainModel(PCOSPmodel, numModels=10), 'PCOSP')
-    expect_true(length(models(trainedPCOSPmodel)) > 5)
+    expect_s4_class(trainModel(PCOSPmodel, numModels=5), 'PCOSP')
+    expect_true(length(models(trainedPCOSPmodel)) > 2)
     # the model list has the correct items
     expect_equal(names(models(trainedPCOSPmodel)[[1]]),
         c('name', 'TSPs', 'score', 'labels'))

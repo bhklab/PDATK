@@ -31,6 +31,9 @@ Model
 data(sampleTrainedPCOSPmodel)
 data(samplePCOSPpredList)
 
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 # Validate model
 validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
   valData=samplePCOSPpredList)

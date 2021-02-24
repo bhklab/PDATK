@@ -27,6 +27,9 @@ data(sampleCohortList)
 data(sampleValPCOSPmodel)
 data(sampleICGCmicro)
 
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 # Setup the models
 set.seed(1987)
 clinicalModel <- ClinicalModel(sampleICGCmicro,

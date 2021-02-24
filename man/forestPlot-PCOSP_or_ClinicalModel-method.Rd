@@ -56,18 +56,9 @@ A \code{ggplot2} object.
 Render a forest plot from the \code{validationStats} slot of a \code{PCOSP} model object.
 }
 \examples{
-data(sampleTrainedPCOSPmodel)
-data(sampleCohortList)
-
-# Make predctions
-PCOSPpredCohortList <- predictClasses(sampleCohortList[c('PCSI', 'TCGA')],
-  model=sampleTrainedPCOSPmodel)
-
-# Validate the models
-validatedPCOSPmodel <- validateModel(sampleTrainedPCOSPmodel,
-  valData=PCOSPpredCohortList)
+data(sampleValPCOSPmodel)
 
 # Plot
-dIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='log_D_index')
+dIndexForestPlot <- forestPlot(sampleValPCOSPmodel, stat='log_D_index')
 
 }

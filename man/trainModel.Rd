@@ -21,6 +21,10 @@ Train a Model Based on the Data in an S4 Object
 \examples{
 data(samplePCOSPmodel)
 set.seed(getModelSeed(samplePCOSPmodel))
+
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 trainModel(samplePCOSPmodel, numModels=5, minAccuracy=0.6)
 
 }

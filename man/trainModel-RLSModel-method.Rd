@@ -36,6 +36,10 @@ other parallelization configuration please pass BPPARAM to bplapply.
 \examples{
 data(sampleRLSmodel)
 set.seed(getModelSeed(sampleRLSmodel))
+
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 trainedRLSmodel <- trainModel(sampleRLSmodel, numModels=2)
 
 }

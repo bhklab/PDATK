@@ -14,8 +14,7 @@
 }
 \value{
 The \code{GeneModel} with the validation statistics in the
-\code{validationStats} slot and the validation data in the
-\code{validationData} slot.
+\code{validationStats} slot and the validation data in the \code{validationData} slot.
 }
 \description{
 Validate a \code{GenefuModel} object with a single \code{SurvivalExperiment} object.

@@ -31,6 +31,9 @@ Model
 data(sampleClinicalModel)
 data(samplePCSIsurvExp)
 
+# Set parallelization settings
+BiocParallel::register(BiocParallel::SerialParam())
+
 # Train Model
 trainedClinicalModel <- trainModel(sampleClinicalModel)
 
