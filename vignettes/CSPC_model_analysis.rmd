@@ -28,6 +28,7 @@ vignette: >
 ```{r load_data, eval=FALSE}
 library(PDATK)
 library(S4Vectors)
+library(MultiAssayExperiment)
 library(qs)
 
 CSPCmaeRaw <- qread('../data/CSPCmae.qs', nthread=16)
@@ -38,6 +39,9 @@ CSPCmae <- intersectRows(CSPCmaeRaw)
 
 ```{r feature_ranking, eval=FALSE}
 experiments(CSPCmae) <- endoapply(experiments(CSPCmae), rankFeatures)
+
+top20FeaturesPerCohort <- lapply(experiments(CSPCmae), getTopFeatures, numFeats=20)
+top20FeaturesOverall <- getTopFeatures(CSPCmae, numFeats=20, na.rm=TRUE)
 ```
 
 # Network Community Search

@@ -87,3 +87,34 @@ setMethod('getTopFeatures', signature(object='SummarizedExperiment'),
 
     return(topFeatures)
 })
+
+#' Get the Top Ranked Features in a `MultiAssayExperiment` object
+#'
+#' @param object A `SummarizedExperiment` to extract top features from
+#' @param numFeats An `integer` number of top ranked features to extract.
+#' @param ... Fall through arguments to `rankFeatures`, which is used to
+#'   calculate the ranks if `rankCol` is not present the object `rowData`.
+#' @param rankCol The name of the column containing the integer feature ranks.
+#'   Defaults to `feature_rank`, as calculated with `rankFeatures`, but users
+#'   can alternatively specify their own custom rank column if desired.
+#'
+#' @return A `character` vector of top ranked features, with the features in
+#'   order of rank ascending.
+#'
+#' @seealso `rankFeatures,MultiAssayExperiment=method`
+#' 
+# @examples
+# data(sampleICGCmicro)
+# getTopFeatures(sampleICGCmicro)
+#'
+#' @md
+#' @export
+setMethod('getTopFeatures', signature(object='MultiAssayExperiment'), 
+    function(object, numFeats, ...) 
+{
+    if (!('featureRanks' %in% names(metadata(object))))
+        object <- rankFeatures(object, ...)
+
+    topFeatures <- metadata(object)$featureRanks[seq_len(numFeats), ]$feature
+    return(topFeatures)
+})
