@@ -2,7 +2,7 @@
 #' 
 #' @md
 #' @export
-setAs('matrix', 'data.frame', function(x) as.data.frame(x, row.names=rownames(x)))
+setAs('matrix', 'data.frame', function(from) as.data.frame(from, row.names=rownames(from)))
 
 #' @inherit setAs
 #' 
@@ -11,4 +11,4 @@ setAs('matrix', 'data.frame', function(x) as.data.frame(x, row.names=rownames(x)
 #' @md
 #' @export
 setAs(from='matrix', to='data.table', 
-    function(x) as.data.table(x, keep.rownames='rownames'))
+    function(from) as.data.table(from, keep.rownames='rownames'))

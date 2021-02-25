@@ -27,6 +27,6 @@ Get the Top Ranked Features in a \code{SummarizedExperiment} object
 }
 \examples{
 data(sampleICGCmicro)
-getTopFeatures(sampleICGCmicro)
+getTopFeatures(sampleICGCmicro, numFeats=20)
 
 }

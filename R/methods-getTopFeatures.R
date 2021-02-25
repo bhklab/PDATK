@@ -58,7 +58,7 @@ setMethod('getTopFeatures', signature(object='PCOSP'),
 #'
 #' @examples
 #' data(sampleICGCmicro)
-#' getTopFeatures(sampleICGCmicro)
+#' getTopFeatures(sampleICGCmicro, numFeats=20)
 #'
 #' @md
 #' @export
@@ -101,11 +101,11 @@ setMethod('getTopFeatures', signature(object='SummarizedExperiment'),
 #' @return A `character` vector of top ranked features, with the features in
 #'   order of rank ascending.
 #'
-#' @seealso `rankFeatures,MultiAssayExperiment=method`
-#' 
+#' @seealso [`rankFeatures,MultiAssayExperiment=method`]
+#'
 # @examples
 # data(sampleICGCmicro)
-# getTopFeatures(sampleICGCmicro)
+# getTopFeatures(sampleICGCmicro, numFeats=20)
 #'
 #' @md
 #' @export

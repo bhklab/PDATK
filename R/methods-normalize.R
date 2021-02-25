@@ -16,7 +16,7 @@
 #' @md
 #' @export
 setMethod('normalize', signature(object='SummarizedExperiment'), 
-    function(object, MARGIN=2, FUN='scale', ..., whichAssays=seq_len(assays(object))) 
+    function(object, MARGIN=2, FUN='scale', ..., whichAssays=seq_len(assays(object)))
 {
     funContext <- .context(1)
 
@@ -30,12 +30,48 @@ setMethod('normalize', signature(object='SummarizedExperiment'),
     if (MARGIN == 1) FUN <- function(x, ...) t(FUN(t(x), ...))
 
     assays(object)[whichAssays] <- endoapply(assays(object)[whichAssays], FUN, ...)
+    metadata(object)$normalizeMethod <- paste0(FUN_NAME, ' ', paste0(as.list(...), collapse=', '))
     return(object)
 })
 
+#' Normalize the `assays` in a `MultiAssayExperiment` Object
 #'
+#' @param object A `SummarizedExperiment` object with assays to normalize.
+#' @param MARGIN An `integer` indicating if rows (1) or columns (2) should be normalized. Defaults to
+#'   2 for columns.
+#' @param FUN A function to normalize your data with. The function should be
+#'   vectorized and 
+#' @param ... Fall through parameters to FUN.
+#' @param whichAssays A `numeric` or `character` vector specifying the indices
+#'   of the assays to normalize.
 #' 
+#' @importMethodsFrom BiocGenerics normalize
 #' 
+#' @md
+#' @export
+setMethod('normalize', signature(object='MultiAssayExperiment'),
+    function(object, MARGIN=2, FUN='caretPreprocess', ..., whichAssays=seq_len(assays(object)))
+{
+    funContext <- .context(1)
+
+    FUN_NAME <- as.character(substitute(FUN))
+
+    if (is.character(FUN)) FUN <- get(FUN)
+    if (!is.function(FUN)) stop(.errorMsg(funContext, 'The argument to the FUN ',
+        'parameter is not a function... Please ensure you pass a function or
+        the name of a function to calculate row summaries with!'))
+
+
+})
+
+#'
+#' @param x The data to be normalized with `caret::preProcess` and `caret::predict`.
+#' @param ... Fall through parameters to `caret::preProcess`. This can be used to apply
+#'   a range of different preprocessing methods from that package.
 #' 
+#' @importFrom caret preProcess
+#' @importFrom stats predict
 #' 
-#' 
+#' @md
+#' @export
+caretPreprocess <- function(x, ...) predict(preProcess(x, ...), x)

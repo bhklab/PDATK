@@ -26,5 +26,5 @@ order of rank ascending.
 Get the Top Ranked Features in a \code{MultiAssayExperiment} object
 }
 \seealso{
-\verb{rankFeatures,MultiAssayExperiment=method}
+\code{\link{rankFeatures,MultiAssayExperiment=method}}
 }
