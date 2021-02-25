@@ -100,7 +100,7 @@ setMethod('rankFeatures', signature(object='SummarizedExperiment'),
 #' @importFrom MatrixGenerics rowMads
 #' @importFrom dplyr dense_rank
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
-#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder set
 #' 
 #' @md
 #' @export

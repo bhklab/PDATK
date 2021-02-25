@@ -41,7 +41,13 @@ CSPCmae <- intersectRows(CSPCmaeRaw)
 experiments(CSPCmae) <- endoapply(experiments(CSPCmae), rankFeatures)
 
 top20FeaturesPerCohort <- lapply(experiments(CSPCmae), getTopFeatures, numFeats=20)
-top20FeaturesOverall <- getTopFeatures(CSPCmae, numFeats=20, na.rm=TRUE)
+top20PctFeaturesOverall <- getTopFeatures(CSPCmae, numFeats=floor(0.2*length(rownames(CSPCmae)[[1]])), na.rm=TRUE)
+
+featuresOfInterest <- unique(c(top20PctFeaturesOverall, unlist(top20FeaturesPerCohort)))
+```
+
+```{r , eval=FALSE}
+featuresOfInterestMAE <- CSPCmae[featuresOfInterest, , ]
 ```
 
 # Network Community Search

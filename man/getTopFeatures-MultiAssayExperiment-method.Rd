@@ -25,3 +25,6 @@ order of rank ascending.
 \description{
 Get the Top Ranked Features in a \code{MultiAssayExperiment} object
 }
+\seealso{
+\verb{rankFeatures,MultiAssayExperiment=method}
+}
