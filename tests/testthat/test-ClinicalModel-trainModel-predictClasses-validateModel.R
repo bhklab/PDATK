@@ -2,12 +2,11 @@ library(testthat)
 library(PDATK)
 library(BiocParallel)
 
-
 data(sampleICGCmicro)
 data(sampleCohortList)
 
 suppressWarnings({
-    if (Sys.info()['sysname'] == 'windows') {
+    if (Sys.info()['sysname'] == 'Windows') {
         BiocParallel::register(BiocParallel::SerialParam())
     }
     clinicalModel <- ClinicalModel(sampleICGCmicro,

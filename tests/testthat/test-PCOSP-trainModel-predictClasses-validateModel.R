@@ -2,7 +2,7 @@ library(testthat)
 library(PDATK)
 library(BiocParallel)
 
-if (Sys.info()['sysname'] == 'windows') {
+if (Sys.info()['sysname'] == 'Windows') {
     BiocParallel::register(BiocParallel::SerialParam())
 }
 

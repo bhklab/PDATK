@@ -1,12 +1,16 @@
 library(testthat)
 library(PDATK)
+library(BiocParallel)
 
 data(sampleICGCmicro)
 data(sampleCohortList)
 
 suppressWarnings({
+    if (Sys.info()['sysname'] == 'Windows') {
+        BiocParallel::register(BiocParallel::SerialParam())
+    }
     PCOSPmodel <- PCOSP(sampleICGCmicro, randomSeed=1987)
-    trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=10)
+    trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=5)
     PCOSPpredCohortList <- predictClasses(sampleCohortList[seq_len(2)],
         model=trainedPCOSPmodel)
     validatedPCOSPModel <- validateModel(trainedPCOSPmodel,
