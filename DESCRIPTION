@@ -71,6 +71,7 @@ Collate:
     'globals.R'
     'methods-assignSubtypes.R'
     'methods-barPlotModelComparison.R'
+    'methods-coerce.R'
     'methods-compareModels.R'
     'methods-densityPlotModelComparison.R'
     'methods-dropNotCensored.R'
