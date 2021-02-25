@@ -27,14 +27,18 @@ vignette: >
 
 ```{r load_data}
 library(PDATK)
+library(S4Vectors)
 library(qs)
 
-CSPCmae <- qread('../data/CSPCmae.qs', nthread=16)
+CSPCmaeRaw <- qread('../data/CSPCmae.qs', nthread=16)
 
-commonGenes <- findCommonGenes(CSPCmae)
-CSPCmae <- CSPCmae[commonGenes, , ]
+# Subset to only feature shared across all data
+CSPCmae <- intersectRows(CSPCmaeRaw)
 ```
 
+```{r feature_ranking}
+experiments(CSPCmae) <- endoapply(experiments(CSPCmae), rankFeatures)
+```
 
 # Network Community Search
 
