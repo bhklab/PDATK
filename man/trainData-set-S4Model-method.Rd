@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{object}{An \code{S4Model} object to retrieve training data from.}
+
+\item{value}{An object to put into the model training data.}
 }
 \value{
 The training data for an \code{S4Model} Object.

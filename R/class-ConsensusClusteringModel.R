@@ -14,20 +14,6 @@ setClassUnion('MAE_or_SE', c('MultiAssayExperiment', 'SummarizedExperiment'))
     slots=c(trainData='MAE_or_SE'),
     contains='S4Model')
 
-#' Initialization Method for ConsensusClusteringModel Class
-#' 
-#' 
-#' @md
-setMethod('initialize', 'ConsensusClusteringModel', function(.Object) {
-    .Object@trainData <- SummarizedExperiment()
-    .Object@modelParams <- SimpleList()
-    .Object@models <- SimpleList()
-    .Object@validationStats <- DataFrame()
-    .Object@validationData <- SimpleList()
-    validObject(.Object)
-    return(.Object)
-})
-
 #' Constructor for a `ConsensusClusterModel` Object.
 #' 
 #' @param trainData A `MultiAssayExperiment` or `SummarizedExperiment` containing
@@ -43,7 +29,7 @@ setMethod('initialize', 'ConsensusClusteringModel', function(.Object) {
 #' 
 #' @seealso [`ConsensusClusterPlus::ConsensusClusterPlus`]
 #' 
-#' @alias ConClustModel
+#' @aliases ConClustModel
 #' 
 #' @md
 #' @export
@@ -59,7 +45,14 @@ ConsensusClusteringModel <- function(trainData, ..., randomSeed) {
         'argument is a ', class(trainData), ' object. It must be either a ',
         'MultiAssayExperiment or SummarizedExperiment'))
 
-    return(.ConsensusClusteringModel(trainData=trainData, 
-        modelParams=SimpleList(randomSeed=randomSeed)))
+    return(.ConsensusClusteringModel(
+        trainData=trainData, 
+        modelParams=SimpleList(randomSeed=randomSeed),
+        models=SimpleList(),
+        validationStats=data.table(),
+        validationData=SimpleList(),
+        metadata=list()
+        ))
 }
+#' @export
 ConClustModel <- ConsensusClusteringModel

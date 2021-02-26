@@ -57,7 +57,7 @@ setMethod('trainData', signature(object='S4Model'), function(object)
 #' 
 #' @param object An `S4` object to retrieve training data from.
 #' @param ... Allow new parameters to be defined for this generic. 
-#' @parm value 
+#' @param value An object to place in the objects training data slot.
 #' 
 #' @return None, updates the object.
 #' 
@@ -69,6 +69,7 @@ setGeneric('trainData<-', function(object, ..., value)
 #' Accessor for the Training Data in a `S4Model` Object
 #' 
 #' @param object An `S4Model` object to retrieve training data from.
+#' @param value An object to put into the model training data.
 #' 
 #' @return The training data for an `S4Model` Object.
 #' 

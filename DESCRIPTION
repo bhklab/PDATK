@@ -63,6 +63,7 @@ Collate:
     'class-SurvivalExperiment.R'
     'class-SurvivalModel.R'
     'class-ClinicalModel.R'
+    'class-ConsensusClusteringModel.R'
     'class-GeneFuModel.R'
     'class-ModelComparison.R'
     'class-PCOSP.R'

@@ -10,6 +10,8 @@ trainData(object, ...) <- value
 \item{object}{An \code{S4} object to retrieve training data from.}
 
 \item{...}{Allow new parameters to be defined for this generic.}
+
+\item{value}{An object to place in the objects training data slot.}
 }
 \value{
 None, updates the object.

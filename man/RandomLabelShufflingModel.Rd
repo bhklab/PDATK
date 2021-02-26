@@ -14,7 +14,7 @@ the \code{SurvivalModel} object.}
 \item{minDaysSurvived}{An \code{integer} minimum number of days survived to be
 classified as a 'good' prognosis.}
 
-\item{...}{Force subsequent paramters to be named. Not used.}
+\item{...}{Force subsequent parameters to be named. Not used.}
 
 \item{randomSeed}{An \code{integer} randomSeed that was used to train the model.
 Users should specify this when initializing a model to ensure

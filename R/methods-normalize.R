@@ -40,7 +40,8 @@ setMethod('normalize', signature(object='SummarizedExperiment'),
     
     .FUN <- if (MARGIN == 1) function(x, ...) { t(FUN(t(x), ...)) } else FUN
 
-    assays(object)[whichAssays] <- endoapply(assays(object)[whichAssays], .FUN)
+    assays(object)[whichAssays] <- endoapply(assays(object)[whichAssays], .FUN,
+        ...)
     metadata(object)$normalization <- list(FUN=substitute(FUN_NAME(x, ...)), 
         MARGIN=MARGIN, assays=whichAssays)
     return(object)
