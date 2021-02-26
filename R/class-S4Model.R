@@ -336,3 +336,45 @@ setReplaceMethod('validationData', signature(object='S4Model',
     object@validationData <- value
     return(object)
 })
+
+#' Show method for Classes Inheriting from `S4Model`
+#'
+#' @param object A `S4Model` derivative to show.
+#'
+#' @return None, prints to console.
+#'
+#' @importFrom CoreGx .collapse
+#' @import S4Vectors
+#' @export
+setMethod('show', signature(object='S4Model'), function(object) {
+    # -- Class
+    cat('<', class(object)[1], '>', '\n')
+
+    # -- trainData
+    data <- trainData(object)
+    cat('trainData: ', .collapse(dim(trainData(object))), '\n')
+    cat('\t ', summary(data), '\n')
+    if (length(assays(data)) > 0)
+        cat('\t ', .collapse(names(assays(data))), '\n')
+
+    # -- modelParams
+    modParams <- modelParams(object)
+    cat('modelParams: ', .collapse(dim(modParams)), '\n')
+    cat(paste0('\t', capture.output(show(modParams)), collapse='\n\t'), '\n')
+
+    # -- models
+    cat('models: \n')
+    mods <- models(object)
+    cat(paste0('\t', capture.output(show(mods)), collapse='\n\t'), '\n')
+
+    # -- validationStats
+    cat('validationStats: \n')
+    valStats <- validationStats(object)
+    cat(paste0('\t', capture.output(head(valStats)), collapse='\n\t'), '\n')
+
+    # -- validationData
+    cat('validationData: \n')
+    valData <- validationData(object)
+    cat(paste0('\t', capture.output(show(valData)), collapse='\n\t'), '\n\n')
+
+})

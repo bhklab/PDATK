@@ -33,7 +33,7 @@
 #'   the `SurvivalModel` object.
 #' @param minDaysSurvived An `integer` minimum number of days survived to be
 #'   classified as a 'good' prognosis.
-#' @param ... Force subsequent paramters to be named. Not used.
+#' @param ... Force subsequent parameters to be named. Not used.
 #' @param randomSeed An `integer` randomSeed that was used to train the model.
 #'   Users should specify this when initializing a model to ensure
 #'   reproducibilty.
