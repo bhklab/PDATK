@@ -92,21 +92,7 @@ SurvivalModel <- function(trainCohorts, minDaysSurvived=365, ...,
     return(SurvModel)
 }
 
-#' Accessor for the models slot of an `S4` object
-#'
-#' @param object An `S4` object to retrieve models from.
-#' @param ... Allow new parameters to be defined for this generic.
-#'
-#' @return An R object representing a model.
-#'
-#' @examples
-#' data(samplePCOSPmodel)
-#' models(samplePCOSPmodel)
-#'
-#' @md
-#' @export
-setGeneric('models', function(object, ...) standardGeneric('models'))
-#'
+
 #' Getter for the models slot of a `SurvivalModel` object
 #'
 #' @param object A `SurvivalModel` model object to retrieve the models slot from.
@@ -116,31 +102,16 @@ setGeneric('models', function(object, ...) standardGeneric('models'))
 #' @examples
 #' data(samplePCOSPmodel)
 #' models(samplePCOSPmodel)
+#' 
+#' @include class-S4Model.R
 #'
 #' @md
 #' @export
-setMethod('models', signature('SurvivalModel'), function(object) {
+setMethod('models', signature(object='SurvivalModel'), function(object) {
     object@models
 })
 
 
-#' Generic for Setting the Models Slot for an S4 Object
-#'
-#' @param object An `S4` object to set the models slot for
-#' @param ... Allow new parameters to be added.
-#' @param value A model or list of models to assign to the object
-#'
-#' @return None, updates the object.
-#'
-#' @examples
-#' data(samplePCOSPmodel)
-#' models(samplePCOSPmodel) <- SimpleList(model1=NA)
-#'
-#' @md
-#' @export
-setGeneric('models<-',
-    function(object, ..., value) standardGeneric('models<-'))
-#'
 #' Setter for the models slot of a `SurvivalModel` object
 #'
 #' @param object A `SurvivalModel` object to update
@@ -152,6 +123,8 @@ setGeneric('models<-',
 #' data(samplePCOSPmodel)
 #' models(samplePCOSPmodel) <- SimpleList(model1=NA)
 #'
+#' @include class-S4Model.R
+#' 
 #' @md
 #' @export
 setReplaceMethod('models', signature(object='SurvivalModel',
@@ -161,23 +134,7 @@ setReplaceMethod('models', signature(object='SurvivalModel',
     return(object)
 })
 
-#' Accessor for the `validationStats` slot of an `S4` object
-#'
-#' @param object An `S4` object
-#' @param ... Allow definition of new arguments to this generic.
-#'
-#' @return A `data.frame` of validation statistics for the validation cohorts
-#'   provided to `validateModel` function for a given `SurvivalModel` object.
-#'
-#' @examples
-#' data(samplePCOSPmodel)
-#' validationStats(samplePCOSPmodel)
-#'
-#' @md
-#' @export
-setGeneric('validationStats', function(object, ...)
-    standardGeneric('validationStats'))
-#'
+
 #' Accessor for the `validationStats` slot of a `SurvivalModel` object.
 #'
 #' @param object A `SurvivalModel` object to get validation statistics from.
@@ -189,6 +146,8 @@ setGeneric('validationStats', function(object, ...)
 #' data(samplePCOSPmodel)
 #' validationStats(samplePCOSPmodel)
 #'
+#' @include class-S4Model.R
+#' 
 #' @md
 #' @export
 setMethod('validationStats', signature(object='SurvivalModel'),
@@ -198,23 +157,6 @@ setMethod('validationStats', signature(object='SurvivalModel'),
 })
 
 
-#' Setter for the `validationStats` slot on an `S4` object
-#'
-#' @param object An `S4` object.
-#' @param ... Allow definition of additional parameters to this generic.
-#' @param value A `data.frame` of validation statistics.
-#'
-#' @return None, updates the object
-#'
-#' @examples
-#' data(samplePCOSPmodel)
-#' validationStats(samplePCOSPmodel) <- data.frame()
-#'
-#' @md
-#' @export
-setGeneric('validationStats<-', function(object, ..., value)
-    standardGeneric('validationStats<-'))
-#'
 #' Setter for the validationStats slot of a `SurvivalModel` object with a
 #'   `data.frame`
 #'
@@ -227,7 +169,9 @@ setGeneric('validationStats<-', function(object, ..., value)
 #' @examples
 #' data(samplePCOSPmodel)
 #' validationStats(samplePCOSPmodel) <- data.frame()
-#'
+#' 
+#' @include class-S4Model.R
+#' 
 #' @md
 #' @export
 setReplaceMethod('validationStats', signature(object='SurvivalModel',
@@ -238,22 +182,7 @@ setReplaceMethod('validationStats', signature(object='SurvivalModel',
 })
 
 
-#' Accessor for the `validationData` slot of an `S4` object
-#'
-#' @param object An `S4` object
-#' @param ... Allow definition of new arguments to this generic.
-#'
-#' @return A `CohortList` with the validation data used for the `SurvivalModel` model,
-#'   or nothing if the model has not be validated.
-#'
-#' @examples
-#' data(samplePCOSPmodel)
-#' validationData(samplePCOSPmodel)
-#'
-#' @md
-#' @export
-setGeneric('validationData', function(object, ...) standardGeneric('validationData'))
-#'
+
 #' Accessor for the `validationData` slot of a `SurvivalModel` object.
 #'
 #' @param object A `SurvivalModel` object.
@@ -264,6 +193,8 @@ setGeneric('validationData', function(object, ...) standardGeneric('validationDa
 #' @examples
 #' data(samplePCOSPmodel)
 #' validationData(samplePCOSPmodel)
+#' 
+#' @include class-S4Model.R
 #'
 #' @md
 #' @export
@@ -273,24 +204,6 @@ setMethod('validationData', signature(object='SurvivalModel'), function(object)
 })
 
 
-
-#' Generic for setting the `validationData` slot on an `S4` object
-#'
-#' @param object An `S4` object.
-#' @param ... Allow definition of additional parameters to this generic.
-#' @param value A `data.frame` of validation statistics.
-#'
-#' @return None, updates the object
-#'
-#' @examples
-#' data(samplePCOSPmodel)
-#' validationData(samplePCOSPmodel) <- validationData(samplePCOSPmodel)
-#'
-#' @md
-#' @export
-setGeneric('validationData<-', function(object, ..., value)
-    standardGeneric('validationData<-'))
-#'
 #' Setter for the `validationData` slot of a `SurvivalModel` object with a
 #'  `CohortList`.
 #'
@@ -303,6 +216,8 @@ setGeneric('validationData<-', function(object, ..., value)
 #' data(samplePCOSPmodel)
 #' validationData(samplePCOSPmodel) <- validationData(samplePCOSPmodel)
 #'
+#' @include class-S4Model.R
+#' 
 #' @md
 #' @export
 setReplaceMethod('validationData', signature(object='SurvivalModel',

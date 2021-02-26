@@ -46,8 +46,15 @@ top20PctFeaturesOverall <- getTopFeatures(CSPCmae, numFeats=floor(0.2*length(row
 topFeatures <- unique(c(top20PctFeaturesOverall, unlist(top20FeaturesPerCohort)))
 ```
 
-```{r , eval=FALSE}
+```{r normalize_MAE, eval=FALSE}
 topFeaturesMAE <- CSPCmae[topFeatures, , ]
+normMAE <- normalize(topFeaturesMAE, MARGIN=1, method='scale')
+```
+
+## Create and Train a ConsensusClusterModel
+
+```{r , eval=FALSE}
+
 ```
 
 # Network Community Search

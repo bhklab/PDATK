@@ -24,6 +24,7 @@ Imports:
     HDF5Array,
     MultiAssayExperiment,
     CoreGx,
+    caret,
     methods,
     S4Vectors, 
     BiocGenerics,
@@ -57,6 +58,7 @@ biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software,
 BugReports: https://github.com/bhklab/PDATK/issues
 RoxygenNote: 7.1.1.9001
 Collate: 
+    'class-S4Model.R'
     'class-CohortList.R'
     'class-SurvivalExperiment.R'
     'class-SurvivalModel.R'
