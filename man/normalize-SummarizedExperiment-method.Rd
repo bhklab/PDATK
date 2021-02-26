@@ -7,28 +7,39 @@
 \S4method{normalize}{SummarizedExperiment}(
   object,
   MARGIN = 2,
-  FUN = "scale",
+  FUN = "preprocessCaret",
   ...,
-  whichAssays = seq_len(assays(object))
+  whichAssays = seq_along(assays(object))
 )
 }
 \arguments{
 \item{object}{A \code{SummarizedExperiment} object with assays to normalize.}
 
-\item{MARGIN}{An \code{integer} indicating if rows (1) or columns (2) should be normalized. Defaults to
-columns. Defaults to 2.}
+\item{MARGIN}{An \code{integer} indicating if rows (1) or columns (2) should be
+normalized. Defaults to columns. Defaults to 2.}
 
-\item{FUN}{A function to normalize your data with. The function should be
-vectorized and}
+\item{FUN}{A function to normalize your data with. The function should accept
+a matrix, normalize the columns then return a matrix. The data will be
+transposed before applyying FUN if MARGIN=1.}
 
-\item{...}{Fall through parameters to FUN.}
+\item{...}{Fall through parameters to FUN. When using the default FUN, the
+data is scaled and centered when no additional arguments are specified.}
 
 \item{whichAssays}{A \code{numeric} or \code{character} vector specifying the indices
-of the assays to normalize.}
+or names of the assays to normalize. Defaults to all assays.}
 }
 \value{
-The \code{SummarizedExperiment} with one or more of the matrices in \code{assays} normalized.
+The \code{SummarizedExperiment} with one or more of the matrices in
+\code{assays} normalized and the normalization details in the \code{normalization}
+item of the object \code{metadata}.
 }
 \description{
 Normalize the \code{assays} in a \code{SummarizedExperiment} Object
+}
+\details{
+When using the default FUN, it is also possible to impute missing values.
+See \code{?caret::preProcess} for information on available methods.
+}
+\seealso{
+\code{\link{preprocessCaret}}, \code{\link[caret:preProcess]{caret::preProcess}}
 }
