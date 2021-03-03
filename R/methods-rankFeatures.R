@@ -107,7 +107,7 @@ setMethod('rankFeatures', signature(object='SummarizedExperiment'),
 #' 
 #' @importFrom dplyr dense_rank
 #' @importFrom stats mad
-#' @importFrom matrixStats weigthedMedian
+#' @importFrom matrixStats weightedMedian
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder set
 #' 
