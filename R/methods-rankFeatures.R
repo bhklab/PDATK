@@ -78,16 +78,18 @@ setMethod('rankFeatures', signature(object='SummarizedExperiment'),
 #'
 #' @param object A `MultiAssayExperiment` to rank the features in.
 #' @param FUN A vectorized feature scoring function, such as `var` or `mad`. 
-#'   Defaults to `MatrixStats::weightedMad`.
+#'   Defaults to `mad` from the `stats` package.
 #' @param RANK_FUN A ranking function, such as `rank` or `dense_rank`. Defaults
-#'   to `dplyr::dense_rank`.
-#' @param ... Fall through arguments to `FUN`, such as `na.rm=TRUE`. For the
-#'   default value of FUN, we recommend weighting per cohort mad values by
-#'   the sample size, which can be achieved by passing the `w` parameter to
-#'   dots. See [`MatrixStats::weightedMad`] for more details.
+#'   to `dense_rank` from `dplyr`.
+#' @param ... Fall through arguments to `FUN`, such as `na.rm=TRUE`.
 #' @param descending Should your rank function be called with `-` before the
 #'   values from `FUN`. Defaults to `TRUE`, which should be used if high values
 #'   returned from `FUN` are good.
+#' @param weights A named `numeric` weighting vector with a weight for each
+#'   experiment in the `MultiAssayExperiment` object. Names must match the
+#'   `names(experiments(object))`. Passed to `matrixStats::weightedMedian` when
+#'   aggregating feature scores per assay. Defaults to the sample size of an
+#'   assay relative to the largest sample size when this paramter is missing.
 #'
 #' @return The `MultiAssayExperiment` with the item `featureRanks` in the object
 #'   metadata, which stores a `DataFrame` containing ranks accross all assays for 
@@ -100,19 +102,20 @@ setMethod('rankFeatures', signature(object='SummarizedExperiment'),
 # data(sampleICGCmicro)
 # rankFeatures(sampleICGCmicro, FUN='mads', RANK_FUN='dense_rank')
 #'
-#' @seealso [`MatrixStats::weightedMad`], [`dplyr::dense_ranke`]
+#' @seealso [`stats::mad`], [`dplyr::dense_rank`], 
+#'   [`matrixStats::weightedMedian`]
 #' 
-#' @importFrom MatrixGenerics rowMads
-#' @importFrom MatrixStats weightedMad
 #' @importFrom dplyr dense_rank
+#' @importFrom stats mad
+#' @importFrom matrixStats weigthedMedian
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder set
 #' 
 #' @md
 #' @export
 setMethod('rankFeatures', signature(object='MultiAssayExperiment'),
-    function(object, FUN='weightedMad', RANK_FUN='dense_rank', ..., 
-        descending=TRUE)
+    function(object, FUN='mad', RANK_FUN='dense_rank', ..., 
+        descending=TRUE, weights)
 {
     funContext <- .context(1)
 
@@ -137,7 +140,26 @@ setMethod('rankFeatures', signature(object='MultiAssayExperiment'),
     }
     longDT <- rbindlist(meltedAssayList)
 
-    featureDT <- longDT[, .(feature_score=FUN(value, ...)), by='feature']
+    featureAssayDT <- longDT[, .(feature_score=FUN(value, ...)), 
+        by=.('feature', 'assay')]
+    if (missing(weights)) {
+        sampleSizes <- vapply(experiments(object), FUN=ncol, numeric(1))
+        weights <- sampleSizes / max(sampleSizes)
+    } 
+    assayHasWeights <- names(assayList) %in% names(weights)
+    if (!all(assayHasWeights)) {
+        stop(.errorMsg(funContext, 'The assays ', 
+            paste0(missignAssays, collapse=', '),
+            ' do not have weights, in the weights vector. Please specify', 
+            ' a weight for all assays in your MultiAssayExperiment or ', 
+            'exclude this weights argument to have them automatically ',
+            'calculated.'))
+    }
+    featureDT <- featureAssayDT[, 
+        .(feature_score=weightedMedian(feature_score, w=weights[assay], 
+            na.rm=TRUE)), 
+        by='feature']
+
     featureDT[, 
         feature_rank := if (descending) RANK_FUN(-feature_score) else 
             RANK_FUN(feature_score)
