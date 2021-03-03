@@ -78,10 +78,13 @@ setMethod('rankFeatures', signature(object='SummarizedExperiment'),
 #'
 #' @param object A `MultiAssayExperiment` to rank the features in.
 #' @param FUN A vectorized feature scoring function, such as `var` or `mad`. 
-#'   Defaults to `mad`.
+#'   Defaults to `MatrixStats::weightedMad`.
 #' @param RANK_FUN A ranking function, such as `rank` or `dense_rank`. Defaults
 #'   to `dplyr::dense_rank`.
-#' @param ... Fall through arguments to `FUN`, such as `na.rm=TRUE`.
+#' @param ... Fall through arguments to `FUN`, such as `na.rm=TRUE`. For the
+#'   default value of FUN, we recommend weighting per cohort mad values by
+#'   the sample size, which can be achieved by passing the `w` parameter to
+#'   dots. See [`MatrixStats::weightedMad`] for more details.
 #' @param descending Should your rank function be called with `-` before the
 #'   values from `FUN`. Defaults to `TRUE`, which should be used if high values
 #'   returned from `FUN` are good.
@@ -97,7 +100,10 @@ setMethod('rankFeatures', signature(object='SummarizedExperiment'),
 # data(sampleICGCmicro)
 # rankFeatures(sampleICGCmicro, FUN='mads', RANK_FUN='dense_rank')
 #'
+#' @seealso [`MatrixStats::weightedMad`], [`dplyr::dense_ranke`]
+#' 
 #' @importFrom MatrixGenerics rowMads
+#' @importFrom MatrixStats weightedMad
 #' @importFrom dplyr dense_rank
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder set
@@ -105,7 +111,8 @@ setMethod('rankFeatures', signature(object='SummarizedExperiment'),
 #' @md
 #' @export
 setMethod('rankFeatures', signature(object='MultiAssayExperiment'),
-    function(object, FUN='mad', RANK_FUN='dense_rank', ..., descending=TRUE)
+    function(object, FUN='weightedMad', RANK_FUN='dense_rank', ..., 
+        descending=TRUE)
 {
     funContext <- .context(1)
 
@@ -131,7 +138,10 @@ setMethod('rankFeatures', signature(object='MultiAssayExperiment'),
     longDT <- rbindlist(meltedAssayList)
 
     featureDT <- longDT[, .(feature_score=FUN(value, ...)), by='feature']
-    featureDT[, feature_rank := if (descending) RANK_FUN(-feature_score) else RANK_FUN(feature_score)]
+    featureDT[, 
+        feature_rank := if (descending) RANK_FUN(-feature_score) else 
+            RANK_FUN(feature_score)
+            ]
 
     featureDF <- DataFrame(featureDT[order(feature_rank)])
     mcols(featureDF)$calculated_with <- c(NA, FUN_NAME, RANK_FUN_NAME)

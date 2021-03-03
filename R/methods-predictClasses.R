@@ -340,3 +340,27 @@ setMethod('predictClasses', signature(object='CohortList',
     metadata(predictionResults)$predictionModel <- model
     return(predictionResults)
 })
+
+
+# ---- ConsensusClusteringModel
+
+#' Compute the Optimal Clustering Solution for a Trained 
+#'   ConsensusClusteringModel
+#' 
+#' Compute the optimal clustering solution out of possibilities generated
+#'   with trainModel. Assigns the cluster labels to the `MultiAssayExperiment`
+#'   object.
+#' 
+#' @param object A `MutliAssayExperiment` object
+#' @param 
+#' @param 
+#' 
+#' 
+#' @md
+#' @importFrom
+#' @export 
+setMethod('predictClasses', signature(object='ConsensusClusteringModel'), 
+    function(object, ...) 
+{
+
+})

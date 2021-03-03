@@ -6,7 +6,7 @@
 \usage{
 \S4method{rankFeatures}{MultiAssayExperiment}(
   object,
-  FUN = "mad",
+  FUN = "weightedMad",
   RANK_FUN = "dense_rank",
   ...,
   descending = TRUE
@@ -16,12 +16,15 @@
 \item{object}{A \code{MultiAssayExperiment} to rank the features in.}
 
 \item{FUN}{A vectorized feature scoring function, such as \code{var} or \code{mad}.
-Defaults to \code{mad}.}
+Defaults to \code{MatrixStats::weightedMad}.}
 
 \item{RANK_FUN}{A ranking function, such as \code{rank} or \code{dense_rank}. Defaults
 to \code{dplyr::dense_rank}.}
 
-\item{...}{Fall through arguments to \code{FUN}, such as \code{na.rm=TRUE}.}
+\item{...}{Fall through arguments to \code{FUN}, such as \code{na.rm=TRUE}. For the
+default value of FUN, we recommend weighting per cohort mad values by
+the sample size, which can be achieved by passing the \code{w} parameter to
+dots. See \code{\link[MatrixStats:weightedMad]{MatrixStats::weightedMad}} for more details.}
 
 \item{descending}{Should your rank function be called with \code{-} before the
 values from \code{FUN}. Defaults to \code{TRUE}, which should be used if high values
@@ -37,4 +40,7 @@ about which functions were used for each column can be found in the object
 }
 \description{
 Rank the Features in a \code{MultiAssayExperiment} Object
+}
+\seealso{
+\code{\link[MatrixStats:weightedMad]{MatrixStats::weightedMad}}, \code{\link[dplyr:dense_ranke]{dplyr::dense_ranke}}
 }
