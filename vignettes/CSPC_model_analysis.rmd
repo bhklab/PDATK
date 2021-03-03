@@ -41,12 +41,8 @@ CSPCmae <- intersectRows(CSPCmaeRaw)
 experiments(CSPCmae) <- endoapply(experiments(CSPCmae), rankFeatures)
 
 top20FeaturesPerCohort <- lapply(experiments(CSPCmae), getTopFeatures, numFeats=20)
-
-sampleSizes <- vapply(experiments(CSPCmae), ncol, numeric(1))
-cohortWeights <- sampleSizes / max(sampleSizes)
-top20PctFeaturesOverall <- 
-    getTopFeatures(CSPCmae, numFeats=floor(0.2*length(rownames(CSPCmae)[[1]])), 
-        w=cohortWeights, na.rm=TRUE)
+top20PctFeaturesOverall <- getTopFeatures(CSPCmae, 
+    numFeats=floor(0.2*length(rownames(CSPCmae)[[1]])), na.rm=TRUE)
 topFeatures <- unique(c(top20PctFeaturesOverall, unlist(top20FeaturesPerCohort)))
 ```
 

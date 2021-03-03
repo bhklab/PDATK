@@ -141,11 +141,11 @@ setMethod('rankFeatures', signature(object='MultiAssayExperiment'),
     longDT <- rbindlist(meltedAssayList)
 
     featureAssayDT <- longDT[, .(feature_score=FUN(value, ...)), 
-        by=.('feature', 'assay')]
+        by=.(feature, assay)]
     if (missing(weights)) {
         sampleSizes <- vapply(experiments(object), FUN=ncol, numeric(1))
         weights <- sampleSizes / max(sampleSizes)
-    } 
+    }
     assayHasWeights <- names(assayList) %in% names(weights)
     if (!all(assayHasWeights)) {
         stop(.errorMsg(funContext, 'The assays ', 
