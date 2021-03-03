@@ -78,7 +78,7 @@ setMethod('rankFeatures', signature(object='SummarizedExperiment'),
 #'
 #' @param object A `MultiAssayExperiment` to rank the features in.
 #' @param FUN A vectorized feature scoring function, such as `var` or `mad`. 
-#'   Defaults to `mad` from the `stats` package.
+#'   Defaults to `mad` from the `BiocGenerics` package.
 #' @param RANK_FUN A ranking function, such as `rank` or `dense_rank`. Defaults
 #'   to `dense_rank` from `dplyr`.
 #' @param ... Fall through arguments to `FUN`, such as `na.rm=TRUE`.
@@ -102,11 +102,11 @@ setMethod('rankFeatures', signature(object='SummarizedExperiment'),
 # data(sampleICGCmicro)
 # rankFeatures(sampleICGCmicro, FUN='mads', RANK_FUN='dense_rank')
 #'
-#' @seealso [`stats::mad`], [`dplyr::dense_rank`], 
+#' @seealso [`BiocGenerics::mad`], [`dplyr::dense_rank`], 
 #'   [`matrixStats::weightedMedian`]
 #' 
 #' @importFrom dplyr dense_rank
-#' @importFrom stats mad
+#' @importFrom BiocGenerics mad
 #' @importFrom matrixStats weightedMedian
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder set

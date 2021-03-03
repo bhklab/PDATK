@@ -149,7 +149,7 @@ setReplaceMethod('modelParams', signature(object='S4Model',
     value='List_or_list_or_NULL'), function(object, value)
 {
     funContext <- .context(1)
-    if (interactive()) warning(.warnMsg(funContext, 'The model parameters of
+    if (sys.nframe() == 1) warning(.warnMsg(funContext, 'The model parameters of
         a ', class(object), ' object should not be modified manually, please
         use the constructor instead.'))
 
@@ -207,7 +207,7 @@ setReplaceMethod('models', signature(object='S4Model',
     value='List_or_list_or_NULL'), function(object, value) 
 {
     funContext <- .context(1)
-    if (interactive()) warning(.warnMsg(funContext, 'The model parameters of
+    if (sys.nframe() == 1) warning(.warnMsg(funContext, 'The model parameters of
         a ', class(object), ' object should not be modified manually, please
         use the constructor instead.'))
 

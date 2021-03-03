@@ -344,23 +344,95 @@ setMethod('predictClasses', signature(object='CohortList',
 
 # ---- ConsensusClusteringModel
 
-# #' Compute the Optimal Clustering Solution for a Trained 
-# #'   ConsensusClusteringModel
-# #' 
-# #' Compute the optimal clustering solution out of possibilities generated
-# #'   with trainModel. Assigns the cluster labels to the `MultiAssayExperiment`
-# #'   object.
-# #' 
-# #' @param object A `MutliAssayExperiment` object
-# #' @param 
-# #' @param 
-# #' 
-# #' 
-# #' @md
-# #' @importFrom
-# #' @export 
-# setMethod('predictClasses', signature(object='ConsensusClusteringModel'), 
-#     function(object, ...) 
-# {
+#' Compute the Optimal Clustering Solution for a Trained 
+#'   ConsensusClusteringModel
+#' 
+#' Compute the optimal clustering solution out of possibilities generated
+#'   with trainModel. Assigns the cluster labels to the `MultiAssayExperiment`
+#'   object.
+#' 
+#' @param object A `MutliAssayExperiment` object
+#' @param subinterval A `numeric` vector of two float values, the first
+#'   being the lower and second being the upper limit of the subinteral
+#'   to compare cluster ambiguity over. Default is c(0.1, 0.9), i.e. comparing
+#'   the 10th and 90th percentile of cluster consensus to calculate the 
+#'   ambiguity of a given clustering solution. This is the value used to
+#'   selected the optimal K value from the potential solutions for each
+#'   assay in the training data.
+#' 
+#' @return A `object` `ConsensusClusteringModel`, with class predictions
+#'   assigned to the colData of `trianData`
+#' 
+#' @md
+#' @export 
+setMethod('predictClasses', signature(object='ConsensusClusteringModel'), 
+    function(object, subinterval=c(0.1, 0.9))
+{
+    ## TODO:: Refactor into some helpers so function is shorter
+    
+    funContext <- .context(1)
+    if (length(models(object)) < 1) stop(.errorMsg(funContext, 'The ',
+        class(object)[1], ' object does not have any clustering results.
+        Please run trainModel first, before trying to predictClasses'))
+    
+    # -- Find optimal K value
+    assayClusters <- models(object)
+    .getFromClusteringResults <- function(x, i='consensusMatrix') lapply(x[-1], 
+        FUN=`[[`, i=i)
+    consensusMatrices <- lapply(assayClusters, FUN=.getFromClusteringResults)
+    .getLowerTris <- function(x) lapply(x, lower.tri)
+    lowerTris <- lapply(consensusMatrices, .getLowerTris)
+    .subsetLowerTris <- function(x, lowerTris) mapply(`[`, x, lowerTris, 
+        SIMPLIFY=FALSE)
+    lowerTriConMatrices <- mapply(.subsetLowerTris, consensusMatrices, 
+        lowerTris, SIMPLIFY=FALSE)
+    # Make and empirical cummulative densitiy function for each consensus matrix
+    .getECDFS <- function(x) lapply(x, FUN=ecdf)
+    assayECDFS <- lapply(lowerTriConMatrices, FUN=.getECDFS)
 
-# })
+    # Compare the 1st and 9th deciles as a metric of cluster ambiguity
+    .calcPropAmbiguousClusters <- function(ecdfs, subinterval) {
+        vapply(ecdfs, function(ecdf, subinterval) 
+                ecdf(subinterval[2]) - ecdf(subinterval[1]),
+            subinterval=subinterval,
+            FUN.VALUE=numeric(1))
+    }
+    clusterAmbiguities <- lapply(assayECDFS, FUN=.calcPropAmbiguousClusters,
+        subinterval=subinterval)
+    assayOptimalK <- vapply(clusterAmbiguities, which.min, numeric(1))
+
+    # -- Extract the class predctions for the optimal K
+    assayClusterLabels <- lapply(assayClusters, FUN=.getFromClusteringResults,
+        i='consensusClass')
+    optimalClusterLabels <- mapply(`[[`, x=assayClusterLabels, i=assayOptimalK,
+        SIMPLIFY=FALSE)
+    
+    # -- Assign class predictions to the experiments in tranData
+    trainingData <- trainData(object)
+    experimentColData <- lapply(experiments(trainingData), FUN=colData)
+    updatedExpColData <- mapply(`[[<-`, x=experimentColData, i='cluster_label', 
+        value=optimalClusterLabels, SIMPLIFY=FALSE)
+    updatedExperiments <- mendoapply(`colData<-`, x=experiments(trainingData),
+        value=updatedExpColData)
+    mcols(updatedExperiments)$optimalK <- assayOptimalK + 1
+    experiments(trainingData) <- updatedExperiments
+    trainData(object) <- trainingData
+
+    # -- Calculate the cluster centroids and assign to the models slot
+    assayList <- assays(trainingData)
+    uniqueClusterLabels <- lapply(optimalClusterLabels, unique)
+    ## TODO:: Clean up this function implementation
+    .calcClusterCentroid <- function(assay, uniqueLabels, labels) {
+        sapply(uniqueLabels, function(i, x, labels) {
+            rowMeans(x[, which(labels == i), drop=FALSE], na.rm=TRUE)
+        }, x=assay, labels=labels)
+    }
+    centroids <- vector(mode='list', length=length(assayList))
+    clusterCentroids <- mapply(.calcClusterCentroid, assay=assayList, 
+        uniqueLabels=uniqueClusterLabels, labels=optimalClusterLabels, 
+        SIMPLIFY=FALSE)
+    models(object) <- SimpleList(clusterCentroids)
+    metadata(object)$consensuClusteringRaw <- assayClusters
+
+    return(object)
+})

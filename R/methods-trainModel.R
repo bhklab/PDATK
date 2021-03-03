@@ -399,7 +399,7 @@ setMethod('trainModel', signature(object='GeneFuModel'), function(object) {
 #' @return The `ConsensusClusteringModel` with the clustering results in the
 #'   `models` slot.
 #' 
-#' @import ConsensusClusterPlus
+#' @importFrom ConsensusClusterPlus ConsensusClusterPlus
 #' @importFrom BiocParallel bplapply
 #' 
 #' @md
@@ -412,10 +412,14 @@ setMethod('trainModel', signature(object='ConsensusClusteringModel'),
     
     clusteringResults <- bplapply(assays(trainData(object)), 
         FUN=ConsensusClusterPlus, maxK=maxK, reps=reps, distance=distance, 
-        clusterAlg=clusterAlg, plot=plot, ...)
+        clusterAlg=clusterAlg, plot=plot, seed=modelParams(object)$randomSeed,
+        ...)
     models(object) <- clusteringResults
 
     if (is.null(plot)) dev.off()
+
+    modelParams(object) <- c(modelParams(object), list(maxK=maxK, reps=reps, 
+        distance=distance, clusteringAlg=clusterAlg), list(...))
 
     return(object)
 })

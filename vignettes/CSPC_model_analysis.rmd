@@ -61,6 +61,10 @@ conClustModel <- ConsensusClusteringModel(normMAE, randomSeed=1987)
 trainedConClustModel <- trainModel(conClustModel)
 ```
 
+```{r, eval=FALSE}
+classifiedConClustModel <- predictClasses(trainedConClustModel)
+```
+
 # Network Community Search
 
 

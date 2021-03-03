@@ -17,7 +17,7 @@
 \item{object}{A \code{MultiAssayExperiment} to rank the features in.}
 
 \item{FUN}{A vectorized feature scoring function, such as \code{var} or \code{mad}.
-Defaults to \code{mad} from the \code{stats} package.}
+Defaults to \code{mad} from the \code{BiocGenerics} package.}
 
 \item{RANK_FUN}{A ranking function, such as \code{rank} or \code{dense_rank}. Defaults
 to \code{dense_rank} from \code{dplyr}.}
@@ -46,6 +46,6 @@ about which functions were used for each column can be found in the object
 Rank the Features in a \code{MultiAssayExperiment} Object
 }
 \seealso{
-\code{\link[stats:mad]{stats::mad}}, \code{\link[dplyr:ranking]{dplyr::dense_rank}},
+\code{\link[BiocGenerics:mad]{BiocGenerics::mad}}, \code{\link[dplyr:ranking]{dplyr::dense_rank}},
 \code{\link[matrixStats:weightedMedian]{matrixStats::weightedMedian}}
 }
