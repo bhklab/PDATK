@@ -80,7 +80,7 @@ setReplaceMethod('trainData', signature(object='S4Model'),
     function(object, value) 
 {
     funContext <- .context(1)
-    if (interactive()) warning(.warnMsg(funContext, 'The training data of
+    if (sys.nframe() == 1) warning(.warnMsg(funContext, 'The training data of
         a ', class(object), ' object should not be modified manually, please
         use the constructor instead.'))
 

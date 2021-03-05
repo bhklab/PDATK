@@ -679,3 +679,137 @@ setMethod('validateModel', signature(model='GeneFuModel',
     validationData(validatedModel) <- predCohortList
     return(validatedModel)
 })
+
+
+# ---- ConsensusClusteringModel
+
+#' 
+#' @param object A `ConsensusClusteringModel` object with cluster_labels in 
+#'   assigned to each experiment, as returned by `predictClasses`.
+#' @param valData A `ConsensusClusteringModel` object with cluster_labels
+#'   assigned to each experiment, as returned by `predictClasses`. This
+#'   consensus cluster should contain outgroup cohorts, such as normal 
+#'   patients to be compared against the disease cohorts being used for 
+#'   class discovery.
+#' @param ... Fallthrough parameters to `BiocParallel::bpmapply`. This can
+#'   also be used to customize the call to `stats::cor.test` used for 
+#'   calculating the cluster thresholds.
+#' 
+#' @return The `ConsensusClusteringModel` from object, with the training
+#'   data from `valData` in the `validationData` slot, the models from the
+#'   `valData` object appended to the `models` of object, and the 
+#'   `validationStats` slot populated with pair-wise comparisons between
+#'   all experiments in both `object` and `valData`.
+#' 
+#' @importFrom BiocParallel bpmapply
+#' @importFrom data.table rbindlist
+#' 
+#' @md
+#' @export
+setMethod('validateModel', signature(object='ConsensusClusteringModel', 
+    valData='ConsensusClusteringModel'), function(object, valData, ...) 
+{
+    funContext <- .context(1)
+    
+    # Prepare comparisons for clustering results between every cohort
+    validationData(object) <- trainData(valData)
+    valCohorts <- names(trainData(valData))
+
+    centroids <- c(models(object), models(valData))
+    cohorts <- c(experiments(trainData(object)), 
+        experiments(trainData(valData)))
+    assays <- lapply(cohorts, assay, 1)
+    clusterLabels <- lapply(cohorts, function(x) x$cluster_label)
+
+    # Find all non-self comparisons between the cohorts
+    cohortPairs <- .findAllCohortPairs(names(cohorts))
+    metadata(object)$cohortPairs <- cohortPairs
+
+    # Extract and expand the data for each cohort
+    comparisonCentroids <- centroids[cohortPairs$x]
+    comparisonAssays <- assays[cohortPairs$y]
+    comparisonClasses <-  clusterLabels[cohortPairs$y]
+    comparisons <- rownames(cohortPairs)
+    centroidOptimalK <- mcols(cohorts)$optimalK[cohortPairs$x]
+    assayOptimalK <- mcols(cohorts)$optimalK[cohortPairs$y]
+
+    # Use cor.test to calculate distance between the expression values
+    #  in a centroid vs a cohort
+    thresholdDtList <- bpmapply(FUN=.calculateMSMthresholds, 
+        comparison=comparisons, centroid=comparisonCentroids, 
+        assay=comparisonAssays, classes=comparisonClasses, 
+        centroidK=centroidOptimalK, assayK=assayOptimalK, 
+        SIMPLIFY=FALSE)#, ...)
+
+    thresholdDT <- rbindlist(thresholdDtList)
+})
+
+
+#' @importFrom data.table data.table rbindlist
+#' 
+#' @md
+#' @keywords internal
+.calculateMSMthresholds <- function(comparison, centroid, assay, classes, 
+    centroidK, assayK, ...)
+{
+    cohorts <- unlist(strsplit(comparison, '-'))
+    sharedGenes <- intersect(rownames(centroid), rownames(assay))
+    centroid <- na.omit(centroid[sharedGenes, , drop=FALSE])
+    assay <- na.omit(assay[sharedGenes, , drop=FALSE])
+    corList <- vector("list", centroidK * assayK)
+    k <- 1
+    for (i in seq_len(centroidK)) {
+      for (j in seq_len(assayK)) {
+        classIdxs <- which(classes == j)
+        if (length(classIdxs) < 1) stop(.errorMsg(funContext, 'No samples have',
+            'the class ', j, ' in ', cohorts[2], '. Something has gone wrong!'))
+        localCentroid <- centroid[, i]
+        meanThresh <- mean(unlist(lapply(classIdxs,
+                              function(idx, localCentroid, data) {
+                                as.numeric(
+                                  cor.test(
+                                    localCentroid,
+                                    data[, idx],
+                                    method='pearson',
+                                    use='pairwise.complete.obs')$estimate
+                                  )},
+                              localCentroid=localCentroid,
+                              data=assay)), na.rm=TRUE)
+        corList[[k]] <- data.table('comparison'=comparison,
+                                   'cohort1'=cohorts[1],
+                                   'cohort2'=cohorts[2],
+                                   'cohort1_K'=i,
+                                   'cohort2_K'=j,
+                                   "threshold"=meanThresh)
+        k <- k + 1
+      }
+    }
+    rbindlist(corList, fill=TRUE)
+}
+
+
+#' Find all non-self pair-wise combinations of cohorts
+#'
+#' @param clusterNames A `character` vector of cohort names
+#'
+#' @return A `data.frame` with the index of all non-self pair-wise cohort combinations. Rownames
+#'     are the names of the two clusters being compared.
+#'
+#' @md
+#' @keywords internal
+.findAllCohortPairs <- function(clusterNames) {
+    pairs <- expand.grid(x=seq_along(clusterNames), y=seq_along(clusterNames))
+    namePairs <- expand.grid(x=clusterNames, y=clusterNames)
+
+    # Remove self comparisons
+    allPairs <- pairs[-which(pairs[, 1] == pairs[, 2]), ]
+    allNames <- namePairs[-which(namePairs[, 1] == namePairs[, 2]), ]
+
+    # Paste together pair names
+    pairNames <- mapply(paste, allNames[, 1], allNames[, 2], MoreArgs=list(sep="-"))
+
+    # Assign names as rownames to pair data.frame
+    rownames(allPairs) <- pairNames
+
+    return(allPairs)
+}

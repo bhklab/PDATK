@@ -48,21 +48,33 @@ topFeatures <- unique(c(top20PctFeaturesOverall, unlist(top20FeaturesPerCohort))
 
 ```{r normalize_MAE, eval=FALSE}
 topFeaturesMAE <- CSPCmae[topFeatures, , ]
-normMAE <- normalize(topFeaturesMAE, MARGIN=1, method=c('medianImpute', 'scale'))
+normMAE <- normalize(topFeaturesMAE, MARGIN=1, method=c('medianImpute', 'center'))
 ```
 
 ## Create and Train a ConsensusClusterModel
 
 ```{r , eval=FALSE}
 conClustModel <- ConsensusClusteringModel(normMAE, randomSeed=1987)
-```
-
-```{r, eval=FALSE}
-trainedConClustModel <- trainModel(conClustModel)
-```
-
-```{r, eval=FALSE}
+trainedConClustModel <- trainModel(conClustModel, reps=100)
 classifiedConClustModel <- predictClasses(trainedConClustModel)
+```
+
+```{r, eval=FALSE}
+normalsMAE <- qread('../data/normalsMAE.qs')
+topFeatsNormalMAE <- normalsMAE[topFeatures, ]
+preprocNormMAE <- normalize(topFeatsNormalMAE, MARGIN=1, 
+  method=c('medianImpute', 'center'))
+```
+
+```{r, eval=FALSE}
+normalsConClustModel <- ConsensusClusteringModel(preprocNormMAE, 
+  randomSeed=1987)
+trainedNormalsConClustModel <- trainModel(normalsConClustModel, reps=100)
+classifiedNormConClustModel <- predictClasses(trainedNormalsConClustModel)
+```
+
+```
+
 ```
 
 # Network Community Search

@@ -71,10 +71,6 @@
 #' x <- data.frame(a=factor(LETTERS[1:5]), b=factor(runif(5, 0, 1)))
 #' removeFactorColumns(x)
 #'
-#' @section WARNING
-#' If for some reason the factor levels are doubles, then this will coerce
-#' them to integers.
-#'
 #' @md
 #' @export
 removeFactorColumns <- function(x) {

@@ -427,8 +427,7 @@ setMethod('predictClasses', signature(object='ConsensusClusteringModel'),
             rowMeans(x[, which(labels == i), drop=FALSE], na.rm=TRUE)
         }, x=assay, labels=labels)
     }
-    centroids <- vector(mode='list', length=length(assayList))
-    clusterCentroids <- mapply(.calcClusterCentroid, assay=assayList, 
+    clusterCentroids <- mapply(FUN=.calcClusterCentroid, assay=assayList, 
         uniqueLabels=uniqueClusterLabels, labels=optimalClusterLabels, 
         SIMPLIFY=FALSE)
     models(object) <- SimpleList(clusterCentroids)
