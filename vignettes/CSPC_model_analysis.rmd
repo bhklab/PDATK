@@ -55,7 +55,7 @@ normMAE <- normalize(topFeaturesMAE, MARGIN=1, method=c('medianImpute', 'center'
 
 ```{r , eval=FALSE}
 conClustModel <- ConsensusClusteringModel(normMAE, randomSeed=1987)
-trainedConClustModel <- trainModel(conClustModel, reps=100)
+trainedConClustModel <- trainModel(conClustModel, reps=250)
 classifiedConClustModel <- predictClasses(trainedConClustModel)
 ```
 
@@ -69,12 +69,13 @@ preprocNormMAE <- normalize(topFeatsNormalMAE, MARGIN=1,
 ```{r, eval=FALSE}
 normalsConClustModel <- ConsensusClusteringModel(preprocNormMAE, 
   randomSeed=1987)
-trainedNormalsConClustModel <- trainModel(normalsConClustModel, reps=100)
+trainedNormalsConClustModel <- trainModel(normalsConClustModel, reps=250)
 classifiedNormConClustModel <- predictClasses(trainedNormalsConClustModel)
 ```
 
 ```
-
+validatedConClustModel <- validateModel(model=classifiedConClustModel, 
+    valData=classifiedNormConClustModel)
 ```
 
 # Network Community Search

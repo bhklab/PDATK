@@ -1,5 +1,7 @@
 setClassUnion('List_or_list_or_NULL', c('List', 'list', NULL))
-setClassUnion('DFrame_or_data.frame_or_NULL', c('DFrame', 'data.frame', NULL))
+#' @importClassesFrom data.table data.table
+setClassUnion('DFrame_or_data.frame_data.table_or_NULL', 
+    c('DFrame', 'data.frame', 'data.table', NULL))
 
 #' An `S4` Virtual Class For the Concept of a Statistical or ML Model
 #' 
@@ -25,7 +27,7 @@ setClassUnion('DFrame_or_data.frame_or_NULL', c('DFrame', 'data.frame', NULL))
         trainData='ANY',
         modelParams='List_or_list_or_NULL',
         models='List_or_list_or_NULL',
-        validationStats='DFrame_or_data.frame_or_NULL',
+        validationStats='DFrame_or_data.frame_data.table_or_NULL',
         validationData='List_or_list_or_NULL'
         ),
     contains=c('Vector', 'VIRTUAL'))
@@ -270,7 +272,7 @@ setGeneric('validationStats<-', function(object, ..., value)
 #' @md
 #' @export
 setReplaceMethod('validationStats', signature(object='S4Model', 
-    value='DFrame_or_data.frame_or_NULL'), function(object, value) 
+    value='DFrame_or_data.frame_data.table_or_NULL'), function(object, value) 
 {
     object@validationStats <- value
     return(object)

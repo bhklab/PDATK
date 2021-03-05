@@ -706,24 +706,25 @@ setMethod('validateModel', signature(model='GeneFuModel',
 #' 
 #' @md
 #' @export
-setMethod('validateModel', signature(object='ConsensusClusteringModel', 
-    valData='ConsensusClusteringModel'), function(object, valData, ...) 
+setMethod('validateModel', signature(model='ConsensusClusteringModel', 
+    valData='ConsensusClusteringModel'), function(model, valData, ...) 
 {
     funContext <- .context(1)
     
     # Prepare comparisons for clustering results between every cohort
-    validationData(object) <- trainData(valData)
+    validationData(model) <- SimpleList(experiments=trainData(valData),
+        models=models(valData))
     valCohorts <- names(trainData(valData))
 
-    centroids <- c(models(object), models(valData))
-    cohorts <- c(experiments(trainData(object)), 
+    centroids <- c(models(model), models(valData))
+    cohorts <- c(experiments(trainData(model)), 
         experiments(trainData(valData)))
     assays <- lapply(cohorts, assay, 1)
     clusterLabels <- lapply(cohorts, function(x) x$cluster_label)
 
     # Find all non-self comparisons between the cohorts
     cohortPairs <- .findAllCohortPairs(names(cohorts))
-    metadata(object)$cohortPairs <- cohortPairs
+    metadata(model)$cohortPairs <- cohortPairs
 
     # Extract and expand the data for each cohort
     comparisonCentroids <- centroids[cohortPairs$x]
@@ -733,19 +734,41 @@ setMethod('validateModel', signature(object='ConsensusClusteringModel',
     centroidOptimalK <- mcols(cohorts)$optimalK[cohortPairs$x]
     assayOptimalK <- mcols(cohorts)$optimalK[cohortPairs$y]
 
-    # Use cor.test to calculate distance between the expression values
-    #  in a centroid vs a cohort
+    # Use cor.test to estimate association between the feature values
+    #  in a centroid vs a cohort. Compare each subcluster individually for
+    #  all assays.
     thresholdDtList <- bpmapply(FUN=.calculateMSMthresholds, 
         comparison=comparisons, centroid=comparisonCentroids, 
         assay=comparisonAssays, classes=comparisonClasses, 
         centroidK=centroidOptimalK, assayK=assayOptimalK, 
-        SIMPLIFY=FALSE)#, ...)
+        ..., SIMPLIFY=FALSE)
 
     thresholdDT <- rbindlist(thresholdDtList)
+    modelParams(thresholdDT) <- c(modelParams(thresholdDT), 
+        SimpleList(thresholdDT=threshodDT))
+
+    clusterReproDtList <- bpmapply(FUN=.calcClusterRepro,
+        comparison=comparisons, centroid=comparisonCentroids, 
+        assay=comparisonAssays, MoreArgs=list(rep=100), 
+        SIMPLIFY=FALSE)
+
+    return(model)
 })
 
+#' @importFrom clusterRepro clusterRepro
+#' 
+#' @md
+#' @keywords internal
+.calcClusterRepro <- function(comparison, centroid, assay, rep)
+{
+    reproStats <- as.data.table(clusterRepro(centroid, assay, rep))
+    reproStats$comparison <- comparison
+    return(reproStats)
+}
 
 #' @importFrom data.table data.table rbindlist
+#' 
+#' @param ... Fallthrough arguments to `stats::cor.test`
 #' 
 #' @md
 #' @keywords internal
@@ -770,8 +793,7 @@ setMethod('validateModel', signature(object='ConsensusClusteringModel',
                                   cor.test(
                                     localCentroid,
                                     data[, idx],
-                                    method='pearson',
-                                    use='pairwise.complete.obs')$estimate
+                                    ...)$estimate
                                   )},
                               localCentroid=localCentroid,
                               data=assay)), na.rm=TRUE)
@@ -786,7 +808,6 @@ setMethod('validateModel', signature(object='ConsensusClusteringModel',
     }
     rbindlist(corList, fill=TRUE)
 }
-
 
 #' Find all non-self pair-wise combinations of cohorts
 #'
