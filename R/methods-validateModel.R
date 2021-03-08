@@ -740,30 +740,45 @@ setMethod('validateModel', signature(model='ConsensusClusteringModel',
     thresholdDtList <- bpmapply(FUN=.calculateMSMthresholds, 
         comparison=comparisons, centroid=comparisonCentroids, 
         assay=comparisonAssays, classes=comparisonClasses, 
-        centroidK=centroidOptimalK, assayK=assayOptimalK, 
-        ..., SIMPLIFY=FALSE)
+        centroidK=centroidOptimalK, assayK=assayOptimalK, SIMPLIFY=FALSE)
 
     thresholdDT <- rbindlist(thresholdDtList)
-    modelParams(thresholdDT) <- c(modelParams(thresholdDT), 
-        SimpleList(thresholdDT=threshodDT))
+    modelParams(model) <- c(modelParams(model), 
+        list(thresholdDT=thresholdDT))
 
     clusterReproDtList <- bpmapply(FUN=.calcClusterRepro,
         comparison=comparisons, centroid=comparisonCentroids, 
-        assay=comparisonAssays, MoreArgs=list(rep=100), 
+        assay=comparisonAssays, MoreArgs=list(rep=modelParams(model)$reps), 
         SIMPLIFY=FALSE)
+
+    reproDT <- rbindlist(clusterReproDtList)
+
+    validationStats(model) <- rbind(reproDT, thresholdDT)
 
     return(model)
 })
 
 #' @importFrom clusterRepro clusterRepro
+#' @importFrom data.table data.table
 #' 
 #' @md
 #' @keywords internal
 .calcClusterRepro <- function(comparison, centroid, assay, rep)
 {
+    message(comparison)
     reproStats <- as.data.table(clusterRepro(centroid, assay, rep))
-    reproStats$comparison <- comparison
-    return(reproStats)
+    cohorts <- unlist(strsplit(comparison, '-'))
+    reproDT <- data.table(
+        'metric'='clusterRepro_IGP',
+        'comparison'=comparison,
+        'centroid_cohort'=cohorts[1],
+        'assay_cohort'=cohorts[2],
+        'centroid_K'=seq_len(ncol(centroid)),
+        'assay_K'=NA_integer_,
+        'estimate'=reproStats$Actual.IGP,
+        'p_value'=reproStats$p.value
+    )
+    return(reproDT)
 }
 
 #' @importFrom data.table data.table rbindlist
@@ -787,22 +802,25 @@ setMethod('validateModel', signature(model='ConsensusClusteringModel',
         if (length(classIdxs) < 1) stop(.errorMsg(funContext, 'No samples have',
             'the class ', j, ' in ', cohorts[2], '. Something has gone wrong!'))
         localCentroid <- centroid[, i]
-        meanThresh <- mean(unlist(lapply(classIdxs,
+        corTestResults <- lapply(classIdxs,
                               function(idx, localCentroid, data) {
-                                as.numeric(
                                   cor.test(
                                     localCentroid,
                                     data[, idx],
-                                    ...)$estimate
-                                  )},
+                                    ...)
+                                  },
                               localCentroid=localCentroid,
-                              data=assay)), na.rm=TRUE)
-        corList[[k]] <- data.table('comparison'=comparison,
-                                   'cohort1'=cohorts[1],
-                                   'cohort2'=cohorts[2],
-                                   'cohort1_K'=i,
-                                   'cohort2_K'=j,
-                                   "threshold"=meanThresh)
+                              data=assay)
+        estimate <- mean(vapply(corTestResults, function(x) x$estimate, numeric(1)), na.rm=TRUE)
+        p_value <- mean(vapply(corTestResults, function(x) x$p.value, numeric(1)), na.rm=TRUE)
+        corList[[k]] <- data.table('metric'='cor.test',
+                                   'comparison'=comparison,
+                                   'centroid_cohort'=cohorts[1],
+                                   'assay_cohort'=cohorts[2],
+                                   'centroid_K'=i,
+                                   'assay_K'=j,
+                                   'estimate'=estimate,
+                                   'p_value'=p_value)
         k <- k + 1
       }
     }
