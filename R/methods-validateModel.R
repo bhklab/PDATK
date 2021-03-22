@@ -681,12 +681,12 @@ setMethod('validateModel', signature(model='GeneFuModel',
 })
 
 
-# ---- ConsensusClusteringModel
+# ---- ConsensusMetaclusteringModel
 
 #' 
-#' @param object A `ConsensusClusteringModel` object with cluster_labels in 
+#' @param object A `ConsensusMetaclusteringModel` object with cluster_labels in 
 #'   assigned to each experiment, as returned by `predictClasses`.
-#' @param valData A `ConsensusClusteringModel` object with cluster_labels
+#' @param valData A `ConsensusMetaclusteringModel` object with cluster_labels
 #'   assigned to each experiment, as returned by `predictClasses`. This
 #'   consensus cluster should contain outgroup cohorts, such as normal 
 #'   patients to be compared against the disease cohorts being used for 
@@ -695,7 +695,7 @@ setMethod('validateModel', signature(model='GeneFuModel',
 #'   also be used to customize the call to `stats::cor.test` used for 
 #'   calculating the cluster thresholds.
 #' 
-#' @return The `ConsensusClusteringModel` from object, with the training
+#' @return The `ConsensusMetaclusteringModel` from object, with the training
 #'   data from `valData` in the `validationData` slot, the models from the
 #'   `valData` object appended to the `models` of object, and the 
 #'   `validationStats` slot populated with pair-wise comparisons between
@@ -706,8 +706,8 @@ setMethod('validateModel', signature(model='GeneFuModel',
 #' 
 #' @md
 #' @export
-setMethod('validateModel', signature(model='ConsensusClusteringModel', 
-    valData='ConsensusClusteringModel'), function(model, valData, ...) 
+setMethod('validateModel', signature(model='ConsensusMetaclusteringModel', 
+    valData='ConsensusMetaclusteringModel'), function(model, valData, ...) 
 {
     funContext <- .context(1)
     
@@ -748,12 +748,12 @@ setMethod('validateModel', signature(model='ConsensusClusteringModel',
 
     clusterReproDtList <- bpmapply(FUN=.calcClusterRepro,
         comparison=comparisons, centroid=comparisonCentroids, 
-        assay=comparisonAssays, MoreArgs=list(rep=modelParams(model)$reps), 
+        assay=comparisonAssays, MoreArgs=list(rep=10), 
         SIMPLIFY=FALSE)
 
     reproDT <- rbindlist(clusterReproDtList)
 
-    validationStats(model) <- rbind(reproDT, thresholdDT)
+    validationStats(model) <- rbind(reproDT, thresholdDT, fill=TRUE)
 
     return(model)
 })
@@ -769,14 +769,13 @@ setMethod('validateModel', signature(model='ConsensusClusteringModel',
     reproStats <- as.data.table(clusterRepro(centroid, assay, rep))
     cohorts <- unlist(strsplit(comparison, '-'))
     reproDT <- data.table(
-        'metric'='clusterRepro_IGP',
         'comparison'=comparison,
         'centroid_cohort'=cohorts[1],
         'assay_cohort'=cohorts[2],
         'centroid_K'=seq_len(ncol(centroid)),
-        'assay_K'=NA_integer_,
-        'estimate'=reproStats$Actual.IGP,
-        'p_value'=reproStats$p.value
+        'clusterRepro_IGP'=reproStats$Actual.IGP,
+        'clusterRepro_p_value'=reproStats$p.value,
+        'clusteReprod_assay_N'=reproStats$Actual.Size
     )
     return(reproDT)
 }
@@ -813,14 +812,14 @@ setMethod('validateModel', signature(model='ConsensusClusteringModel',
                               data=assay)
         estimate <- mean(vapply(corTestResults, function(x) x$estimate, numeric(1)), na.rm=TRUE)
         p_value <- mean(vapply(corTestResults, function(x) x$p.value, numeric(1)), na.rm=TRUE)
-        corList[[k]] <- data.table('metric'='cor.test',
-                                   'comparison'=comparison,
-                                   'centroid_cohort'=cohorts[1],
-                                   'assay_cohort'=cohorts[2],
-                                   'centroid_K'=i,
-                                   'assay_K'=j,
-                                   'estimate'=estimate,
-                                   'p_value'=p_value)
+        corList[[k]] <- data.table(
+            'comparison'=comparison,
+            'centroid_cohort'=cohorts[1],
+            'assay_cohort'=cohorts[2],
+            'centroid_K'=i,
+            'assay_K'=j,
+            'cor.test_estimate'=estimate,
+            'cor.test_p_value'=p_value)
         k <- k + 1
       }
     }

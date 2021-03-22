@@ -372,16 +372,16 @@ setMethod('trainModel', signature(object='GeneFuModel'), function(object) {
 })
 
 
-# ---- ConsensusClusteringModel
+# ---- ConsensusMetaclusteringModel
 
-#' Train A ConsensusClusteringModel
+#' Train A ConsensusMetaclusteringModel
 #' 
 #' @description
 #' Since consensus clustering is an unsuperived learning method, there isn't
 #'   really a 'training step' per se. Instead this method computes the consensus
 #'   clusters and stores the results in the `models` slot.
 #' 
-#' @param object A `ConsensusClusteringModel` to train.
+#' @param object A `ConsensusMetaclusteringModel` to train.
 #' @param maxK The maximum number of clusters to test. Defaults to 5.
 #' @param reps How many random samples should clustering be repeated on? Default
 #'   is 10, but 1000+ is recommended for real world use.
@@ -396,7 +396,7 @@ setMethod('trainModel', signature(object='GeneFuModel'), function(object) {
 #'   call to `ConsensusClusterPlus::ConsensusClusterPlus`. Default is NULL,
 #'   which suppresses all plots, otherwise passed to the clustering function.
 #' 
-#' @return The `ConsensusClusteringModel` with the clustering results in the
+#' @return The `ConsensusMetaclusteringModel` with the clustering results in the
 #'   `models` slot.
 #' 
 #' @importFrom ConsensusClusterPlus ConsensusClusterPlus
@@ -404,7 +404,7 @@ setMethod('trainModel', signature(object='GeneFuModel'), function(object) {
 #' 
 #' @md
 #' @export
-setMethod('trainModel', signature(object='ConsensusClusteringModel'), 
+setMethod('trainModel', signature(object='ConsensusMetaclusteringModel'), 
     function(object, maxK=5, reps=10, distance='pearson', clusterAlg='hc', 
         plot=NULL, ...)
 {

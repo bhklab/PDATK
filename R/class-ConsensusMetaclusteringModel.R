@@ -1,6 +1,6 @@
 setClassUnion('MAE_or_SE', c('MultiAssayExperiment', 'SummarizedExperiment'))
 
-#' @title An `S4Model` Containing Molecular Data to be Consesus Clustered
+#' @title An `S4Model` Containing Molecular Data to be Consensus Clustered
 #' 
 #' @description
 #' An `S4` wrapper class providing an interface to the `ConsensusClusterPlus`
@@ -10,7 +10,7 @@ setClassUnion('MAE_or_SE', c('MultiAssayExperiment', 'SummarizedExperiment'))
 #' 
 #' @md
 #' @export
-.ConsensusClusteringModel <- setClass('ConsensusClusteringModel',
+.ConsensusMetaclusteringModel <- setClass('ConsensusMetaclusteringModel',
     slots=c(trainData='MAE_or_SE'),
     contains='S4Model')
 
@@ -22,9 +22,9 @@ setClassUnion('MAE_or_SE', c('MultiAssayExperiment', 'SummarizedExperiment'))
 #' @param ... Force subsequent parameters to be named. Not used.
 #' @param randomSeed An `integer` randomSeed that will be passed to the
 #'   randomSeed parameter of the `ConsensusClusterPlus::ConsensusClusterPlus`
-#'   function when training the model. 
+#'   function when training the model.
 #' 
-#' @return A `ConsensusClusteringModel` object containing the training
+#' @return A `ConsensusMetaclusteringModel` object containing the training
 #'   data and ready to be trained.
 #' 
 #' @seealso [`ConsensusClusterPlus::ConsensusClusterPlus`]
@@ -33,7 +33,7 @@ setClassUnion('MAE_or_SE', c('MultiAssayExperiment', 'SummarizedExperiment'))
 #' 
 #' @md
 #' @export
-ConsensusClusteringModel <- function(trainData, ..., randomSeed) {
+ConsensusMetaclusteringModel <- function(trainData, ..., randomSeed) {
     funContext <- .context(1)
 
     if (missing(randomSeed)) stop(.errorMsg(funContext, 'No random seed was ',
@@ -45,7 +45,7 @@ ConsensusClusteringModel <- function(trainData, ..., randomSeed) {
         'argument is a ', class(trainData), ' object. It must be either a ',
         'MultiAssayExperiment or SummarizedExperiment'))
 
-    return(.ConsensusClusteringModel(
+    return(.ConsensusMetaclusteringModel(
         trainData=trainData, 
         modelParams=SimpleList(randomSeed=randomSeed),
         models=SimpleList(),
@@ -55,4 +55,4 @@ ConsensusClusteringModel <- function(trainData, ..., randomSeed) {
         ))
 }
 #' @export
-ConClustModel <- ConsensusClusteringModel
+ConMetaclustModel <- ConsensusMetaclusteringModel

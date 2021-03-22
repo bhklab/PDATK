@@ -342,10 +342,10 @@ setMethod('predictClasses', signature(object='CohortList',
 })
 
 
-# ---- ConsensusClusteringModel
+# ---- ConsensusMetaclusteringModel
 
 #' Compute the Optimal Clustering Solution for a Trained 
-#'   ConsensusClusteringModel
+#'   ConsensusMetaclusteringModel
 #' 
 #' Compute the optimal clustering solution out of possibilities generated
 #'   with trainModel. Assigns the cluster labels to the `MultiAssayExperiment`
@@ -360,12 +360,12 @@ setMethod('predictClasses', signature(object='CohortList',
 #'   selected the optimal K value from the potential solutions for each
 #'   assay in the training data.
 #' 
-#' @return A `object` `ConsensusClusteringModel`, with class predictions
+#' @return A `object` `ConsensusMetaclusteringModel`, with class predictions
 #'   assigned to the colData of `trianData`
 #' 
 #' @md
-#' @export 
-setMethod('predictClasses', signature(object='ConsensusClusteringModel'), 
+#' @export
+setMethod('predictClasses', signature(object='ConsensusMetaclusteringModel'), 
     function(object, subinterval=c(0.1, 0.9))
 {
     ## TODO:: Refactor into some helpers so function is shorter
