@@ -48,7 +48,7 @@ topFeatures <- unique(c(top20PctFeaturesOverall, unlist(top20FeaturesPerCohort))
 
 ```{r normalize_MAE, eval=FALSE}
 topFeaturesMAE <- CSPCmae[topFeatures, , ]
-normMAE <- normalize(topFeaturesMAE, MARGIN=1, method=c('medianImpute', 'center'))
+normMAE <- normalize(topFeaturesMAE, MARGIN=1, method=c('medianImpute', 'center', 'scale'))
 ```
 
 ## Create and Train a ConsensusClusterModel

@@ -769,13 +769,14 @@ setMethod('validateModel', signature(model='ConsensusMetaclusteringModel',
     reproStats <- as.data.table(clusterRepro(centroid, assay, rep))
     cohorts <- unlist(strsplit(comparison, '-'))
     reproDT <- data.table(
+        'metric'='clusterRepro',
         'comparison'=comparison,
         'centroid_cohort'=cohorts[1],
         'assay_cohort'=cohorts[2],
         'centroid_K'=seq_len(ncol(centroid)),
-        'clusterRepro_IGP'=reproStats$Actual.IGP,
-        'clusterRepro_p_value'=reproStats$p.value,
-        'clusteReprod_assay_N'=reproStats$Actual.Size
+        'estimate'=reproStats$Actual.IGP,
+        'p_value'=reproStats$p.value,
+        'assay_N'=reproStats$Actual.Size
     )
     return(reproDT)
 }
@@ -813,13 +814,14 @@ setMethod('validateModel', signature(model='ConsensusMetaclusteringModel',
         estimate <- mean(vapply(corTestResults, function(x) x$estimate, numeric(1)), na.rm=TRUE)
         p_value <- mean(vapply(corTestResults, function(x) x$p.value, numeric(1)), na.rm=TRUE)
         corList[[k]] <- data.table(
+            'metric'='cor.test',
             'comparison'=comparison,
             'centroid_cohort'=cohorts[1],
             'assay_cohort'=cohorts[2],
             'centroid_K'=i,
             'assay_K'=j,
-            'cor.test_estimate'=estimate,
-            'cor.test_p_value'=p_value)
+            'estimate'=estimate,
+            'p_value'=p_value)
         k <- k + 1
       }
     }
