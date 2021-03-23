@@ -73,15 +73,16 @@ trainedNormalsConClustModel <- trainModel(normalsConClustModel, reps=250)
 classifiedNormConClustModel <- predictClasses(trainedNormalsConClustModel)
 ```
 
-```
+```{r}
 validatedConClustModel <- validateModel(model=classifiedConClustModel, 
     valData=classifiedNormConClustModel)
 ```
 
 # Network Community Search
 
-
-
+```{r}
+NCSmodel <- NetworkCommunitySearchModel(model=validatedConClustModel)
+```
 
 # Gene Signature Comparison
 

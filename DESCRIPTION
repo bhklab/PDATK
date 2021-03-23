@@ -89,6 +89,7 @@ Collate:
     'class-ConsensusMetaclusteringModel.R'
     'class-GeneFuModel.R'
     'class-ModelComparison.R'
+    'class-NCSModel.R'
     'class-PCOSP.R'
     'class-RGAModel.R'
     'class-RLSModel.R'

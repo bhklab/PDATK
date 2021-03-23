@@ -17,7 +17,7 @@ setClassUnion('DFrame_or_data.frame_data.table_or_NULL',
 #'   the data used to validate or evaluate the performance of a model.
 #' @slot mcols A `DataFrame` or 'data.frame' of item metadata for the `models` 
 #'   slot.
-#' @slot metadaata A `List` or `list` of model level metadata.
+#' @slot metadata A `List` or `list` of model level metadata.
 #' 
 #' @md
 #' @keywords internal

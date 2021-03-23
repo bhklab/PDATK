@@ -29,7 +29,7 @@ the data used to validate or evaluate the performance of a model.}
 \item{\code{mcols}}{A \code{DataFrame} or 'data.frame' of item metadata for the \code{models}
 slot.}
 
-\item{\code{metadaata}}{A \code{List} or \code{list} of model level metadata.}
+\item{\code{metadata}}{A \code{List} or \code{list} of model level metadata.}
 }}
 
 \keyword{internal}
