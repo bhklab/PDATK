@@ -46,6 +46,9 @@ Imports:
     data.table,
     HDF5Array,
     MultiAssayExperiment,
+    ConsensusClusterPlus,
+    igraph,
+    base2grob,
     CoreGx,
     caret,
     methods,
@@ -108,6 +111,7 @@ Collate:
     'methods-getTopFeatures.R'
     'methods-merge.R'
     'methods-normalize.R'
+    'methods-plotNetworkGraph.R'
     'methods-plotROC.R'
     'methods-predictClasses.R'
     'methods-rankFeatures.R'

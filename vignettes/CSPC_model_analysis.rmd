@@ -86,6 +86,10 @@ trainedNCSmodel <- trainModel(NCSmodel)
 classifiedNCSmodel <- predictClasses(trainedNCSmodel)
 ```
 
+```{r }
+clusterNetworkGraph <- plotNetworkGraph(classifiedNCSmodel)
+```
+
 # Gene Signature Comparison
 
 
