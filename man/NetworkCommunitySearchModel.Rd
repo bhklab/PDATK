@@ -5,20 +5,10 @@
 \alias{NCSModel}
 \title{Constructor for a NetworkCommunitySearchModel (NCSModel)}
 \usage{
-NetworkCommunitySearchModel(model, alpha = 0.05, minRepro = 0.5, minCor = 0)
+NetworkCommunitySearchModel(model)
 }
 \arguments{
 \item{model}{A validated \code{ConsensusMetaclusteringModel} object.}
-
-\item{alpha}{A \code{float} specifying the significance level for cluster
-reproducibility. Default is 0.05.}
-
-\item{minRepro}{A \code{float} specifying the minimum in-group proportion (IGP)
-for a cluster to be included in the metacluster labels. Default is 0.5.}
-
-\item{minCor}{A \code{float} specifying the minimum correlation between a
-centroid and assay cluster to be included in the metacluster labels.
-Default is 0.0.}
 }
 \description{
 Use \code{igraph::fastgreedy.community} cross-cohort metaclusters for

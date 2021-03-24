@@ -435,3 +435,86 @@ setMethod('predictClasses', signature(object='ConsensusMetaclusteringModel'),
 
     return(object)
 })
+
+
+# ---- NetworkCommunitySearchModel
+
+#' Predict Metacluster Labels for a NetworkCommunitySearchModel
+#' 
+#' @param object A `NCSModel` which has been trained.
+#' 
+#' @return The `object` model with 
+#' 
+#' @md
+#' @importFrom igraph graph_from_edgelist layout_with_fr as.undirected
+#'     fastgreedy.community
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder setnames
+#'   tstrsplit
+#' @importFrom MultiAssayExperiment experiments experiments<-
+#' @importFrom S4Vectors endoapply mendoapply merge
+#' @export
+setMethod('predictClasses', signature(object='NCSModel'), function(object) {
+
+    # -- Extract network edge data
+    signifEdgeDT <- models(object)$networkEdges
+
+    edgeMatrix <- as.matrix(signifEdgeDT[,
+        .(centroid_cluster=paste0(centroid_cohort, '-', centroid_K), 
+            assay_cluster=paste0(assay_cohort, '-', assay_K))
+    ])
+
+    # -- Construct graph from network edges and use the graph to predict
+    #  cross-cohort meta-clusters
+    graph <- graph_from_edgelist(edgeMatrix)
+    coords <- layout_with_fr(graph)
+    ugraph <- as.undirected(graph)
+    metaclusters <- fastgreedy.community(ugraph, 
+        weights=signifEdgeDT$cor_threshold)
+
+    # -- Assign raw graph results to the NCSModel object
+    models(object) <- c(SimpleList(list(graphData=list(
+        graph=graph,
+        coords=coords,
+        ugraph=ugraph,
+        metaclusters=metaclusters
+    ))), models(object))
+
+    # -- Format the metacluster results into a data.table
+    metaclusterDT <- data.table(
+        tmp=metaclusters$names,
+        metacluster_label=metaclusters$membership
+    )
+    metaclusterDT[, c('cohort', 'cluster_label') := tstrsplit(tmp, '-')]
+    metaclusterDT[, `:=`(tmp=NULL, cluster_label=as.integer(cluster_label))]
+    setcolorder(metaclusterDT, c('cohort', 'cluster_label', 'metacluster_label'))
+
+    models(object)$metaclusterDT <- metaclusterDT
+
+    # -- Assign metacluster lables to each SummarizedExperiment
+    cohortMAE <- trainData(object)
+    colDataL <- lapply(experiments(cohortMAE), colData)
+    metaclusterL <- split(metaclusterDT, by='cohort')[names(colDataL)]
+    metaclusterL <- lapply(metaclusterL, function(DT) DataFrame(DT[, cohort := NULL]))
+    metaclustColDataL <- mendoapply(merge, colDataL, metaclusterL,
+        by='cluster_label', all.x=TRUE)
+    colDataRownames <- lapply(colDataL, rownames)
+    metaclustColDataL <- mendoapply(`rownames<-`, x=metaclustColDataL, 
+        value=colDataRownames)
+    experiments(cohortMAE) <- mendoapply(`colData<-`, x=experiments(cohortMAE),
+        value=metaclustColDataL)
+
+    # -- Find cohort clusters with no metacluster assignment
+    notMetaclustered <- lapply(metaclustColDataL, 
+        function(x) unique(x[is.na(x$metacluster_label), ]$cluster_label))
+    notMetaclustered <- notMetaclustered[!isEmpty(notMetaclustered)]
+    notMetaclusteredDT <- data.table(
+        cohort=names(notMetaclustered),
+        cluster_label=notMetaclustered
+    )
+
+    # -- Add not clustered information into models
+    models(object)$notMetaclusteredDT <- notMetaclusteredDT
+
+    return(object)
+})

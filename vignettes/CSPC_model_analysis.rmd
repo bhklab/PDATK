@@ -80,8 +80,10 @@ validatedConClustModel <- validateModel(model=classifiedConClustModel,
 
 # Network Community Search
 
-```{r}
+```{r }
 NCSmodel <- NetworkCommunitySearchModel(model=validatedConClustModel)
+trainedNCSmodel <- trainModel(NCSmodel)
+classifiedNCSmodel <- predictClasses(trainedNCSmodel)
 ```
 
 # Gene Signature Comparison

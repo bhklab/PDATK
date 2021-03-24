@@ -423,3 +423,40 @@ setMethod('trainModel', signature(object='ConsensusMetaclusteringModel'),
 
     return(object)
 })
+
+# ---- NetworkCommunitySearchModel
+
+#' Train a NetworkCommunitySearchModel
+#' 
+#' @param object An `NCSModel` object, created from a 
+#'   `ConsensusMetaclusteringModel`.
+#' @param alpha A `float` specifying the significance level for cluster
+#'   reproducibility. Default is 0.05.
+#' @param minRepro A `float` specifying the minimum in-group proportion (IGP) 
+#'   for a cluster to be included in the metacluster labels. Default is 0.5.
+#' @param minCor A `float` specifying the minimum correlation between a 
+#'   centroid and assay cluster to be included in the metacluster labels. 
+#'   Default is 0.0.
+#' 
+#' @md
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder setnames
+#' @export
+setMethod('trainModel', signature(object='NCSModel'), function(object, 
+    alpha=0.05, minRepro=0.5, minCor=0.0) 
+{
+    modelParams(object) <- SimpleList(list(
+        alpha=alpha,
+        minRepro=minRepro,
+        minCor=minCor
+    ))
+
+    models(object)$networkEdges <- models(object)$networkEdges[
+        p_value <= alpha &
+        ingroup_proportion >= minRepro &
+        cor_threshold > minCor,
+
+    ]
+
+    return(object)
+})

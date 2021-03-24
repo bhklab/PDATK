@@ -16,13 +16,6 @@
 #'   `validateModel`.
 #' 
 #' @param model A validated `ConsensusMetaclusteringModel` object.
-#' @param alpha A `float` specifying the significance level for cluster
-#'   reproducibility. Default is 0.05.
-#' @param minRepro A `float` specifying the minimum in-group proportion (IGP) 
-#'   for a cluster to be included in the metacluster labels. Default is 0.5.
-#' @param minCor A `float` specifying the minimum correlation between a 
-#'   centroid and assay cluster to be included in the metacluster labels. 
-#'   Default is 0.0.
 #' 
 #' @md
 #' @importFrom CoreGx .errorMsg
@@ -30,12 +23,17 @@
 #'     fastgreedy.community
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder setnames
+#' @importFrom MultiAssayExperiment experiments experiments<-
+#' @importFrom S4Vectors endoapply mendoapply merge
 #' @aliases NCSModel
 #' @export
-NetworkCommunitySearchModel <- function(model, alpha=0.05, minRepro=0.5, 
-    minCor=0.0) 
+NetworkCommunitySearchModel <- function(model) 
 {
     funContext <- .context(1)
+
+    if (!is(model, 'ConsensusMetaclusteringModel'))
+        stop(errorMsg(funContext, ' The model argument is a ', class(model),
+            ' but must be a ConsensusClusteringModel!'))
 
     cohortMAE <- c(trainData(model), validationData(model)$experiments)
     corTestStats <- validationStats(model)[metric == 'cor.test', ]
@@ -67,15 +65,13 @@ NetworkCommunitySearchModel <- function(model, alpha=0.05, minRepro=0.5,
 
     .NCSModel(
         trainData=cohortMAE,
-        modelParams=SimpleList(list(
-            alpha=alpha,
-            minRepro=minRepro,
-            minCor=minCor
-        )
-        ),
+        modelParams=SimpleList(),
         models=SimpleList(list(
-            networkEdges=clusterEdges
-        ))
+            networkEdges=clusterEdgeDT
+        )),
+        validationStats=data.table(),
+        validationData=SimpleList(),
+        metadata=list(ConsensusMetaclusteringModel_modelParams=modelParams(model))
     )
 
 }
