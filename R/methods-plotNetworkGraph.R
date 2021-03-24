@@ -34,10 +34,17 @@ setGeneric('plotNetworkGraph',
 setMethod('plotNetworkGraph', signature(object='NCSModel'), 
     function(object, ..., palette="Set1", clusterLabels) 
 {
+    funContext <- .context(1)
+    
     ## TODO:: Add state labels to S4Model object to determine if it has
     #  been trained, classified, etc.
 
-    ## TODO:: Add error handling
+    ## TODO:: Improve
+    if (!('graphData' %in% names(models(object))))
+        stop(.errorMsg(funContext, 'There is not graph data in the models ',
+            'slot of object. Please ensure you have classified the model ',
+            'using predictClasses before attempting to plot the metacluster' ,
+            'network grpah!'))
 
     # -- Extract the relevant graph data
     graphData <- models(object)$graphData
@@ -47,7 +54,7 @@ setMethod('plotNetworkGraph', signature(object='NCSModel'),
     colours <- brewer.pal(n=8, palette)
 
     # -- Plot using igraph::plot.igraph
-    if (!missing((clusterLabels))) {
+    if (missing(clusterLabels)) {
         clusterLabels <- as.character(sort(unique(membership(metaclusters))))
     }
     plotNetwork <- call('.plotNetwork', ugraph=ugraph, 
