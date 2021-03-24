@@ -48,7 +48,9 @@
         context <- gsub('\\(.*\\)', '', context)
         # deal with S4 lapply calls (e.g., endoapply)
         if (grepl('.*match.fun.*', context)) {
-            context <- deparse(callStack[[length(callStack) - (n + 6)]][3])
+            context <- tryCatch({ 
+                deparse(callStack[[length(callStack) - (n + 6)]][3])
+            }, error=function(e) 'context_failed')
             context <- gsub('\\(.*\\)', '', context)
         }
     }
@@ -148,4 +150,37 @@ renameColumns <- function(x, values) {
 renameColDataColumns <- function(x, values) {
     colData(x) <- renameColumns(colData(x), values)
     return(x)
+}
+
+#' Check for Column Names in the colData Slot of a SummarizedExperiment
+#' 
+#' @param SE A `SummarizedExperiment` object to check for the existence
+#'   of colData columns.
+#' @param values A `character` vector with one or more column name to 
+#'   check for in the column data.
+#' 
+#' @return `logical` True if all of values are column names in the 
+#'   `SummarizedExperiment` object, FALSE otherwise.
+#' 
+#' @md
+#' @export
+hasColDataColumns <- function(SE, values) {
+    all(values %in% colnames(colData(SE)))
+}
+
+#'
+#' @param SE A `SummarizedExperiment` object to assign colData columns to
+#' @param colname The name of the column to assign `values` to.
+#' @param values The values to assign to the col
+#' 
+#' @md
+#' @export
+assignColDataColumn <- function(SE, colname, values) {
+    funContext <- .context(1)
+    if (length(values) != nrow(colData(SE || length(values != 1))))
+        warning(.warnMsg(funContext), 'Assignment values not he same
+            length as nrow(colData), values will be recycled!')
+    colData(SE) <- within(colData(SE), 
+        eval(str2expression(paste0(colname, ' <- ', capture.output(dput(values))))))
+    return(SE)
 }

@@ -503,6 +503,7 @@ setMethod('predictClasses', signature(object='NCSModel'), function(object) {
         value=colDataRownames)
     experiments(cohortMAE) <- mendoapply(`colData<-`, x=experiments(cohortMAE),
         value=metaclustColDataL)
+    trainData(object) <- cohortMAE
 
     # -- Find cohort clusters with no metacluster assignment
     notMetaclustered <- lapply(metaclustColDataL, 

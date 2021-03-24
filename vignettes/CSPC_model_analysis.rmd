@@ -92,6 +92,20 @@ clusterNetworkGraph <- plotNetworkGraph(classifiedNCSmodel)
 
 # Metacluster Survival Analysis
 
+```{r }
+metaclusteredMAE <- trainData(classifiedNCSmodel)
+SEhasSurvivalColumns <- lapply(experiments(metaclusteredMAE), hasColDataColumns, 
+  values=c('vital_status', 'days_to_death'))
+mclustSurvMAE <- metaclusteredMAE[,, unlist(SEhasSurvivalColumns)]
+experiments(mclustSurvMAE) <- endoapply(experiments(mclustSurvMAE), 
+  FUN=SurvivalExperiment, survival_time='days_to_death', 
+  event_occurred='vital_status')
+```
+
+```{r}
+coxModel <- CoxModel(mclustSurvMAE, survivalPredictor='metacluster_label')
+```
+
 # Gene Signature Comparison
 
 
