@@ -454,9 +454,49 @@ setMethod('trainModel', signature(object='NCSModel'), function(object,
     models(object)$networkEdges <- models(object)$networkEdges[
         p_value <= alpha &
         ingroup_proportion >= minRepro &
-        cor_threshold > minCor,
+        cor_threshold >= minCor,
 
     ]
+
+    return(object)
+})
+
+# ---- CoxModel-methods
+
+#' 
+#' 
+#' @param object A `CoxModel` object to fit models for.
+#' 
+#' @md
+#' @export
+setMethod("trainModel", signature(object='CoxModel'), 
+    function(object) 
+{
+    colDataL <- lapply(experiments(trainData(object)), colData)
+    colDataL <- lapply(colDataL, as.data.frame)
+    colDataL <- lapply(colDataL, na.omit)
+    survivalPredictor <- modelParams(object)$survivalPredictor
+    if (length(survivalPredictor) > 1) {
+        warning('Multiple predictors have not been tested yet...')
+        survivalPredictor <- paste0(survivalPredictor, collapse=' + ')
+    } 
+    modelFormula <- as.formula(
+        paste0('Surv(event=event_occurred, time=survival_time) ~ ', 
+            survivalPredictor))
+    coxModels <- lapply(colDataL, function(DF) coxph(formula=modelFormula, data=DF))
+    survivalCurves <- lapply(colDataL, function(DF) survfit(formula=modelFormula, data=DF))
+    survivalDiffs <- lapply(colDataL, function(DF) survdiff(formula=modelFormula, data=DF))
+    chisq <- vapply(survivalDiffs, `[[`, 'chisq', FUN.VALUE=numeric(1))
+    degFreedom <- vapply(survivalDiffs, function(x) length(x$n) - 1, numeric(1))
+    chisqPval <- 1 - pchisq(chisq, degFreedom)
+
+    models(object) <- SimpleList(list(
+        coxModels=coxModels,
+        survivalCurves=survivalCurves,
+        survivalDiffs=survivalDiffs,
+        chisqPvalues=chisqPval,
+        modelData=colDataL
+    ))
 
     return(object)
 })

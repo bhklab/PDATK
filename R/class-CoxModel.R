@@ -51,7 +51,6 @@ CoxModel <- function(object, survivalPredictor='metacluster_labels') {
         models=SimpleList(),
         validationStats=data.table(),
         validationData=SimpleList(),
-        mcols=DataFrame(),
         metadata=list()
     )
 }

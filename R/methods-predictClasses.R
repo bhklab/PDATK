@@ -452,7 +452,7 @@ setMethod('predictClasses', signature(object='ConsensusMetaclusteringModel'),
 #'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder setnames
 #'   tstrsplit
 #' @importFrom MultiAssayExperiment experiments experiments<-
-#' @importFrom S4Vectors endoapply mendoapply merge
+#' @importFrom S4Vectors endoapply mendoapply merge DataFrame
 #' @export
 setMethod('predictClasses', signature(object='NCSModel'), function(object) {
 

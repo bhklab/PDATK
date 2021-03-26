@@ -716,6 +716,7 @@ setMethod('validateModel', signature(model='ConsensusMetaclusteringModel',
         models=models(valData))
     valCohorts <- names(trainData(valData))
 
+    repeats <- modelParams(model)$reps
     centroids <- c(models(model), models(valData))
     cohorts <- c(experiments(trainData(model)), 
         experiments(trainData(valData)))
@@ -748,7 +749,7 @@ setMethod('validateModel', signature(model='ConsensusMetaclusteringModel',
 
     clusterReproDtList <- bpmapply(FUN=.calcClusterRepro,
         comparison=comparisons, centroid=comparisonCentroids, 
-        assay=comparisonAssays, MoreArgs=list(rep=10), 
+        assay=comparisonAssays, MoreArgs=list(rep=repeats), 
         SIMPLIFY=FALSE)
 
     reproDT <- rbindlist(clusterReproDtList)

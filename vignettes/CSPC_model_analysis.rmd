@@ -31,6 +31,9 @@ library(S4Vectors)
 library(MultiAssayExperiment)
 library(qs)
 
+seed <- 1987
+reps <- 1000
+
 CSPCmaeRaw <- qread('../data/CSPCmae.qs', nthread=16)
 
 # Subset to only feature shared across all data
@@ -48,14 +51,16 @@ topFeatures <- unique(c(top20PctFeaturesOverall, unlist(top20FeaturesPerCohort))
 
 ```{r normalize_MAE, eval=FALSE}
 topFeaturesMAE <- CSPCmae[topFeatures, , ]
-normMAE <- normalize(topFeaturesMAE, MARGIN=1, method=c('medianImpute', 'center', 'scale'))
+normMAE <- normalize(topFeaturesMAE, MARGIN=1, 
+    method=c('medianImpute', 'scale', 'center'))
 ```
 
 ## Create and Train a ConsensusClusterModel
 
-```{r , eval=FALSE}
-conClustModel <- ConsensusMetaclusteringModel(normMAE, randomSeed=1987)
-trainedConClustModel <- trainModel(conClustModel, reps=250)
+```{r, eval=FALSE}
+set.seed(seed)
+conClustModel <- ConsensusMetaclusteringModel(normMAE, randomSeed=seed)
+trainedConClustModel <- trainModel(conClustModel, reps=reps)
 classifiedConClustModel <- predictClasses(trainedConClustModel)
 ```
 
@@ -63,24 +68,26 @@ classifiedConClustModel <- predictClasses(trainedConClustModel)
 normalsMAE <- qread('../data/normalsMAE.qs')
 topFeatsNormalMAE <- normalsMAE[topFeatures, ]
 preprocNormMAE <- normalize(topFeatsNormalMAE, MARGIN=1, 
-  method=c('medianImpute', 'center'))
+  method=c('medianImpute', 'scale', 'center'))
 ```
 
 ```{r, eval=FALSE}
 normalsConClustModel <- ConsensusMetaclusteringModel(preprocNormMAE, 
-  randomSeed=1987)
-trainedNormalsConClustModel <- trainModel(normalsConClustModel, reps=250)
+  randomSeed=seed)
+trainedNormalsConClustModel <- trainModel(normalsConClustModel, reps=reps)
 classifiedNormConClustModel <- predictClasses(trainedNormalsConClustModel)
 ```
 
 ```{r}
 validatedConClustModel <- validateModel(model=classifiedConClustModel, 
     valData=classifiedNormConClustModel)
+qsave(validatedConClustModel, file='valConClustModel_1000r.qs')
 ```
 
 # Network Community Search
 
 ```{r }
+validatedConClustModel <- qread('vignettes/valConClustModel_1000r.qs')
 NCSmodel <- NetworkCommunitySearchModel(model=validatedConClustModel)
 trainedNCSmodel <- trainModel(NCSmodel)
 classifiedNCSmodel <- predictClasses(trainedNCSmodel)
@@ -88,6 +95,9 @@ classifiedNCSmodel <- predictClasses(trainedNCSmodel)
 
 ```{r }
 clusterNetworkGraph <- plotNetworkGraph(classifiedNCSmodel)
+pdf('metacluster_network_graph.pdf')
+clusterNetworkGraph
+dev.off()
 ```
 
 # Metacluster Survival Analysis
@@ -95,15 +105,22 @@ clusterNetworkGraph <- plotNetworkGraph(classifiedNCSmodel)
 ```{r }
 metaclusteredMAE <- trainData(classifiedNCSmodel)
 SEhasSurvivalColumns <- lapply(experiments(metaclusteredMAE), hasColDataColumns, 
-  values=c('vital_status', 'days_to_death'))
+    values=c('vital_status', 'days_to_death'))
 mclustSurvMAE <- metaclusteredMAE[,, unlist(SEhasSurvivalColumns)]
 experiments(mclustSurvMAE) <- endoapply(experiments(mclustSurvMAE), 
-  FUN=SurvivalExperiment, survival_time='days_to_death', 
-  event_occurred='vital_status')
+    FUN=SurvivalExperiment, survival_time='days_to_death', 
+    event_occurred='vital_status')
+experiments(mclustSurvMAE) <- endoapply(experiments(mclustSurvMAE), 
+    dropNotCensored)
 ```
 
 ```{r}
 coxModel <- CoxModel(mclustSurvMAE, survivalPredictor='metacluster_label')
+fitCoxModel <- trainModel(coxModel)
+```
+
+```{r }
+survPlotL <- ggsurvplot_list(models(fitCoxModel)$survivalCurves), models(fitCoxModel)$modelData)
 ```
 
 # Gene Signature Comparison
