@@ -30,9 +30,10 @@ library(PDATK)
 library(S4Vectors)
 library(MultiAssayExperiment)
 library(qs)
+library(survminer)
 
-seed <- 1987
-reps <- 1000
+seed <- 99791
+reps <- 250
 
 CSPCmaeRaw <- qread('../data/CSPCmae.qs', nthread=16)
 
@@ -67,7 +68,7 @@ classifiedConClustModel <- predictClasses(trainedConClustModel)
 ```{r, eval=FALSE}
 normalsMAE <- qread('../data/normalsMAE.qs')
 topFeatsNormalMAE <- normalsMAE[topFeatures, ]
-preprocNormMAE <- normalize(topFeatsNormalMAE, MARGIN=1, 
+preprocNormMAE <- normalize(topFeatsNormalMAE, MARGIN=1,
   method=c('medianImpute', 'scale', 'center'))
 ```
 
@@ -78,31 +79,30 @@ trainedNormalsConClustModel <- trainModel(normalsConClustModel, reps=reps)
 classifiedNormConClustModel <- predictClasses(trainedNormalsConClustModel)
 ```
 
-```{r}
+```{r eval=FALSE}
 validatedConClustModel <- validateModel(model=classifiedConClustModel, 
     valData=classifiedNormConClustModel)
-qsave(validatedConClustModel, file='valConClustModel_1000r.qs')
+qsave(validatedConClustModel, file='valConClustModel_seed99791_250reps.qs')
 ```
 
 # Network Community Search
 
-```{r }
-validatedConClustModel <- qread('vignettes/valConClustModel_1000r.qs')
+```{r eval=FALSE}
+validatedConClustModel <- qread('valConClustModel_1000r.qs')
 NCSmodel <- NetworkCommunitySearchModel(model=validatedConClustModel)
 trainedNCSmodel <- trainModel(NCSmodel)
 classifiedNCSmodel <- predictClasses(trainedNCSmodel)
 ```
 
-```{r }
+```{r eval=FALSE}
 clusterNetworkGraph <- plotNetworkGraph(classifiedNCSmodel)
-pdf('metacluster_network_graph.pdf')
-clusterNetworkGraph
-dev.off()
+ggsave(clusterNetworkGraph, file='metacluster_network_graph.pdf',
+    width=12, height=12)
 ```
 
 # Metacluster Survival Analysis
 
-```{r }
+```{r eval=FALSE}
 metaclusteredMAE <- trainData(classifiedNCSmodel)
 SEhasSurvivalColumns <- lapply(experiments(metaclusteredMAE), hasColDataColumns, 
     values=c('vital_status', 'days_to_death'))
@@ -114,13 +114,17 @@ experiments(mclustSurvMAE) <- endoapply(experiments(mclustSurvMAE),
     dropNotCensored)
 ```
 
-```{r}
+```{r eval=FALSE}
 coxModel <- CoxModel(mclustSurvMAE, survivalPredictor='metacluster_label')
 fitCoxModel <- trainModel(coxModel)
 ```
 
-```{r }
-survPlotL <- ggsurvplot_list(models(fitCoxModel)$survivalCurves), models(fitCoxModel)$modelData)
+```{r eval=FALSE}
+
+```
+
+```{r eval=FALSE}
+
 ```
 
 # Gene Signature Comparison

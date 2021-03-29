@@ -2,7 +2,7 @@ Package: PDATK
 Type: Package
 Title: Pancreatic Ductal Adenocarcinoma Tool-Kit
 Version: 0.99.12
-Date: 2021-02-05
+Date: 2021-03-29
 Authors@R: c(
     person('Vandana', 'Sandhu', role=c('aut')),
     person('Heewon', 'Seo', role=c('aut')),
@@ -49,6 +49,8 @@ Imports:
     ConsensusClusterPlus,
     igraph,
     ggplotify,
+    matrixStats,
+    RColorBrewer,
     clusterRepro,
     CoreGx,
     caret,
@@ -68,7 +70,6 @@ Imports:
     genefu,
     ggplot2,
     switchBox,
-    caret,
     reportROC,
     pROC,
     verification,
@@ -115,6 +116,7 @@ Collate:
     'methods-normalize.R'
     'methods-plotNetworkGraph.R'
     'methods-plotROC.R'
+    'methods-plotSurvivalCurves.R'
     'methods-predictClasses.R'
     'methods-rankFeatures.R'
     'methods-runGSEA.R'
