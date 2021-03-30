@@ -20,3 +20,9 @@ check for in the column data.}
 \description{
 Check for Column Names in the colData Slot of a SummarizedExperiment
 }
+\examples{
+SE <- SummarizedExperiment(matrix(rnorm(100), 10, 10),
+    colData=data.frame(test=rep(1, 10)))
+hasColDataColumns(SE, 'test')
+
+}

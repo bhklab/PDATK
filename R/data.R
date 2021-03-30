@@ -213,3 +213,25 @@ NULL
 #'
 #' @md
 NULL
+
+#' @title A `MultiAssayExperiment` containing cohorts of normal patients, for
+#'   package examples.
+#'
+#' @examples
+#' data(normalsMAE)
+#'
+#' @name normalsMAE
+#'
+#' @md
+NULL
+
+#' @title A `MultiAssayExperiment` containing cohorts of pancreatic cancer
+#'   patients, for use in package examples.
+#'
+#' @examples
+#' data(CSPC_MAE)
+#'
+#' @name CSPC_MAE
+#'
+#' @md
+NULL
