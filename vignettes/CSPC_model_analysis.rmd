@@ -120,7 +120,7 @@ fitCoxModel <- trainModel(coxModel)
 ```
 
 ```{r eval=FALSE}
-survPlots <- plotSurvivalCurves(fitCoxModel, pval=TRUE, pval.coords=c(0.9, 3000))
+survPlots <- plotSurvivalCurves(fitCoxModel, pval=TRUE, pval.coord=c(0.9, 3000))
 ggsave(survPlots, file='survPlots.pdf', height=14, width=14)
 ```
 
