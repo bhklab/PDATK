@@ -25,7 +25,7 @@ setGeneric('plotSurvivalCurves',
 #' @importFrom survival survfit Surv
 #' @export
 setMethod('plotSurvivalCurves', signature(object='CoxModel'),
-    function(object, byCohort=TRUE, ...)
+    function(object, byCohort=TRUE, ..., facet.by='cohort')
 {
     funContext <- .context(1)
     
