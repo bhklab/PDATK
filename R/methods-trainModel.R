@@ -467,6 +467,11 @@ setMethod('trainModel', signature(object='NCSModel'), function(object,
 #' @param object A `CoxModel` object to fit models for.
 #' 
 #' @md
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder setnames
+#' @importFrom survival coxph survfit survdiff
+#' @importFrom stats pchisq
+#' @importFrom S4Vectors SimpleList
 #' @export
 setMethod("trainModel", signature(object='CoxModel'), 
     function(object) 
@@ -479,16 +484,14 @@ setMethod("trainModel", signature(object='CoxModel'),
         warning('Multiple predictors have not been tested yet...')
         survivalPredictor <- paste0(survivalPredictor, collapse=' + ')
     }
-    modelFormula <-
-        paste0('Surv(event=event_occurred, time=survival_time) ~ ', 
-            survivalPredictor)
-    coxModels <- vector('list', length(colDataL))
-    survivalFits <- vector('list', length(colDataL))
-    survivalDiffs <- vector('list', length(colDataL))
+    modelFormula <- paste0('Surv(event=event_occurred, time=survival_time) ~ ', 
+        survivalPredictor)
+    coxModels <- survivalFits <- survivalDiffs <- vector('list', length(colDataL))
     FUNs <- c('coxph', 'survfit', 'survdiff')
     modelData <- colDataL
     for (i in seq_along(modelData)) {
-        callStrings <- paste0(FUNs, '(', modelFormula, ', modelData$', names(colDataL)[i], ')')
+        callStrings <- paste0(FUNs, '(', modelFormula, ', modelData$', 
+            names(colDataL)[i], ')')
         coxModels[[i]] <- eval(str2lang(callStrings[1]))
         survivalFits[[i]] <- eval(str2lang(callStrings[2]))
         survivalDiffs[[i]] <- eval(str2lang(callStrings[3]))
@@ -497,12 +500,18 @@ setMethod("trainModel", signature(object='CoxModel'),
     degFreedom <- vapply(survivalDiffs, function(x) length(x$n) - 1, numeric(1))
     chisqPval <- 1 - pchisq(chisq, degFreedom)
 
+    for (i in seq_along(colDataL)) colDataL[[i]][, cohort := names(colDataL)[i]]
+    modelDT <- rbindlist(colDataL, fill=TRUE)
+    commonCols <- Reduce(intersect, lapply(colDataL, colnames))
+    modelDT <- modelDT[, .SD, .SDcols=commonCols]
+
     models(object) <- SimpleList(list(
         coxModels=coxModels,
         survivalFits=survivalFits,
         survivalDiffs=survivalDiffs,
         chisqPvalues=chisqPval,
-        modelData=colDataL
+        modelData=modelData,
+        modelDT=modelDT
     ))
 
     return(object)

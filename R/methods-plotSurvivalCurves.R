@@ -21,29 +21,29 @@ setGeneric('plotSurvivalCurves',
 #'   curves for each cohort in the `trainData` slot of the `CoxModel`.
 #' 
 #' @md
-#' @importFrom survminer ggsurvplot arrange_ggsurvplots
+#' @importFrom survminer ggsurvplot ggsurvplot_facet
+#' @importFrom survival survfit Surv
 #' @export
 setMethod('plotSurvivalCurves', signature(object='CoxModel'),
-    function(object, arrangePlots=TRUE, ...)
+    function(object, byCohort=TRUE, ...)
 {
     funContext <- .context(1)
     
-    if (!all(c('modelData', 'survivalFits') %in% names(models(object))))
+    if (!('modelDT' %in% names(models(object))))
         stop(.errorMsg(funContext, 'It looks like your ', class(object), ' ',
             ' object has not been trained. Please use trainModel to ',
             'fit the Cox model before trying to plot survival curves!'))
 
-    modelData <- models(object)$modelData
-    survivalFits <- models(object)$survivalFits
+    modelDT <- models(object)$modelDT
+    fitCall <- paste0('survfit(Surv(event=event_occurred, time=survival_time) ~', 
+        paste0(modelParams(object)[[1]], collapse=' + '), ')')
+    overallFit <- eval(str2lang(fitCall), envir=modelDT)
 
-    survivalPlots <- ggsurvplot(survivalFits)
+    if (byCohort) {
+        plot <- ggsurvplot_facet(overallFit, data=modelDT, facet.by='cohort', ...)
+    } else {
+        plot <- ggsurvplot(overallFit, data=modelDT, ...)
+    }
 
-    if (!arrangePlots) return(survivalPlots)
-
-    ncol <- ceiling(sqrt(length(survivalPlots)))
-    nrow <- ceiling(length(survivalPlots) / ncol)
-
-    return(arrange_ggsurvplots(survivalPlots, ncol=ncol, nrow=nrow, 
-        print=FALSE))
-
+    return(plot)
 })

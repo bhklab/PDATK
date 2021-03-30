@@ -30,7 +30,7 @@ library(PDATK)
 library(S4Vectors)
 library(MultiAssayExperiment)
 library(qs)
-library(survminer)
+library(ggplot2)
 
 seed <- 99791
 reps <- 250
@@ -120,11 +120,8 @@ fitCoxModel <- trainModel(coxModel)
 ```
 
 ```{r eval=FALSE}
-
-```
-
-```{r eval=FALSE}
-
+survPlots <- plotSurvivalCurves(fitCoxModel, pval=TRUE, pval.coords=c(0.9, 3000))
+ggsave(survPlots, file='survPlots.pdf', height=14, width=14)
 ```
 
 # Gene Signature Comparison
