@@ -10,7 +10,7 @@ renameColumns(x, values)
 \item{x}{An object for which \code{colnames} is defined, probably a \code{data.frame}
 or other similar object.}
 
-\item{value}{A character vector where names are the old column names
+\item{values}{A character vector where names are the old column names
 and values are the new column names. Uses \code{gsub} internally to do
 the renaming.}
 }

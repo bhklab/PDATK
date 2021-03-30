@@ -10,6 +10,10 @@ NetworkCommunitySearchModel(model)
 \arguments{
 \item{model}{A validated \code{ConsensusMetaclusteringModel} object.}
 }
+\value{
+An \code{NCSModel} object containing the relevant data from the
+\code{ConsensusMetaclusteringModel}.
+}
 \description{
 Use \code{igraph::fastgreedy.community} cross-cohort metaclusters for
 a \code{ConsensusMetaclusteringModel} which has been validated with

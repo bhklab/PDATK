@@ -12,10 +12,10 @@
 
 \item{...}{Not used, force subsequent arguments to be named.}
 
+\item{palette}{\code{character} A valid pallete for use in \code{RColourBrewer::brewer.pal}}
+
 \item{clusterLabels}{A \code{character} vector of names for the metaclusters.
 Defaults to the cluster number.}
-
-\item{pallete}{\code{character} A valid pallete for use in \code{RColourBrewer::brewer.pal}}
 }
 \value{
 A \code{ggplot} object containing the network graph, showing the

@@ -8,8 +8,6 @@
 }
 \arguments{
 \item{object}{An \code{S4Model} object}
-
-\item{...}{Allow definition of new arguments to this generic.}
 }
 \value{
 A \code{List}- or \code{list}-like object containing one or more

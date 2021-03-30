@@ -17,4 +17,5 @@ vignettes/.*.qs
 vignettes/.*.html
 vignettes/.*.pdf
 vignettes/.*.svg
-data/*.qs
+data/.*.qs
+.github

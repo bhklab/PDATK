@@ -1,8 +1,8 @@
 library(testthat)
 library(PDATK)
 
-data(existingClassifierData)
-data(sampleCohortList)
+data("existingClassifierData")
+data("sampleCohortList")
 
 if (Sys.info()['sysname'] == 'Windows') {
     BiocParallel::register(BiocParallel::SerialParam())

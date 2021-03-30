@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-ConsensusMetaclusteringModel.R
 \name{ConsensusMetaclusteringModel}
 \alias{ConsensusMetaclusteringModel}
-\alias{ConClustModel}
+\alias{ConMetaclustModel}
 \title{Constructor for a \code{ConsensusClusterModel} Object.}
 \usage{
 ConsensusMetaclusteringModel(trainData, ..., randomSeed)

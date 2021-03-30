@@ -7,7 +7,7 @@
 plotSurvivalCurves(object, ...)
 }
 \arguments{
-\item{object}{An \code{S4} object to plot surival curves for.}
+\item{object}{An \code{S4} object to plot survival curves for.}
 
 \item{...}{Allow new parameters to be defined on this generic.}
 }

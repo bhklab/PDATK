@@ -11,8 +11,6 @@
 
 \item{value}{A \code{DataFrame}- or \code{data.frame}-like object of validation
 statistics.}
-
-\item{...}{Allow definition of additional parameters to this generic.}
 }
 \value{
 None, updates the object

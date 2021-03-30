@@ -7,7 +7,9 @@
 modelParams(object, ...)
 }
 \arguments{
-\item{object}{A \code{S4} Object}
+\item{object}{A \code{S4} Object.}
+
+\item{...}{Allow additional arguments to be defined for this generic.}
 }
 \value{
 A \code{List}- or \code{list}-like object containing all the parameters needed

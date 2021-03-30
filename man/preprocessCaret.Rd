@@ -14,6 +14,9 @@ preprocessCaret(x, ...)
 \item{...}{Fall through parameters to \code{caret::preProcess}. This can be used
 to apply a range of different preprocessing methods from that package.}
 }
+\value{
+\code{x} preprocessed according to the arguments in \code{...}.
+}
 \description{
 Preprocess Data Using the \code{caret::preProcess} method, then return the
 normalized data using \code{predict}.

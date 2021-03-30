@@ -8,8 +8,6 @@
 }
 \arguments{
 \item{object}{An \code{S4} object}
-
-\item{...}{Allow definition of new arguments to this generic.}
 }
 \value{
 A \code{data.frame} of validation statistics for the validation data

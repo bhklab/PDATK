@@ -26,10 +26,9 @@ and storing statistics assessing model performance.}
 \item{\code{validationData}}{An object inheriting \code{List} or \code{list} representing
 the data used to validate or evaluate the performance of a model.}
 
-\item{\code{mcols}}{A \code{DataFrame} or 'data.frame' of item metadata for the \code{models}
-slot.}
+\item{\code{elementMetadata}}{A \code{DataFrame} or 'data.frame' of item metadata for
+the \code{models} slot.}
 
 \item{\code{metadata}}{A \code{List} or \code{list} of model level metadata.}
 }}
 
-\keyword{internal}

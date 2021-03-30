@@ -44,7 +44,6 @@ Encoding: UTF-8
 Depends: R (>= 4.1), SummarizedExperiment
 Imports:
     data.table,
-    HDF5Array,
     MultiAssayExperiment,
     ConsensusClusterPlus,
     igraph,
@@ -54,6 +53,7 @@ Imports:
     clusterRepro,
     CoreGx,
     caret,
+    survminer,
     methods,
     S4Vectors, 
     BiocGenerics,
@@ -79,10 +79,11 @@ Suggests:
     msigdbr,
     BiocStyle,
     rmarkdown,
-    knitr
+    knitr,
+    HDF5Array
 VignetteBuilder: knitr
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software,
-    Classification,  Survival
+    Classification,  Survival, Clustering, GenePrediction
 BugReports: https://github.com/bhklab/PDATK/issues
 RoxygenNote: 7.1.1.9001
 Collate: 
