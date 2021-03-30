@@ -23,6 +23,9 @@ vignette: >
 
 # COINCIDE
 
+Please note that this vignette is incomplete and is not intended to for package
+users at this time. It is here as a placeholder until the vignette is complete.
+
 ## Preprocess the data
 
 ```{r load_data, eval=FALSE}

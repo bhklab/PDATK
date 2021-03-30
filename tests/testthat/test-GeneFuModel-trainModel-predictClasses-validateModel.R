@@ -1,8 +1,12 @@
 library(testthat)
 library(PDATK)
+library(S4Vectors)
 
-data("existingClassifierData")
-data("sampleCohortList")
+names <- data(existingClassifierData, package='PDATK', verbose=TRUE)
+warning(names)
+warning(ls())
+warning(print(chen))
+data(sampleCohortList)
 
 if (Sys.info()['sysname'] == 'Windows') {
     BiocParallel::register(BiocParallel::SerialParam())

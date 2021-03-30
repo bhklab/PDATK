@@ -184,8 +184,8 @@ hasColDataColumns <- function(SE, values) {
 #' @return The `SE` object with the new column in the objects `colData` slot.
 #'
 #' @examples
-#' SE <- SUmmarizedExperiment(matrix(rnorm(100), 10, 10))
-#' updatedSE <- assingColDataColumn(SE, 'test', rep(1, 10))
+#' SE <- SummarizedExperiment(matrix(rnorm(100), 10, 10))
+#' updatedSE <- assignColDataColumn(SE, 'test', rep(1, 10))
 #'
 #' @md
 #' @importFrom utils capture.output
