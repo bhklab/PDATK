@@ -25,6 +25,6 @@ Assign a new column directly to the colData slot of a SummarizedExperiment.
 }
 \examples{
 SE <- SummarizedExperiment(matrix(rnorm(100), 10, 10))
-updatedSE <- assingColDataColumn(SE, 'test', rep(1, 10))
+updatedSE <- assignColDataColumn(SE, 'test', rep(1, 10))
 
 }
