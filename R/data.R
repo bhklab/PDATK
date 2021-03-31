@@ -138,8 +138,6 @@ NULL
 
 #' @title existingClassifierData
 #'
-#' @name existingClassifierData
-#'
 #' @examples
 #' # Loads chen, birnbaum and haiderSigScores objects
 #' data(existingClassifierData)
