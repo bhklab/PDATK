@@ -17,3 +17,9 @@ The training data for an S4 object.
 \description{
 Generic for Accessing the Training Data of an `S4` Object
 }
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+
+}

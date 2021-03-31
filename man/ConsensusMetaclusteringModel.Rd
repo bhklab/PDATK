@@ -25,6 +25,12 @@ data and ready to be trained.
 \description{
 Constructor for a \code{ConsensusClusterModel} Object.
 }
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+conMetaclustModel <- ConsensusMetaclusteringModel(CSPC_MAE, randomSeed=1987)
+
+}
 \seealso{
 \code{\link[ConsensusClusterPlus:ConsensusClusterPlus]{ConsensusClusterPlus::ConsensusClusterPlus}}
 }

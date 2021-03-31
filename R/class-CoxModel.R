@@ -26,6 +26,13 @@
 #'
 #' @return A `CoxModel` object, with `object` in the trainData slot.
 #'
+#' @examples
+#' library(MultiAssayExperiment)
+#' data(CSPC_MAE)
+#' experiments(CSPC_MAE) <- endoapply(experiments(CSPC_MAE), SurvivalExperiment,
+#'     event_occurred='vital_status', survival_time='days_to_death')
+#' coxModel <- CoxModel(CSPC_MAE, survivalPredictor='sample_type')
+#'
 #' @md
 #' @export
 CoxModel <- function(object, survivalPredictor='metacluster_labels') {

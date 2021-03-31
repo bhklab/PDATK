@@ -19,3 +19,11 @@ settings like the random seed and RNGkind.
 \description{
 Generic for Accessing the Model Parameters of an \code{S4} Object
 }
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+modelParams(metaclustModel)
+
+
+}

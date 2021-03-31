@@ -15,3 +15,10 @@ None, prints to console.
 \description{
 Show method for Classes Inheriting from `S4Model`
 }
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+metaclustModel
+
+}

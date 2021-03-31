@@ -24,3 +24,11 @@ Build a \code{CoxModel} object from a \code{MultiAssayExperiment} of
 \code{survival::coxph} function to many \code{SurvivalExperiment} at once,
 assuming they share the \code{survivalPredictor} column.
 }
+\examples{
+library(MultiAssayExperiment)
+data(CSPC_MAE)
+experiments(CSPC_MAE) <- endoapply(experiments(CSPC_MAE), SurvivalExperiment,
+    event_occurred='vital_status', survival_time='days_to_death')
+coxModel <- CoxModel(CSPC_MAE, survivalPredictor='sample_type')
+
+}

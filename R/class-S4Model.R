@@ -39,6 +39,11 @@ setClassUnion('DFrame_or_data.frame_data.table_or_NULL',
 #'
 #' @return The training data for an S4 object.
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#'
 #' @export
 setGeneric('trainData', function(object, ...) standardGeneric('trainData'))
 #'
@@ -62,6 +67,12 @@ setMethod('trainData', signature(object='S4Model'), function(object)
 #' @param value An object to place in the objects training data slot.
 #'
 #' @return None, updates the object.
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' trainData(metaclustModel) <- CSPC_MAE
 #'
 #' @md
 #' @export
@@ -99,6 +110,12 @@ setReplaceMethod('trainData', signature(object='S4Model'),
 #'   to reproduce a specific model training run, including environmental
 #'   settings like the random seed and RNGkind.
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' modelParams(metaclustModel)
+#'
 #'
 #' @md
 #' @export
@@ -127,6 +144,12 @@ setMethod('modelParams', signature(object='S4Model'), function(object)
 #'   for the model.
 #'
 #' @return None, modifies the object.
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' modelParams(metaclustModel) <- list(alpha=0.05)
 #'
 #' @md
 #' @keywords internal
@@ -168,6 +191,12 @@ setReplaceMethod('modelParams', signature(object='S4Model',
 #'
 #' @return An `S4` object representing a model.
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' models(metaclustModel)
+#'
 #' @md
 #' @export
 setGeneric('models', function(object, ...) standardGeneric('models'))
@@ -192,6 +221,12 @@ setMethod('models', signature(object='S4Model'), function(object)
 #' @param value A `List`- or `list`-like object.
 #'
 #' @return None, updates the object.
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' models(metaclustModel) <- list(model1='some_kind_of_model)
 #'
 #' @md
 #' @keywords internal
@@ -228,6 +263,12 @@ setReplaceMethod('models', signature(object='S4Model',
 #' @return A `data.frame` of validation statistics for the validation data
 #'   provided to `validateModel` function for a given `S4` object.
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' validationStats(metaclustModel)
+#'
 #' @md
 #' @export
 setGeneric('validationStats', function(object, ...)
@@ -239,6 +280,7 @@ setGeneric('validationStats', function(object, ...)
 #'
 #' @return A `data.frame` of validation statistics for the validation data
 #'   provided to `validateModel` function for a given `S4Model` object.
+#'
 #'
 #' @md
 #' @export
@@ -256,6 +298,12 @@ setMethod('validationStats', signature(object='S4Model'),
 #'   statistics.
 #'
 #' @return None, updates the object
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' validationStats(metaclustModel) <- data.frame()
 #'
 #' @md
 #' @export
@@ -288,12 +336,18 @@ setReplaceMethod('validationStats', signature(object='S4Model',
 #' @return A `List`- or `list`-like object containing one or more
 #'   sets of validation data.
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' validationData(metaclustModel)
+#'
 #' @md
 #' @export
 setGeneric('validationData', function(object, ...)
     standardGeneric('validationData'))
 #'
-#' Acessor for the `validationData` slot of an `S4Model` object
+#' Accessor for the `validationData` slot of an `S4Model` object
 #'
 #' @param object An `S4Model` object
 #'
@@ -316,6 +370,12 @@ setMethod('validationData', signature(object='S4Model'),
 #' @param value A `data.frame` of validation statistics.
 #'
 #' @return None, updates the object
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' validationData(metaclustModel) <- list(cohort1='This should be cohort data')
 #'
 #' @md
 #' @export
@@ -346,10 +406,19 @@ setReplaceMethod('validationData', signature(object='S4Model',
 #'
 #' @return None, prints to console.
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' metaclustModel
+#'
 #' @importFrom CoreGx .collapse
 #' @import S4Vectors
 #' @export
 setMethod('show', signature(object='S4Model'), function(object) {
+
+    ##FIXME:: This show method sucks, make it better
+
     # -- Class
     cat('<', class(object)[1], '>', '\n')
 

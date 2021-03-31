@@ -31,6 +31,11 @@ setClassUnion('MAE_or_SE', c('MultiAssayExperiment', 'SummarizedExperiment'))
 #'
 #' @aliases ConMetaclustModel
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' conMetaclustModel <- ConsensusMetaclusteringModel(CSPC_MAE, randomSeed=1987)
+#'
 #' @md
 #' @export
 ConsensusMetaclusteringModel <- function(trainData, ..., randomSeed) {
