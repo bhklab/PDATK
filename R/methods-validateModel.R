@@ -681,36 +681,38 @@ setMethod('validateModel', signature(model='GeneFuModel',
 })
 
 
-# ---- ConsensusMetaclusteringModel
+# ---- ConsensusMetaclusteringModel-methods
 
-#' 
-#' @param object A `ConsensusMetaclusteringModel` object with cluster_labels in 
+#' Compute the Inter-Cohort Cluster Correlation and Clustering Reproducibility
+#'   of All Clusters in Each Cohort.
+#'
+#' @param model A `ConsensusMetaclusteringModel` object with cluster_labels in
 #'   assigned to each experiment, as returned by `predictClasses`.
 #' @param valData A `ConsensusMetaclusteringModel` object with cluster_labels
 #'   assigned to each experiment, as returned by `predictClasses`. This
-#'   consensus cluster should contain outgroup cohorts, such as normal 
-#'   patients to be compared against the disease cohorts being used for 
+#'   consensus cluster should contain outgroup cohorts, such as normal
+#'   patients to be compared against the disease cohorts being used for
 #'   class discovery.
 #' @param ... Fallthrough parameters to `BiocParallel::bpmapply`. This can
-#'   also be used to customize the call to `stats::cor.test` used for 
+#'   also be used to customize the call to `stats::cor.test` used for
 #'   calculating the cluster thresholds.
-#' 
+#'
 #' @return The `ConsensusMetaclusteringModel` from object, with the training
 #'   data from `valData` in the `validationData` slot, the models from the
-#'   `valData` object appended to the `models` of object, and the 
+#'   `valData` object appended to the `models` of object, and the
 #'   `validationStats` slot populated with pair-wise comparisons between
-#'   all experiments in both `object` and `valData`.
-#' 
+#'   all experiments in both `model` and `valData`.
+#'
 #' @importFrom BiocParallel bpmapply
 #' @importFrom data.table rbindlist
-#' 
+#'
 #' @md
 #' @export
-setMethod('validateModel', signature(model='ConsensusMetaclusteringModel', 
-    valData='ConsensusMetaclusteringModel'), function(model, valData, ...) 
+setMethod('validateModel', signature(model='ConsensusMetaclusteringModel',
+    valData='ConsensusMetaclusteringModel'), function(model, valData, ...)
 {
     funContext <- .context(1)
-    
+
     # Prepare comparisons for clustering results between every cohort
     validationData(model) <- SimpleList(experiments=trainData(valData),
         models=models(valData))
@@ -718,7 +720,7 @@ setMethod('validateModel', signature(model='ConsensusMetaclusteringModel',
 
     repeats <- modelParams(model)$reps
     centroids <- c(models(model), models(valData))
-    cohorts <- c(experiments(trainData(model)), 
+    cohorts <- c(experiments(trainData(model)),
         experiments(trainData(valData)))
     assays <- lapply(cohorts, assay, 1)
     clusterLabels <- lapply(cohorts, function(x) x$cluster_label)
@@ -738,18 +740,18 @@ setMethod('validateModel', signature(model='ConsensusMetaclusteringModel',
     # Use cor.test to estimate association between the feature values
     #  in a centroid vs a cohort. Compare each subcluster individually for
     #  all assays.
-    thresholdDtList <- bpmapply(FUN=.calculateMSMthresholds, 
-        comparison=comparisons, centroid=comparisonCentroids, 
-        assay=comparisonAssays, classes=comparisonClasses, 
+    thresholdDtList <- bpmapply(FUN=.calculateMSMthresholds,
+        comparison=comparisons, centroid=comparisonCentroids,
+        assay=comparisonAssays, classes=comparisonClasses,
         centroidK=centroidOptimalK, assayK=assayOptimalK, SIMPLIFY=FALSE)
 
     thresholdDT <- rbindlist(thresholdDtList)
-    modelParams(model) <- c(modelParams(model), 
+    modelParams(model) <- c(modelParams(model),
         list(thresholdDT=thresholdDT))
 
     clusterReproDtList <- bpmapply(FUN=.calcClusterRepro,
-        comparison=comparisons, centroid=comparisonCentroids, 
-        assay=comparisonAssays, MoreArgs=list(rep=repeats), 
+        comparison=comparisons, centroid=comparisonCentroids,
+        assay=comparisonAssays, MoreArgs=list(rep=repeats),
         SIMPLIFY=FALSE)
 
     reproDT <- rbindlist(clusterReproDtList)
@@ -761,7 +763,7 @@ setMethod('validateModel', signature(model='ConsensusMetaclusteringModel',
 
 #' @importFrom clusterRepro clusterRepro
 #' @importFrom data.table data.table
-#' 
+#'
 #' @md
 #' @keywords internal
 .calcClusterRepro <- function(comparison, centroid, assay, rep)
@@ -783,12 +785,13 @@ setMethod('validateModel', signature(model='ConsensusMetaclusteringModel',
 }
 
 #' @importFrom data.table data.table rbindlist
-#' 
+#'
 #' @param ... Fallthrough arguments to `stats::cor.test`
-#' 
+#'
 #' @md
+#' @importFrom stats cor.test
 #' @keywords internal
-.calculateMSMthresholds <- function(comparison, centroid, assay, classes, 
+.calculateMSMthresholds <- function(comparison, centroid, assay, classes,
     centroidK, assayK, ...)
 {
     cohorts <- unlist(strsplit(comparison, '-'))

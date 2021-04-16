@@ -1,7 +1,8 @@
 library(testthat)
 library(PDATK)
+library(S4Vectors)
 
-data(existingClassifierData)
+data(existingClassifierData, verbose=TRUE)
 data(sampleCohortList)
 
 if (Sys.info()['sysname'] == 'Windows') {

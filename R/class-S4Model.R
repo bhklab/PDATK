@@ -1,10 +1,10 @@
 setClassUnion('List_or_list_or_NULL', c('List', 'list', NULL))
 #' @importClassesFrom data.table data.table
-setClassUnion('DFrame_or_data.frame_data.table_or_NULL', 
+setClassUnion('DFrame_or_data.frame_data.table_or_NULL',
     c('DFrame', 'data.frame', 'data.table', NULL))
 
 #' An `S4` Virtual Class For the Concept of a Statistical or ML Model
-#' 
+#'
 #' @slot trainData An object inheriting from `List` or `list` representing
 #'   the training data for the model.
 #' @slot modelParams An object inherting from `List` or `list` representing
@@ -15,14 +15,14 @@ setClassUnion('DFrame_or_data.frame_data.table_or_NULL',
 #'   and storing statistics assessing model performance.
 #' @slot validationData An object inheriting `List` or `list` representing
 #'   the data used to validate or evaluate the performance of a model.
-#' @slot mcols A `DataFrame` or 'data.frame' of item metadata for the `models` 
-#'   slot.
+#' @slot elementMetadata A `DataFrame` or 'data.frame' of item metadata for
+#'   the `models` slot.
 #' @slot metadata A `List` or `list` of model level metadata.
-#' 
+#'
 #' @md
-#' @aliases S4Model S4Model-class
+#' @aliases S4Model-class
 #' @export
-.S4Model <- setClass('S4Model', 
+.S4Model <- setClass('S4Model',
     slots=c(
         trainData='ANY',
         modelParams='List_or_list_or_NULL',
@@ -33,21 +33,26 @@ setClassUnion('DFrame_or_data.frame_data.table_or_NULL',
     contains=c('Vector', 'VIRTUAL'))
 
 #' Generic for Accessing the Training Data of an `S4` Object
-#' 
+#'
 #' @param object An `S4` object to retrieve training data from.
-#' @param ... Allow new parameters to be defined for this generic. 
-#' 
+#' @param ... Allow new parameters to be defined for this generic.
+#'
 #' @return The training data for an S4 object.
-#' 
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#'
 #' @export
 setGeneric('trainData', function(object, ...) standardGeneric('trainData'))
 #'
 #' Accessor for the Training Data in a `S4Model` Object
-#' 
+#'
 #' @param object An `S4Model` object to retrieve training data from.
-#' 
+#'
 #' @return The training data for an `S4Model` Object.
-#' 
+#'
 #' @md
 #' @export
 setMethod('trainData', signature(object='S4Model'), function(object)
@@ -56,30 +61,36 @@ setMethod('trainData', signature(object='S4Model'), function(object)
 })
 
 #' Generic for Accessing the Training Data of an `S4` Object
-#' 
+#'
 #' @param object An `S4` object to retrieve training data from.
-#' @param ... Allow new parameters to be defined for this generic. 
+#' @param ... Allow new parameters to be defined for this generic.
 #' @param value An object to place in the objects training data slot.
-#' 
+#'
 #' @return None, updates the object.
-#' 
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' trainData(metaclustModel) <- CSPC_MAE
+#'
 #' @md
 #' @export
-setGeneric('trainData<-', function(object, ..., value) 
+setGeneric('trainData<-', function(object, ..., value)
     standardGeneric('trainData<-'))
 #'
 #' Accessor for the Training Data in a `S4Model` Object
-#' 
+#'
 #' @param object An `S4Model` object to retrieve training data from.
 #' @param value An object to put into the model training data.
-#' 
+#'
 #' @return The training data for an `S4Model` Object.
-#' 
+#'
 #' @md
 #' @keywords internal
 #' @export
-setReplaceMethod('trainData', signature(object='S4Model'), 
-    function(object, value) 
+setReplaceMethod('trainData', signature(object='S4Model'),
+    function(object, value)
 {
     funContext <- .context(1)
     if (sys.nframe() == 1) warning(.warnMsg(funContext, 'The training data of
@@ -91,25 +102,33 @@ setReplaceMethod('trainData', signature(object='S4Model'),
 })
 
 #' Generic for Accessing the Model Parameters of an `S4` Object
-#' 
-#' @param object A `S4` Object
-#' 
+#'
+#' @param object A `S4` Object.
+#' @param ... Allow additional arguments to be defined for this generic.
+#'
 #' @return A `List`- or `list`-like object containing all the parameters needed
 #'   to reproduce a specific model training run, including environmental
 #'   settings like the random seed and RNGkind.
-#' 
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' modelParams(metaclustModel)
+#'
+#'
 #' @md
 #' @export
 setGeneric('modelParams', function(object, ...) standardGeneric('modelParams'))
 #'
 #' Accessor for the Model Parameters of an `S4Model` Object
-#' 
+#'
 #' @param object A `S4Model` Object
-#' 
+#'
 #' @return A `List`- or `list`-like object containing all the parameters needed
 #'   to reproduce a specific model training run, including environmental
 #'   settings like the random seed and RNGkind.
-#' 
+#'
 #' @md
 #' @export
 setMethod('modelParams', signature(object='S4Model'), function(object)
@@ -118,36 +137,42 @@ setMethod('modelParams', signature(object='S4Model'), function(object)
 })
 
 #' Generic for Setting the Model Parameters of An `S4` Object
-#' 
+#'
 #' @param object An `S4` Object
 #' @param ... Allow additional parameters to be defined for this generic.
 #' @param value A `List`- or `list`-like object containing the parameters
 #'   for the model.
-#' 
+#'
 #' @return None, modifies the object.
-#' 
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' modelParams(metaclustModel) <- list(alpha=0.05)
+#'
 #' @md
 #' @keywords internal
 #' @export
-setGeneric('modelParams<-', function(object, ..., value) 
+setGeneric('modelParams<-', function(object, ..., value)
     standardGeneric('modelParams<-'))
 #'
 #' Setter for the `modelParams` of an `S4Model`
-#' 
+#'
 #' @param object An `S4Model`
 #' @param value A `List`- or `list`-like object containing the parameters
 #'   for the model.
-#' 
-#' @details 
+#'
+#' @details
 #' This method if not intended for interactive use and will throw an warning
 #'   when used interactively.
-#' 
+#'
 #' @return None, modifies the object.
-#' 
+#'
 #' @md
 #' @keywords internal
 #' @export
-setReplaceMethod('modelParams', signature(object='S4Model', 
+setReplaceMethod('modelParams', signature(object='S4Model',
     value='List_or_list_or_NULL'), function(object, value)
 {
     funContext <- .context(1)
@@ -166,18 +191,25 @@ setReplaceMethod('modelParams', signature(object='S4Model',
 #'
 #' @return An `S4` object representing a model.
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' models(metaclustModel)
+#'
 #' @md
 #' @export
 setGeneric('models', function(object, ...) standardGeneric('models'))
-#' 
+#'
+#' Getter for the models slot of an `S4Model` Object
+#'
 #' @param object An `S4Model` object to retrieve models from.
-#' @param ... Allow new parameters to be defined for this generic.
 #'
 #' @return An `List`- or `list`-like object representing a model.
-#' 
+#'
 #' @md
 #' @export
-setMethod('models', signature(object='S4Model'), function(object) 
+setMethod('models', signature(object='S4Model'), function(object)
 {
     return(object@models)
 })
@@ -190,23 +222,29 @@ setMethod('models', signature(object='S4Model'), function(object)
 #'
 #' @return None, updates the object.
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' models(metaclustModel) <- list(model1='some_kind_of_model)
+#'
 #' @md
 #' @keywords internal
 #' @export
 setGeneric('models<-', function(object, ..., value) standardGeneric('models<-'))
-#' 
+#'
 #' Setter for the Models Slot of an `S4Model` Object
-#' 
+#'
 #' @param object An `S4Model` object to retrieve models from.
 #' @param value A `List`- or `list`-like object.
-#' 
+#'
 #' @return An `List`- or `list`-like object representing a model.
-#' 
+#'
 #' @md
 #' @keywords internal
 #' @export
-setReplaceMethod('models', signature(object='S4Model', 
-    value='List_or_list_or_NULL'), function(object, value) 
+setReplaceMethod('models', signature(object='S4Model',
+    value='List_or_list_or_NULL'), function(object, value)
 {
     funContext <- .context(1)
     if (sys.nframe() == 1) warning(.warnMsg(funContext, 'The model parameters of
@@ -225,23 +263,29 @@ setReplaceMethod('models', signature(object='S4Model',
 #' @return A `data.frame` of validation statistics for the validation data
 #'   provided to `validateModel` function for a given `S4` object.
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' validationStats(metaclustModel)
+#'
 #' @md
 #' @export
 setGeneric('validationStats', function(object, ...)
     standardGeneric('validationStats'))
 #'
 #' Acessor for the `validationStats` slot of an `S4Model` Object
-#' 
+#'
 #' @param object An `S4` object
-#' @param ... Allow definition of new arguments to this generic.
 #'
 #' @return A `data.frame` of validation statistics for the validation data
 #'   provided to `validateModel` function for a given `S4Model` object.
-#' 
+#'
+#'
 #' @md
 #' @export
-setMethod('validationStats', signature(object='S4Model'), 
-    function(object) 
+setMethod('validationStats', signature(object='S4Model'),
+    function(object)
 {
     return(object@validationStats)
 })
@@ -250,10 +294,16 @@ setMethod('validationStats', signature(object='S4Model'),
 #'
 #' @param object An `S4` object.
 #' @param ... Allow definition of additional parameters to this generic.
-#' @param value A `DataFrame`- or `data.frame`-like object of validation 
+#' @param value A `DataFrame`- or `data.frame`-like object of validation
 #'   statistics.
 #'
 #' @return None, updates the object
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' validationStats(metaclustModel) <- data.frame()
 #'
 #' @md
 #' @export
@@ -263,16 +313,15 @@ setGeneric('validationStats<-', function(object, ..., value)
 #' Setter for the `validationStats` slot on an `S4Model` object
 #'
 #' @param object An `S4Model` object.
-#' @param ... Allow definition of additional parameters to this generic.
-#' @param value A `DataFrame`- or `data.frame`-like object of validation 
+#' @param value A `DataFrame`- or `data.frame`-like object of validation
 #'   statistics.
 #'
 #' @return None, updates the object
-#' 
+#'
 #' @md
 #' @export
-setReplaceMethod('validationStats', signature(object='S4Model', 
-    value='DFrame_or_data.frame_data.table_or_NULL'), function(object, value) 
+setReplaceMethod('validationStats', signature(object='S4Model',
+    value='DFrame_or_data.frame_data.table_or_NULL'), function(object, value)
 {
     object@validationStats <- value
     return(object)
@@ -286,24 +335,29 @@ setReplaceMethod('validationStats', signature(object='S4Model',
 #'
 #' @return A `List`- or `list`-like object containing one or more
 #'   sets of validation data.
-#' 
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' validationData(metaclustModel)
+#'
 #' @md
 #' @export
-setGeneric('validationData', function(object, ...) 
+setGeneric('validationData', function(object, ...)
     standardGeneric('validationData'))
 #'
-#' Acessor for the `validationData` slot of an `S4Model` object
-#' 
+#' Accessor for the `validationData` slot of an `S4Model` object
+#'
 #' @param object An `S4Model` object
-#' @param ... Allow definition of new arguments to this generic.
 #'
 #' @return A `List`- or `list`-like object containing one or more
 #'   sets of validation data.
-#' 
+#'
 #' @md
 #' @export
-setMethod('validationData', signature(object='S4Model'), 
-    function(object) 
+setMethod('validationData', signature(object='S4Model'),
+    function(object)
 {
     return(object@validationData)
 })
@@ -317,24 +371,30 @@ setMethod('validationData', signature(object='S4Model'),
 #'
 #' @return None, updates the object
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' validationData(metaclustModel) <- list(cohort1='This should be cohort data')
+#'
 #' @md
 #' @export
 setGeneric('validationData<-', function(object, ..., value)
     standardGeneric('validationData<-'))
 #'
 #' Setter Method for the `validationData` of an `S4Model` Object.
-#' 
+#'
 #' @param object An `S4Model` object.
 #' @param value A `List`- or `list`-like object containing
 #'   the new validation data for the `S4Model` object.
-#' 
+#'
 #' @return None, updates the object.
-#' 
+#'
 #' @md
 #' @keywords internal
 #' @export
-setReplaceMethod('validationData', signature(object='S4Model', 
-    value='List_or_list_or_NULL'), function(object, value) 
+setReplaceMethod('validationData', signature(object='S4Model',
+    value='List_or_list_or_NULL'), function(object, value)
 {
     object@validationData <- value
     return(object)
@@ -346,10 +406,19 @@ setReplaceMethod('validationData', signature(object='S4Model',
 #'
 #' @return None, prints to console.
 #'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+#' metaclustModel
+#'
 #' @importFrom CoreGx .collapse
 #' @import S4Vectors
 #' @export
 setMethod('show', signature(object='S4Model'), function(object) {
+
+    ##FIXME:: This show method sucks, make it better
+
     # -- Class
     cat('<', class(object)[1], '>', '\n')
 

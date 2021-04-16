@@ -18,3 +18,10 @@ sets of validation data.
 \description{
 Accessor for the \code{validationData} slot of an \code{S4} object
 }
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+validationData(metaclustModel)
+
+}

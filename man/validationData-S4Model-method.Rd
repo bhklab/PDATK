@@ -2,19 +2,17 @@
 % Please edit documentation in R/class-S4Model.R
 \name{validationData,S4Model-method}
 \alias{validationData,S4Model-method}
-\title{Acessor for the \code{validationData} slot of an \code{S4Model} object}
+\title{Accessor for the \code{validationData} slot of an \code{S4Model} object}
 \usage{
 \S4method{validationData}{S4Model}(object)
 }
 \arguments{
 \item{object}{An \code{S4Model} object}
-
-\item{...}{Allow definition of new arguments to this generic.}
 }
 \value{
 A \code{List}- or \code{list}-like object containing one or more
 sets of validation data.
 }
 \description{
-Acessor for the \code{validationData} slot of an \code{S4Model} object
+Accessor for the \code{validationData} slot of an \code{S4Model} object
 }

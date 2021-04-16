@@ -23,7 +23,8 @@ vignette: >
 
 # COINCIDE
 
-This vignette is incomplete and is not intended for users at this time.
+Please note that this vignette is incomplete and is not intended to for package
+users at this time. It is here as a placeholder until the vignette is complete.
 
 ## Preprocess the data
 

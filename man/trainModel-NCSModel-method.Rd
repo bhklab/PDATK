@@ -20,6 +20,11 @@ for a cluster to be included in the metacluster labels. Default is 0.5.}
 centroid and assay cluster to be included in the metacluster labels.
 Default is 0.0.}
 }
+\value{
+The \code{NCSModel} from \code{object} with the \code{networkEdges} item of the
+\code{models} slot fitlered based on the specified criteria. The criteria are
+also stored in the \code{modelParam} slots to ensure reproducibility.
+}
 \description{
 Train a NetworkCommunitySearchModel
 }

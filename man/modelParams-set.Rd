@@ -20,4 +20,11 @@ None, modifies the object.
 \description{
 Generic for Setting the Model Parameters of An \code{S4} Object
 }
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+modelParams(metaclustModel) <- list(alpha=0.05)
+
+}
 \keyword{internal}

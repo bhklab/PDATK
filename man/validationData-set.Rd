@@ -19,3 +19,10 @@ None, updates the object
 \description{
 Generic for setting the \code{validationData} slot on an \code{S4} object
 }
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+validationData(metaclustModel) <- list(cohort1='This should be cohort data')
+
+}

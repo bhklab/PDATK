@@ -7,7 +7,9 @@
 modelParams(object, ...)
 }
 \arguments{
-\item{object}{A \code{S4} Object}
+\item{object}{A \code{S4} Object.}
+
+\item{...}{Allow additional arguments to be defined for this generic.}
 }
 \value{
 A \code{List}- or \code{list}-like object containing all the parameters needed
@@ -16,4 +18,12 @@ settings like the random seed and RNGkind.
 }
 \description{
 Generic for Accessing the Model Parameters of an \code{S4} Object
+}
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+modelParams(metaclustModel)
+
+
 }

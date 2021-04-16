@@ -1,41 +1,41 @@
 #' A Generic for Plotting a Network Graph From an S4 Object
-#' 
+#'
 #' @param object An `S4` object with a valid plotNetworkGraph method set.
 #' @param ... Allow additional arguments to be defined for this generic.
-#' 
+#'
 #' @return A network plot, either as an object or via side effects.
-#' 
+#'
 #' @md
 #' @export
-setGeneric('plotNetworkGraph', 
+setGeneric('plotNetworkGraph',
     function(object, ...) standardGeneric('plotNetworkGraph'))
 
 #' Plot a Network Graph for a Classified NCSModel Object
-#' 
+#'
 #' Visualize metaclusters predicted using network community search on the
 #'   consensus clustering results for a MultiAssayExperiment of patient
 #'   cohorts.
-#' 
-#' @param object A classified `NCSModel` object, as returned by the 
+#'
+#' @param object A classified `NCSModel` object, as returned by the
 #'   `predictClasses` method.
 #' @param ... Not used, force subsequent arguments to be named.
-#' @param pallete `character` A valid pallete for use in `RColourBrewer::brewer.pal`
+#' @param palette `character` A valid pallete for use in `RColourBrewer::brewer.pal`
 #' @param clusterLabels A `character` vector of names for the metaclusters.
 #'   Defaults to the cluster number.
-#' 
-#' @return A `ggplot` object containing the network graph, showing the 
+#'
+#' @return A `ggplot` object containing the network graph, showing the
 #'   relative edge distances between each cluster in each cohort along with
 #'   the predicted metacluster label.
-#' 
+#'
 #' @md
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom ggplotify as.ggplot base2grob
 #' @export
-setMethod('plotNetworkGraph', signature(object='NCSModel'), 
-    function(object, ..., palette="Set1", clusterLabels) 
+setMethod('plotNetworkGraph', signature(object='NCSModel'),
+    function(object, ..., palette="Set1", clusterLabels)
 {
     funContext <- .context(1)
-    
+
     ## TODO:: Add state labels to S4Model object to determine if it has
     #  been trained, classified, etc.
 
@@ -57,7 +57,7 @@ setMethod('plotNetworkGraph', signature(object='NCSModel'),
     if (missing(clusterLabels)) {
         clusterLabels <- as.character(sort(unique(membership(metaclusters))))
     }
-    plotNetwork <- call('.plotNetwork', ugraph=ugraph, 
+    plotNetwork <- call('.plotNetwork', ugraph=ugraph,
         metaClusters=metaclusters, coords=coords, colours=colours,
         clusterLabels=clusterLabels)
 

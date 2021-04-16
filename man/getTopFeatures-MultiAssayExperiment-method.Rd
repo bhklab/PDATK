@@ -11,12 +11,7 @@
 
 \item{numFeats}{An \code{integer} number of top ranked features to extract.}
 
-\item{...}{Fall through arguments to \code{rankFeatures}, which is used to
-calculate the ranks if \code{rankCol} is not present the object \code{rowData}.}
-
-\item{rankCol}{The name of the column containing the integer feature ranks.
-Defaults to \code{feature_rank}, as calculated with \code{rankFeatures}, but users
-can alternatively specify their own custom rank column if desired.}
+\item{...}{Fall through arguments to \code{rankFeatures}.}
 }
 \value{
 A \code{character} vector of top ranked features, with the features in
@@ -26,5 +21,5 @@ order of rank ascending.
 Get the Top Ranked Features in a \code{MultiAssayExperiment} object
 }
 \seealso{
-\code{\link{rankFeatures,MultiAssayExperiment=method}}
+\code{\link{rankFeatures,MultiAssayExperiment-method}}
 }

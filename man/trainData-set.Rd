@@ -19,3 +19,10 @@ None, updates the object.
 \description{
 Generic for Accessing the Training Data of an \code{S4} Object
 }
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+trainData(metaclustModel) <- CSPC_MAE
+
+}

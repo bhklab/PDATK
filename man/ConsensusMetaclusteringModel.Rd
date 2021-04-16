@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-ConsensusMetaclusteringModel.R
 \name{ConsensusMetaclusteringModel}
 \alias{ConsensusMetaclusteringModel}
-\alias{ConClustModel}
+\alias{ConMetaclustModel}
 \title{Constructor for a \code{ConsensusClusterModel} Object.}
 \usage{
 ConsensusMetaclusteringModel(trainData, ..., randomSeed)
@@ -24,6 +24,12 @@ data and ready to be trained.
 }
 \description{
 Constructor for a \code{ConsensusClusterModel} Object.
+}
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+conMetaclustModel <- ConsensusMetaclusteringModel(CSPC_MAE, randomSeed=1987)
+
 }
 \seealso{
 \code{\link[ConsensusClusterPlus:ConsensusClusterPlus]{ConsensusClusterPlus::ConsensusClusterPlus}}

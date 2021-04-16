@@ -1,13 +1,13 @@
 setClassUnion('MAE_or_SE', c('MultiAssayExperiment', 'SummarizedExperiment'))
 
 #' @title An `S4Model` Containing Molecular Data to be Consensus Clustered
-#' 
+#'
 #' @description
 #' An `S4` wrapper class providing an interface to the `ConsensusClusterPlus`
 #'   function from the package with the same name.
-#' 
-#' @inherit .S4Model
-#' 
+#'
+#' @inherit S4Model-class
+#'
 #' @md
 #' @export
 .ConsensusMetaclusteringModel <- setClass('ConsensusMetaclusteringModel',
@@ -15,22 +15,27 @@ setClassUnion('MAE_or_SE', c('MultiAssayExperiment', 'SummarizedExperiment'))
     contains='S4Model')
 
 #' Constructor for a `ConsensusClusterModel` Object.
-#' 
+#'
 #' @param trainData A `MultiAssayExperiment` or `SummarizedExperiment` containing
-#'   molecular data to be used for consensus clustering with 
+#'   molecular data to be used for consensus clustering with
 #'   `ConsensusClusterPlus::ConsensusClusterPlus`
 #' @param ... Force subsequent parameters to be named. Not used.
 #' @param randomSeed An `integer` randomSeed that will be passed to the
 #'   randomSeed parameter of the `ConsensusClusterPlus::ConsensusClusterPlus`
 #'   function when training the model.
-#' 
+#'
 #' @return A `ConsensusMetaclusteringModel` object containing the training
 #'   data and ready to be trained.
-#' 
+#'
 #' @seealso [`ConsensusClusterPlus::ConsensusClusterPlus`]
-#' 
-#' @aliases ConClustModel
-#' 
+#'
+#' @aliases ConMetaclustModel
+#'
+#' @examples
+#' data(CSPC_MAE)
+#' set.seed(1987)
+#' conMetaclustModel <- ConsensusMetaclusteringModel(CSPC_MAE, randomSeed=1987)
+#'
 #' @md
 #' @export
 ConsensusMetaclusteringModel <- function(trainData, ..., randomSeed) {
@@ -46,7 +51,7 @@ ConsensusMetaclusteringModel <- function(trainData, ..., randomSeed) {
         'MultiAssayExperiment or SummarizedExperiment'))
 
     return(.ConsensusMetaclusteringModel(
-        trainData=trainData, 
+        trainData=trainData,
         modelParams=SimpleList(randomSeed=randomSeed),
         models=SimpleList(),
         validationStats=data.table(),
@@ -54,5 +59,6 @@ ConsensusMetaclusteringModel <- function(trainData, ..., randomSeed) {
         metadata=list()
         ))
 }
+#'
 #' @export
 ConMetaclustModel <- ConsensusMetaclusteringModel
