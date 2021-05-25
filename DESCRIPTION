@@ -85,7 +85,7 @@ VignetteBuilder: knitr
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software,
     Classification,  Survival, Clustering, GenePrediction
 BugReports: https://github.com/bhklab/PDATK/issues
-RoxygenNote: 7.1.1.9001
+RoxygenNote: 7.1.1
 Collate: 
     'class-S4Model.R'
     'class-CohortList.R'

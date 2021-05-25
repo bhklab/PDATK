@@ -34,8 +34,10 @@ library(S4Vectors)
 library(MultiAssayExperiment)
 library(qs)
 library(ggplot2)
+library(BiocParallel)
+library(doParallel)
 
-seed <- 1990
+seed <- 55555
 reps <- 1000
 
 ICGC_SE_list <- qread('vignettes/ICGC_SEs.qs', nthread=16)
@@ -54,15 +56,15 @@ CSPCmae <- intersectRows(CSPCmaeRaw)
 experiments(CSPCmae) <- endoapply(experiments(CSPCmae), rankFeatures)
 
 top20FeaturesPerCohort <- lapply(experiments(CSPCmae), getTopFeatures, numFeats=20)
-top20PctFeaturesOverall <- getTopFeatures(CSPCmae, 
-    numFeats=floor(0.2*length(rownames(CSPCmae)[[1]])), na.rm=TRUE)
-topFeatures <- unique(c(top20PctFeaturesOverall, unlist(top20FeaturesPerCohort)))
+top1PctFeaturesOverall <- getTopFeatures(CSPCmae, 
+    numFeats=floor(0.01*length(rownames(CSPCmae)[[1]])), na.rm=TRUE)
+topFeatures <- unique(c(top1PctFeaturesOverall, unlist(top20FeaturesPerCohort)))
 ```
 
 ```{r normalize_MAE, eval=FALSE}
 topFeaturesMAE <- CSPCmae[topFeatures, , ]
-normMAE <- PDATK::normalize(topFeaturesMAE, MARGIN=1, 
-    method=c('medianImpute', 'scale', 'center'))
+normMAE <- PDATK::normalize(topFeaturesMAE, MARGIN=2, 
+    method=c('scale', 'center', 'medianImpute'))
 ```
 
 ## Create and Train a ConsensusClusterModel
@@ -89,6 +91,8 @@ classifiedNormConClustModel <- predictClasses(trainedNormalsConClustModel)
 ``` -->
 
 ```{r eval=FALSE}
+registerDoParallel(14)
+register(DoparParam())
 validatedConClustModel <- validateModel(model=classifiedConClustModel, 
     valData=ConMetaclustModel(trainData=MultiAssayExperiment(), randomSeed=seed))
 qsave(validatedConClustModel, file='valConClustModel_seed99791_250reps.qs')
@@ -99,7 +103,7 @@ qsave(validatedConClustModel, file='valConClustModel_seed99791_250reps.qs')
 ```{r eval=FALSE}
 validatedConClustModel <- qread('valConClustModel_1000r.qs')
 NCSmodel <- NetworkCommunitySearchModel(model=validatedConClustModel)
-trainedNCSmodel <- trainModel(NCSmodel, p_value = 0)
+trainedNCSmodel <- trainModel(NCSmodel, alpha = 1)
 classifiedNCSmodel <- predictClasses(trainedNCSmodel)
 ```
 
@@ -112,7 +116,7 @@ ggsave(clusterNetworkGraph, file='metacluster_network_graph.pdf',
 # Metacluster Survival Analysis
 
 ```{r eval=FALSE}
-metaclusteredMAE <- trainData(classifiedNCSmodel)
+metaclusteredMAE <- trainData(validatedConClustModel)
 SEhasSurvivalColumns <- lapply(experiments(metaclusteredMAE), hasColDataColumns, 
     values=c('vital_status', 'days_to_death'))
 mclustSurvMAE <- metaclusteredMAE[,, unlist(SEhasSurvivalColumns)]
