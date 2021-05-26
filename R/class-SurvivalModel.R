@@ -1,6 +1,5 @@
 #' @name SurvivalModel-class
-#' A Generic Container for Storing Mathematical Models of
-#'   SurvivalExperiments
+#' @title A Generic Container for Storing Mathematical Models of SurvivalExperiments
 #'
 #' @description An S4 class with a number of predefined methods for
 #'   accessing slots relavant to a surival model. More specific model types

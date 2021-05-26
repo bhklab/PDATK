@@ -19,4 +19,11 @@ None, updates the object.
 \description{
 Accessor for the models slot of an \code{S4} object
 }
+\examples{
+data(CSPC_MAE)
+set.seed(1987)
+metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
+models(metaclustModel) <- list(model1='some_kind_of_model')
+
+}
 \keyword{internal}

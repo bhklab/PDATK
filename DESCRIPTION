@@ -82,6 +82,7 @@ Suggests:
     knitr,
     HDF5Array
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE, r6=FALSE)
 biocViews: GeneExpression, Pharmacogenetics, Pharmacogenomics, Software,
     Classification,  Survival, Clustering, GenePrediction
 BugReports: https://github.com/bhklab/PDATK/issues
