@@ -3,18 +3,21 @@
 \name{existingClassifierData}
 \alias{existingClassifierData}
 \title{existingClassifierData}
+\value{
+Three objects:
+\itemize{
+\item \code{chen}: The genes and coefficients for the gene signature from
+Chen \emph{et al.} (2015)
+\item \code{birnbaum}: The genes and coefficients for the gene signature from
+Birnbaum \emph{et al.} (2017)
+\item \code{haiderSigScores}: The classifier risk scores from Haider \emph{et al.} (2014)
+}
+}
 \description{
 existingClassifierData
 }
 \examples{
 # Loads chen, birnbaum and haiderSigScores objects
 data(existingClassifierData)
-
-Three objects:
-- `chen`: The genes and coefficients for the gene signature from
-Chen *et al.* (2015)
-- `birnbaum`: The genes and coefficients for the gene signature from
-Birnbaum *et al.* (2017)
-- `haiderSigScores`: The classifier risk scores from Haider *et al.* (2014)
 
 }

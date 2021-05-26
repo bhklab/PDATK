@@ -3,30 +3,30 @@
 \name{optimalKMinimizeAmbiguity}
 \alias{optimalKMinimizeAmbiguity}
 \title{Predict optimal K values by minimizing the difference between the ECDF
-  of clustering consensus at two points in a subinterval.}
+of clustering consensus at two points in a subinterval.}
 \usage{
 optimalKMinimizeAmbiguity(assayClusters, subinterval = c(0.1, 0.9))
 }
 \arguments{
-\item{assayClusters}{A `SimpleList` of clustering results from a 
-`ConsensusMetaclusteringModel`, as returned by `models(object)` where
-object is a trained `ConsensusMetaclusteringModel` object.}
+\item{assayClusters}{A \code{SimpleList} of clustering results from a
+\code{ConsensusMetaclusteringModel}, as returned by \code{models(object)} where
+object is a trained \code{ConsensusMetaclusteringModel} object.}
 
-\item{subinterval}{A `numeric` vector of two float values, the first
+\item{subinterval}{A \code{numeric} vector of two float values, the first
 being the lower and second being the upper limit of the subinteral
 to compare cluster ambiguity over. Default is c(0.1, 0.9), i.e. comparing
-the 10th and 90th percentile of cluster consensus to calculate the 
+the 10th and 90th percentile of cluster consensus to calculate the
 ambiguity of a given clustering solution. This is the value used to
 selected the optimal K value from the potential solutions for each
 assay in the training data.}
 }
 \value{
-A `numeric` vector the same length as `assayClusters`, with 
-  an optimal K prediction for each assay in the `rawdata` slot of 
-  the trained `ConsensusMetaclusteringModel` object which `assayClusters`
-  came from.
+A \code{numeric} vector the same length as \code{assayClusters}, with
+an optimal K prediction for each assay in the \code{rawdata} slot of
+the trained \code{ConsensusMetaclusteringModel} object which \code{assayClusters}
+came from.
 }
 \description{
 Predict optimal K values by minimizing the difference between the ECDF
-  of clustering consensus at two points in a subinterval.
+of clustering consensus at two points in a subinterval.
 }

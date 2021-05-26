@@ -344,18 +344,18 @@ setMethod('predictClasses', signature(object='CohortList',
 
 # ---- ConsensusMetaclusteringModel
 
-#' Compute the Optimal Clustering Solution for a Trained 
+#' Compute the Optimal Clustering Solution for a Trained
 #'   ConsensusMetaclusteringModel
-#' 
+#'
 #' Compute the optimal clustering solution out of possibilities generated
 #'   with trainModel. Assigns the cluster labels to the `MultiAssayExperiment`
 #'   object.
-#' 
+#'
 #' @param object A `MutliAssayExperiment` object
 #' @param optimal_k_function A function which accepts as its input `models(object)`
 #'   of a trained `ConsensusMetaclusteringModel` object, and returns a vector
-#'   of optimal K values, one for each assay in `rawdata(object)`. The default 
-#'   method is `optimalKMinimizeAmbiguity`, see `?optimalKMinimizeAmbiguity` 
+#'   of optimal K values, one for each assay in `rawdata(object)`. The default
+#'   method is `optimalKMinimizeAmbiguity`, see `?optimalKMinimizeAmbiguity`
 #'   for more details. Please note this argument must be named or it will not
 #'   work.
 #' @param ... Fall through arguments to `optimal_k_function`. For the default
@@ -369,28 +369,28 @@ setMethod('predictClasses', signature(object='CohortList',
 #'
 #' @md
 #' @export
-setMethod('predictClasses', signature(object='ConsensusMetaclusteringModel'), 
+setMethod('predictClasses', signature(object='ConsensusMetaclusteringModel'),
     function(object, ..., optimal_k_function=optimalKMinimizeAmbiguity)
 {
     ## TODO:: Refactor into some helpers so function is shorter
-    
+
     funContext <- .context(1)
     if (length(models(object)) < 1) stop(.errorMsg(funContext, 'The ',
         class(object)[1], ' object does not have any clustering results.
         Please run trainModel first, before trying to predictClasses'))
-    
+
     # -- Find optimal K value
-    .getFromClusteringResults <- function(x, i='consensusMatrix') lapply(x[-1], 
+    .getFromClusteringResults <- function(x, i='consensusMatrix') lapply(x[-1],
         FUN=`[[`, i=i)
     assayClusters <- models(object)
     assayOptimalK <- optimal_k_function(assayClusters, ...)
     if (!is.numeric(assayOptimalK)) .error(funContext, 'optimal_k_function
-        did not return a numeric vector! Please check ensure your 
+        did not return a numeric vector! Please check ensure your
         optimal_k_function returns a numeric vector with length the same as
         models(object).')
     if (length(assayOptimalK) != length(assayClusters)) .error(funContext,
-        'optimal_k_function returned a numeric vector with length != 
-        length(rawdata(object))! Please check ensure your 
+        'optimal_k_function returned a numeric vector with length !=
+        length(rawdata(object))! Please check ensure your
         optimal_k_function returns a numeric vector with length equal to
         length(models(object)).')
 
@@ -399,11 +399,11 @@ setMethod('predictClasses', signature(object='ConsensusMetaclusteringModel'),
         i='consensusClass')
     optimalClusterLabels <- mapply(`[[`, x=assayClusterLabels, i=assayOptimalK - 1,
         SIMPLIFY=FALSE)
-    
+
     # -- Assign class predictions to the experiments in tranData
     trainingData <- trainData(object)
     experimentColData <- lapply(experiments(trainingData), FUN=colData)
-    updatedExpColData <- mapply(`[[<-`, x=experimentColData, i='cluster_label', 
+    updatedExpColData <- mapply(`[[<-`, x=experimentColData, i='cluster_label',
         value=optimalClusterLabels, SIMPLIFY=FALSE)
     updatedExperiments <- mendoapply(`colData<-`, x=experiments(trainingData),
         value=updatedExpColData)
@@ -420,8 +420,8 @@ setMethod('predictClasses', signature(object='ConsensusMetaclusteringModel'),
             rowMeans(x[, which(labels == i), drop=FALSE], na.rm=TRUE)
         }, x=assay, labels=labels)
     }
-    clusterCentroids <- mapply(FUN=.calcClusterCentroid, assay=assayList, 
-        uniqueLabels=uniqueClusterLabels, labels=optimalClusterLabels, 
+    clusterCentroids <- mapply(FUN=.calcClusterCentroid, assay=assayList,
+        uniqueLabels=uniqueClusterLabels, labels=optimalClusterLabels,
         SIMPLIFY=FALSE)
     models(object) <- SimpleList(clusterCentroids)
     metadata(object)$consensuClusteringRaw <- assayClusters
@@ -432,32 +432,33 @@ setMethod('predictClasses', signature(object='ConsensusMetaclusteringModel'),
 #' Predict optimal K values by minimizing the difference between the ECDF
 #'   of clustering consensus at two points in a subinterval.
 #'
-#' @param assayClusters A `SimpleList` of clustering results from a 
+#' @param assayClusters A `SimpleList` of clustering results from a
 #'   `ConsensusMetaclusteringModel`, as returned by `models(object)` where
 #'   object is a trained `ConsensusMetaclusteringModel` object.
 #' @param subinterval A `numeric` vector of two float values, the first
 #'   being the lower and second being the upper limit of the subinteral
 #'   to compare cluster ambiguity over. Default is c(0.1, 0.9), i.e. comparing
-#'   the 10th and 90th percentile of cluster consensus to calculate the 
+#'   the 10th and 90th percentile of cluster consensus to calculate the
 #'   ambiguity of a given clustering solution. This is the value used to
 #'   selected the optimal K value from the potential solutions for each
 #'   assay in the training data.
 #'
-#' @return A `numeric` vector the same length as `assayClusters`, with 
-#'   an optimal K prediction for each assay in the `rawdata` slot of 
+#' @return A `numeric` vector the same length as `assayClusters`, with
+#'   an optimal K prediction for each assay in the `rawdata` slot of
 #'   the trained `ConsensusMetaclusteringModel` object which `assayClusters`
 #'   came from.
 #'
+#' @importFrom stats ecdf
 #' @export
 optimalKMinimizeAmbiguity <- function(assayClusters, subinterval=c(0.1, 0.9)) {
-    .getFromClusteringResults <- function(x, i='consensusMatrix') lapply(x[-1], 
-        FUN=`[[`, i=i) 
+    .getFromClusteringResults <- function(x, i='consensusMatrix') lapply(x[-1],
+        FUN=`[[`, i=i)
     consensusMatrices <- lapply(assayClusters, FUN=.getFromClusteringResults)
     .getLowerTris <- function(x) lapply(x, lower.tri)
     lowerTris <- lapply(consensusMatrices, .getLowerTris)
-    .subsetLowerTris <- function(x, lowerTris) mapply(`[`, x, lowerTris, 
+    .subsetLowerTris <- function(x, lowerTris) mapply(`[`, x, lowerTris,
         SIMPLIFY=FALSE)
-    lowerTriConMatrices <- mapply(.subsetLowerTris, consensusMatrices, 
+    lowerTriConMatrices <- mapply(.subsetLowerTris, consensusMatrices,
         lowerTris, SIMPLIFY=FALSE)
     # Make and empirical cumulative densitiy function for each consensus matrix
     .getECDFS <- function(x) lapply(x, FUN=ecdf)
@@ -465,8 +466,8 @@ optimalKMinimizeAmbiguity <- function(assayClusters, subinterval=c(0.1, 0.9)) {
 
     # Compare the 1st and 9th deciles as a metric of cluster ambiguity
     .calcPropAmbiguousClusters <- function(ecdfs, subinterval) {
-        vapply(ecdfs, function(ecdf, subinterval) 
-                ecdf(subinterval[which.max(subinterval)]) - 
+        vapply(ecdfs, function(ecdf, subinterval)
+                ecdf(subinterval[which.max(subinterval)]) -
                     ecdf(subinterval[which.min(subinterval)]),
             subinterval=subinterval,
             FUN.VALUE=numeric(1))
@@ -480,11 +481,11 @@ optimalKMinimizeAmbiguity <- function(assayClusters, subinterval=c(0.1, 0.9)) {
 # ---- NetworkCommunitySearchModel
 
 #' Predict Metacluster Labels for a NetworkCommunitySearchModel
-#' 
+#'
 #' @param object A `NCSModel` which has been trained.
-#' 
-#' @return The `object` model with 
-#' 
+#'
+#' @return The `object` model with
+#'
 #' @md
 #' @importFrom igraph graph_from_edgelist layout_with_fr as.undirected
 #'     fastgreedy.community
@@ -500,7 +501,7 @@ setMethod('predictClasses', signature(object='NCSModel'), function(object) {
     signifEdgeDT <- models(object)$networkEdges
 
     edgeMatrix <- as.matrix(signifEdgeDT[,
-        .(centroid_cluster=paste0(centroid_cohort, '-', centroid_K), 
+        .(centroid_cluster=paste0(centroid_cohort, '-', centroid_K),
             assay_cluster=paste0(assay_cohort, '-', assay_K))
     ])
 
@@ -509,8 +510,8 @@ setMethod('predictClasses', signature(object='NCSModel'), function(object) {
     graph <- graph_from_edgelist(edgeMatrix)
     coords <- layout_with_fr(graph)
     ugraph <- as.undirected(graph)
-    metaclusters <- fastgreedy.community(ugraph, 
-        weights=ifelse(signifEdgeDT$cor_threshold < 0, 
+    metaclusters <- fastgreedy.community(ugraph,
+        weights=ifelse(signifEdgeDT$cor_threshold < 0,
             0, signifEdgeDT$cor_threshold ))
 
     # -- Assign raw graph results to the NCSModel object
@@ -543,14 +544,14 @@ setMethod('predictClasses', signature(object='NCSModel'), function(object) {
     metaclustColDataL <- mendoapply(merge, colDataL, metaclusterL,
         by='cluster_label', all.x=TRUE)
     colDataRownames <- lapply(colDataL, rownames)
-    metaclustColDataL <- mendoapply(`rownames<-`, x=metaclustColDataL, 
+    metaclustColDataL <- mendoapply(`rownames<-`, x=metaclustColDataL,
         value=colDataRownames)
     experiments(cohortMAE) <- mendoapply(`colData<-`, x=experiments(cohortMAE),
         value=metaclustColDataL)
     trainData(object) <- cohortMAE
 
     # -- Find cohort clusters with no metacluster assignment
-    notMetaclustered <- lapply(metaclustColDataL, 
+    notMetaclustered <- lapply(metaclustColDataL,
         function(x) unique(x[is.na(x$metacluster_label), ]$cluster_label))
     notMetaclustered <- notMetaclustered[!isEmpty(notMetaclustered)]
     notMetaclusteredDT <- data.table(

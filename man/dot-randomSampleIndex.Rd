@@ -17,11 +17,11 @@
 }
 \value{
 A subset of your object with n random samples from each group in
-  groups. The number of rows returned will equal the number of groups times
-  the sample size.
+groups. The number of rows returned will equal the number of groups times
+the sample size.
 }
 \description{
 Returns a list of equally size random samples from two or more sample
-  groupings.
+groupings.
 }
 \keyword{internal}

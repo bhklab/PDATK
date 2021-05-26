@@ -1,5 +1,5 @@
 #' @name CohortList-class
-#' `CohortList` Class Definition
+#' @title CohortList Class Definition
 #'
 #' @description A list containing only `SurvivalExperiment` objects.
 #'
@@ -13,8 +13,8 @@
 ## to dots... Review SimpleList class to see how they accomplish that.
 
 #' @name CohortList
-#' Constructor for the `CohortList` class, a specialized list for storing
-#'   `SurvivalExperiment` objects.
+#' @title Constructor for the CohortList class, a specialized list for storing
+#'   SurvivalExperiment objects.
 #'
 #' @param ... One or more `SurvivalExperiment` objects.
 #' @param mDataTypes A `character` vector with the same length as ... which

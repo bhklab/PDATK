@@ -2,18 +2,18 @@
 % Please edit documentation in R/class-S4Model.R
 \name{show,S4Model-method}
 \alias{show,S4Model-method}
-\title{Show method for Classes Inheriting from `S4Model`}
+\title{Show method for Classes Inheriting from \code{S4Model}}
 \usage{
 \S4method{show}{S4Model}(object)
 }
 \arguments{
-\item{object}{A `S4Model` derivative to show.}
+\item{object}{A \code{S4Model} derivative to show.}
 }
 \value{
 None, prints to console.
 }
 \description{
-Show method for Classes Inheriting from `S4Model`
+Show method for Classes Inheriting from \code{S4Model}
 }
 \examples{
 data(CSPC_MAE)

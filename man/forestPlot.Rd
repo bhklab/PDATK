@@ -2,12 +2,12 @@
 % Please edit documentation in R/methods-forestPlot.R
 \name{forestPlot}
 \alias{forestPlot}
-\title{Generate a forest plot from an `S4` object}
+\title{Generate a forest plot from an \code{S4} object}
 \usage{
 forestPlot(object, ...)
 }
 \arguments{
-\item{object}{An `S4` object to create a forest plot of.}
+\item{object}{An \code{S4} object to create a forest plot of.}
 
 \item{...}{Allow new parameters to this generic.}
 }
@@ -15,7 +15,7 @@ forestPlot(object, ...)
 None, draws a forest plot.
 }
 \description{
-Generate a forest plot from an `S4` object
+Generate a forest plot from an \code{S4} object
 }
 \examples{
 data(sampleValPCOSPmodel)

@@ -2,12 +2,12 @@
 % Please edit documentation in R/class-S4Model.R
 \name{trainData}
 \alias{trainData}
-\title{Generic for Accessing the Training Data of an `S4` Object}
+\title{Generic for Accessing the Training Data of an \code{S4} Object}
 \usage{
 trainData(object, ...)
 }
 \arguments{
-\item{object}{An `S4` object to retrieve training data from.}
+\item{object}{An \code{S4} object to retrieve training data from.}
 
 \item{...}{Allow new parameters to be defined for this generic.}
 }
@@ -15,7 +15,7 @@ trainData(object, ...)
 The training data for an S4 object.
 }
 \description{
-Generic for Accessing the Training Data of an `S4` Object
+Generic for Accessing the Training Data of an \code{S4} Object
 }
 \examples{
 data(CSPC_MAE)

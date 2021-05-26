@@ -1,5 +1,5 @@
 #' @name SurvivalExperiment-class
-#' SurvivalExperiment Class
+#' @title SurvivalExperiment Class
 #'
 #' @description
 #' A SummarizedExperiment with mandatory numeric survival metadata columns
@@ -10,6 +10,7 @@
 .SurvivalExperiment <- setClass('SurvivalExperiment',
     contains='SummarizedExperiment')
 
+#' @name SurvivalExperiment
 #' @title Constructor for `SurvivalExperiment` Class
 #'
 #' Builds a `SurvivalExperiment` object, which is just a wrapper for a

@@ -1,12 +1,13 @@
 Package: PDATK
 Type: Package
 Title: Pancreatic Ductal Adenocarcinoma Tool-Kit
-Version: 1.1.0
-Date: 2021-04-16
+Version: 1.1.1
+Date: 2021-05-26
 Authors@R: c(
     person('Vandana', 'Sandhu', role=c('aut')),
     person('Heewon', 'Seo', role=c('aut')),
     person('Christopher', 'Eeles', role=c('aut')),
+    person('Neha', 'Rohatgi', role=c('ctb')),
     person('Benjamin', 'Haibe-Kains', role=c('aut', 'cre'),
         email="benjamin.haibe.kains@utoronto.ca"))
 Description: Pancreatic ductal adenocarcinoma (PDA) has a relatively poor 
