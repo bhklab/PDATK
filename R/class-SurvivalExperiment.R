@@ -1,3 +1,4 @@
+#' @name SurvivalExperiment-class
 #' SurvivalExperiment Class
 #'
 #' @description

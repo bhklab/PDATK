@@ -10,3 +10,4 @@ results/*
 scratch.R
 .idea/*
 *.Rproj
+data/*.qs

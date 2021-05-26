@@ -226,7 +226,7 @@ setMethod('models', signature(object='S4Model'), function(object)
 #' data(CSPC_MAE)
 #' set.seed(1987)
 #' metaclustModel <- ConMetaclustModel(CSPC_MAE, randomSeed=1987)
-#' models(metaclustModel) <- list(model1='some_kind_of_model)
+#' models(metaclustModel) <- list(model1='some_kind_of_model')
 #'
 #' @md
 #' @keywords internal

@@ -1,3 +1,4 @@
+#' @name SurvivalModel-class
 #' A Generic Container for Storing Mathematical Models of
 #'   SurvivalExperiments
 #'

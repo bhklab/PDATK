@@ -3,5 +3,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .idea
-**.qs
-**.Rproj
+.*Rproj
+data/.*qs
+.*qs
+vignettes/.*pdf
+vignettes/CSPC_

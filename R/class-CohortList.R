@@ -1,3 +1,4 @@
+#' @name CohortList-class
 #' `CohortList` Class Definition
 #'
 #' @description A list containing only `SurvivalExperiment` objects.
@@ -11,6 +12,7 @@
 ##FIXME:: CohortList constructor doesn't work if passed named items
 ## to dots... Review SimpleList class to see how they accomplish that.
 
+#' @name CohortList
 #' Constructor for the `CohortList` class, a specialized list for storing
 #'   `SurvivalExperiment` objects.
 #'
