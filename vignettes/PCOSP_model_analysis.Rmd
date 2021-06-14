@@ -234,8 +234,6 @@ PCOSPdIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='log_D_index')
 PCOSPdIndexForestPlot
 ```
 
-
-
 ```{r PCOSP_concordance_index_forestplot, fig.width=8, fig.height=8, fig.wide=TRUE}
 PCOSPconcIndexForestPlot <- forestPlot(validatedPCOSPmodel, stat='concordance_index')
 PCOSPconcIndexForestPlot
@@ -295,13 +293,13 @@ validatedRLSmodel <- validateModel(trainedRLSmodel, RLSpredCohortList)
 ### Compare with a PCOSP Model
 
 To compare the performance of a permuted model to that of a PCOSP model, we
-have included the `densitityPlotModelComparion` method, which plots a
+have included the `densityPlotModelComparion` method, which plots a
 density plot of model AUCs per molecular data type and overall. The dotted
 line represents the mean AUC of the PCOSP model. From this plot we can 
 see that the PCOSP model performs significantly better than the random label
 shuffling model.
 
-```{r RLSModel_PCOSP_comparison_plot}
+```{r RLSModel_PCOSP_comparison_plot, fig.width=8, fig.height=8, fig.wide=TRUE}
 RLSmodelComparisonPlot <- densityPlotModelComparison(validatedRLSmodel,
     validatedPCOSPmodel, title='Random Label Shuffling vs PCOSP',
     mDataTypeLabels=c(rna_seq='Sequencing-based', rna_micro='Array-based',
@@ -346,7 +344,7 @@ validatedRGAmodel <- validateModel(trainedRGAmodel, RGApredCohortList)
 The density plot for the `RGAModel` also shows that the `PCOSP` model does
 significantly better than random chance.
 
-```{r RGAModel_PCOSP_comparison_plot}
+```{r RGAModel_PCOSP_comparison_plot, fig.width=8, fig.height=8, fig.wide=TRUE}
 RGAmodelComparisonPlot <-  densityPlotModelComparison(validatedRGAmodel,
     validatedPCOSPmodel, title='Random Gene Assignment vs PCOSP',
     mDataTypeLabels=c(rna_seq='Sequencing-based', rna_micro='Array-based',
@@ -590,14 +588,14 @@ allModelComparisons <- compareModels(genefuModelComparisons, validatedPCOSPmodel
 allModelComparisons <- subset(allModelComparisons, isSummary == TRUE)
 ```
 
-```{r plotting Model_Comparisons_dindex, fig.wide=TRUE}
+```{r plotting Model_Comparisons_dindex, fig.width=8, fig.height=8, fig.wide=TRUE}
 allDindexComparisonForestPlot <- forestPlot(allModelComparisons,
     stat='log_D_index', colourBy='model', groupBy='mDataType')
 allDindexComparisonForestPlot
 ```
 
 
-```{r plotting Model Comparisons_concindex, fig.wide=TRUE}
+```{r plotting Model Comparisons_concindex, fig.width=8, fig.height=8, fig.wide=TRUE}
 allConcIndexComparisonForestPlot <- forestPlot(allModelComparisons,
     stat='concordance_index', colourBy='model', groupBy='mDataType')
 allConcIndexComparisonForestPlot
@@ -620,15 +618,14 @@ subtypedPCOSPValCohorts <- assignSubtypes(PCOSPpredValCohorts, cohortSubtypeDFs)
 ```{r validateModel_with_subtypes}
 subtypeValidatedPCOSPmodel <- validateModel(trainedPCOSPmodel, valData=subtypedPCOSPValCohorts)
 ```
-```{r forestPlot_subtyped_PCOSP_model}
+```{r forestPlot_Dindex_subtyped_PCOSP_model, fig.width=8, fig.height=8, fig.wide=TRUE}
 forestPlot(subtypeValidatedPCOSPmodel, stat='log_D_index', groupBy='cohort',
     colourBy='subtype')
 ```
-```{r }
+```{r forestPlot_Cindex_subtyped_PCOSP_model, fig.width=8, fig.height=8, fig.wide=TRUE}
 forestPlot(subtypeValidatedPCOSPmodel, stat='concordance_index', groupBy='cohort',
     colourBy='subtype')
 ```
-
 
 # References
 

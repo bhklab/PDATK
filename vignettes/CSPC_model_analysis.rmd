@@ -23,7 +23,7 @@ vignette: >
 
 # COINCIDE
 
-Please note that this vignette is incomplete and is not intended to for package
+Please note that this vignette is incomplete and is not intended for package
 users at this time. It is here as a placeholder until the vignette is complete.
 
 ## Preprocess the data
@@ -40,16 +40,10 @@ library(doParallel)
 seed <- 55555
 reps <- 1000
 
-ICGC_SE_list <- qread('vignettes/ICGC_SEs.qs', nthread=16)
-names(ICGC_SE_list) <- gsub('-', '_', names(ICGC_SE_list))
-for (i in seq_along(ICGC_SE_list)) {
-    assayNames(ICGC_SE_list[[i]]) <- gsub('^.*-', '', assayNames(ICGC_SE_list[[i]]))
-    assays(ICGC_SE_list[[i]]) <- rev(assays(ICGC_SE_list[[i]]))
-}
-CSPCmaeRaw <- MultiAssayExperiment(ICGC_SE_list)
+data(CSPC_MAE)
 
 # Subset to only feature shared across all data
-CSPCmae <- intersectRows(CSPCmaeRaw)
+CSPCmae <- intersectRows(CSPC_MAE)
 ```
 
 ```{r feature_ranking, eval=FALSE}
@@ -73,7 +67,27 @@ normMAE <- PDATK::normalize(topFeaturesMAE, MARGIN=2,
 set.seed(seed)
 conClustModel <- ConsensusMetaclusteringModel(normMAE, randomSeed=seed)
 trainedConClustModel <- trainModel(conClustModel, reps=reps)
-classifiedConClustModel <- predictClasses(trainedConClustModel)
+
+optimalKFunction <- function(models, subinterval) {
+    vapply(models, FUN=function(x) { 
+        icl = calcICL(x,
+                plot=NULL)
+        coni = icl[["itemConsensus"]]
+        pac = list()
+        k_list = unique(coni$k)
+        for (k_temp in 1:length(k_list)) {
+            coni_temp = coni[which(coni$k == k_list[[k_temp]]),]
+            middle_no = dim(coni_temp[which(coni_temp$itemConsensus > subinterval[1] &     
+                coni_temp$itemConsensus < subinterval[2]),])[1]
+            pac[[k_temp]] = data.frame(k = k_list[[k_temp]],pac = middle_no)
+        }
+        pac = do.call(rbind,pac)
+        optimal_k = pac$k[which.min(pac$pac)]
+        return(optimal_k)
+    }, numeric(1))
+}
+
+classifiedConClustModel <- predictClasses(trainedConClustModel, subinterval=c(0.1, 0.9))
 ```
 
 <!-- ```{r, eval=FALSE}
