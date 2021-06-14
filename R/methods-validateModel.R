@@ -306,7 +306,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
                 surv.time=survival_time, surv.event=event_occurred,
                 method='noether', na.rm=TRUE)[c('c.index', 'se', 'lower',
                     'upper', 'p.value', 'n')] },
-            error=function(e) {print(e); return(c(rep(NA, 5), n)) }))
+            error=function(e) { print(e); return(c(rep(NA, 5), n)) }))
 }
 
 # ---- ClinicalModel methods
@@ -340,7 +340,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'
 #' @md
 #' @importFrom data.table data.table as.data.table merge.data.table rbindlist
-#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
+#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder setDF
 #' @import survcomp
 #' @importFrom S4Vectors metadata
 #' @importFrom SummarizedExperiment colData
