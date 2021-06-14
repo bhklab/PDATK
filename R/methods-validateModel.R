@@ -380,10 +380,10 @@ setMethod('validateModel', signature(model='ClinicalModel',
     ## FIXME:: Should this be 1 - clinical_prob_good?
     validationStats <- with(survivalDF,
         list(
-            dIndex=D.index(x=clinical_prob_good, surv.time=survival_time,
+            dIndex=D.index(x=1 - clinical_prob_good, surv.time=survival_time,
                 surv.event=event_occurred, na.rm=TRUE, alpha=0.5,
                 method.test='logrank'),
-            cIndex=concordance.index(x=clinical_prob_good,
+            cIndex=concordance.index(x=1 - clinical_prob_good,
                 surv.time=survival_time, surv.event=event_occurred,
                 method='noether', na.rm=TRUE),
             AUC=as.list(aucStats)
@@ -391,17 +391,21 @@ setMethod('validateModel', signature(model='ClinicalModel',
     )
 
     # assemble into a data.frame
-    valStatsDF <- data.frame(
+    valStatsDF <- data.table(
         statistic=c('log_D_index', 'concordance_index', 'AUC'),
         estimate=c(validationStats$dIndex$coef,
             validationStats$cIndex$c.index, validationStats$AUC$estimate),
         se=vapply(validationStats, `[[`, i='se', FUN.VALUE=numeric(1)),
-        lower=log(vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1))),
-        upper=log(vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1))),
+        lower=vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1)),
+        upper=vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1)),
         p_value=vapply(validationStats, `[[`, i='p.value', FUN.VALUE=numeric(1)),
         n=vapply(validationStats, `[[`, i='n', FUN.VALUE=numeric(1)),
         isSummary=FALSE
     )
+    valStatsDF[statistic == 'log_D_index', c('lower', 'upper') := 
+        .(log(lower), log(upper))]
+    setDF(valStatsDF)
+
 
     valStatsDF$cohort <- class(model)
 
