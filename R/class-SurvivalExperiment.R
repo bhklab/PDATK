@@ -93,6 +93,16 @@ SurvivalExperiment <- function(..., survival_time='survival_time',
                 colData(SE)$event_occurred <-
                     as.integer(event_occurred_col == 'deceased')
             },
+            'factor'={
+                colData(SE)$event_occurred <- as.character(colData(SE)$event_occurred)
+                event_occurred <- colData(SE)$event_occurred
+                if (!('deceased' %in% event_occurred))
+                    stop(.errorMsg(funContext, 'The string deceased is not in ',
+                        'the event_occurred column. Please convert this column to ',
+                        'integer manually, where 1 is deceased and 0 is alive.'))
+                colData(SE)$event_occurred <-
+                    as.integer(event_occurred == 'deceased')
+            },
             stop(.errorMsg(funContext, 'The event_occurred column is not logical ',
                 'or integer, please convert this column such that deceased is 1 ',
                 'or TRUE and alive is 0 or FALSE before retrying the conversion!'))
@@ -111,6 +121,13 @@ SurvivalExperiment <- function(..., survival_time='survival_time',
             error=function(e) stop(.errorMsg(funContext, 'Tried to ',
                 'coerce survival_time from character to integer, but ',
                 'failed.')))
+            },
+            'factor'={ tryCatch({
+                colData(SE)$survival_time <- as.integer(levels(
+                    colData(SE)$survival_time)[colData(SE)$survival_time])
+            }, 
+            error=function(e) stop(.errorMsg(funContext, 'Tried to ',
+                'coerce survival_time from factor to integer, but failed')))
             },
             stop(.errorMsg(funContext, 'The survival_time column is not logical',
                 ' or integer, please convert this column before retrying the ',
