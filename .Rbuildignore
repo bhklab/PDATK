@@ -10,3 +10,4 @@ vignettes/.*pdf
 vignettes/CSPC_.*
 local_data
 local_data/.*
+vignettes/.*1.Rmd
