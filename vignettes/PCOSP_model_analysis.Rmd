@@ -147,7 +147,7 @@ encourage experimentation to see what works best with your data.
 
 
 ```{r messages=FALSE, warning=FALSE}
-trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=1000, minAccuracy=0.6)
+trainedPCOSPmodel <- trainModel(PCOSPmodel, numModels=15, minAccuracy=0.6)
 
 metadata(trainedPCOSPmodel)$modelParams
 ```
