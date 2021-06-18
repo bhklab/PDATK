@@ -38,9 +38,7 @@ test_that('SurvivalExperiment constructor errors if survival_time or
     colData(invalidExp2)$survival_time <-
         as.factor(colData(invalidExp2)$survival_time)
     expect_error(SurvivalExperiment(invalidExp1),
-        '.*The event_occurred column is not logical or integer,.*')
-    expect_error(SurvivalExperiment(invalidExp2),
-        '.*The survival_time column is not logical or integer,.*')
+        '.*deceased is not in.*')
 })
 
 test_that('SurvivalExperiment constructor errors if survival_time or
