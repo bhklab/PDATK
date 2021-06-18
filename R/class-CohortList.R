@@ -38,7 +38,8 @@
 CohortList <- function(..., mDataTypes) {
 
     funContext <- .context(1)
-    cohortList <- .CohortList(...)
+    cohortList <- if (...length() > 0 && is(..1, 'CohortList')) ..1 else 
+        .CohortList(...)
 
     # Use existing mDataTypes if they exist
     if (missing(mDataTypes) && !is.null(mcols(cohortList)$mDataType) &&
