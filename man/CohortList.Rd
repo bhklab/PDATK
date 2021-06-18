@@ -2,8 +2,8 @@
 % Please edit documentation in R/class-CohortList.R
 \name{CohortList}
 \alias{CohortList}
-\title{Constructor for the \code{CohortList} class, a specialized list for storing
-\code{SurvivalExperiment} objects.}
+\title{Constructor for the CohortList class, a specialized list for storing
+SurvivalExperiment objects.}
 \usage{
 CohortList(..., mDataTypes)
 }
@@ -20,8 +20,8 @@ A \code{CohortList} object containing one or more \code{SurvivalExperiment}
 objects.
 }
 \description{
-Constructor for the \code{CohortList} class, a specialized list for storing
-\code{SurvivalExperiment} objects.
+Constructor for the CohortList class, a specialized list for storing
+SurvivalExperiment objects.
 }
 \examples{
 data(sampleICGCmicro)

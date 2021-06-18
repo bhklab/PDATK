@@ -4,7 +4,6 @@
 \name{S4Model-class}
 \alias{S4Model-class}
 \alias{.S4Model}
-\alias{S4Model}
 \title{An \code{S4} Virtual Class For the Concept of a Statistical or ML Model}
 \description{
 An \code{S4} Virtual Class For the Concept of a Statistical or ML Model

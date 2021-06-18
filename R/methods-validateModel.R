@@ -339,8 +339,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'   valData=clinicalPredCohortList)
 #'
 #' @md
-#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
-#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder setDF
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist `:=` copy .N .SD fifelse merge.data.table transpose setcolorder setDF
 #' @import survcomp
 #' @importFrom S4Vectors metadata
 #' @importFrom SummarizedExperiment colData
