@@ -12,3 +12,4 @@ scratch.R
 *.Rproj
 data/*.qs
 local_data/*
+scripts/*

@@ -380,10 +380,10 @@ setMethod('validateModel', signature(model='ClinicalModel',
     ## FIXME:: Should this be 1 - clinical_prob_good?
     validationStats <- with(survivalDF,
         list(
-            dIndex=D.index(x=1 - clinical_prob_good, surv.time=survival_time,
+            dIndex=D.index(x=clinical_prob_good, surv.time=survival_time,
                 surv.event=event_occurred, na.rm=TRUE, alpha=0.5,
                 method.test='logrank'),
-            cIndex=concordance.index(x=1 - clinical_prob_good,
+            cIndex=concordance.index(x=clinical_prob_good,
                 surv.time=survival_time, surv.event=event_occurred,
                 method='noether', na.rm=TRUE),
             AUC=as.list(aucStats)
