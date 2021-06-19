@@ -1,4 +1,5 @@
-#' `CohortList` Class Definition
+#' @name CohortList-class
+#' @title CohortList Class Definition
 #'
 #' @description A list containing only `SurvivalExperiment` objects.
 #'
@@ -11,8 +12,9 @@
 ##FIXME:: CohortList constructor doesn't work if passed named items
 ## to dots... Review SimpleList class to see how they accomplish that.
 
-#' Constructor for the `CohortList` class, a specialized list for storing
-#'   `SurvivalExperiment` objects.
+#' @name CohortList
+#' @title Constructor for the CohortList class, a specialized list for storing
+#'   SurvivalExperiment objects.
 #'
 #' @param ... One or more `SurvivalExperiment` objects.
 #' @param mDataTypes A `character` vector with the same length as ... which
@@ -36,7 +38,8 @@
 CohortList <- function(..., mDataTypes) {
 
     funContext <- .context(1)
-    cohortList <- .CohortList(...)
+    cohortList <- if (...length() > 0 && is(..1, 'CohortList')) ..1 else 
+        .CohortList(...)
 
     # Use existing mDataTypes if they exist
     if (missing(mDataTypes) && !is.null(mcols(cohortList)$mDataType) &&

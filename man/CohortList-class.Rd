@@ -4,7 +4,7 @@
 \name{CohortList-class}
 \alias{CohortList-class}
 \alias{.CohortList}
-\title{\code{CohortList} Class Definition}
+\title{CohortList Class Definition}
 \description{
 A list containing only \code{SurvivalExperiment} objects.
 }

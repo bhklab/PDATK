@@ -306,7 +306,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
                 surv.time=survival_time, surv.event=event_occurred,
                 method='noether', na.rm=TRUE)[c('c.index', 'se', 'lower',
                     'upper', 'p.value', 'n')] },
-            error=function(e) {print(e); return(c(rep(NA, 5), n)) }))
+            error=function(e) { print(e); return(c(rep(NA, 5), n)) }))
 }
 
 # ---- ClinicalModel methods
@@ -339,8 +339,7 @@ setMethod('validateModel', signature(model='PCOSP_or_RLS_or_RGA',
 #'   valData=clinicalPredCohortList)
 #'
 #' @md
-#' @importFrom data.table data.table as.data.table merge.data.table rbindlist
-#'   `:=` copy .N .SD fifelse merge.data.table transpose setcolorder
+#' @importFrom data.table data.table as.data.table merge.data.table rbindlist `:=` copy .N .SD fifelse merge.data.table transpose setcolorder setDF
 #' @import survcomp
 #' @importFrom S4Vectors metadata
 #' @importFrom SummarizedExperiment colData
@@ -391,17 +390,21 @@ setMethod('validateModel', signature(model='ClinicalModel',
     )
 
     # assemble into a data.frame
-    valStatsDF <- data.frame(
+    valStatsDF <- data.table(
         statistic=c('log_D_index', 'concordance_index', 'AUC'),
         estimate=c(validationStats$dIndex$coef,
             validationStats$cIndex$c.index, validationStats$AUC$estimate),
         se=vapply(validationStats, `[[`, i='se', FUN.VALUE=numeric(1)),
-        lower=log(vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1))),
-        upper=log(vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1))),
+        lower=vapply(validationStats, `[[`, i='lower', FUN.VALUE=numeric(1)),
+        upper=vapply(validationStats, `[[`, i='upper', FUN.VALUE=numeric(1)),
         p_value=vapply(validationStats, `[[`, i='p.value', FUN.VALUE=numeric(1)),
         n=vapply(validationStats, `[[`, i='n', FUN.VALUE=numeric(1)),
         isSummary=FALSE
     )
+    valStatsDF[statistic == 'log_D_index', c('lower', 'upper') := 
+        .(log(lower), log(upper))]
+    setDF(valStatsDF)
+
 
     valStatsDF$cohort <- class(model)
 
