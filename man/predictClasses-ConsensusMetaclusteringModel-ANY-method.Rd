@@ -5,18 +5,23 @@
 \title{Compute the Optimal Clustering Solution for a Trained
 ConsensusMetaclusteringModel}
 \usage{
-\S4method{predictClasses}{ConsensusMetaclusteringModel,ANY}(object, subinterval = c(0.1, 0.9))
+\S4method{predictClasses}{ConsensusMetaclusteringModel,ANY}(object, ..., optimal_k_function = optimalKMinimizeAmbiguity)
 }
 \arguments{
 \item{object}{A \code{MutliAssayExperiment} object}
 
-\item{subinterval}{A \code{numeric} vector of two float values, the first
-being the lower and second being the upper limit of the subinteral
-to compare cluster ambiguity over. Default is c(0.1, 0.9), i.e. comparing
-the 10th and 90th percentile of cluster consensus to calculate the
-ambiguity of a given clustering solution. This is the value used to
-selected the optimal K value from the potential solutions for each
-assay in the training data.}
+\item{...}{Fall through arguments to \code{optimal_k_function}. For the default
+\code{optimal_k_function}, you can specify \code{subinterval} argument which defines
+the interval of the ECDF to minimize ambiguity over. Defaults to \code{c(0.1, 0.9)}
+if not specified. See \code{?optimalKMinimizeAmbiguity} for more details on
+the \code{subinterval} parameter.}
+
+\item{optimal_k_function}{A function which accepts as its input \code{models(object)}
+of a trained \code{ConsensusMetaclusteringModel} object, and returns a vector
+of optimal K values, one for each assay in \code{rawdata(object)}. The default
+method is \code{optimalKMinimizeAmbiguity}, see \code{?optimalKMinimizeAmbiguity}
+for more details. Please note this argument must be named or it will not
+work.}
 }
 \value{
 A \code{object} \code{ConsensusMetaclusteringModel}, with class predictions

@@ -202,6 +202,10 @@ setMethod('forestPlot', signature(object='ModelComparison'),
     statsDT[, model_pvalue := factor(model_pvalue,
         levels=model_pvalue)]
 
+    # fix facet ording by converting grouping columns to factors
+    for (group in groupBy) statsDT[[groupBy]] <- 
+        factor(statsDT[[groupBy]], levels=unique(statsDT[[groupBy]]))
+
     if (missing(vline)) {
         vline <- switch(stat,
             'log_D_index' = 0,
