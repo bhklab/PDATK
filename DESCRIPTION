@@ -1,8 +1,8 @@
 Package: PDATK
 Type: Package
 Title: Pancreatic Ductal Adenocarcinoma Tool-Kit
-Version: 1.0.1
-Date: 2021-06-18
+Version: 1.0.2
+Date: 2021-06-23
 Authors@R: c(
     person('Vandana', 'Sandhu', role=c('aut')),
     person('Heewon', 'Seo', role=c('aut')),
